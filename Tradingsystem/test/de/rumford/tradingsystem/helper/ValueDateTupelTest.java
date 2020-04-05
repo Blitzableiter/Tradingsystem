@@ -22,8 +22,8 @@ class ValueDateTupelTest {
 
 	@Test
 	void testEqualsObject() {
-		vdt = new ValueDateTupel(value, date);
-		vdt2 = new ValueDateTupel(value, date);
+		vdt = new ValueDateTupel(date, value);
+		vdt2 = new ValueDateTupel(date, value);
 		
 		assertEquals(vdt, vdt2, "Two equal instances of ValueDateTupel are not equal");
 	}

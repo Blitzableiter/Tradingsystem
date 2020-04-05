@@ -83,7 +83,7 @@ public final class Util {
 	 */
 	public static double calculateReturn(double formerValue, double latterValue) throws IllegalArgumentException {
 		if (formerValue == 0) throw new IllegalArgumentException("Former value cannot be zero");
-		return latterValue / formerValue - 1f;
+		return latterValue / formerValue - 1d;
 	}
 
 }

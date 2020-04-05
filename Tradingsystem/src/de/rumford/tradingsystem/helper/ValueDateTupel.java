@@ -17,7 +17,7 @@ public class ValueDateTupel {
 	/**
 	 * Constructor the the {@code ValueDateTupel} class
 	 */
-	public ValueDateTupel(double value, LocalDateTime date) {
+	public ValueDateTupel(LocalDateTime date, double value) {
 		this.setDate(date);
 		this.setValue(value);
 	}

@@ -1,19 +1,31 @@
 package de.rumford.tradingsystem;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+import de.rumford.tradingsystem.helper.ValueDateTupel;
+
 public class Treiber {
 
 	public static void main(String[] args) {
-		double[] weights = { 0.5d, 0.6d };
-		final double[][] correlations = { { 1d, 0.75d }, { 0.75d, 1d } };
+		ValueDateTupel valuedatetupel1 = new ValueDateTupel(
+				LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0)), 200d);
+		ValueDateTupel valuedatetupel2 = new ValueDateTupel(
+				LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0)), 400d);
+		ValueDateTupel valuedatetupel3 = new ValueDateTupel(
+				LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0)), 500d);
+		ValueDateTupel[] values = { valuedatetupel1, valuedatetupel2, valuedatetupel3 };
+		BaseValue bv = new BaseValue("value", values);
 
-		try {
-			DiversificationMultiplier dm = new DiversificationMultiplier(weights, correlations);
-			dm.getValue();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		ValueDateTupel[] vs = bv.getValues();
+		ValueDateTupel[] sv = bv.getShortIndexValues();
+
+		for (ValueDateTupel tup : vs)
+			System.out.println(tup);
+		for (ValueDateTupel tup : sv)
+			System.out.println(tup);
+
 	}
 
 }
