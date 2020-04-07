@@ -13,27 +13,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/dev/eclipse-workspaces/Thesis-Workspace/lib/commons-lang3-3.10/commons-lang3-3.10-javadoc.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/dev/eclipse-workspaces/Thesis-Workspace/lib/commons-lang3-3.10/commons-lang3-3.10-sources.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/dev/eclipse-workspaces/Thesis-Workspace/lib/commons-lang3-3.10/commons-lang3-3.10-test-sources.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/dev/eclipse-workspaces/Thesis-Workspace/lib/commons-lang3-3.10/commons-lang3-3.10-tests.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/dev/eclipse-workspaces/Thesis-Workspace/lib/commons-lang3-3.10/commons-lang3-3.10.jar" sourcepath="C:/dev/eclipse-workspaces/Thesis-Workspace/lib/commons-lang3-3.10/commons-lang3-3.10-sources.jar">
+	<classpathentry kind="lib" path="lib/commons-lang3-3.10/commons-lang3-3.10.jar" sourcepath="lib/commons-lang3-3.10/commons-lang3-3.10-sources.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

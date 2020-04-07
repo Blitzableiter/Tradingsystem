@@ -15,7 +15,12 @@ public class ValueDateTupel {
 	private LocalDateTime date;
 
 	/**
-	 * Constructor the the {@code ValueDateTupel} class
+	 * Creates a new {@code ValueDateTupel} instance using... TODO
+	 * 
+	 * @param date  {@code LocalDateTime} The dateTime to be set for this
+	 *              {@code ValueDateTupel}
+	 * @param value {@code double} The value to be set for this
+	 *              {@code ValueDateTupel}
 	 */
 	public ValueDateTupel(LocalDateTime date, double value) {
 		this.setDate(date);
@@ -23,9 +28,9 @@ public class ValueDateTupel {
 	}
 
 	/**
-	 * Create and return an empty array of {@code ValueDateTupel}.
+	 * Creates an empty array of {@code ValueDateTupel}.
 	 * 
-	 * @return {@code ValueDateTupel[]} An Empty array.
+	 * @return {@code ValueDateTupel[]} An Empty array of {@code ValueDateTupel}.
 	 */
 	public static ValueDateTupel[] createEmptyArray() {
 		return new ValueDateTupel[0];
@@ -39,7 +44,9 @@ public class ValueDateTupel {
 	 *                        to.
 	 * @param newElement      {@code ValueDateTupel} to be appended to the given
 	 *                        array.
-	 * @return {@code ValueDateTupel[]) Passed array with the passed Element in the last index.
+	 * @return {@code ValueDateTupel[]) Passed array with the passed Element in the last index. @deprecated
+	 *         Use {@link org.apache.commons.lang3.ArrayUtils#add(Object[], Object)}
+	 *         instead
 	 */
 	public static ValueDateTupel[] appendElement(ValueDateTupel[] valueDateTupels, ValueDateTupel newElement) {
 		ValueDateTupel[] returnValueDateTupels = new ValueDateTupel[valueDateTupels.length + 1];

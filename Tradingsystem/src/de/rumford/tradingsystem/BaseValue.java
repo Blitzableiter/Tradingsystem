@@ -29,9 +29,10 @@ public class BaseValue {
 	 * {@link de.rumford.tradingsystem.BaseValue#calculateShortIndexValues(double[])}.
 	 * 
 	 * @param name   {@code String} Name used to identify the represented base
-	 *               value. Fulfills no purpose and is not used for calculation of
-	 *               any kind. Must be of length > {@code 0}.
-	 * @param values {@code ValueDateTupel[]} Values of the represented base value
+	 *               value. Is not used for calculation of any kind. Must be of
+	 *               length > {@code 0}.
+	 * @param values {@code ValueDateTupel[]} Values of the represented base value.
+	 *               Must be of length > {@code 0}.
 	 * @throws IllegalArgumentException if the input values are not within
 	 *                                  specification
 	 */

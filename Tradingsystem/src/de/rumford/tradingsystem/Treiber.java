@@ -22,9 +22,10 @@ public class Treiber {
 		values = ValueDateTupel.appendElement(values, valuedatetupel2);
 		values = ValueDateTupel.appendElement(values, valuedatetupel3);
 		values = ValueDateTupel.appendElement(values, valuedatetupel4);
-		
-		for (ValueDateTupel tup : values) System.out.println(tup);
-		
+
+		for (ValueDateTupel tup : values)
+			System.out.println(tup);
+
 		BaseValue bv = new BaseValue("value", values);
 
 		ValueDateTupel[] vs = bv.getValues();
