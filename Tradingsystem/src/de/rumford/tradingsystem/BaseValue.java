@@ -3,9 +3,6 @@
  */
 package de.rumford.tradingsystem;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.Arrays;
 
 import de.rumford.tradingsystem.helper.Util;
@@ -26,24 +23,19 @@ public class BaseValue {
 	private ValueDateTupel[] shortIndexValues;
 
 	/**
-	 *TODO MORE COMMENTS
 	 * Creates a new {@code BaseValue} instance using the passed {@code String} for
 	 * identification and stores the passed {@code ValueDateTupel[]} as values.
+	 * Short index values are calculated based on the given values as specified in
+	 * {@link de.rumford.tradingsystem.BaseValue#calculateShortIndexValues(double[])}.
 	 * 
 	 * @param name   {@code String} Name used to identify the represented base
 	 *               value. Fulfills no purpose and is not used for calculation of
 	 *               any kind. Must be of length > {@code 0}.
-	 * @param values {@code ValueDateTupel[]} Values of the represented 
-	 * @throws IllegalArgumentException
+	 * @param values {@code ValueDateTupel[]} Values of the represented base value
+	 * @throws IllegalArgumentException if the input values are not within
+	 *                                  specification
 	 */
 	public BaseValue(String name, ValueDateTupel[] values) throws IllegalArgumentException {
-
-		try {
-			FileReader fr = new FileReader(new File("index.html"));
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 
 		try {
 			this.validateAndSetInput(name, values);
@@ -55,30 +47,85 @@ public class BaseValue {
 	}
 
 	/**
+	 * Creates a new {@code BaseValue} instance using the passed {@code String} for
+	 * identification and stores the passed {@code ValueDateTupel[]} as values and
+	 * the second passed {@code ValueDateTupel[]} as shortIndexValues.
 	 * 
+	 * @param name             {@code String} Name used to identify the represented
+	 *                         base value. Fulfills no purpose and is not used for
+	 *                         calculation of any kind. Must be of length >
+	 *                         {@code 0}.
+	 * @param values           {@code ValueDateTupel[]} Values of the represented
+	 *                         base value
+	 * @param shortIndexValues {@code ValueDateTupel[]} Short index values of the
+	 *                         represented base value
+	 * @throws IllegalArgumentException if the input values are not within
+	 *                                  specification
 	 */
 	public BaseValue(String name, ValueDateTupel[] values, ValueDateTupel[] shortIndexValues)
 			throws IllegalArgumentException {
 		try {
-			this.validateAndSetInput(name, values);
+			this.validateAndSetInput(name, values, shortIndexValues);
 		} catch (IllegalArgumentException e) {
 			throw e;
 		}
-
-		this.setShortIndexValues(shortIndexValues);
 	}
 
+	/**
+	 * Validates the given parameters. Used by the Constructors to validate the
+	 * constructor parameters.
+	 * 
+	 * @param name   {@code String} Name to be set for a {@code BaseValue}. Must not
+	 *               have a length of {@code 0}.
+	 * @param values {@code ValueDateTupel[]} Values to be set for a
+	 *               {@code BaseValue}. Must contain at least {@code 1} element.
+	 * @throws IllegalArgumentException if one of the above specifications is not
+	 *                                  met.
+	 */
 	private void validateAndSetInput(String name, ValueDateTupel[] values) throws IllegalArgumentException {
 		// Check if name is not empty
 		if (name.length() == 0)
 			throw new IllegalArgumentException("Name must not be an empty String");
 
 		// Check if passed values array contains elements
-		if (values.length < 0)
+		if (values.length == 0)
 			throw new IllegalArgumentException("Values must not be an empty array");
 
 		this.setName(name);
 		this.setValues(values);
+	}
+
+	/**
+	 * Validates the given parameters. Used by the Constructors to validate the
+	 * constructor parameters. Utilizes *
+	 * {@link de.rumford.tradingsystem.BaseValue#validateAndSetInput(String, double[])}.
+	 * 
+	 * 
+	 * @param name             {@code String} Name to be set for a
+	 *                         {@code BaseValue}. Specifications see
+	 *                         {@link de.rumford.tradingsystem.BaseValue#validateAndSetInput(String, double[])}.
+	 * @param values           {@code ValueDateTupel[]} Values to be set for a
+	 *                         {@code BaseValue}. Specifications see
+	 *                         {@link de.rumford.tradingsystem.BaseValue#validateAndSetInput(String, double[])}.
+	 * @param shortIndexValues {@code ValueDateTupel[]} Short index values to be set
+	 *                         for a {@code BaseValue}. Must contain at least
+	 *                         {@code 1} element.
+	 * @throws IllegalArgumentException if one of the above specifications is not
+	 *                                  met.
+	 */
+	private void validateAndSetInput(String name, ValueDateTupel[] values, ValueDateTupel[] shortIndexValues)
+			throws IllegalArgumentException {
+		// Check if passed values array contains elements
+		if (shortIndexValues.length == 0)
+			throw new IllegalArgumentException("Short index values must not be an empty array");
+
+		try {
+			validateAndSetInput(name, values);
+		} catch (IllegalArgumentException e) {
+			throw e;
+		}
+
+		this.setShortIndexValues(shortIndexValues);
 	}
 
 	/**
