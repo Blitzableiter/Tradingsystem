@@ -3,6 +3,11 @@
  */
 package de.rumford.tradingsystem;
 
+import java.util.Arrays;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
+
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
@@ -37,6 +42,8 @@ public class VolatilityDifference extends Rule {
 	public VolatilityDifference(BaseValue baseValue, int lookbackWindow) {
 		this.setBaseValue(baseValue);
 		this.setLookbackWindow(lookbackWindow);
+		this.setVolatilityIndices(this.calculateVolatilityIndices());
+		this.setAverageVolatility();
 	}
 
 	public double calculateRawForecast(double currentVolatilty) {
@@ -44,7 +51,7 @@ public class VolatilityDifference extends Rule {
 	}
 
 	/**
-	 * Calculate the volatility index values for its {@code VolatilityDifference}.
+	 * Calculate the volatility index values for its {@link VolatilityDifference}.
 	 * If the lookback window is longer than there are base values, an empty
 	 * {@link ValueDateTupel[]} is returned.
 	 * 
@@ -64,8 +71,36 @@ public class VolatilityDifference extends Rule {
 
 		ValueDateTupel[] volatilityIndices = ValueDateTupel.createEmptyArray();
 
-		for (int i = 0; i < lookbackWindow; i++) {
-//			TODO calculate volatility values
+		/**
+		 * Fill the spaces before reaching lookbackWindow with NaN
+		 */
+		for (int i = 0; i < lookbackWindow - 1; i++)
+			ArrayUtils.add(volatilityIndices, Double.NaN);
+		/**
+		 * Start calculation with first adequate time value (after lookback window is
+		 * reached), e.g. lookbackWindow = 4, start with index 3 (4th element)
+		 */
+		for (int i = lookbackWindow - 1; i < baseValues.length; i++) {
+			// Copy the relevant values into a temporary array
+			ValueDateTupel[] tempBaseValues = new ValueDateTupel[lookbackWindow];
+			System.arraycopy(baseValues, // src
+					i - (lookbackWindow - 1), // srcPos
+					tempBaseValues, // dest
+					0, // destPos
+					tempBaseValues.length // length
+			);
+
+			// Extract relevant values to be used in standard deviation
+			double[] tempDoubleValues = {};
+			for (ValueDateTupel tempBaseValue : tempBaseValues)
+				ArrayUtils.add(tempDoubleValues, tempBaseValue.getValue());
+
+			// Calculate standard deviation and save into local variable
+			StandardDeviation sd = new StandardDeviation();
+			double volatilityIndexValue = sd.evaluate(tempDoubleValues);
+
+			// Add calculated standard deviation to volatility indices
+			ArrayUtils.add(volatilityIndices, volatilityIndexValue);
 		}
 
 		return volatilityIndices;
@@ -92,7 +127,7 @@ public class VolatilityDifference extends Rule {
 	 * @param volatilityIndices {@link ValueDateTupel[]} the volatilityIndices to
 	 *                          set
 	 */
-	public void setVolatilityIndices(ValueDateTupel[] volatilityIndices) {
+	private void setVolatilityIndices(ValueDateTupel[] volatilityIndices) {
 		this.volatilityIndices = volatilityIndices;
 	}
 
@@ -112,7 +147,21 @@ public class VolatilityDifference extends Rule {
 	 * @param averageVolatility {@code double} The {@code averageVolatility} to be
 	 *                          set
 	 */
-	public void setAverageVolatility(double averageVolatility) {
+	private void setAverageVolatility() {
+//		TODO testme
+//		TODO testme
+//		TODO testme
+//		TODO testme
+		ValueDateTupel[] allVolatilityIndices = this.getVolatilityIndices();
+		int lookbackWindow = this.getLookbackWindow();
+		ValueDateTupel[] relevantVolatilityIndices = {};
+		System.arraycopy(allVolatilityIndices, // src
+				lookbackWindow - 1, // srcPos
+				relevantVolatilityIndices, // dest
+				0, // destPos
+				allVolatilityIndices.length - lookbackWindow // length
+		);
+
 		this.averageVolatility = averageVolatility;
 	}
 

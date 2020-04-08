@@ -9,4 +9,5 @@ module tradingsystem {
 	requires junit;
 	requires org.junit.jupiter.api;
 	requires org.apache.commons.lang3;
+	requires commons.math3;
 }
