@@ -15,12 +15,12 @@ public class ValueDateTupel {
 	private LocalDateTime date;
 
 	/**
-	 * Creates a new {@code ValueDateTupel} instance using... TODO
+	 * Creates a new {@link ValueDateTupel} instance using... TODO
 	 * 
-	 * @param date  {@code LocalDateTime} The dateTime to be set for this
-	 *              {@code ValueDateTupel}
+	 * @param date  {@link LocalDateTime} The dateTime to be set for this
+	 *              {@link ValueDateTupel}
 	 * @param value {@code double} The value to be set for this
-	 *              {@code ValueDateTupel}
+	 *              {@link ValueDateTupel}
 	 */
 	public ValueDateTupel(LocalDateTime date, double value) {
 		this.setDate(date);
@@ -28,23 +28,23 @@ public class ValueDateTupel {
 	}
 
 	/**
-	 * Creates an empty array of {@code ValueDateTupel}.
+	 * Creates an empty array of {@link ValueDateTupel}.
 	 * 
-	 * @return {@code ValueDateTupel[]} An Empty array of {@code ValueDateTupel}.
+	 * @return {@link ValueDateTupel[]} An Empty array of {@link ValueDateTupel}.
 	 */
 	public static ValueDateTupel[] createEmptyArray() {
 		return new ValueDateTupel[0];
 	}
 
 	/**
-	 * Append a {@code ValueDateTupel} to an array of {@code ValueDateTupel}.
+	 * Append a {@link ValueDateTupel} to an array of {@link ValueDateTupel}.
 	 * 
-	 * @param valueDateTupels {@code ValueDateTupel[]} Array of
-	 *                        {@code ValueDateTupel} an element should be appended
+	 * @param valueDateTupels {@link ValueDateTupel[]} Array of
+	 *                        {@link ValueDateTupel} an element should be appended
 	 *                        to.
-	 * @param newElement      {@code ValueDateTupel} to be appended to the given
+	 * @param newElement      {@link ValueDateTupel} to be appended to the given
 	 *                        array.
-	 * @return {@code ValueDateTupel[]) Passed array with the passed Element in the last index. @deprecated
+	 * @return {@link ValueDateTupel[]) Passed array with the passed Element in the last index. @deprecated
 	 *         Use {@link org.apache.commons.lang3.ArrayUtils#add(Object[], Object)}
 	 *         instead
 	 */
@@ -105,16 +105,16 @@ public class ValueDateTupel {
 	 * ======================================================================
 	 */
 	/**
-	 * Get the value of a {@code ValueDateTupel}
+	 * Get the value of a {@link ValueDateTupel}
 	 * 
-	 * @return {@code double} value of the {@code ValueDateTupel}
+	 * @return {@code double} value of the {@link ValueDateTupel}
 	 */
 	public double getValue() {
 		return value;
 	}
 
 	/**
-	 * Set the value of a {@code ValueDateTupel}
+	 * Set the value of a {@link ValueDateTupel}
 	 * 
 	 * @param value {@code double} value to be set
 	 */
@@ -123,19 +123,19 @@ public class ValueDateTupel {
 	}
 
 	/**
-	 * Get the date of a {@code ValueDateTupel}
+	 * Get the date of a {@link ValueDateTupel}
 	 * 
-	 * @return {@code LocalDateTime} date for the {@code ValueDateTupel}
+	 * @return {@link LocalDateTime} date for the {@link ValueDateTupel}
 	 */
 	public LocalDateTime getDate() {
 		return date;
 	}
 
 	/**
-	 * Set the date for a {@code ValueDateTupel}
+	 * Set the date for a {@link ValueDateTupel}
 	 * 
-	 * @param date {@code LocalDateTime} date to be set for the
-	 *             {@code ValueDateTupel}
+	 * @param date {@link LocalDateTime} date to be set for the
+	 *             {@link ValueDateTupel}
 	 */
 	public void setDate(LocalDateTime date) {
 		this.date = date;

@@ -23,15 +23,15 @@ public class BaseValue {
 	private ValueDateTupel[] shortIndexValues;
 
 	/**
-	 * Creates a new {@code BaseValue} instance using the passed {@code String} for
-	 * identification and stores the passed {@code ValueDateTupel[]} as values.
+	 * Creates a new {@link BaseValue} instance using the passed {@code String} for
+	 * identification and stores the passed {@link ValueDateTupel[]} as values.
 	 * Short index values are calculated based on the given values as specified in
 	 * {@link de.rumford.tradingsystem.BaseValue#calculateShortIndexValues(double[])}.
 	 * 
 	 * @param name   {@code String} Name used to identify the represented base
 	 *               value. Is not used for calculation of any kind. Must be of
 	 *               length > {@code 0}.
-	 * @param values {@code ValueDateTupel[]} Values of the represented base value.
+	 * @param values {@link ValueDateTupel[]} Values of the represented base value.
 	 *               Must be of length > {@code 0}.
 	 * @throws IllegalArgumentException if the input values are not within
 	 *                                  specification
@@ -48,17 +48,17 @@ public class BaseValue {
 	}
 
 	/**
-	 * Creates a new {@code BaseValue} instance using the passed {@code String} for
-	 * identification and stores the passed {@code ValueDateTupel[]} as values and
-	 * the second passed {@code ValueDateTupel[]} as shortIndexValues.
+	 * Creates a new {@link BaseValue} instance using the passed {@code String} for
+	 * identification and stores the passed {@link ValueDateTupel[]} as values and
+	 * the second passed {@link ValueDateTupel[]} as shortIndexValues.
 	 * 
 	 * @param name             {@code String} Name used to identify the represented
 	 *                         base value. Fulfills no purpose and is not used for
 	 *                         calculation of any kind. Must be of length >
 	 *                         {@code 0}.
-	 * @param values           {@code ValueDateTupel[]} Values of the represented
+	 * @param values           {@link ValueDateTupel[]} Values of the represented
 	 *                         base value
-	 * @param shortIndexValues {@code ValueDateTupel[]} Short index values of the
+	 * @param shortIndexValues {@link ValueDateTupel[]} Short index values of the
 	 *                         represented base value
 	 * @throws IllegalArgumentException if the input values are not within
 	 *                                  specification
@@ -76,19 +76,19 @@ public class BaseValue {
 	 * Validates the given parameters. Used by the Constructors to validate the
 	 * constructor parameters.
 	 * 
-	 * @param name   {@code String} Name to be set for a {@code BaseValue}. Must not
+	 * @param name   {@code String} Name to be set for a {@link BaseValue}. Must not
 	 *               have a length of {@code 0}.
-	 * @param values {@code ValueDateTupel[]} Values to be set for a
-	 *               {@code BaseValue}. Must contain at least {@code 1} element.
+	 * @param values {@link ValueDateTupel[]} Values to be set for a
+	 *               {@link BaseValue}. Must contain at least {@code 1} element.
 	 * @throws IllegalArgumentException if one of the above specifications is not
 	 *                                  met.
 	 */
 	private void validateAndSetInput(String name, ValueDateTupel[] values) throws IllegalArgumentException {
-		// Check if name is not empty
+		/* Check if name is not empty */
 		if (name.length() == 0)
 			throw new IllegalArgumentException("Name must not be an empty String");
 
-		// Check if passed values array contains elements
+		/* Check if passed values array contains elements */
 		if (values.length == 0)
 			throw new IllegalArgumentException("Values must not be an empty array");
 
@@ -98,25 +98,25 @@ public class BaseValue {
 
 	/**
 	 * Validates the given parameters. Used by the Constructors to validate the
-	 * constructor parameters. Utilizes *
+	 * constructor parameters. Utilizes
 	 * {@link de.rumford.tradingsystem.BaseValue#validateAndSetInput(String, double[])}.
 	 * 
 	 * 
 	 * @param name             {@code String} Name to be set for a
-	 *                         {@code BaseValue}. Specifications see
+	 *                         {@link BaseValue}. Specifications see
 	 *                         {@link de.rumford.tradingsystem.BaseValue#validateAndSetInput(String, double[])}.
-	 * @param values           {@code ValueDateTupel[]} Values to be set for a
-	 *                         {@code BaseValue}. Specifications see
+	 * @param values           {@link ValueDateTupel[]} Values to be set for a
+	 *                         {@link BaseValue}. Specifications see
 	 *                         {@link de.rumford.tradingsystem.BaseValue#validateAndSetInput(String, double[])}.
-	 * @param shortIndexValues {@code ValueDateTupel[]} Short index values to be set
-	 *                         for a {@code BaseValue}. Must contain at least
+	 * @param shortIndexValues {@link ValueDateTupel[]} Short index values to be set
+	 *                         for a {@link BaseValue}. Must contain at least
 	 *                         {@code 1} element.
 	 * @throws IllegalArgumentException if one of the above specifications is not
 	 *                                  met.
 	 */
 	private void validateAndSetInput(String name, ValueDateTupel[] values, ValueDateTupel[] shortIndexValues)
 			throws IllegalArgumentException {
-		// Check if passed values array contains elements
+		/* Check if passed values array contains elements */
 		if (shortIndexValues.length == 0)
 			throw new IllegalArgumentException("Short index values must not be an empty array");
 
@@ -151,14 +151,14 @@ public class BaseValue {
 	 * If return of the base value exceeds 50% the return used to calculate the
 	 * short index value is floored to 50%.
 	 * 
-	 * @param values {@code ValueDateTupel[]} values to base the short index values
+	 * @param values {@link ValueDateTupel[]} values to base the short index values
 	 *               on
-	 * @return {@code ValueDateTupel} array of short index values
+	 * @return {@link ValueDateTupel[]} array of short index values
 	 * @throws IllegalArgumentException if the passed values array contains no
 	 *                                  elements
 	 */
 	private ValueDateTupel[] calculateShortIndexValues(ValueDateTupel[] values) throws IllegalArgumentException {
-		// Empty values array is not allowed
+		/* Empty values array is not allowed */
 		if (values.length == 0)
 			throw new IllegalArgumentException("Empty values array not allowed");
 
@@ -274,7 +274,7 @@ public class BaseValue {
 	/**
 	 * Get the values of this {@link BaseValue}
 	 * 
-	 * @return values {@code ValueDateTupel[]} BaseValue
+	 * @return values {@link ValueDateTupel[]} BaseValue
 	 */
 	public ValueDateTupel[] getValues() {
 		return values;
@@ -283,7 +283,7 @@ public class BaseValue {
 	/**
 	 * Set the values of this {@link BaseValue}
 	 * 
-	 * @param values {@code ValueDateTupel[]} the values to be set
+	 * @param values {@link ValueDateTupel[]} the values to be set
 	 */
 	private void setValues(ValueDateTupel[] values) {
 		this.values = values;
@@ -292,7 +292,7 @@ public class BaseValue {
 	/**
 	 * Get the shortIndexValues of this {@link BaseValue}
 	 * 
-	 * @return shortIndexValues {@code ValueDateTupel[]} shortIndexValues of this
+	 * @return shortIndexValues {@link ValueDateTupel[]} shortIndexValues of this
 	 *         {@link BaseValue}
 	 */
 	public ValueDateTupel[] getShortIndexValues() {
@@ -302,7 +302,7 @@ public class BaseValue {
 	/**
 	 * Set the shortIndexValues of this {@link BaseValue}
 	 * 
-	 * @param shortIndexValues {@code ValueDateTupel[]} the shortIndexValues to be
+	 * @param shortIndexValues {@link ValueDateTupel[]} the shortIndexValues to be
 	 *                         set
 	 */
 	private void setShortIndexValues(ValueDateTupel[] shortIndexValues) {

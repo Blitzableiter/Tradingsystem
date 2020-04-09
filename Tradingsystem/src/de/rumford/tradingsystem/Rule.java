@@ -19,10 +19,9 @@ public abstract class Rule {
 	 * ======================================================================
 	 */
 
-//	
-//	TODO
-//	ABSOLUTE VALUES FOR CALCULATION OF FORECAST SCALAR
-//	
+	/*
+	 * TODO ABSOLUTE VALUES FOR CALCULATION OF FORECAST SCALAR
+	 */
 
 	/**
 	 * Get the forecast scalar of this rule
@@ -64,7 +63,7 @@ public abstract class Rule {
 	/**
 	 * Get the weight of this rule
 	 * 
-	 * @return {@code double{@code  the weight of this rule
+	 * @return {@code double} the weight of this rule
 	 */
 	public double getWeight() {
 		return weight;

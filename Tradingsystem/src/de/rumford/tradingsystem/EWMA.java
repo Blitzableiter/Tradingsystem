@@ -11,7 +11,7 @@ public class EWMA {
 	private double decay;
 
 	/**
-	 * Constructor for the {@code EWMA} class
+	 * Constructor for the {@link EWMA} class
 	 * 
 	 * @param horizon {@code int} horizon this EWMA is to be over
 	 */
@@ -29,15 +29,16 @@ public class EWMA {
 	 * @return {@code double} EWMA for the current time period
 	 */
 	public double calculateEWMA(double previousEWMA, double baseValue) {
-		// E_t = A * P_t + [E_t-1 * ( 1 - A ) ]
+		/* E_t = A * P_t + [E_t-1 * ( 1 - A ) ] */
 		double _ewma = this.getDecay() * baseValue + (previousEWMA * (1d - this.getDecay()));
 		return _ewma;
 	}
 
-	//
-	//
-	//
-	// OVERRIDES
+	/**
+	 * ======================================================================
+	 * OVERRIDES
+	 * ======================================================================
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;

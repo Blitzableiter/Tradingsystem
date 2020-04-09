@@ -10,7 +10,7 @@ import java.util.DoubleSummaryStatistics;
 public final class Util {
 
 	/**
-	 * Constructor for the {@code Util} class<br/>
+	 * Constructor for the {@link Util} class<br/>
 	 * Only supports static methods, hence no instance shall be created, hence a
 	 * private constructor
 	 */
@@ -25,7 +25,8 @@ public final class Util {
 	 * @return {@code double} standard deviation adjusted value
 	 * @throws IllegalArgumentException if the given standard deviation is zero
 	 */
-	public static double adjustForStandardDeviation(double value, double standardDeviation) throws IllegalArgumentException {
+	public static double adjustForStandardDeviation(double value, double standardDeviation)
+			throws IllegalArgumentException {
 		if (standardDeviation == 0)
 			throw new IllegalArgumentException("Standard deviation must not be zero");
 		return value / standardDeviation;
@@ -63,19 +64,19 @@ public final class Util {
 		if (values.length == 0)
 			throw new IllegalArgumentException("Given array of values must not be empty");
 
-		// helper array
+		/* helper array */
 		double[] absoluteValues = new double[values.length];
 
-		// Calculate the absolute values for all values in the given array
+		/* Calculate the absolute values for all values in the given array */
 		for (int i = 0; i < values.length; i++)
 			absoluteValues[i] = Math.abs(values[i]);
 
-		// Calculate the average of absolute values
+		/* Calculate the average of absolute values */
 		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();
-		// Load absolute values into stats
+		/* Load absolute values into stats */
 		for (double value : absoluteValues)
 			stats.accept(value);
-		// Get average of all values
+		/* Get average of all values */
 		double averageOfAbsolutes = stats.getAverage();
 
 		if (averageOfAbsolutes == 0)

@@ -35,39 +35,39 @@ public class EWMAC extends Rule {
 	 */
 
 	/**
-	 * Get the long horizon {@code EWMA} for an {@code EWMAC}
+	 * Get the long horizon {@link EWMA} for an {@link EWMAC}
 	 * 
-	 * @return long horizon {@code EWMA} for this {@code EWMAC}
+	 * @return long horizon {@link EWMA} for this {@link EWMAC}
 	 */
 	public EWMA getLongHorizonEwma() {
 		return longHorizonEwma;
 	}
 
 	/**
-	 * Set the long horizon {@code EWMA} for an {@code EWMAC}
+	 * Set the long horizon {@link EWMA} for an {@link EWMAC}
 	 * 
-	 * @param longHorizonEwma {@link de.rumford.tradingsystem.EWMA} long horizon the
-	 *                        be set for this {@code EWMAC}
+	 * @param longHorizonEwma {@link EWMA} long horizon the
+	 *                        be set for this {@link EWMAC}
 	 */
 	public void setLongHorizonEwma(EWMA longHorizonEwma) {
 		this.longHorizonEwma = longHorizonEwma;
 	}
 
 	/**
-	 * Get the short horizon {@code EWMA} for an {@code EWMAC}
+	 * Get the short horizon {@link EWMA} for an {@link EWMAC}
 	 * 
-	 * @return short horizon {@link de.rumford.tradingsystem.EWMA} for this
-	 *         {@code EWMAC}
+	 * @return short horizon {@link EWMA} for this
+	 *         {@link EWMAC}
 	 */
 	public EWMA getShortHorizonEwma() {
 		return shortHorizonEwma;
 	}
 
 	/**
-	 * Set the short horizon {@code EWMA} for an {@code EWMAC}
+	 * Set the short horizon {@link EWMA} for an {@link EWMAC}
 	 * 
-	 * @param shortHorizonEwma short horizon {@link de.rumford.tradingsystem.EWMA}
-	 *                         to be set for this {@code EWMAC}
+	 * @param shortHorizonEwma short horizon {@link EWMA}
+	 *                         to be set for this {@link EWMAC}
 	 */
 	public void setShortHorizonEwma(EWMA shortHorizonEwma) {
 		this.shortHorizonEwma = shortHorizonEwma;

@@ -53,10 +53,10 @@ public class DiversificationMultiplier {
 		double[][] correlations = this.getCorrelations();
 		double[] weights = this.getWeights();
 
-		// local field to hold sum of correlations multiplied with weights
+		/* local field to hold sum of correlations multiplied with weights */
 		double sumOfCorrelationsWeights = 0f;
 
-		// Get the sum of all correlations multiplier with both corresponding weights
+		/* Get the sum of all correlations multiplier with both corresponding weights */
 		for (int row = 0; row < correlations.length; row++) {
 			// Check if self correlations are correctly filled (diagonal line) from "top
 			// left" to "bottom right" (these values have to be 1), e.g.
@@ -72,16 +72,18 @@ public class DiversificationMultiplier {
 				// {0.5d, 1d, 0.6d},
 				// {0.75d, 0.6d, 1d}
 				// }
-				if (correlations[row][col] != correlations[col][row]) 
+				if (correlations[row][col] != correlations[col][row])
 					throw new IllegalArgumentException("Correlations matrix is not properly populated");
-				
-				// multiply the correlation with both corresponding weights
+
+				/* multiply the correlation with both corresponding weights */
 				sumOfCorrelationsWeights += correlations[row][col] * weights[row] * weights[col];
 			}
 		}
 
-		// sumOfCorrelationsWeights is always > 0 as there is always at least one weight
-		// > 0 and at least on correlation > 0 (self correlation)
+		/*
+		 * sumOfCorrelationsWeights is always > 0 as there is always at least one weight
+		 * > 0 and at least on correlation > 0 (self correlation)
+		 */
 		return 1 / Math.sqrt(sumOfCorrelationsWeights);
 	}
 
@@ -92,36 +94,80 @@ public class DiversificationMultiplier {
 	 * @throws IllegalArgumentException if any constraint is not fulfilled
 	 */
 	private void validateConstructorArguments() throws IllegalArgumentException {
-		// Check if correlations has values in it
+		/* Check if correlations has values in it */
 		if (correlations.length == 0)
 			throw new IllegalArgumentException("Correlations must not have zero values");
 
-		// Check if weights has values in it
+		/* Check if weights has values in it */
 		if (weights.length == 0)
 			throw new IllegalArgumentException("Weights must not have zero values");
 
-		// Check if correlations is a square two dimensional array (number of rows and
-		// columns are the same on every row)
+		/*
+		 * Check if correlations is a square two dimensional array (number of rows and
+		 * columns are the same on every row)
+		 */
 		for (int i = 0; i < correlations.length; i++) {
 			if (correlations.length != correlations[i].length)
 				throw new IllegalArgumentException("Correlations must have as many rows as columns"
 						+ "and all columns and rows must have the same length.");
 		}
 
-		// Check if weights and correlations arrays have the same length
+		/* Check if weights and correlations arrays have the same length */
 		if (weights.length != correlations.length)
 			throw new IllegalArgumentException("There must be as many weights as correlations columns/rows");
 
-		// Check for negative weights
+		/* Check for negative weights */
 		Double[] list = ArrayUtils.toObject(weights);
 		double min = Collections.min(Arrays.asList(list));
 		if (min < 0)
 			throw new IllegalArgumentException("Negative weights are not allowed");
 
-		// Check if weights add up to 1
+		/* Check if weights add up to 1 */
 		double sum = Arrays.stream(weights).sum();
 		if (sum != 1)
 			throw new IllegalArgumentException("Weights don't sum up to 1");
+	}
+
+	/**
+	 * ======================================================================
+	 * OVERRIDES
+	 * ======================================================================
+	 */
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.deepHashCode(correlations);
+		long temp;
+		temp = Double.doubleToLongBits(value);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + Arrays.hashCode(weights);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DiversificationMultiplier other = (DiversificationMultiplier) obj;
+		if (!Arrays.deepEquals(correlations, other.correlations))
+			return false;
+		if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value))
+			return false;
+		if (!Arrays.equals(weights, other.weights))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "DiversificationMultiplier [value=" + value + ", weights=" + Arrays.toString(weights) + ", correlations="
+				+ Arrays.toString(correlations) + "]";
 	}
 
 	/**
@@ -134,7 +180,7 @@ public class DiversificationMultiplier {
 	 * 
 	 * @return {@code double} value of this {@link DiversificationMultiplier}
 	 */
-	public double getValue()  {
+	public double getValue() {
 		return value;
 	}
 
