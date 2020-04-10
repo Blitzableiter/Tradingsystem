@@ -3,6 +3,8 @@
  */
 package de.rumford.tradingsystem;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -26,23 +28,52 @@ public class VolatilityDifference extends Rule {
 	 * {@link BaseValue} to calculate the volatility indices and the average
 	 * volatility.
 	 * 
-	 * @param baseValue      {@link BaseValue} The base value to be used for this
-	 *                       {@link VolatilityDifference}. Must not be null. Values
-	 *                       array must be of of length > {@code 0}.
-	 * @param lookbackWindow {@code int} The lookback window to be used for this
-	 *                       {@link VolatilityDifference}. Must be > {@code 1}.
+	 * @param baseValue              {@link BaseValue} The base value to be used for
+	 *                               this {@link VolatilityDifference}. Must not be
+	 *                               null. Values array must be of of length >
+	 *                               {@code 0}.
+	 * @param lookbackWindow         {@code int} The lookback window to be used for
+	 *                               this {@link VolatilityDifference}. Must be >
+	 *                               {@code 1}.
+	 * @param startOfReferenceWindow {@link LocalDateTime} First DateTime value to
+	 *                               be considered in average calculation. Must be <
+	 *                               {@code endOfReferenceWindow}.
+	 * @param endOfReferenceWindow   {@link LocalDateTime} Last DateTime value to be
+	 *                               considered in average calculation. Must be >
+	 *                               {@code startOfReferenceWindow}.
 	 */
-	public VolatilityDifference(BaseValue baseValue, int lookbackWindow) throws IllegalArgumentException {
+	public VolatilityDifference(BaseValue baseValue, int lookbackWindow, LocalDateTime startOfReferenceWindow,
+			LocalDateTime endOfReferenceWindow) throws IllegalArgumentException {
 		/* Check if base value fulfills requirements. If yes, set it */
 		if (baseValue == null)
 			throw new IllegalArgumentException("Base value must not be null");
-		if (baseValue.getValues().length == 0)
-			throw new IllegalArgumentException("Base value must contain at least one value");
-		this.setBaseValue(baseValue);
 
 		/* Check if lookback window fulfills requirements. If yes, set it */
 		if (lookbackWindow <= 1)
 			throw new IllegalArgumentException("Lookback window must be at least 2");
+
+		/* Check if LocalDates are null */
+		if (startOfReferenceWindow == null)
+			throw new IllegalArgumentException("Start of reference window value must not be null");
+		if (endOfReferenceWindow == null)
+			throw new IllegalArgumentException("End of reference window value must not be null");
+
+		/* Check if reference window is properly defined. */
+		if (endOfReferenceWindow.isBefore(startOfReferenceWindow))
+			throw new IllegalArgumentException(
+					"End of reference window value must not be before start of reference window value");
+
+		/*
+		 * Check if there are values in baseValue with startOfReferenceWindow and
+		 * endOfReferenceWindow date values.
+		 */
+		if (baseValue.getValue(startOfReferenceWindow) == null)
+			throw new IllegalArgumentException("Base values do not include given start value for reference window");
+		if (baseValue.getValue(endOfReferenceWindow) == null)
+			throw new IllegalArgumentException("Base values do not include given end value for reference window");
+
+		/* Only if all checks are successful begin setting of instance values */
+		this.setBaseValue(baseValue);
 		this.setLookbackWindow(lookbackWindow);
 
 		/* Calculate volatility index values based on the base value and set it */
@@ -81,7 +112,7 @@ public class VolatilityDifference extends Rule {
 		 */
 		for (int i = 0; i < lookbackWindow - 1; i++) {
 			ValueDateTupel volatilityIndexNaN = new ValueDateTupel(baseValues[i].getDate(), Double.NaN);
-			ArrayUtils.add(volatilityIndices, volatilityIndexNaN);
+			volatilityIndices = ArrayUtils.add(volatilityIndices, volatilityIndexNaN);
 		}
 
 		/**
@@ -109,7 +140,7 @@ public class VolatilityDifference extends Rule {
 			/* Extract relevant values to be used in standard deviation */
 			double[] tempDoubleValues = {};
 			for (ValueDateTupel tempBaseValue : tempBaseValues)
-				ArrayUtils.add(tempDoubleValues, tempBaseValue.getValue());
+				tempDoubleValues = ArrayUtils.add(tempDoubleValues, tempBaseValue.getValue());
 
 			/* Calculate standard deviation and save into local variable */
 			StandardDeviation sd = new StandardDeviation();
@@ -119,7 +150,7 @@ public class VolatilityDifference extends Rule {
 					volatilityIndexValue);
 
 			/* Add calculated standard deviation to volatility indices */
-			ArrayUtils.add(volatilityIndices, volatilityIndexValueDateTupel);
+			volatilityIndices = ArrayUtils.add(volatilityIndices, volatilityIndexValueDateTupel);
 		}
 
 		return volatilityIndices;
@@ -133,6 +164,10 @@ public class VolatilityDifference extends Rule {
 	 * @param averageVolatility {@code double} The average volatility} to be set
 	 */
 	private void calculateAverageVolatility() {
+		/*
+		 * TODO Calculate based on given startOfReferenceWindow and endOfReferenceWindow
+		 */
+
 		/* Get all volatility index values */
 		ValueDateTupel[] allVolatilityIndices = this.getVolatilityIndices();
 
@@ -149,13 +184,14 @@ public class VolatilityDifference extends Rule {
 		/* Get lookbackWindow to evaluate the values relevant for the calculation */
 		int lookbackWindow = this.getLookbackWindow();
 
-		ValueDateTupel[] relevantVolatilityIndices = {};
+		int numOfValuesToBeCopied = allVolatilityIndices.length - lookbackWindow + 1;
+		ValueDateTupel[] relevantVolatilityIndices = new ValueDateTupel[numOfValuesToBeCopied];
 		/* Copy the relevant volatility index values into a temporary array */
 		System.arraycopy(allVolatilityIndices, /* source array */
 				lookbackWindow - 1, /* source array position (starting position for copy) */
 				relevantVolatilityIndices, /* destination array */
 				0, /* destination position (starting position for paste) */
-				allVolatilityIndices.length - lookbackWindow + 1 /* length (number of values to copy */
+				numOfValuesToBeCopied /* length (number of values to copy */
 		);
 
 		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();
@@ -165,6 +201,53 @@ public class VolatilityDifference extends Rule {
 
 		/* Put average value of relevant values into class variable */
 		this.averageVolatility = stats.getAverage();
+	}
+
+	/**
+	 * ======================================================================
+	 * OVERRIDES
+	 * ======================================================================
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(averageVolatility);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((baseValue == null) ? 0 : baseValue.hashCode());
+		result = prime * result + lookbackWindow;
+		result = prime * result + Arrays.hashCode(volatilityIndices);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		VolatilityDifference other = (VolatilityDifference) obj;
+		if (Double.doubleToLongBits(averageVolatility) != Double.doubleToLongBits(other.averageVolatility))
+			return false;
+		if (baseValue == null) {
+			if (other.baseValue != null)
+				return false;
+		} else if (!baseValue.equals(other.baseValue))
+			return false;
+		if (lookbackWindow != other.lookbackWindow)
+			return false;
+		if (!Arrays.equals(volatilityIndices, other.volatilityIndices))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "VolatilityDifference [volatilityIndices=" + Arrays.toString(volatilityIndices) + ", averageVolatility="
+				+ averageVolatility + ", baseValue=" + baseValue + ", lookbackWindow=" + lookbackWindow + "]";
 	}
 
 	/**

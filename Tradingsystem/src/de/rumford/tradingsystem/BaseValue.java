@@ -3,7 +3,10 @@
  */
 package de.rumford.tradingsystem;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import de.rumford.tradingsystem.helper.Util;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
@@ -92,6 +95,12 @@ public class BaseValue {
 		if (values.length == 0)
 			throw new IllegalArgumentException("Values must not be an empty array");
 
+		try {
+			validateDates(values);
+		} catch (IllegalArgumentException e) {
+			throw e;
+		}
+
 		this.setName(name);
 		this.setValues(values);
 	}
@@ -126,7 +135,37 @@ public class BaseValue {
 			throw e;
 		}
 
+		try {
+			validateDates(shortIndexValues);
+		} catch (IllegalArgumentException e) {
+			throw e;
+		}
+
 		this.setShortIndexValues(shortIndexValues);
+	}
+
+	private static void validateDates(ValueDateTupel[] values) throws IllegalArgumentException {
+		/* Extract dates out of the values array and add it to a HashSet */
+		Set<LocalDateTime> set = new HashSet<>();
+		for (ValueDateTupel value : values)
+			set.add(value.getDate());
+		/*
+		 * HashSets only store unique values. If the set has a smaller size than the
+		 * original values array there must have been duplicate dates in the values
+		 * array
+		 */
+		if (values.length != set.size())
+			throw new IllegalArgumentException("Date/time values in given values array are not unique");
+
+		/* Check if values are in correct order */
+		for (int i = 1; i < values.length; i++) {
+			/*
+			 * If the date of the current value is before the date of the previous value the
+			 * values array is not properly sorted
+			 */
+			if (values[i].getDate().isBefore(values[i - 1].getDate()))
+				throw new IllegalArgumentException("Given values are not properly sorted");
+		}
 	}
 
 	/**
@@ -204,6 +243,24 @@ public class BaseValue {
 		}
 
 		return shortIndexValues;
+	}
+
+	/**
+	 * Check if the {@link BaseValue} instance contains the given
+	 * {@link LocalDateTime} in its values. Returns the containing
+	 * {@link ValueDateTupel} if so, returns {@code null} otherwise.
+	 * 
+	 * @param valueToCheck {@link LocalDateTime} Value to be found inside the
+	 *                     {@link BaseValue} values.
+	 * @return {@link ValueDateTupel} containing the given {@link LocalDateTime}.
+	 *         {@code null} if the given {@link LocalDateTime} cannot be found.
+	 */
+	public ValueDateTupel getValue(LocalDateTime valueToCheck) {
+		for (ValueDateTupel baseValue : this.getValues()) {
+			if (baseValue.getDate().equals(valueToCheck))
+				return baseValue;
+		}
+		return null;
 	}
 
 	/**
