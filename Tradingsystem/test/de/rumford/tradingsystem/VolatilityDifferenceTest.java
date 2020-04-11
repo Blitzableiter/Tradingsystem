@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.DoubleSummaryStatistics;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
@@ -161,7 +162,7 @@ class VolatilityDifferenceTest {
 	 */
 	@Test
 	void testVolatilityDifference_endOfReferenceWindow_before_startOfReferenceWindow() {
-		String expectedMessage = "End of reference window value must not be before start of reference window value";
+		String expectedMessage = "End of reference window value must be after start of reference window value";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new VolatilityDifference(baseValue, lookbackWindow, localDateTime2020Jan04_22_00_00,
@@ -202,23 +203,32 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#calculateRawForecast(double)}.
-	 */
-	@Test
-	void testCalculateRawForecast() {
-		double[] sdValues = { 200d, 400d };
-		StandardDeviation sd = new StandardDeviation();
-		double expectedValue = sd.evaluate(sdValues) - 100d; /* ~41.42136 */
-		/* TODO */
-	}
-
-	/**
-	 * Test method for
 	 * {@link de.rumford.tradingsystem.VolatilityDifference#calculateVolatilityIndices()}.
 	 */
 	@Test
-	void testGetVolatilityIndices() {
-		fail("Not yet implemented");
+	void testCalculateVolatilityIndices() {
+		StandardDeviation sd = new StandardDeviation();
+		double[] values1 = { 200d, 400d };
+		double expectedVolatilityValue1 = sd.evaluate(values1);
+		double[] values2 = { 400d, 500d };
+		double expectedVolatilityValue2 = sd.evaluate(values2);
+		double[] values3 = { 500d, 200d };
+		double expectedVolatilityValue3 = sd.evaluate(values3);
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01_22_00_00, Double.NaN);
+		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02_22_00_00, expectedVolatilityValue1);
+		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03_22_00_00, expectedVolatilityValue2);
+		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04_22_00_00, expectedVolatilityValue3);
+		ValueDateTupel[] expectedValues = ValueDateTupel.createEmptyArray();
+		expectedValues = ArrayUtils.add(expectedValues, volatilityIndex1);
+		expectedValues = ArrayUtils.add(expectedValues, volatilityIndex2);
+		expectedValues = ArrayUtils.add(expectedValues, volatilityIndex3);
+		expectedValues = ArrayUtils.add(expectedValues, volatilityIndex4);
+
+		volatilityDifference = new VolatilityDifference(baseValue, lookbackWindow, localDateTime2020Jan02_22_00_00,
+				localDateTime2020Jan04_22_00_00);
+		ValueDateTupel[] actualValues = volatilityDifference.getVolatilityIndices();
+
+		assertArrayEquals(expectedValues, actualValues, "Volatility index values are not properly calculated");
 	}
 
 	/**
@@ -227,15 +237,51 @@ class VolatilityDifferenceTest {
 	 */
 	@Test
 	void testCalculateAverageVolatility() {
-		double[] sdValues = { 200d, 400d };
 		StandardDeviation sd = new StandardDeviation();
-		double expectedValue = sd.evaluate(sdValues); /* ~141.42136 */
+		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();
+
+		double[] sdValues1 = { 200d, 400d };
+		double volatilityValue1 = sd.evaluate(sdValues1); /* ~ 141.42136 */
+		stats.accept(volatilityValue1);
+
+		double[] sdValues2 = { 400d, 500d };
+		double volatilityValue2 = sd.evaluate(sdValues2); /* ~ 70.71068 */
+		stats.accept(volatilityValue2);
+
+		double expectedValue = stats.getAverage(); /* ~ 106.066017 */
 
 		VolatilityDifference volDif = new VolatilityDifference(baseValue, lookbackWindow,
 				localDateTime2020Jan02_22_00_00, localDateTime2020Jan03_22_00_00);
 		double actualValue = volDif.getAverageVolatility();
 
 		assertEquals(expectedValue, actualValue, "The average volatilty is not correctly calculated");
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.VolatilityDifference#calculateRawForecast(double)}.
+	 */
+	@Test
+	void testCalculateRawForecast() {
+		double currentVolatility = 100d;
+		StandardDeviation sd = new StandardDeviation();
+		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();
+
+		double[] sdValues1 = { 200d, 400d };
+		double volatilityValue1 = sd.evaluate(sdValues1); /* ~ 141.42136 */
+		stats.accept(volatilityValue1);
+
+		double[] sdValues2 = { 400d, 500d };
+		double volatilityValue2 = sd.evaluate(sdValues2); /* ~ 70.71068 */
+		stats.accept(volatilityValue2);
+
+		double expectedValue = stats.getAverage() - currentVolatility; /* ~ 6.066017 */
+
+		VolatilityDifference volDif = new VolatilityDifference(baseValue, lookbackWindow,
+				localDateTime2020Jan02_22_00_00, localDateTime2020Jan03_22_00_00);
+		double actualValue = volDif.calculateRawForecast(currentVolatility);
+
+		assertEquals(expectedValue, actualValue, "Raw Forecast is not correctly calculated");
 	}
 
 }

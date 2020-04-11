@@ -1,14 +1,16 @@
 package de.rumford.tradingsystem;
 
+import java.io.IOException;
+
+import de.rumford.tradingsystem.helper.DataSource;
 
 public class Treiber {
 
-	public static void main(String[] args) {
-		
-		
-		int a = (Integer) null;
+	public static void main(String[] args) throws IOException {
 
-		System.out.println(a <= 1);
+//		DataSource.getDataFromCsv("resources/DAX.csv");
+		
+		System.out.println(Double.parseDouble("5000.00"));
 
 	}
 

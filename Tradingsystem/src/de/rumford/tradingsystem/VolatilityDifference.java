@@ -58,10 +58,10 @@ public class VolatilityDifference extends Rule {
 		if (endOfReferenceWindow == null)
 			throw new IllegalArgumentException("End of reference window value must not be null");
 
-		/* Check if reference window is properly defined. */
-		if (endOfReferenceWindow.isBefore(startOfReferenceWindow))
+		/* Check if reference window is properly defined: end must be after start */
+		if (!endOfReferenceWindow.isAfter(startOfReferenceWindow))
 			throw new IllegalArgumentException(
-					"End of reference window value must not be before start of reference window value");
+					"End of reference window value must be after start of reference window value");
 
 		/*
 		 * Check if there are values in baseValue with startOfReferenceWindow and
@@ -83,7 +83,7 @@ public class VolatilityDifference extends Rule {
 		 * Calculate the average volatility for the base value over all available
 		 * volatility index values
 		 */
-		this.calculateAverageVolatility();
+		this.calculateAverageVolatility(startOfReferenceWindow, endOfReferenceWindow);
 	}
 
 	public double calculateRawForecast(double currentVolatilty) {
@@ -163,14 +163,11 @@ public class VolatilityDifference extends Rule {
 	 * 
 	 * @param averageVolatility {@code double} The average volatility} to be set
 	 */
-	private void calculateAverageVolatility() {
-		/*
-		 * TODO Calculate based on given startOfReferenceWindow and endOfReferenceWindow
-		 */
-
+	private void calculateAverageVolatility(LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow) {
 		/* Get all volatility index values */
 		ValueDateTupel[] allVolatilityIndices = this.getVolatilityIndices();
 
+		/* TODO Test me */
 		/*
 		 * If the last volatility index value is NaN then no volatility index values
 		 * were calculated due to there not being enough values. If this is the case,
@@ -181,14 +178,40 @@ public class VolatilityDifference extends Rule {
 			return;
 		}
 
+		int startIndex = 0;
+		int endIndex = 0;
+
+		for (int i = 0; i < allVolatilityIndices.length; i++) {
+			if (startIndex == 0 && allVolatilityIndices[i].getDate().equals(startOfReferenceWindow)) {
+				startIndex = i;
+				continue;
+			}
+			if (startIndex != 0 && allVolatilityIndices[i].getDate().equals(endOfReferenceWindow)) {
+				endIndex = i;
+				/*
+				 * When endOfReferenceWindow is found the loop can be exited, as
+				 * startOfReferenceWindow must have already been found
+				 */
+				break;
+			}
+		}
+
 		/* Get lookbackWindow to evaluate the values relevant for the calculation */
 		int lookbackWindow = this.getLookbackWindow();
 
-		int numOfValuesToBeCopied = allVolatilityIndices.length - lookbackWindow + 1;
+		/*
+		 * If starting point lies before reaching lookback Window the volatility index
+		 * value is Double.NaN
+		 */
+		if (startIndex < lookbackWindow - 1)
+			throw new IllegalArgumentException("Start of reference window is set before lookback window is reached");
+
+		int numOfValuesToBeCopied = endIndex - startIndex + 1;
 		ValueDateTupel[] relevantVolatilityIndices = new ValueDateTupel[numOfValuesToBeCopied];
+
 		/* Copy the relevant volatility index values into a temporary array */
 		System.arraycopy(allVolatilityIndices, /* source array */
-				lookbackWindow - 1, /* source array position (starting position for copy) */
+				startIndex, /* source array position (starting position for copy) */
 				relevantVolatilityIndices, /* destination array */
 				0, /* destination position (starting position for paste) */
 				numOfValuesToBeCopied /* length (number of values to copy */

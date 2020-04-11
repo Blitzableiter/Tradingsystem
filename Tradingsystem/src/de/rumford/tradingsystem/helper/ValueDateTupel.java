@@ -44,9 +44,11 @@ public class ValueDateTupel {
 	 *                        to.
 	 * @param newElement      {@link ValueDateTupel} to be appended to the given
 	 *                        array.
-	 * @return {@link ValueDateTupel[]) Passed array with the passed Element in the last index. @deprecated
-	 *         Use {@link org.apache.commons.lang3.ArrayUtils#add(Object[], Object)}
+	 * @return {@link ValueDateTupel[]) Passed array with the passed Element in the
+	 *         last index. @deprecated Use
+	 *         {@link org.apache.commons.lang3.ArrayUtils#add(Object[], Object)}
 	 *         instead
+	 * @deprecated
 	 */
 	public static ValueDateTupel[] appendElement(ValueDateTupel[] valueDateTupels, ValueDateTupel newElement) {
 		ValueDateTupel[] returnValueDateTupels = new ValueDateTupel[valueDateTupels.length + 1];
