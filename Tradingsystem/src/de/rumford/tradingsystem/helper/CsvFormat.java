@@ -10,21 +10,26 @@ package de.rumford.tradingsystem.helper;
  *
  */
 public enum CsvFormat {
-	EU(";", ".", ":", ",", "."), US(",", "/", ":", ".", ",");
+	EU(";", ".", ":", ",", ".", MonthDayOrder.DAY_MONTH_YEAR),
+	EU_YEAR_MONTH_DAY(";", ".", ":", ",", ".", MonthDayOrder.YEAR_MONTH_DAY),
+	US(",", "/", ":", ".", ",", MonthDayOrder.MONTH_DAY_YEAR),
+	US_YEAR_MONTH_DAY(",", "/", ":", ".", ",", MonthDayOrder.YEAR_MONTH_DAY);
 
 	private final String fieldSeparator;
 	private final String dateSeparator;
 	private final String timeSeparator;
 	private final String decimalPoint;
 	private final String thousandsSeparator;
+	private final MonthDayOrder monthDayOrder;
 
 	CsvFormat(String fieldSeparator, String dateSeparator, String timeSeparator, String decimalPoint,
-			String thousandSeparator) {
+			String thousandSeparator, MonthDayOrder monthDayOrder) {
 		this.fieldSeparator = fieldSeparator;
 		this.dateSeparator = dateSeparator;
 		this.timeSeparator = timeSeparator;
 		this.decimalPoint = decimalPoint;
 		this.thousandsSeparator = thousandSeparator;
+		this.monthDayOrder = monthDayOrder;
 	}
 
 	/**
@@ -67,4 +72,10 @@ public enum CsvFormat {
 		return thousandsSeparator;
 	}
 
+	/**
+	 * @return monthDayOrder CsvFormat
+	 */
+	public MonthDayOrder getMonthDayOrder() {
+		return monthDayOrder;
+	}
 }
