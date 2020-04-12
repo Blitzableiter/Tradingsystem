@@ -70,6 +70,9 @@ public abstract class Rule {
 			values = ArrayUtils.add(values, ValueDateTupel.getValues(forecasts2));
 			values = ArrayUtils.add(values, ValueDateTupel.getValues(forecasts3));
 
+//			BlockRealMatrix
+//			BlockRealMatrix.transpose()
+			
 			/* Needs double[][] */
 			PearsonsCorrelation correlations = new PearsonsCorrelation(values);
 			correlations.getCorrelationMatrix();
