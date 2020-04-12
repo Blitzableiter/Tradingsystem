@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 /**
  * @author Max Rumford
@@ -17,6 +18,10 @@ public class DiversificationMultiplier {
 
 	/**
 	 * 
+	 */
+	/*
+	 * TODO siehe setCorrelations -> bekommt nicht double[][] correlations, sondern
+	 * double[][] values und nutzt dann set.Correlations
 	 */
 	public DiversificationMultiplier(double[] weights, double[][] correlations) throws IllegalArgumentException {
 		this.setWeights(weights);
@@ -219,6 +224,16 @@ public class DiversificationMultiplier {
 	 * {@link DiversificationMultiplier}
 	 */
 	private void setCorrelations(double[][] correlations) {
+		/* TODO */
+		/* TODO */
+		/* TODO */
+		/* TODO */
+		double[][] data = {};
+		PearsonsCorrelation corr = new PearsonsCorrelation(data);
+		/* TODO */
+		/* TODO */
+		/* TODO */
+		/* TODO */
 		this.correlations = correlations;
 	}
 

@@ -98,6 +98,14 @@ public class DataSource {
 				br.close();
 				throw e;
 			}
+			/*
+			 * Catch Exception so BufferedReader can be closed on unknown Exceptions to
+			 * memory avoid leakage.
+			 */
+			catch (Exception e) {
+				br.close();
+				throw e;
+			}
 
 			/* Pass the third field (course value) into a double */
 			String[] valueStrings = new String[1];
@@ -106,6 +114,14 @@ public class DataSource {
 			try {
 				value = parseCourseValue(valueStrings, format);
 			} catch (IllegalArgumentException e) {
+				br.close();
+				throw e;
+			}
+			/*
+			 * Catch Exception so BufferedReader can be closed on unknown Exceptions to
+			 * memory avoid leakage.
+			 */
+			catch (Exception e) {
 				br.close();
 				throw e;
 			}
@@ -169,6 +185,13 @@ public class DataSource {
 					"The date values of the read CSV file cannot be parsed into numbers. Failing value >" + columns[0]
 							+ "<");
 		}
+		/*
+		 * Catch Exception so BufferedReader can be closed (in calling method) on
+		 * unknown Exceptions to memory avoid leakage.
+		 */
+		catch (Exception e) {
+			throw e;
+		}
 
 		/* Extract the relevant time values */
 		String[] time = columns[1].split(format.getTimeSeparator());
@@ -193,7 +216,6 @@ public class DataSource {
 					"The date or time values of the read CSV file cannot be parsed into a LocalDateTime instance. Failing values >"
 							+ columns[0] + "< and >" + columns[1] + "<.");
 		}
-
 		return localDateTime;
 	}
 
@@ -257,8 +279,9 @@ public class DataSource {
 		try {
 			value = Double.parseDouble(valueString);
 		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException(
-					"The course value >" + columns[0] + "< cannot be parsed");
+			throw new IllegalArgumentException("The course value >" + columns[0] + "< cannot be parsed");
+		} catch (Exception e) {
+			throw e;
 		}
 
 		return value;

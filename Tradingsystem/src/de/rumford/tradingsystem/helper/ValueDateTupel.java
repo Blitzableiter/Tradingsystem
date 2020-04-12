@@ -5,6 +5,8 @@ package de.rumford.tradingsystem.helper;
 
 import java.time.LocalDateTime;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 /**
  * @author Max Rumford
  *
@@ -59,6 +61,42 @@ public class ValueDateTupel {
 		returnValueDateTupels[returnValueDateTupels.length - 1] = newElement;
 
 		return returnValueDateTupels;
+	}
+
+	/**
+	 * Get all values from an array of {@link ValueDateTupel[]}.
+	 * 
+	 * @param tupels {@link ValueDateTupel[]} An array of {@link ValueDateTupel}}.
+	 * @return {@code double[]} An array of values of the given
+	 *         {@link ValueDateTupel[]}. Returns an empty array if the given array
+	 *         is empty.
+	 * @throws IllegalArgumentException if the given array is null.
+	 */
+	public static double[] getValues(ValueDateTupel[] tupels) throws IllegalArgumentException {
+		if (tupels == null)
+			throw new IllegalArgumentException("Given array must not be null");
+		double[] values = {};
+		for (ValueDateTupel tupel : tupels)
+			values = ArrayUtils.add(values, tupel.getValue());
+		return values;
+	}
+
+	/**
+	 * Get all {@link LocalDateTime} from an array of {@link ValueDateTupel[]}.
+	 * 
+	 * @param tupels {@link ValueDateTupel[]} An array of {@link ValueDateTupel}}.
+	 * @return {@code LocalDateTime[]} An array of {@link LocalDateTime} of the
+	 *         given {@link ValueDateTupel[]}. Returns an empty array if the given
+	 *         array is empty.
+	 * @throws IllegalArgumentException if the given array is null.
+	 */
+	public static LocalDateTime[] getDates(ValueDateTupel[] tupels) throws IllegalArgumentException {
+		if (tupels == null)
+			throw new IllegalArgumentException("Given array must not be null");
+		LocalDateTime[] values = {};
+		for (ValueDateTupel tupel : tupels)
+			values = ArrayUtils.add(values, tupel.getDate());
+		return values;
 	}
 
 	/**

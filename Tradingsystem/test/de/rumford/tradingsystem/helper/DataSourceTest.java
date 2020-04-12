@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,21 +26,21 @@ import org.junit.jupiter.api.Test;
  */
 class DataSourceTest {
 
-	final static String FILE_NAME_CORRECT_FILE_EUR = "TEST_FILE_CORRECT_EUR.CSV";
-	final static String FILE_NAME_CORRECT_FILE_US = "TEST_FILE_CORRECT_US.CSV";
+	final static String FILE_NAME_CORRECT_FILE_EUR = RandomStringUtils.randomAlphanumeric(12);
+	final static String FILE_NAME_CORRECT_FILE_US = RandomStringUtils.randomAlphanumeric(12);
 	final static String FILE_NAME_NULL = null;
-	final static String FILE_NAME_UNKOWN = "TEST_FILE_UNKNOWN.CSV";
-	final static String FILE_NAME_DIRECTORY = "TEST_FILE_IS_DIRECTORY";
-	final static String FILE_NAME_FILE_HAS_HEADINGS = "TEST_FILE_HAS_HEADINGS.CSV";
-	final static String FILE_NAME_FOUR_COLUMNS = "TEST_FILE_FOUR_COLUMNS.CSV";
-	final static String FILE_NAME_DAY_NON_INTEGER = "TEST_FILE_DAY_NON_INTEGER.CSV";
-	final static String FILE_NAME_MONTH_NON_INTEGER = "TEST_FILE_MONTH_NON_INTEGER.CSV";
-	final static String FILE_NAME_YEAR_NON_INTEGER = "TEST_FILE_YEAR_NON_INTEGER.CSV";
-	final static String FILE_NAME_HOUR_NON_INTEGER = "TEST_FILE_HOUR_NON_INTEGER.CSV";
-	final static String FILE_NAME_MINUTE_NON_INTEGER = "TEST_FILE_MINUTE_NON_INTEGER.CSV";
-	final static String FILE_NAME_SECOND_NON_INTEGER = "TEST_FILE_SECOND_NON_INTEGER.CSV";
-	final static String FILE_NAME_DATE_VALUE_OUT_OF_RANGE = "TEST_FILE_DATE_VALUE_OUT_OF_RANGE.CSV";
-	final static String FILE_NAME_COURSE_VALUE_INVALID = "TEST_FILE_COURSE_VALUE_INVALID.CSV";
+	final static String FILE_NAME_UNKOWN = RandomStringUtils.randomAlphanumeric(12);
+	final static String FILE_NAME_DIRECTORY = RandomStringUtils.randomAlphanumeric(12);
+	final static String FILE_NAME_FILE_HAS_HEADINGS = RandomStringUtils.randomAlphanumeric(12);
+	final static String FILE_NAME_FOUR_COLUMNS = RandomStringUtils.randomAlphanumeric(12);
+	final static String FILE_NAME_DAY_NON_INTEGER = RandomStringUtils.randomAlphanumeric(12);
+	final static String FILE_NAME_MONTH_NON_INTEGER = RandomStringUtils.randomAlphanumeric(12);
+	final static String FILE_NAME_YEAR_NON_INTEGER = RandomStringUtils.randomAlphanumeric(12);
+	final static String FILE_NAME_HOUR_NON_INTEGER = RandomStringUtils.randomAlphanumeric(12);
+	final static String FILE_NAME_MINUTE_NON_INTEGER = RandomStringUtils.randomAlphanumeric(12);
+	final static String FILE_NAME_SECOND_NON_INTEGER = RandomStringUtils.randomAlphanumeric(12);
+	final static String FILE_NAME_DATE_VALUE_OUT_OF_RANGE = RandomStringUtils.randomAlphanumeric(12);
+	final static String FILE_NAME_COURSE_VALUE_INVALID = RandomStringUtils.randomAlphanumeric(12);
 	static String[] FILE_NAMES = { //
 			FILE_NAME_CORRECT_FILE_EUR, //
 			FILE_NAME_CORRECT_FILE_US, //
@@ -112,10 +113,14 @@ class DataSourceTest {
 	 */
 	@AfterAll
 	static void tearDownAfterClass() throws Exception {
+		/* Delete all files after tests are done */
 		for (String fileName : FILE_NAMES) {
 			File file = new File(fileName);
-			// TODO FIX ME
-			System.out.println(file.delete());
+			try {
+				file.delete();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

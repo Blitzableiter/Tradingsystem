@@ -20,7 +20,6 @@ public class VolatilityDifference extends Rule {
 
 	private ValueDateTupel[] volatilityIndices;
 	private double averageVolatility;
-	private BaseValue baseValue;
 	private int lookbackWindow;
 
 	/**
@@ -44,6 +43,15 @@ public class VolatilityDifference extends Rule {
 	 */
 	public VolatilityDifference(BaseValue baseValue, int lookbackWindow, LocalDateTime startOfReferenceWindow,
 			LocalDateTime endOfReferenceWindow) throws IllegalArgumentException {
+		/* FIXME */
+		/* FIXME */
+		/* FIXME */
+		/* FIXME */
+		super(baseValue, null, startOfReferenceWindow, endOfReferenceWindow);
+		/* FIXME */
+		/* FIXME */
+		/* FIXME */
+		/* FIXME */
 		/* Check if base value fulfills requirements. If yes, set it */
 		if (baseValue == null)
 			throw new IllegalArgumentException("Base value must not be null");
