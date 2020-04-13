@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.DoubleSummaryStatistics;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.math3.linear.BlockRealMatrix;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import de.rumford.tradingsystem.helper.ValueDateTupel;
@@ -39,9 +40,9 @@ public abstract class Rule {
 			this.weighVariations();
 	}
 
-	abstract double calculateRawForecast();
+	protected abstract double calculateRawForecast();
 
-	abstract ValueDateTupel[] calculateForecasts(LocalDateTime startOfReferenceWindow,
+	protected abstract ValueDateTupel[] calculateForecasts(LocalDateTime startOfReferenceWindow,
 			LocalDateTime endOfReferenceWindow);
 
 	final private void weighVariations() {
@@ -65,14 +66,46 @@ public abstract class Rule {
 			ValueDateTupel[] forecasts3 = variations[2].calculateForecasts(startOfReferenceWindow,
 					endOfReferenceWindow);
 
+			/*
+			 * FIXME Insert averaging values when missing OR
+			 * 
+			 * delete values when another row doesn't have the current LocalDateTime.
+			 * 
+			 * EXTRACTING OF MINIMUM LENGTH CAN BE OMITTED THEN
+			 */
+
+			/*
+			 * Extract the values from the forecasts array, as the Dates are not needed for
+			 * correlation calculation.
+			 */
 			double[][] values = {};
 			values = ArrayUtils.add(values, ValueDateTupel.getValues(forecasts1));
 			values = ArrayUtils.add(values, ValueDateTupel.getValues(forecasts2));
 			values = ArrayUtils.add(values, ValueDateTupel.getValues(forecasts3));
 
-//			BlockRealMatrix
-//			BlockRealMatrix.transpose()
-			
+			/*
+			 * Extract the minimum length of all arrays so the longer ones can be cut.
+			 * Correlations can only be done when the underlying arrays have the same value
+			 */
+			/* FIXME */
+			int minLength = Integer.MAX_VALUE;
+			for (double[] value : values)
+				if (value.length < minLength)
+					minLength = value.length;
+
+			for (int i = 0; i < values.length; i++) {
+				if (values[i].length != minLength) {
+					double[] localValues = new double[minLength];
+					System.arraycopy(values[i], 0, localValues, 0, minLength);
+					values[i] = localValues.clone();
+				}
+			}
+
+			/* Load the extracted values into rows */
+			BlockRealMatrix matrix = new BlockRealMatrix(values);
+			/* Transpose the values into columns to get the correct correlations */
+			matrix = matrix.transpose();
+
 			/* Needs double[][] */
 			PearsonsCorrelation correlations = new PearsonsCorrelation(values);
 			correlations.getCorrelationMatrix();

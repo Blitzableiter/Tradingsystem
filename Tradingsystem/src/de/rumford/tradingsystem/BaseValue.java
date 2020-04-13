@@ -159,11 +159,11 @@ public class BaseValue {
 
 		/* Check if values are in correct order */
 		for (int i = 1; i < values.length; i++) {
+
 			/*
-			 * If the date of the current value is before the date of the previous value the
-			 * values array is not properly sorted
+			 * The values cannot be used if they are not in ascending order.
 			 */
-			if (values[i].getDate().isBefore(values[i - 1].getDate()))
+			if (!ValueDateTupel.isSortedAscending(values))
 				throw new IllegalArgumentException("Given values are not properly sorted");
 		}
 	}
