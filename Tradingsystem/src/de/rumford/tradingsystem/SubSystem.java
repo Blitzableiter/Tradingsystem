@@ -20,12 +20,23 @@ public class SubSystem {
 	/**
 	 * 
 	 */
-	public SubSystem(BaseValue baseValue, Rule[] rules, double capital) {
-		this.evaluateRules(rules);
+	public SubSystem(BaseValue baseValue, Rule[] rules, double capital) throws IllegalArgumentException {
+		try {
+			this.evaluateAndSetRules(rules);
+		} catch (Exception e) {
+			throw e;
+		}
 
 		this.setBaseValue(baseValue);
 		this.setCapital(capital);
 
+		/* Calculates and recursively sets weights for all rules and their variations */
+		this.calculateRuleWeights();
+
+	}
+	
+	private boolean areRulesUnique(Rule[] rules) {
+		return false;
 	}
 
 	/**
@@ -34,7 +45,17 @@ public class SubSystem {
 	 * @param rules
 	 * @return
 	 */
-	private boolean evaluateRules(Rule[] rules) {
+	private boolean evaluateAndSetRules(Rule[] rules) {
+		if (!areRulesUnique(rules)) throw new IllegalArgumentException("The given rules are not unique. Only unique rules can be used.");
+		
+		/* If rules are unique set them. */
+		this.setRules(rules);
+
+		return false;
+	}
+
+	private void calculateRuleWeights() {
+		Rule[] rules = this.getRules();
 
 	}
 

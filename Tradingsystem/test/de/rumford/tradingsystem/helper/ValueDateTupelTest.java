@@ -240,17 +240,51 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testalignDates() {
-		ValueDateTupel vdt1NaN = new ValueDateTupel(date_20200101, Double.NaN);
-		ValueDateTupel vdt2NaN = new ValueDateTupel(date_20200102, Double.NaN);
-		ValueDateTupel vdt3NaN = new ValueDateTupel(date_20200103, Double.NaN);
-		ValueDateTupel vdt4NaN = new ValueDateTupel(date_20200104, Double.NaN);
-		ValueDateTupel vdt5NaN = new ValueDateTupel(date_20200105, Double.NaN);
-		ValueDateTupel[] expectedVdtArray1 = { valueDateTupel1, vdt2NaN, valueDateTupel3, vdt4NaN, valueDateTupel5 };
-		ValueDateTupel[] expectedVdtArray2 = { vdt1NaN, valueDateTupel2, valueDateTupel3, valueDateTupel4, vdt5NaN };
-		ValueDateTupel[] expectedVdtArray3 = { valueDateTupel1, vdt2NaN, vdt3NaN, valueDateTupel4, valueDateTupel5 };
-		ValueDateTupel[] expectedVdtArray4 = { vdt1NaN, vdt2NaN, valueDateTupel3, valueDateTupel4, valueDateTupel5 };
-		ValueDateTupel[] expectedVdtArray5 = { valueDateTupel1, valueDateTupel2, valueDateTupel3, vdt4NaN, vdt5NaN };
-		ValueDateTupel[][] expectedValue = { expectedVdtArray1, expectedVdtArray2, expectedVdtArray3, expectedVdtArray4,
+		ValueDateTupel vdtCalculated20200102_200 = new ValueDateTupel(date_20200102, 200d);
+		ValueDateTupel vdtCalculated20200104_400 = new ValueDateTupel(date_20200104, 400d);
+		ValueDateTupel vdtCalculated20200101_200 = new ValueDateTupel(date_20200101, 200d);
+		ValueDateTupel vdtCalculated20200105_400 = new ValueDateTupel(date_20200105, 400d);
+		ValueDateTupel vdtCalculated20200102_250 = new ValueDateTupel(date_20200102, 250d);
+		ValueDateTupel vdtCalculated20200103_250 = new ValueDateTupel(date_20200103, 250d);
+		ValueDateTupel vdtCalculated20200101_300 = new ValueDateTupel(date_20200101, 300d);
+		ValueDateTupel vdtCalculated20200102_300 = new ValueDateTupel(date_20200102, 300d);
+		ValueDateTupel vdtCalculated20200104_300 = new ValueDateTupel(date_20200104, 300d);
+		ValueDateTupel vdtCalculated20200105_300 = new ValueDateTupel(date_20200105, 300d);
+		ValueDateTupel[] expectedVdtArray1 = { //
+				valueDateTupel1, //
+				vdtCalculated20200102_200, //
+				valueDateTupel3, //
+				vdtCalculated20200104_400, //
+				valueDateTupel5 };
+		ValueDateTupel[] expectedVdtArray2 = { //
+				vdtCalculated20200101_200, //
+				valueDateTupel2, //
+				valueDateTupel3, //
+				valueDateTupel4, //
+				vdtCalculated20200105_400 };
+		ValueDateTupel[] expectedVdtArray3 = { //
+				valueDateTupel1, //
+				vdtCalculated20200102_250, //
+				vdtCalculated20200103_250, //
+				valueDateTupel4, //
+				valueDateTupel5 };
+		ValueDateTupel[] expectedVdtArray4 = { //
+				vdtCalculated20200101_300, //
+				vdtCalculated20200102_300, //
+				valueDateTupel3, //
+				valueDateTupel4, //
+				valueDateTupel5 };
+		ValueDateTupel[] expectedVdtArray5 = { //
+				valueDateTupel1, //
+				valueDateTupel2, //
+				valueDateTupel3, //
+				vdtCalculated20200104_300, //
+				vdtCalculated20200105_300 };
+		ValueDateTupel[][] expectedValue = { //
+				expectedVdtArray1, //
+				expectedVdtArray2, //
+				expectedVdtArray3, //
+				expectedVdtArray4, //
 				expectedVdtArray5 };
 
 		ValueDateTupel[] vdtArray1 = { valueDateTupel1, valueDateTupel3, valueDateTupel5 };
@@ -262,6 +296,104 @@ class ValueDateTupelTest {
 		ValueDateTupel[][] actualValue = ValueDateTupel.alignDates(vdtArraysArray);
 
 		assertArrayEquals(expectedValue, actualValue, "Dates aren't correct after aligning ValueDateTuples");
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#alignDates(ValueDateTupel[][])}.
+	 */
+	@Test
+	void testalignDates_arrayOfArraysNull() {
+		String expectedMessage = "Given array of arrays must not be null";
+
+		ValueDateTupel[][] vdtArraysArray = null;
+		Exception thrown = assertThrows( //
+				IllegalArgumentException.class, //
+				() -> ValueDateTupel.alignDates(vdtArraysArray), //
+				"Array of arrays = null is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Expcetion message");
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#alignDates(ValueDateTupel[][])}.
+	 */
+	@Test
+	void testalignDates_arrayNull() {
+		String expectedMessage = "The array at position 0 is null.";
+
+		ValueDateTupel[] vdtArray1 = null;
+		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3, valueDateTupel4 };
+		ValueDateTupel[][] vdtArraysArray = { vdtArray1, vdtArray2 };
+		Exception thrown = assertThrows( //
+				IllegalArgumentException.class, //
+				() -> ValueDateTupel.alignDates(vdtArraysArray), //
+				"null in array of arrays is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Expcetion message");
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#alignDates(ValueDateTupel[][])}.
+	 */
+	@Test
+	void testalignDates_arrayContainsNull() {
+		String expectedMessage = "The array at position 0 contains at least one null.";
+
+		ValueDateTupel[] vdtArray1 = { valueDateTupel1, null, valueDateTupel5 };
+		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3, valueDateTupel4 };
+		ValueDateTupel[][] vdtArraysArray = { vdtArray1, vdtArray2 };
+		Exception thrown = assertThrows( //
+				IllegalArgumentException.class, //
+				() -> ValueDateTupel.alignDates(vdtArraysArray), //
+				"null in array is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Expcetion message");
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#alignDates(ValueDateTupel[][])}.
+	 */
+	@Test
+	void testalignDates_arrayNotSortedAscending() {
+		String expectedMessage = "The array at position 0 is not sorted in ascending order.";
+
+		ValueDateTupel[] vdtArray1 = { valueDateTupel1, valueDateTupel5, valueDateTupel3 };
+		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3, valueDateTupel4 };
+		ValueDateTupel[][] vdtArraysArray = { vdtArray1, vdtArray2 };
+		Exception thrown = assertThrows( //
+				IllegalArgumentException.class, //
+				() -> ValueDateTupel.alignDates(vdtArraysArray), //
+				"Unsorted array is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Expcetion message");
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#alignDates(ValueDateTupel[][])}.
+	 */
+	@Test
+	void testalignDates_onlyNaN() {
+
+		String expectedMessage = "Row at position 0 contains only Double.NaN. Rows must contain at least one value != Double.NaN";
+
+		ValueDateTupel vdt1NaN = new ValueDateTupel(date_20200101, Double.NaN);
+		ValueDateTupel vdt3NaN = new ValueDateTupel(date_20200103, Double.NaN);
+		ValueDateTupel vdt5NaN = new ValueDateTupel(date_20200105, Double.NaN);
+
+		ValueDateTupel[] vdtArray1 = { vdt1NaN, vdt3NaN, vdt5NaN };
+		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3, valueDateTupel4 };
+		ValueDateTupel[][] vdtArraysArray = { vdtArray1, vdtArray2 };
+		Exception thrown = assertThrows( //
+				IllegalArgumentException.class, //
+				() -> ValueDateTupel.alignDates(vdtArraysArray), //
+				"Only NaN values in ValueDateTupel is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Expcetion message");
 	}
 
 	/**
@@ -443,7 +575,8 @@ class ValueDateTupelTest {
 	void testAddOneAt_position_greater_arrayLength() {
 		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3, valueDateTupel4 };
 		int tooLargeAPosition = 4;
-		String expectedMessage = "Cannot add a value at position > " + valueDateTupelArray.length;
+		String expectedMessage = "Cannot add a value at position > " + valueDateTupelArray.length
+				+ ". Given position is " + tooLargeAPosition + ".";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.addOneAt(valueDateTupelArray, valueDateTupel1, tooLargeAPosition),

@@ -165,32 +165,36 @@ public class ValueDateTupel {
 	 *                       shall be aligned.
 	 * @return {@code ValueDateTupel[][]} Array of arrays of {@link ValueDateTupel}
 	 *         with now aligned {@link LocalDateTime} values.
-	 * @throws IllegalArgumentException If the given array is null.
-	 * @throws IllegalArgumentException If the given array contains null.
+	 * @throws IllegalArgumentException If the given array of arrays is null.
+	 * @throws IllegalArgumentException If the given array of arrays contains null.
+	 * @throws IllegalArgumentException If any array of the given array of arrays
+	 *                                  contains null.
 	 * @throws IllegalArgumentException If the given array contains an array of
 	 *                                  {@link ValueDateTupel} not sorted in
 	 *                                  ascending order.
 	 * @throws IllegalArgumentException If the one of the given arrays contains only
 	 *                                  {@link Double#NaN}.
 	 */
-	// TODO TEST ME
 	public static ValueDateTupel[][] alignDates(ValueDateTupel[][] valueDateTupels) throws IllegalArgumentException {
 		if (valueDateTupels == null)
-			throw new IllegalArgumentException("Given array must not be null");
-		for (ValueDateTupel[] vdt : valueDateTupels) {
-			if (ValueDateTupel.contains(vdt, null))
-				throw new IllegalArgumentException("The given array must not contain nulls");
-			if (!ValueDateTupel.isSortedAscending(vdt))
-				throw new IllegalArgumentException("Not all given ValueDateTuple[] are sorted in ascending order");
-		}
+			throw new IllegalArgumentException("Given array of arrays must not be null");
 
 		/* TreeSet (unique and sorted) of all dates in all valueDateTupel[] */
 		TreeSet<LocalDateTime> uniqueSortedDates = new TreeSet<>();
 
-		/* For each array of ValueDateTupel ... */
-		for (ValueDateTupel[] row : valueDateTupels) {
+		/* For each array in ValueDateTupels ... */
+		for (int rowIndex = 0; rowIndex < valueDateTupels.length; rowIndex++) {
+			if (valueDateTupels[rowIndex] == null)
+				throw new IllegalArgumentException("The array at position " + rowIndex + " is null.");
+			if (ValueDateTupel.contains(valueDateTupels[rowIndex], null))
+				throw new IllegalArgumentException(
+						"The array at position " + rowIndex + " contains at least one null.");
+			if (!ValueDateTupel.isSortedAscending(valueDateTupels[rowIndex]))
+				throw new IllegalArgumentException(
+						"The array at position " + rowIndex + " is not sorted in ascending order.");
+
 			/* ... add all values into uniqueSortedDates */
-			uniqueSortedDates.addAll(Arrays.asList(ValueDateTupel.getDates(row)));
+			uniqueSortedDates.addAll(Arrays.asList(ValueDateTupel.getDates(valueDateTupels[rowIndex])));
 		}
 
 		/* Load unique sorted dates into an ArrayList to have access to an index. */
@@ -267,7 +271,8 @@ public class ValueDateTupel {
 						 * ArrayOutOfBounds-Exception would be thrown on the next while-iteration.
 						 */
 						if (localFieldIndex == valueDateTupels[rowIndex].length)
-							throw new IllegalArgumentException("Rows must contain at least one value != Double.NaN");
+							throw new IllegalArgumentException("Row at position " + rowIndex
+									+ " contains only Double.NaN. Rows must contain at least one value != Double.NaN");
 					}
 
 					/*
@@ -311,6 +316,16 @@ public class ValueDateTupel {
 				 */
 				int localFieldIndexNext = fieldIndex + 1;
 
+				/*
+				 * If only the last value is NaN set it to be the previous value and break from
+				 * loop.
+				 */
+				if (valueDateTupels[rowIndex].length == localFieldIndexNext) {
+					valueDateTupels[rowIndex][fieldIndex]
+							.setValue(valueDateTupels[rowIndex][fieldIndex - 1].getValue());
+					break;
+				}
+
 				double valueToBeSet = Double.NaN;
 
 				while (Double.isNaN(valueDateTupels[rowIndex][localFieldIndexNext].getValue())) {
@@ -327,8 +342,9 @@ public class ValueDateTupel {
 
 				}
 				/*
-				 * If the value to be set has already been calculated it can be set to all
-				 * remaining values in the array. After that the loop can be left.
+				 * If the value to be set has already been calculated then there is NaNs left in
+				 * the array, no more real values, until the very last position. All remaining
+				 * values can be set to this value then. After that the loop can be left.
 				 */
 				if (!Double.isNaN(valueToBeSet)) {
 					while (fieldIndex <= localFieldIndexNext) {
@@ -345,7 +361,11 @@ public class ValueDateTupel {
 				valueToBeSet = (valueDateTupels[rowIndex][fieldIndex - 1].getValue()
 						+ valueDateTupels[rowIndex][localFieldIndexNext].getValue()) / 2;
 
-				/* TODO set the value to all values currently NaN */
+				/* Fill all values up to the next NaN with the calculated value. */
+				while (fieldIndex < localFieldIndexNext) {
+					valueDateTupels[rowIndex][fieldIndex].setValue(valueToBeSet);
+					fieldIndex++;
+				}
 
 			}
 		}
@@ -418,7 +438,8 @@ public class ValueDateTupel {
 		if (position < 0)
 			throw new IllegalArgumentException("Cannot not add a value at position < 0. Given position is " + position);
 		if (position > valueDateTupels.length)
-			throw new IllegalArgumentException("Cannot add a value at position > " + valueDateTupels.length);
+			throw new IllegalArgumentException("Cannot add a value at position > " + valueDateTupels.length
+					+ ". Given position is " + position + ".");
 
 		ValueDateTupel[] extendedArray = ValueDateTupel.createEmptyArray(valueDateTupels.length + 1);
 
