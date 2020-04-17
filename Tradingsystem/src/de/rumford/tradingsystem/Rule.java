@@ -4,6 +4,7 @@
 package de.rumford.tradingsystem;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -17,6 +18,9 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
  *
  */
 public abstract class Rule {
+
+	// TODO
+	// GETTER & SETTER: PROTECTED VS. PACKAGE PROTECTED
 
 	private double forecastScalar;
 	private double standardDeviationAdjustedValue;
@@ -113,6 +117,68 @@ public abstract class Rule {
 		}
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((baseValue == null) ? 0 : baseValue.hashCode());
+		result = prime * result + ((endOfReferenceWindow == null) ? 0 : endOfReferenceWindow.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(forecastScalar);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(standardDeviationAdjustedValue);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((startOfReferenceWindow == null) ? 0 : startOfReferenceWindow.hashCode());
+		result = prime * result + Arrays.hashCode(variations);
+		temp = Double.doubleToLongBits(weight);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Rule other = (Rule) obj;
+		if (baseValue == null) {
+			if (other.baseValue != null)
+				return false;
+		} else if (!baseValue.equals(other.baseValue))
+			return false;
+		if (endOfReferenceWindow == null) {
+			if (other.endOfReferenceWindow != null)
+				return false;
+		} else if (!endOfReferenceWindow.equals(other.endOfReferenceWindow))
+			return false;
+		if (Double.doubleToLongBits(forecastScalar) != Double.doubleToLongBits(other.forecastScalar))
+			return false;
+		if (Double.doubleToLongBits(standardDeviationAdjustedValue) != Double
+				.doubleToLongBits(other.standardDeviationAdjustedValue))
+			return false;
+		if (startOfReferenceWindow == null) {
+			if (other.startOfReferenceWindow != null)
+				return false;
+		} else if (!startOfReferenceWindow.equals(other.startOfReferenceWindow))
+			return false;
+		if (!Arrays.equals(variations, other.variations))
+			return false;
+		if (Double.doubleToLongBits(weight) != Double.doubleToLongBits(other.weight))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Rule [forecastScalar=" + forecastScalar + ", standardDeviationAdjustedValue="
+				+ standardDeviationAdjustedValue + ", weight=" + weight + ", variations=" + Arrays.toString(variations)
+				+ ", startOfReferenceWindow=" + startOfReferenceWindow + ", endOfReferenceWindow="
+				+ endOfReferenceWindow + ", baseValue=" + baseValue + "]";
+	}
+
 	/**
 	 * ======================================================================
 	 * GETTERS AND SETTERS
@@ -126,14 +192,14 @@ public abstract class Rule {
 	/**
 	 * @return baseValue Rule
 	 */
-	private BaseValue getBaseValue() {
+	public BaseValue getBaseValue() {
 		return baseValue;
 	}
 
 	/**
 	 * @param baseValue the baseValue to set
 	 */
-	private void setBaseValue(BaseValue baseValue) {
+	void setBaseValue(BaseValue baseValue) {
 		this.baseValue = baseValue;
 	}
 
@@ -151,7 +217,7 @@ public abstract class Rule {
 	 * 
 	 * @param forecastScalar {@code double} forecast scalar to be set for this rule
 	 */
-	public void setForecastScalar(double forecastScalar) {
+	void setForecastScalar(double forecastScalar) {
 		this.forecastScalar = forecastScalar;
 	}
 
@@ -170,7 +236,7 @@ public abstract class Rule {
 	 * @param standardDeviationAdjustedValue {@code double} the standard deviation
 	 *                                       adjusted value to be set for this rule
 	 */
-	public void setStandardDeviationAdjustedValue(double standardDeviationAdjustedValue) {
+	void setStandardDeviationAdjustedValue(double standardDeviationAdjustedValue) {
 		this.standardDeviationAdjustedValue = standardDeviationAdjustedValue;
 	}
 
@@ -188,7 +254,7 @@ public abstract class Rule {
 	 * 
 	 * @param weight {@code double} the weight to be set for this rule
 	 */
-	public void setWeight(double weight) {
+	void setWeight(double weight) {
 		/* TODO Prüfung, ob die Regel Variationen hat, wenn ja, dann ? */
 		this.weight = weight;
 	}
@@ -203,7 +269,7 @@ public abstract class Rule {
 	/**
 	 * @param variations the variations to set
 	 */
-	private void setVariations(Rule[] variations) throws IllegalArgumentException {
+	void setVariations(Rule[] variations) throws IllegalArgumentException {
 		if (variations == null)
 			return;
 		if (variations.length > 3)
@@ -214,28 +280,28 @@ public abstract class Rule {
 	/**
 	 * @return startOfReferenceWindow Rule
 	 */
-	private LocalDateTime getStartOfReferenceWindow() {
+	public LocalDateTime getStartOfReferenceWindow() {
 		return startOfReferenceWindow;
 	}
 
 	/**
 	 * @param startOfReferenceWindow the startOfReferenceWindow to set
 	 */
-	private void setStartOfReferenceWindow(LocalDateTime startOfReferenceWindow) {
+	void setStartOfReferenceWindow(LocalDateTime startOfReferenceWindow) {
 		this.startOfReferenceWindow = startOfReferenceWindow;
 	}
 
 	/**
 	 * @return endOfReferenceWindow Rule
 	 */
-	private LocalDateTime getEndOfReferenceWindow() {
+	public LocalDateTime getEndOfReferenceWindow() {
 		return endOfReferenceWindow;
 	}
 
 	/**
 	 * @param endOfReferenceWindow the endOfReferenceWindow to set
 	 */
-	private void setEndOfReferenceWindow(LocalDateTime endOfReferenceWindow) {
+	void setEndOfReferenceWindow(LocalDateTime endOfReferenceWindow) {
 		this.endOfReferenceWindow = endOfReferenceWindow;
 	}
 

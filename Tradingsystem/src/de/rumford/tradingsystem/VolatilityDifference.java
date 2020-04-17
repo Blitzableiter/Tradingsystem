@@ -41,13 +41,13 @@ public class VolatilityDifference extends Rule {
 	 *                               considered in average calculation. Must be >
 	 *                               {@code startOfReferenceWindow}.
 	 */
-	public VolatilityDifference(BaseValue baseValue, int lookbackWindow, LocalDateTime startOfReferenceWindow,
-			LocalDateTime endOfReferenceWindow) throws IllegalArgumentException {
+	public VolatilityDifference(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
+			LocalDateTime endOfReferenceWindow, int lookbackWindow) throws IllegalArgumentException {
 		/* FIXME */
 		/* FIXME */
 		/* FIXME */
 		/* FIXME */
-		super(baseValue, null, startOfReferenceWindow, endOfReferenceWindow);
+		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow);
 		/* FIXME */
 		/* FIXME */
 		/* FIXME */
@@ -110,7 +110,7 @@ public class VolatilityDifference extends Rule {
 	 *         {@code Double.NaN}, the rest contains real volatility index values.
 	 */
 	private ValueDateTupel[] calculateVolatilityIndices() {
-		ValueDateTupel[] baseValues = this.baseValue.getValues();
+		ValueDateTupel[] baseValues = this.getBaseValue().getValues();
 		int lookbackWindow = this.getLookbackWindow();
 
 		ValueDateTupel[] volatilityIndices = ValueDateTupel.createEmptyArray();
@@ -246,7 +246,6 @@ public class VolatilityDifference extends Rule {
 		long temp;
 		temp = Double.doubleToLongBits(averageVolatility);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + ((baseValue == null) ? 0 : baseValue.hashCode());
 		result = prime * result + lookbackWindow;
 		result = prime * result + Arrays.hashCode(volatilityIndices);
 		return result;
@@ -263,11 +262,6 @@ public class VolatilityDifference extends Rule {
 		VolatilityDifference other = (VolatilityDifference) obj;
 		if (Double.doubleToLongBits(averageVolatility) != Double.doubleToLongBits(other.averageVolatility))
 			return false;
-		if (baseValue == null) {
-			if (other.baseValue != null)
-				return false;
-		} else if (!baseValue.equals(other.baseValue))
-			return false;
 		if (lookbackWindow != other.lookbackWindow)
 			return false;
 		if (!Arrays.equals(volatilityIndices, other.volatilityIndices))
@@ -278,7 +272,7 @@ public class VolatilityDifference extends Rule {
 	@Override
 	public String toString() {
 		return "VolatilityDifference [volatilityIndices=" + Arrays.toString(volatilityIndices) + ", averageVolatility="
-				+ averageVolatility + ", baseValue=" + baseValue + ", lookbackWindow=" + lookbackWindow + "]";
+				+ averageVolatility + ", lookbackWindow=" + lookbackWindow + "]";
 	}
 
 	/**
@@ -317,26 +311,6 @@ public class VolatilityDifference extends Rule {
 	}
 
 	/**
-	 * Get the base value for this {@link VolatilityDifference}.
-	 * 
-	 * @return {@link BaseValue} The base value for this
-	 *         {@link VolatilityDifference}.
-	 */
-	public BaseValue getBaseValue() {
-		return baseValue;
-	}
-
-	/**
-	 * Set the base value for this {@link VolatilityDifference}.
-	 * 
-	 * @param baseValue {@link BaseValue} The baseValue to be set for this
-	 *                  {@link VolatilityDifference}.
-	 */
-	private void setBaseValue(BaseValue baseValue) {
-		this.baseValue = baseValue;
-	}
-
-	/**
 	 * Get the lookbackWindow for this {@link VolatilityDifference}.
 	 * 
 	 * @return {@code int} The lookback window for this {@link VolatilityDifference}
@@ -353,6 +327,19 @@ public class VolatilityDifference extends Rule {
 	 */
 	private void setLookbackWindow(int lookbackWindow) {
 		this.lookbackWindow = lookbackWindow;
+	}
+
+	@Override
+	protected double calculateRawForecast() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	protected ValueDateTupel[] calculateForecasts(LocalDateTime startOfReferenceWindow,
+			LocalDateTime endOfReferenceWindow) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

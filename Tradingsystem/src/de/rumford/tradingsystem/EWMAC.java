@@ -1,5 +1,9 @@
 package de.rumford.tradingsystem;
 
+import java.time.LocalDateTime;
+
+import de.rumford.tradingsystem.helper.ValueDateTupel;
+
 /**
  * 
  * @author Max Rumford
@@ -10,7 +14,9 @@ public class EWMAC extends Rule {
 	private EWMA longHorizonEwma;
 	private EWMA shortHorizonEwma;
 
-	public EWMAC(int longHorizon, int shortHorizon) {
+	public EWMAC(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
+			LocalDateTime endOfReferenceWindow, int longHorizon, int shortHorizon) {
+		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow);
 		EWMA longHorizonEwma = new EWMA(longHorizon);
 		EWMA shortHorizonEwma = new EWMA(shortHorizon);
 		this.setLongHorizonEwma(longHorizonEwma);
@@ -46,8 +52,8 @@ public class EWMAC extends Rule {
 	/**
 	 * Set the long horizon {@link EWMA} for an {@link EWMAC}
 	 * 
-	 * @param longHorizonEwma {@link EWMA} long horizon the
-	 *                        be set for this {@link EWMAC}
+	 * @param longHorizonEwma {@link EWMA} long horizon the be set for this
+	 *                        {@link EWMAC}
 	 */
 	public void setLongHorizonEwma(EWMA longHorizonEwma) {
 		this.longHorizonEwma = longHorizonEwma;
@@ -56,8 +62,7 @@ public class EWMAC extends Rule {
 	/**
 	 * Get the short horizon {@link EWMA} for an {@link EWMAC}
 	 * 
-	 * @return short horizon {@link EWMA} for this
-	 *         {@link EWMAC}
+	 * @return short horizon {@link EWMA} for this {@link EWMAC}
 	 */
 	public EWMA getShortHorizonEwma() {
 		return shortHorizonEwma;
@@ -66,11 +71,24 @@ public class EWMAC extends Rule {
 	/**
 	 * Set the short horizon {@link EWMA} for an {@link EWMAC}
 	 * 
-	 * @param shortHorizonEwma short horizon {@link EWMA}
-	 *                         to be set for this {@link EWMAC}
+	 * @param shortHorizonEwma short horizon {@link EWMA} to be set for this
+	 *                         {@link EWMAC}
 	 */
 	public void setShortHorizonEwma(EWMA shortHorizonEwma) {
 		this.shortHorizonEwma = shortHorizonEwma;
+	}
+
+	@Override
+	protected double calculateRawForecast() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	protected ValueDateTupel[] calculateForecasts(LocalDateTime startOfReferenceWindow,
+			LocalDateTime endOfReferenceWindow) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
