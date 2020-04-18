@@ -2,6 +2,11 @@ package de.rumford.tradingsystem.helper;
 
 import java.util.DoubleSummaryStatistics;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.math3.linear.BlockRealMatrix;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+
 /**
  * 
  * @author Max Rumford
@@ -101,6 +106,72 @@ public final class Util {
 		if (formerValue == 0)
 			throw new IllegalArgumentException("Former value cannot be zero");
 		return latterValue / formerValue - 1d;
+	}
+
+	/**
+	 * Calculate the correlations between the given array of value arrays.
+	 * 
+	 * @param values {@code double[][]} An array of 3 arrays, A, B, and C, of
+	 *               values.
+	 * @return {@code double[]} The correlations between the given rows A, B, and C
+	 *         as { corr_AB, corr_BC, corr_CA }.
+	 * @throws IllegalArgumentException if the given array is null.
+	 * @throws IllegalArgumentException if the given array does not contain exactly
+	 *                                  3 values.
+	 * @throws IllegalArgumentException if the given array contains null.
+	 * @throws IllegalArgumentException if the given array contains arrays
+	 *                                  containing null.
+	 * @throws IllegalArgumentException if the given array contains arrays
+	 *                                  containing Double.NaN.
+	 * @throws IllegalArgumentException if the given array contains arrays not of
+	 *                                  the same length.
+	 * 
+	 */
+	public static double[] calculateCorrelationsOfThreeRows(double[][] values) throws IllegalArgumentException {
+		/* Check if the given array is null */
+		if (values == null)
+			throw new IllegalArgumentException("The given array of arrays is null.");
+		/* Check if the given array contains exactly three values. */
+		if (values.length != 3)
+			throw new IllegalArgumentException("The given array of arrays contains " + values.length
+					+ " elements altough only 3 values were expected.");
+
+		/* Check if the array contains null. */
+		for (int i = 0; i < values.length; i++) {
+			if (values[i] == null)
+				throw new IllegalArgumentException(
+						"The given array contains null at position " + i + " although null is not permitted.");
+			for (int j = 0; j < values[i].length; j++)
+				if (Double.isNaN(values[i][j]))
+					throw new IllegalArgumentException(
+							"Array at position " + i + " contains Double.NaN at position " + j);
+		}
+		/* Check if the given arrays all have the same length. */
+		if (values[0].length != values[1].length || values[0].length != values[2].length)
+			throw new IllegalArgumentException("The given arrays are not of the same length.");
+
+		/* Load the given values into rows of a matrix */
+		RealMatrix matrix = new BlockRealMatrix(values);
+		/* Transpose the values into columns to get the correct correlations */
+		matrix = matrix.transpose();
+
+		/* Get the correlations of the passed value arrays */
+		PearsonsCorrelation pearsonsCorrelations = new PearsonsCorrelation(matrix);
+		RealMatrix correlationMatrix = pearsonsCorrelations.getCorrelationMatrix();
+
+		/*
+		 * E.g. the correlation between the columns 0 and 1 is at matrix position 0/1.
+		 */
+		double correlation_0_1 = correlationMatrix.getEntry(0, 1);
+		double correlation_1_2 = correlationMatrix.getEntry(1, 2);
+		double correlation_0_2 = correlationMatrix.getEntry(0, 2);
+
+		double[] correlations = {};
+		correlations = ArrayUtils.add(correlations, correlation_0_1);
+		correlations = ArrayUtils.add(correlations, correlation_1_2);
+		correlations = ArrayUtils.add(correlations, correlation_0_2);
+
+		return correlations;
 	}
 
 }

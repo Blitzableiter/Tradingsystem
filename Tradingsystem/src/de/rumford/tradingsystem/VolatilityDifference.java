@@ -43,20 +43,12 @@ public class VolatilityDifference extends Rule {
 	 */
 	public VolatilityDifference(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
 			LocalDateTime endOfReferenceWindow, int lookbackWindow) throws IllegalArgumentException {
-		/* FIXME */
-		/* FIXME */
-		/* FIXME */
-		/* FIXME */
 		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow);
-		/* FIXME */
-		/* FIXME */
-		/* FIXME */
-		/* FIXME */
-		/* Check if base value fulfills requirements. If yes, set it */
+		/* Check if base value fulfills requirements. */
 		if (baseValue == null)
 			throw new IllegalArgumentException("Base value must not be null");
 
-		/* Check if lookback window fulfills requirements. If yes, set it */
+		/* Check if lookback window fulfills requirements. */
 		if (lookbackWindow <= 1)
 			throw new IllegalArgumentException("Lookback window must be at least 2");
 
@@ -99,7 +91,7 @@ public class VolatilityDifference extends Rule {
 	}
 
 	/**
-	 * Calculate the volatility index values for its {@link VolatilityDifference}.
+	 * Calculate the volatility index values for this {@link VolatilityDifference}.
 	 * If the lookback window is longer than there are base values, an empty
 	 * {@link ValueDateTupel[]} is returned.
 	 * 
@@ -175,7 +167,6 @@ public class VolatilityDifference extends Rule {
 		/* Get all volatility index values */
 		ValueDateTupel[] allVolatilityIndices = this.getVolatilityIndices();
 
-		/* TODO Test me */
 		/*
 		 * If the last volatility index value is NaN then no volatility index values
 		 * were calculated due to there not being enough values. If this is the case,

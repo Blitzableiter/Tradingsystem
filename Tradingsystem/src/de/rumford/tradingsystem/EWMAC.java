@@ -80,7 +80,7 @@ public class EWMAC extends Rule {
 
 	@Override
 	protected double calculateRawForecast() {
-		// TODO Auto-generated method stub
+
 		return 0;
 	}
 

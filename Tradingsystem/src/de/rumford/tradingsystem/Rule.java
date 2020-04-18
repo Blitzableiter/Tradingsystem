@@ -5,12 +5,11 @@ package de.rumford.tradingsystem;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.DoubleSummaryStatistics;
+import java.util.stream.DoubleStream;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.math3.linear.BlockRealMatrix;
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
+import de.rumford.tradingsystem.helper.Util;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
@@ -21,6 +20,7 @@ public abstract class Rule {
 
 	// TODO
 	// GETTER & SETTER: PROTECTED VS. PACKAGE PROTECTED
+	// https://docs.oracle.com/javase/tutorial/java/javaOO/accesscontrol.html
 
 	private double forecastScalar;
 	private double standardDeviationAdjustedValue;
@@ -44,12 +44,12 @@ public abstract class Rule {
 			this.weighVariations();
 	}
 
-	protected abstract double calculateRawForecast();
+	abstract double calculateRawForecast();
 
-	protected abstract ValueDateTupel[] calculateForecasts(LocalDateTime startOfReferenceWindow,
+	abstract ValueDateTupel[] calculateForecasts(LocalDateTime startOfReferenceWindow,
 			LocalDateTime endOfReferenceWindow);
 
-	final private void weighVariations() {
+	final private void weighVariations() throws IllegalArgumentException {
 		Rule[] variations = this.getVariations();
 
 		/* If there is only 1 variation then its weight is 100% */
@@ -63,58 +63,123 @@ public abstract class Rule {
 			variations[1].setWeight(0.5d);
 			break;
 		case 3:
-			ValueDateTupel[] forecasts1 = variations[0].calculateForecasts(startOfReferenceWindow,
+			ValueDateTupel[] forecasts0 = variations[0].calculateForecasts(startOfReferenceWindow,
 					endOfReferenceWindow);
-			ValueDateTupel[] forecasts2 = variations[1].calculateForecasts(startOfReferenceWindow,
+			ValueDateTupel[] forecasts1 = variations[1].calculateForecasts(startOfReferenceWindow,
 					endOfReferenceWindow);
-			ValueDateTupel[] forecasts3 = variations[2].calculateForecasts(startOfReferenceWindow,
+			ValueDateTupel[] forecasts2 = variations[2].calculateForecasts(startOfReferenceWindow,
 					endOfReferenceWindow);
 
-			/*
-			 * FIXME Insert averaging values when missing OR
-			 * 
-			 * delete values when another row doesn't have the current LocalDateTime.
-			 * 
-			 * EXTRACTING OF MINIMUM LENGTH CAN BE OMITTED THEN
-			 */
+			ValueDateTupel[][] forecasts = {};
+			forecasts = ArrayUtils.add(forecasts, forecasts0);
+			forecasts = ArrayUtils.add(forecasts, forecasts1);
+			forecasts = ArrayUtils.add(forecasts, forecasts2);
+
+			/* Amend missing values so correlations can be calculated. */
+			ValueDateTupel[][] forecastsWithAlignedDates;
+			try {
+				forecastsWithAlignedDates = ValueDateTupel.alignDates(forecasts);
+			} catch (IllegalArgumentException e) {
+				throw e;
+			}
 
 			/*
 			 * Extract the values from the forecasts array, as the Dates are not needed for
 			 * correlation calculation.
 			 */
 			double[][] values = {};
-			values = ArrayUtils.add(values, ValueDateTupel.getValues(forecasts1));
-			values = ArrayUtils.add(values, ValueDateTupel.getValues(forecasts2));
-			values = ArrayUtils.add(values, ValueDateTupel.getValues(forecasts3));
+			values = ArrayUtils.add(values, ValueDateTupel.getValues(forecastsWithAlignedDates[0]));
+			values = ArrayUtils.add(values, ValueDateTupel.getValues(forecastsWithAlignedDates[1]));
+			values = ArrayUtils.add(values, ValueDateTupel.getValues(forecastsWithAlignedDates[2]));
 
-			/*
-			 * Extract the minimum length of all arrays so the longer ones can be cut.
-			 * Correlations can only be done when the underlying arrays have the same value
-			 */
-			/* FIXME */
-			int minLength = Integer.MAX_VALUE;
-			for (double[] value : values)
-				if (value.length < minLength)
-					minLength = value.length;
-
-			for (int i = 0; i < values.length; i++) {
-				if (values[i].length != minLength) {
-					double[] localValues = new double[minLength];
-					System.arraycopy(values[i], 0, localValues, 0, minLength);
-					values[i] = localValues.clone();
-				}
+			/* Find the correlations for the given variations. */
+			double[] correlations;
+			try {
+				correlations = Util.calculateCorrelationsOfThreeRows(values);
+			} catch (IllegalArgumentException e) {
+				throw e;
 			}
 
-			/* Load the extracted values into rows */
-			BlockRealMatrix matrix = new BlockRealMatrix(values);
-			/* Transpose the values into columns to get the correct correlations */
-			matrix = matrix.transpose();
+			/* Find the weights corresponding to those correlations. */
+			double[] weights;
+			try {
+				weights = Rule.calculateWeights(correlations);
+			} catch (IllegalArgumentException e) {
+				throw e;
+			}
 
-			/* Needs double[][] */
-			PearsonsCorrelation correlations = new PearsonsCorrelation(values);
-			correlations.getCorrelationMatrix();
-
+			/* Set the weights of the underlying variations */
+			for (int i = 0; i < weights.length; i++) {
+				variations[i].setWeight(weights[i]);
+			}
 		}
+	}
+
+	/**
+	 * Calculate the weights that should be given to the rows of values making up
+	 * the given correlations. Expects an array of length 3, where position 0 holds
+	 * the correlation of rows A and B, position 1 holds the correlation for rows B
+	 * and C, and position 2 holds the correlation for rows C and A.
+	 * 
+	 * @param correlations {@code double[]} Three values representing the
+	 *                     correlations between the rows A, B and C. The expected
+	 *                     array is constructed as follows: { corr_AB, corr_BC,
+	 *                     corr_CA }.
+	 * @return {@code double[]} The calculated weights { w_A, w_B, w_C }.
+	 * @throws IllegalArgumentException if the given array is null.
+	 * @throws IllegalArgumentException if the given array is not of length 3.
+	 * @throws IllegalArgumentException if a correlation value is < -1 or > 1.
+	 */
+	final private static double[] calculateWeights(double[] correlations) throws IllegalArgumentException {
+		/* The given array must no be null */
+		if (correlations == null)
+			throw new IllegalArgumentException("Array of correlations must not be null");
+
+		/*
+		 * There must be exactly three rows of values for this method to work properly.
+		 */
+		if (correlations.length != 3)
+			throw new IllegalArgumentException("Given array of correlations contains " + correlations.length
+					+ " items although an array of length 3 was expected.");
+
+		/*
+		 * Correlation values are within the bounds of -1 and +1. Other values cannot be
+		 * real correlation values.
+		 */
+		for (int i = 0; i < correlations.length; i++) {
+			if (correlations[i] < -1 || correlations[i] > 1)
+				throw new IllegalArgumentException("Correlation value " + correlations[i] + " at position " + i
+						+ " is out of bounds. Correlation values must be between -1 and +1 (including).");
+
+			/* Floor negative correlations at 0 (See Carver: "Systematic Trading", p. 79) */
+			if (correlations[i] < 0)
+				correlations[i] = 0;
+		}
+
+		/* Get the average correlation each row of values has */
+		double averageCorrelationA = (correlations[0] + correlations[2]) / 2;
+		double averageCorrelationB = (correlations[1] + correlations[0]) / 2;
+		double averageCorrelationC = (correlations[2] + correlations[1]) / 2;
+
+		double[] averageCorrelations = {};
+		averageCorrelations = ArrayUtils.add(averageCorrelations, averageCorrelationA);
+		averageCorrelations = ArrayUtils.add(averageCorrelations, averageCorrelationB);
+		averageCorrelations = ArrayUtils.add(averageCorrelations, averageCorrelationC);
+
+		/* Subtract each average correlation from 1 to get an inverse-ish value */
+		for (int i = 0; i < averageCorrelations.length; i++)
+			averageCorrelations[i] = 1 - averageCorrelations[i];
+
+		/* Calculate the sum of average calculations. */
+		double sumOfAverageCorrelations = DoubleStream.of(averageCorrelations).sum();
+		/*
+		 * Normalize the average correlations so they sum up to 1. These normalized
+		 * values are the weights.
+		 */
+		for (int i = 0; i < averageCorrelations.length; i++)
+			averageCorrelations[i] = averageCorrelations[i] / sumOfAverageCorrelations;
+
+		return averageCorrelations;
 	}
 
 	@Override
@@ -255,7 +320,6 @@ public abstract class Rule {
 	 * @param weight {@code double} the weight to be set for this rule
 	 */
 	void setWeight(double weight) {
-		/* TODO Prüfung, ob die Regel Variationen hat, wenn ja, dann ? */
 		this.weight = weight;
 	}
 
