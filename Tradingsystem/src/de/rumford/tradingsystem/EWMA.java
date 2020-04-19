@@ -7,7 +7,7 @@ package de.rumford.tradingsystem;
  */
 public class EWMA {
 
-	int horizon;
+	private int horizon;
 	private double decay;
 
 	/**
@@ -16,9 +16,8 @@ public class EWMA {
 	 * @param horizon {@code int} horizon this EWMA is to be over
 	 */
 	public EWMA(int horizon) {
-		super();
 		this.setHorizon(horizon);
-		this.setDecay(this.getHorizon());
+		this.setDecay(this.calculateDecay(this.getHorizon()));
 	}
 
 	/**
@@ -32,6 +31,10 @@ public class EWMA {
 		/* E_t = A * P_t + [E_t-1 * ( 1 - A ) ] */
 		double _ewma = this.getDecay() * baseValue + (previousEWMA * (1d - this.getDecay()));
 		return _ewma;
+	}
+
+	private double calculateDecay(int horizon) {
+		return 2d / (horizon + 1d);
 	}
 
 	/**
@@ -71,25 +74,6 @@ public class EWMA {
 	 * GETTERS AND SETTERS
 	 * ======================================================================
 	 */
-	/**
-	 * Get the decay of an EWMA
-	 * 
-	 * @return {@code double} decay of the EWMA
-	 */
-	public double getDecay() {
-		return this.decay;
-	}
-
-	/**
-	 * Set the decay of an EWMA Is only called upon creation of a new instance,
-	 * hence private
-	 * 
-	 * @param horizon {@code int} horizon on which the decay is derived from
-	 */
-	private void setDecay(int horizon) {
-		double _horizon = (double) horizon;
-		this.decay = 2d / (_horizon + 1d);
-	}
 
 	/**
 	 * Get the horizon of an EWMA
@@ -107,6 +91,25 @@ public class EWMA {
 	 */
 	public void setHorizon(int horizon) {
 		this.horizon = horizon;
+	}
+
+	/**
+	 * Get the decay of an EWMA
+	 * 
+	 * @return {@code double} decay of the EWMA
+	 */
+	public double getDecay() {
+		return this.decay;
+	}
+
+	/**
+	 * Set the decay of an EWMA Is only called upon creation of a new instance,
+	 * hence private
+	 * 
+	 * @param horizon {@code int} horizon on which the decay is derived from
+	 */
+	private void setDecay(double decay) {
+		this.decay = decay;
 	}
 
 }

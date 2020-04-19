@@ -23,7 +23,6 @@ public abstract class Rule {
 	// https://docs.oracle.com/javase/tutorial/java/javaOO/accesscontrol.html
 
 	private double forecastScalar;
-	private double standardDeviationAdjustedValue;
 	private double weight;
 	private Rule[] variations;
 	private LocalDateTime startOfReferenceWindow;
@@ -46,8 +45,8 @@ public abstract class Rule {
 
 	abstract double calculateRawForecast();
 
-	abstract ValueDateTupel[] calculateForecasts(LocalDateTime startOfReferenceWindow,
-			LocalDateTime endOfReferenceWindow);
+	abstract ValueDateTupel[] calculateForecasts(LocalDateTime calculateFrom,
+			LocalDateTime calculateTo);
 
 	final private void weighVariations() throws IllegalArgumentException {
 		Rule[] variations = this.getVariations();
@@ -191,8 +190,6 @@ public abstract class Rule {
 		long temp;
 		temp = Double.doubleToLongBits(forecastScalar);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(standardDeviationAdjustedValue);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + ((startOfReferenceWindow == null) ? 0 : startOfReferenceWindow.hashCode());
 		result = prime * result + Arrays.hashCode(variations);
 		temp = Double.doubleToLongBits(weight);
@@ -221,9 +218,6 @@ public abstract class Rule {
 			return false;
 		if (Double.doubleToLongBits(forecastScalar) != Double.doubleToLongBits(other.forecastScalar))
 			return false;
-		if (Double.doubleToLongBits(standardDeviationAdjustedValue) != Double
-				.doubleToLongBits(other.standardDeviationAdjustedValue))
-			return false;
 		if (startOfReferenceWindow == null) {
 			if (other.startOfReferenceWindow != null)
 				return false;
@@ -238,10 +232,9 @@ public abstract class Rule {
 
 	@Override
 	public String toString() {
-		return "Rule [forecastScalar=" + forecastScalar + ", standardDeviationAdjustedValue="
-				+ standardDeviationAdjustedValue + ", weight=" + weight + ", variations=" + Arrays.toString(variations)
-				+ ", startOfReferenceWindow=" + startOfReferenceWindow + ", endOfReferenceWindow="
-				+ endOfReferenceWindow + ", baseValue=" + baseValue + "]";
+		return "Rule [forecastScalar=" + forecastScalar + ", weight=" + weight + ", variations="
+				+ Arrays.toString(variations) + ", startOfReferenceWindow=" + startOfReferenceWindow
+				+ ", endOfReferenceWindow=" + endOfReferenceWindow + ", baseValue=" + baseValue + "]";
 	}
 
 	/**
@@ -284,25 +277,6 @@ public abstract class Rule {
 	 */
 	void setForecastScalar(double forecastScalar) {
 		this.forecastScalar = forecastScalar;
-	}
-
-	/**
-	 * Get the standard deviation adjusted value for this rule
-	 * 
-	 * @return {@code double} the standard deviation adjusted value for this rule
-	 */
-	public double getStandardDeviationAdjustedValue() {
-		return standardDeviationAdjustedValue;
-	}
-
-	/**
-	 * Set the standard deviation adjusted value for this rule
-	 * 
-	 * @param standardDeviationAdjustedValue {@code double} the standard deviation
-	 *                                       adjusted value to be set for this rule
-	 */
-	void setStandardDeviationAdjustedValue(double standardDeviationAdjustedValue) {
-		this.standardDeviationAdjustedValue = standardDeviationAdjustedValue;
 	}
 
 	/**

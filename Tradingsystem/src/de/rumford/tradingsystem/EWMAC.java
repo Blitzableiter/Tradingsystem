@@ -16,11 +16,26 @@ public class EWMAC extends Rule {
 
 	public EWMAC(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
 			LocalDateTime endOfReferenceWindow, int longHorizon, int shortHorizon) {
+
 		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow);
+
+		// TODO Validate longHorizon and shortHorizon
 		EWMA longHorizonEwma = new EWMA(longHorizon);
 		EWMA shortHorizonEwma = new EWMA(shortHorizon);
 		this.setLongHorizonEwma(longHorizonEwma);
 		this.setShortHorizonEwma(shortHorizonEwma);
+	}
+
+	@Override
+	double calculateRawForecast() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	ValueDateTupel[] calculateForecasts(LocalDateTime calculateFrom, LocalDateTime calculateTo) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**
@@ -76,19 +91,6 @@ public class EWMAC extends Rule {
 	 */
 	public void setShortHorizonEwma(EWMA shortHorizonEwma) {
 		this.shortHorizonEwma = shortHorizonEwma;
-	}
-
-	@Override
-	protected double calculateRawForecast() {
-
-		return 0;
-	}
-
-	@Override
-	protected ValueDateTupel[] calculateForecasts(LocalDateTime startOfReferenceWindow,
-			LocalDateTime endOfReferenceWindow) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

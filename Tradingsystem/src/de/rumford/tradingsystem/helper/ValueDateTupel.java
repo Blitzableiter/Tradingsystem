@@ -59,31 +59,6 @@ public class ValueDateTupel {
 	}
 
 	/**
-	 * Append a {@link ValueDateTupel} to an array of {@link ValueDateTupel}.
-	 * 
-	 * @param valueDateTupels {@link ValueDateTupel[]} Array of
-	 *                        {@link ValueDateTupel} an element should be appended
-	 *                        to.
-	 * @param newElement      {@link ValueDateTupel} to be appended to the given
-	 *                        array.
-	 * @return {@link ValueDateTupel[]) Passed array with the passed Element in the
-	 *         last index. @deprecated Use
-	 *         {@link org.apache.commons.lang3.ArrayUtils#add(Object[], Object)}
-	 *         instead
-	 * @deprecated
-	 */
-	public static ValueDateTupel[] appendElement(ValueDateTupel[] valueDateTupels, ValueDateTupel newElement) {
-		ValueDateTupel[] returnValueDateTupels = new ValueDateTupel[valueDateTupels.length + 1];
-
-		for (int i = 0; i < valueDateTupels.length; i++)
-			returnValueDateTupels[i] = valueDateTupels[i];
-
-		returnValueDateTupels[returnValueDateTupels.length - 1] = newElement;
-
-		return returnValueDateTupels;
-	}
-
-	/**
 	 * Evaluate if the given {@link ValueDateTupel[]} is sorted in ascending order,
 	 * i.e., if the value at position 0 has the lowest {@link LocalDateTime} value
 	 * (implicit check) and all subsequent {@link ValueDateTupel} each have a
@@ -379,13 +354,13 @@ public class ValueDateTupel {
 	 * {@link ValueDateTupel}. Will only find exact matches.
 	 * 
 	 * @param valueDateTupels {@code ValueDateTupel[]} Array to be searched in.
-	 * @param valueDateTupel  {@link ValueDateTupel} Value to be searched for.
+	 * @param vdtToBeFound  {@link ValueDateTupel} Value to be searched for.
 	 * @return {@code boolean} True, if the given value can be found in the given
 	 *         array, false otherwise.
 	 */
-	public static boolean contains(ValueDateTupel[] valueDateTupels, ValueDateTupel valueDateTupel) {
+	public static boolean contains(ValueDateTupel[] valueDateTupels, ValueDateTupel vdtToBeFound) {
 		List<ValueDateTupel> list = new ArrayList<>(Arrays.asList(valueDateTupels));
-		return list.contains(valueDateTupel);
+		return list.contains(vdtToBeFound);
 	}
 
 	/**
@@ -393,7 +368,7 @@ public class ValueDateTupel {
 	 * {@link LocalDateTime}.
 	 * 
 	 * @param valueDateTupels {@code ValueDateTupel[]} Array to be searched in.
-	 * @param dateTime        {@link LocalDateTime} Value to be searched for.
+	 * @param dateTimeToBeFound        {@link LocalDateTime} Value to be searched for.
 	 * @return {@code boolean} True, if the given value can be found inside the
 	 *         given array, false otherwise.
 	 * @throws IllegalArgumentException If the given array of {@link ValueDateTupel}
@@ -401,16 +376,16 @@ public class ValueDateTupel {
 	 * @throws IllegalArgumentException If the given {@link LocalDateTime} is null.
 	 * 
 	 */
-	public static boolean containsDate(ValueDateTupel[] valueDateTupels, LocalDateTime dateTime)
+	public static boolean containsDate(ValueDateTupel[] valueDateTupels, LocalDateTime dateTimeToBeFound)
 			throws IllegalArgumentException {
 		if (valueDateTupels == null)
 			throw new IllegalArgumentException("Given array cannot be null");
-		if (dateTime == null)
+		if (dateTimeToBeFound == null)
 			throw new IllegalArgumentException("Given LocalDateTime cannot be null");
 		/* Load all values from the given array into an ArrayList. */
 		List<LocalDateTime> list = new ArrayList<>(Arrays.asList(ValueDateTupel.getDates(valueDateTupels)));
 		/* Utilize the generic contains method on ArrayList. */
-		return list.contains(dateTime);
+		return list.contains(dateTimeToBeFound);
 	}
 
 	/**
@@ -419,7 +394,7 @@ public class ValueDateTupel {
 	 * extended with the given single value.
 	 * 
 	 * @param valueDateTupels         {@code ValueDateTupel[]} Array to be extended.
-	 * @param valueDateTupelToBeAdded {@link ValueDateTupel} Value to be added.
+	 * @param vdtToBeAdded {@link ValueDateTupel} Value to be added.
 	 * @param position                {@code int} Position the given value shall be
 	 *                                put into.
 	 * @return {@code ValueDateTupel[]} The extended array.
@@ -429,11 +404,11 @@ public class ValueDateTupel {
 	 * @throws IllegalArgumentException If the given position is > the length of the
 	 *                                  given array.
 	 */
-	public static ValueDateTupel[] addOneAt(ValueDateTupel[] valueDateTupels, ValueDateTupel valueDateTupelToBeAdded,
+	public static ValueDateTupel[] addOneAt(ValueDateTupel[] valueDateTupels, ValueDateTupel vdtToBeAdded,
 			int position) throws IllegalArgumentException {
 		if (valueDateTupels == null)
 			throw new IllegalArgumentException("Given array of ValueDateTupel must not be null");
-		if (valueDateTupelToBeAdded == null)
+		if (vdtToBeAdded == null)
 			throw new IllegalArgumentException("Given valueDateTupelToBeAdded must not be null");
 		if (position < 0)
 			throw new IllegalArgumentException("Cannot not add a value at position < 0. Given position is " + position);
@@ -445,14 +420,14 @@ public class ValueDateTupel {
 
 		/* Add new ValueDateTupel at the beginning of the given array. */
 		if (position == 0) {
-			extendedArray[position] = valueDateTupelToBeAdded;
+			extendedArray[position] = vdtToBeAdded;
 			System.arraycopy(valueDateTupels, 0, extendedArray, 1, valueDateTupels.length);
 			return extendedArray;
 		}
 		/* Add new ValueDateTupel at the end of the given array. */
 		if (position == valueDateTupels.length) {
 			System.arraycopy(valueDateTupels, 0, extendedArray, 0, valueDateTupels.length);
-			extendedArray[position] = valueDateTupelToBeAdded;
+			extendedArray[position] = vdtToBeAdded;
 			return extendedArray;
 		}
 		/*
@@ -462,7 +437,7 @@ public class ValueDateTupel {
 		/* Add all values prior to the new ValueDateTupel */
 		System.arraycopy(valueDateTupels, 0, extendedArray, 0, position);
 		/* Add new ValueDateTupel at the given position. */
-		extendedArray[position] = valueDateTupelToBeAdded;
+		extendedArray[position] = vdtToBeAdded;
 		/* Add all values subsequent to the new ValueDateTupel */
 		System.arraycopy(valueDateTupels, position, extendedArray, position + 1, valueDateTupels.length - position);
 		return extendedArray;
@@ -471,17 +446,17 @@ public class ValueDateTupel {
 	/**
 	 * Get all values from an array of {@link ValueDateTupel[]}.
 	 * 
-	 * @param tupels {@link ValueDateTupel[]} An array of {@link ValueDateTupel}}.
+	 * @param valueDateTupels {@link ValueDateTupel[]} An array of {@link ValueDateTupel}}.
 	 * @return {@code double[]} An array of values of the given
 	 *         {@link ValueDateTupel[]}. Returns an empty array if the given array
 	 *         is empty.
 	 * @throws IllegalArgumentException if the given array is null.
 	 */
-	public static double[] getValues(ValueDateTupel[] tupels) throws IllegalArgumentException {
-		if (tupels == null)
+	public static double[] getValues(ValueDateTupel[] valueDateTupels) throws IllegalArgumentException {
+		if (valueDateTupels == null)
 			throw new IllegalArgumentException("Given array must not be null");
 		double[] values = {};
-		for (ValueDateTupel tupel : tupels)
+		for (ValueDateTupel tupel : valueDateTupels)
 			values = ArrayUtils.add(values, tupel.getValue());
 		return values;
 	}
@@ -489,17 +464,17 @@ public class ValueDateTupel {
 	/**
 	 * Get all {@link LocalDateTime} from an array of {@link ValueDateTupel[]}.
 	 * 
-	 * @param tupels {@link ValueDateTupel[]} An array of {@link ValueDateTupel}}.
+	 * @param valueDateTupels {@link ValueDateTupel[]} An array of {@link ValueDateTupel}}.
 	 * @return {@code LocalDateTime[]} An array of {@link LocalDateTime} of the
 	 *         given {@link ValueDateTupel[]}. Returns an empty array if the given
 	 *         array is empty.
 	 * @throws IllegalArgumentException if the given array is null.
 	 */
-	public static LocalDateTime[] getDates(ValueDateTupel[] tupels) throws IllegalArgumentException {
-		if (tupels == null)
+	public static LocalDateTime[] getDates(ValueDateTupel[] valueDateTupels) throws IllegalArgumentException {
+		if (valueDateTupels == null)
 			throw new IllegalArgumentException("Given array must not be null");
 		LocalDateTime[] values = {};
-		for (ValueDateTupel tupel : tupels)
+		for (ValueDateTupel tupel : valueDateTupels)
 			values = ArrayUtils.add(values, tupel.getDate());
 		return values;
 	}

@@ -83,10 +83,22 @@ public class VolatilityDifference extends Rule {
 		 * Calculate the average volatility for the base value over all available
 		 * volatility index values
 		 */
-		this.calculateAverageVolatility(startOfReferenceWindow, endOfReferenceWindow);
+		this.setAverageVolatility(this.calculateAverageVolatility(startOfReferenceWindow, endOfReferenceWindow));
 	}
 
-	public double calculateRawForecast(double currentVolatilty) {
+	@Override
+	double calculateRawForecast() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	ValueDateTupel[] calculateForecasts(LocalDateTime calculateFrom, LocalDateTime calculateTo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private double calculateRawForecast(double currentVolatilty) {
 		return this.getAverageVolatility() - currentVolatilty;
 	}
 
@@ -163,7 +175,8 @@ public class VolatilityDifference extends Rule {
 	 * 
 	 * @param averageVolatility {@code double} The average volatility} to be set
 	 */
-	private void calculateAverageVolatility(LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow) {
+	private double calculateAverageVolatility(LocalDateTime startOfReferenceWindow,
+			LocalDateTime endOfReferenceWindow) {
 		/* Get all volatility index values */
 		ValueDateTupel[] allVolatilityIndices = this.getVolatilityIndices();
 
@@ -173,8 +186,7 @@ public class VolatilityDifference extends Rule {
 		 * the average volatility is set to be Double.NaN
 		 */
 		if (allVolatilityIndices[allVolatilityIndices.length - 1].getValue() == Double.NaN) {
-			this.averageVolatility = Double.NaN;
-			return;
+			return Double.NaN;
 		}
 
 		int startIndex = 0;
@@ -222,7 +234,7 @@ public class VolatilityDifference extends Rule {
 			stats.accept(volatilityIndex.getValue());
 
 		/* Put average value of relevant values into class variable */
-		this.averageVolatility = stats.getAverage();
+		return stats.getAverage();
 	}
 
 	/**
@@ -302,6 +314,16 @@ public class VolatilityDifference extends Rule {
 	}
 
 	/**
+	 * Set the average volatility for this {@link VolatilityDifference}.
+	 * 
+	 * @param averageVolatility {@code double} The average volatility to be set for
+	 *                          this {@link VolatilityDifference}
+	 */
+	private void setAverageVolatility(double averageVolatility) {
+		this.averageVolatility = averageVolatility;
+	}
+
+	/**
 	 * Get the lookbackWindow for this {@link VolatilityDifference}.
 	 * 
 	 * @return {@code int} The lookback window for this {@link VolatilityDifference}
@@ -318,19 +340,6 @@ public class VolatilityDifference extends Rule {
 	 */
 	private void setLookbackWindow(int lookbackWindow) {
 		this.lookbackWindow = lookbackWindow;
-	}
-
-	@Override
-	protected double calculateRawForecast() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	protected ValueDateTupel[] calculateForecasts(LocalDateTime startOfReferenceWindow,
-			LocalDateTime endOfReferenceWindow) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
