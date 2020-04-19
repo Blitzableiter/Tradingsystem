@@ -250,24 +250,6 @@ public class BaseValue {
 	}
 
 	/**
-	 * Check if the {@link BaseValue} instance contains the given
-	 * {@link LocalDateTime} in its values. Returns the containing
-	 * {@link ValueDateTupel} if so, returns {@code null} otherwise.
-	 * 
-	 * @param valueToCheck {@link LocalDateTime} Value to be found inside the
-	 *                     {@link BaseValue} values.
-	 * @return {@link ValueDateTupel} containing the given {@link LocalDateTime}.
-	 *         {@code null} if the given {@link LocalDateTime} cannot be found.
-	 */
-	public ValueDateTupel getValue(LocalDateTime valueToCheck) {
-		for (ValueDateTupel baseValue : this.getValues()) {
-			if (baseValue.getDate().equals(valueToCheck))
-				return baseValue;
-		}
-		return null;
-	}
-
-	/**
 	 * ======================================================================
 	 * OVERRIDES
 	 * ======================================================================
@@ -417,5 +399,4 @@ public class BaseValue {
 	private void setShortIndexValues(ValueDateTupel[] shortIndexValues) {
 		this.shortIndexValues = shortIndexValues;
 	}
-
 }

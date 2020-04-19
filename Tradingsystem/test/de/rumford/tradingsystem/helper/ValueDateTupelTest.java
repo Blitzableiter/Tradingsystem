@@ -2,9 +2,7 @@ package de.rumford.tradingsystem.helper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -584,6 +582,32 @@ class ValueDateTupelTest {
 
 		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
 	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#getValue(ValueDateTupel[], LocalDateTime)}.
+	 */
+	@Test
+	void testContainsLocalDateTime_existingLocalDateTime() {
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3, valueDateTupel4 };
+		ValueDateTupel expectedValue = valueDateTupel1;
+
+		ValueDateTupel actualValue = ValueDateTupel.getValue(valueDateTupelArray, date_20200101);
+
+		assertEquals(expectedValue, actualValue, "Value cannot be properly found");
+	}
+
+//	/**
+//	 * Test method for
+//	 * {@link de.rumford.tradingsystem.BaseValue#getValue(LocalDateTime)}.
+//	 */
+//	@Test
+//	void testContainsLocalDateTime_nonexistingLocalDateTime() {
+//		baseValue = new BaseValue(NAME_OF_TEST_BASE_VALUES, values);
+//		ValueDateTupel actualValue = baseValue.getValue(localDateTimeJan05_22_00_00);
+//
+//		assertNull(actualValue, "Returned value falsly not null");
+//	}
 
 	/**
 	 * Test method for

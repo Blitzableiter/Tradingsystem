@@ -11,6 +11,8 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import de.rumford.tradingsystem.BaseValue;
+
 /**
  * @author Max Rumford
  *
@@ -368,7 +370,7 @@ public class ValueDateTupel {
 	 * {@link LocalDateTime}.
 	 * 
 	 * @param valueDateTupels {@code ValueDateTupel[]} Array to be searched in.
-	 * @param dateTimeToBeFound        {@link LocalDateTime} Value to be searched for.
+	 * @param dtToBeFound        {@link LocalDateTime} Value to be searched for.
 	 * @return {@code boolean} True, if the given value can be found inside the
 	 *         given array, false otherwise.
 	 * @throws IllegalArgumentException If the given array of {@link ValueDateTupel}
@@ -376,16 +378,16 @@ public class ValueDateTupel {
 	 * @throws IllegalArgumentException If the given {@link LocalDateTime} is null.
 	 * 
 	 */
-	public static boolean containsDate(ValueDateTupel[] valueDateTupels, LocalDateTime dateTimeToBeFound)
+	public static boolean containsDate(ValueDateTupel[] valueDateTupels, LocalDateTime dtToBeFound)
 			throws IllegalArgumentException {
 		if (valueDateTupels == null)
 			throw new IllegalArgumentException("Given array cannot be null");
-		if (dateTimeToBeFound == null)
+		if (dtToBeFound == null)
 			throw new IllegalArgumentException("Given LocalDateTime cannot be null");
 		/* Load all values from the given array into an ArrayList. */
 		List<LocalDateTime> list = new ArrayList<>(Arrays.asList(ValueDateTupel.getDates(valueDateTupels)));
 		/* Utilize the generic contains method on ArrayList. */
-		return list.contains(dateTimeToBeFound);
+		return list.contains(dtToBeFound);
 	}
 
 	/**
@@ -443,6 +445,24 @@ public class ValueDateTupel {
 		return extendedArray;
 	}
 
+	/**
+	 * Check if the {@link BaseValue} instance contains the given
+	 * {@link LocalDateTime} in its values. Returns the containing
+	 * {@link ValueDateTupel} if so, returns {@code null} otherwise.
+	 * 
+	 * @param dtToBeFound {@link LocalDateTime} Value to be found inside the
+	 *                     {@link BaseValue} values.
+	 * @return {@link ValueDateTupel} containing the given {@link LocalDateTime}.
+	 *         {@code null} if the given {@link LocalDateTime} cannot be found.
+	 */
+	public static ValueDateTupel getValue(ValueDateTupel[] valueDateTupels, LocalDateTime dtToBeFound) {
+		for (ValueDateTupel value : valueDateTupels) {
+			if (value.getDate().equals(dtToBeFound))
+				return value;
+		}
+		return null;
+	}
+	
 	/**
 	 * Get all values from an array of {@link ValueDateTupel[]}.
 	 * 

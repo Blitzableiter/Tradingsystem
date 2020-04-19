@@ -224,32 +224,6 @@ class BaseValueTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.BaseValue#getValue(LocalDateTime)}.
-	 */
-	@Test
-	void testContainsLocalDateTime_existingLocalDateTime() {
-		baseValue = new BaseValue(NAME_OF_TEST_BASE_VALUES, values);
-		ValueDateTupel expectedValue = valuedatetupel1;
-
-		ValueDateTupel actualValue = baseValue.getValue(localDateTimeJan01_22_00_00);
-
-		assertEquals(expectedValue, actualValue, "Value cannot be properly found");
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.BaseValue#getValue(LocalDateTime)}.
-	 */
-	@Test
-	void testContainsLocalDateTime_nonexistingLocalDateTime() {
-		baseValue = new BaseValue(NAME_OF_TEST_BASE_VALUES, values);
-		ValueDateTupel actualValue = baseValue.getValue(localDateTimeJan05_22_00_00);
-		
-		assertNull(actualValue, "Returned value falsly not null");
-	}
-
-	/**
-	 * Test method for
 	 * {@link de.rumford.tradingsystem.BaseValue#calculateShortIndexValues(ValueDateTupel[])}.
 	 */
 	@Test

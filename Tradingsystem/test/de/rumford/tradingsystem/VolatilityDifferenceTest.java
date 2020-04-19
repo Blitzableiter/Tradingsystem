@@ -241,31 +241,31 @@ class VolatilityDifferenceTest {
 		assertEquals(expectedValue, actualValue, "The average volatilty is not correctly calculated");
 	}
 
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#calculateRawForecast(double)}.
-	 */
-	@Test
-	void testCalculateRawForecast() {
-		double currentVolatility = 100d;
-		StandardDeviation sd = new StandardDeviation();
-		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();
-
-		double[] sdValues1 = { 200d, 400d };
-		double volatilityValue1 = sd.evaluate(sdValues1); /* ~ 141.42136 */
-		stats.accept(volatilityValue1);
-
-		double[] sdValues2 = { 400d, 500d };
-		double volatilityValue2 = sd.evaluate(sdValues2); /* ~ 70.71068 */
-		stats.accept(volatilityValue2);
-
-		double expectedValue = stats.getAverage() - currentVolatility; /* ~ 6.066017 */
-
-		VolatilityDifference volDif = new VolatilityDifference(baseValue, null, localDateTime2020Jan02_22_00_00,
-				localDateTime2020Jan03_22_00_00, lookbackWindow);
-		double actualValue = volDif.calculateRawForecast(currentVolatility);
-
-		assertEquals(expectedValue, actualValue, "Raw Forecast is not correctly calculated");
-	}
+//	/**
+//	 * Test method for
+//	 * {@link de.rumford.tradingsystem.VolatilityDifference#calculateRawForecast(double)}.
+//	 */
+//	@Test
+//	void testCalculateRawForecast() {
+//		double currentVolatility = 100d;
+//		StandardDeviation sd = new StandardDeviation();
+//		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();
+//
+//		double[] sdValues1 = { 200d, 400d };
+//		double volatilityValue1 = sd.evaluate(sdValues1); /* ~ 141.42136 */
+//		stats.accept(volatilityValue1);
+//
+//		double[] sdValues2 = { 400d, 500d };
+//		double volatilityValue2 = sd.evaluate(sdValues2); /* ~ 70.71068 */
+//		stats.accept(volatilityValue2);
+//
+//		double expectedValue = stats.getAverage() - currentVolatility; /* ~ 6.066017 */
+//
+//		VolatilityDifference volDif = new VolatilityDifference(baseValue, null, localDateTime2020Jan02_22_00_00,
+//				localDateTime2020Jan03_22_00_00, lookbackWindow);
+//		double actualValue = volDif.calculateRawForecast(currentVolatility);
+//
+//		assertEquals(expectedValue, actualValue, "Raw Forecast is not correctly calculated");
+//	}
 
 }
