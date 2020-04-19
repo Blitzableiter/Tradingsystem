@@ -42,8 +42,8 @@ public class VolatilityDifference extends Rule {
 	 *                               {@code startOfReferenceWindow}.
 	 */
 	public VolatilityDifference(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
-			LocalDateTime endOfReferenceWindow, int lookbackWindow) throws IllegalArgumentException {
-		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow);
+			LocalDateTime endOfReferenceWindow, int lookbackWindow, int baseScale) throws IllegalArgumentException {
+		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
 		/* Check if base value fulfills requirements. */
 		if (baseValue == null)
 			throw new IllegalArgumentException("Base value must not be null");

@@ -15,9 +15,9 @@ public class EWMAC extends Rule {
 	private EWMA shortHorizonEwma;
 
 	public EWMAC(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
-			LocalDateTime endOfReferenceWindow, int longHorizon, int shortHorizon) {
+			LocalDateTime endOfReferenceWindow, int longHorizon, int shortHorizon, int baseScale) {
 
-		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow);
+		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
 
 		// TODO Validate longHorizon and shortHorizon
 		EWMA longHorizonEwma = new EWMA(longHorizon);

@@ -27,6 +27,7 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
 class VolatilityDifferenceTest {
 
 	final static String BASE_VALUE_NAME = "Base Value";
+	final static int BASE_SCALE = 10;
 
 	BaseValue baseValue;
 	int lookbackWindow;
@@ -72,9 +73,9 @@ class VolatilityDifferenceTest {
 	@Test
 	void testVolatilityDifference() {
 		volatilityDifference = new VolatilityDifference(baseValue, null, localDateTime2020Jan02_22_00_00,
-				localDateTime2020Jan04_22_00_00, lookbackWindow);
+				localDateTime2020Jan04_22_00_00, lookbackWindow, BASE_SCALE);
 		volatilityDifference2 = new VolatilityDifference(baseValue, null, localDateTime2020Jan02_22_00_00,
-				localDateTime2020Jan04_22_00_00, lookbackWindow);
+				localDateTime2020Jan04_22_00_00, lookbackWindow, BASE_SCALE);
 
 		assertEquals(volatilityDifference, volatilityDifference2,
 				"Two identical instances are not considered identical");
@@ -91,7 +92,7 @@ class VolatilityDifferenceTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new VolatilityDifference(nullBaseValue, null, localDateTime2020Jan02_22_00_00,
-						localDateTime2020Jan04_22_00_00, lookbackWindow),
+						localDateTime2020Jan04_22_00_00, lookbackWindow, BASE_SCALE),
 				"Base value of null is not correctly handled");
 		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
 	}
@@ -107,7 +108,7 @@ class VolatilityDifferenceTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02_22_00_00,
-						localDateTime2020Jan04_22_00_00, lookbackWindowOne),
+						localDateTime2020Jan04_22_00_00, lookbackWindowOne, BASE_SCALE),
 				"Lookback window <= 1 is not correctly handled");
 		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
 	}
@@ -120,8 +121,9 @@ class VolatilityDifferenceTest {
 	void testVolatilityDifference_startOfReferenceWindow_null() {
 		String expectedMessage = "Start of reference window value must not be null";
 
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, null, localDateTime2020Jan04_22_00_00, lookbackWindow),
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> new VolatilityDifference(baseValue, null, null,
+						localDateTime2020Jan04_22_00_00, lookbackWindow, BASE_SCALE),
 				"startOfReferenceWindow of null is not correctly handled");
 		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
 	}
@@ -134,8 +136,9 @@ class VolatilityDifferenceTest {
 	void testVolatilityDifference_endOfReferenceWindow_null() {
 		String expectedMessage = "End of reference window value must not be null";
 
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02_22_00_00, null, lookbackWindow),
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> new VolatilityDifference(baseValue, null,
+						localDateTime2020Jan02_22_00_00, null, lookbackWindow, BASE_SCALE),
 				"endOfReferenceWindow of null is not correctly handled");
 		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
 	}
@@ -150,7 +153,7 @@ class VolatilityDifferenceTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan04_22_00_00,
-						localDateTime2020Jan02_22_00_00, lookbackWindow),
+						localDateTime2020Jan02_22_00_00, lookbackWindow, BASE_SCALE),
 				"endOfReferenceWindow before startOfReferenceWindow is not correctly handled");
 		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
 	}
@@ -165,10 +168,17 @@ class VolatilityDifferenceTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new VolatilityDifference(baseValue, null, localDateTime2019Dec31_22_00_00,
-						localDateTime2020Jan04_22_00_00, lookbackWindow),
+						localDateTime2020Jan04_22_00_00, lookbackWindow, BASE_SCALE),
 				"Not included startOfReferenceWindow is not correctly handled");
 		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
 	}
+
+	// TODO TEST BREAKS
+	// TODO TEST BREAKS
+	// TODO TEST BREAKS
+	// TODO TEST BREAKS
+	// TODO TEST BREAKS
+	// TODO TEST BREAKS
 
 	/**
 	 * Test method for
@@ -180,7 +190,7 @@ class VolatilityDifferenceTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02_22_00_00,
-						localDateTime2020Jan05_22_00_00, lookbackWindow),
+						localDateTime2020Jan05_22_00_00, lookbackWindow, BASE_SCALE),
 				"Not included endOfReferenceWindow is not correctly handled");
 		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
 	}
@@ -209,7 +219,7 @@ class VolatilityDifferenceTest {
 		expectedValues = ArrayUtils.add(expectedValues, volatilityIndex4);
 
 		volatilityDifference = new VolatilityDifference(baseValue, null, localDateTime2020Jan02_22_00_00,
-				localDateTime2020Jan04_22_00_00, lookbackWindow);
+				localDateTime2020Jan04_22_00_00, lookbackWindow, BASE_SCALE);
 		ValueDateTupel[] actualValues = volatilityDifference.getVolatilityIndices();
 
 		assertArrayEquals(expectedValues, actualValues, "Volatility index values are not properly calculated");
@@ -235,7 +245,7 @@ class VolatilityDifferenceTest {
 		double expectedValue = stats.getAverage(); /* ~ 106.066017 */
 
 		VolatilityDifference volDif = new VolatilityDifference(baseValue, null, localDateTime2020Jan02_22_00_00,
-				localDateTime2020Jan03_22_00_00, lookbackWindow);
+				localDateTime2020Jan03_22_00_00, lookbackWindow, BASE_SCALE);
 		double actualValue = volDif.getAverageVolatility();
 
 		assertEquals(expectedValue, actualValue, "The average volatilty is not correctly calculated");
@@ -262,7 +272,7 @@ class VolatilityDifferenceTest {
 //		double expectedValue = stats.getAverage() - currentVolatility; /* ~ 6.066017 */
 //
 //		VolatilityDifference volDif = new VolatilityDifference(baseValue, null, localDateTime2020Jan02_22_00_00,
-//				localDateTime2020Jan03_22_00_00, lookbackWindow);
+//				localDateTime2020Jan03_22_00_00, lookbackWindow, BASE_SCALE);
 //		double actualValue = volDif.calculateRawForecast(currentVolatility);
 //
 //		assertEquals(expectedValue, actualValue, "Raw Forecast is not correctly calculated");

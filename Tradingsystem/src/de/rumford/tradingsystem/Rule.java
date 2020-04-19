@@ -34,19 +34,61 @@ public abstract class Rule {
 	 * @param variations {@link Rule[]} or {@code null}
 	 */
 	public Rule(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
-			LocalDateTime endOfReferenceWindow) {
+			LocalDateTime endOfReferenceWindow, int baseScale) {
 		this.setBaseValue(baseValue);
-		this.setVariations(variations);
+		this.validateSetAndWeighVariations(variations);
 		this.setStartOfReferenceWindow(startOfReferenceWindow);
 		this.setEndOfReferenceWindow(endOfReferenceWindow);
-		if (variations != null)
-			this.weighVariations();
+		this.calculateAndSetForecastScalar(baseScale);
 	}
 
 	abstract double calculateRawForecast();
 
-	abstract ValueDateTupel[] calculateForecasts(LocalDateTime calculateFrom,
-			LocalDateTime calculateTo);
+	abstract ValueDateTupel[] calculateForecasts(LocalDateTime calculateFrom, LocalDateTime calculateTo);
+
+	// TODO COMMENT ME
+	private void calculateAndSetForecastScalar(int baseScale) {
+		ValueDateTupel[] forecasts = this.calculateForecasts(this.getStartOfReferenceWindow(),
+				this.getEndOfReferenceWindow());
+
+		double forecastScalar = Util.calculateForecastScalar(ValueDateTupel.getValues(forecasts), baseScale);
+		if (Double.isNaN(forecastScalar))
+			this.setForecastScalar(0);
+
+		this.setForecastScalar(forecastScalar);
+	}
+
+	/**
+	 * Checks the given variations. If the given variations is null, null will be
+	 * set. If there are more than 3 variations given an Exception will be thrown.
+	 * 
+	 * If there are null values in the given variations array an Exception will be
+	 * thrown.
+	 * 
+	 * If there are 3 or less variations, they will be weighed utilizing
+	 * {@link #weighVariations()}.
+	 * 
+	 * @param variations {@code Rule[]} The Variations to be checked, set and
+	 *                   weighed.
+	 * @throws IllegalArgumentException if the given array is not null and contains
+	 *                                  more than 3 elements.
+	 * @throws IllegalArgumentException if the given array contains null.
+	 */
+	private void validateSetAndWeighVariations(Rule[] variations) throws IllegalArgumentException {
+		if (variations != null && variations.length > 3)
+			throw new IllegalArgumentException("Each layer must not contain more than 3 rules/variations");
+		this.setVariations(variations);
+		if (variations != null) {
+			for (int i = 0; i < variations.length; i++) {
+				if (variations[i] == null)
+					throw new IllegalArgumentException(
+							"The variation at position " + i + " in the given variations array is null.");
+			}
+
+			/* Only if there are no null variations they can be weighed. */
+			this.weighVariations();
+		}
+	}
 
 	final private void weighVariations() throws IllegalArgumentException {
 		Rule[] variations = this.getVariations();
@@ -181,6 +223,11 @@ public abstract class Rule {
 		return averageCorrelations;
 	}
 
+	/**
+	 * ======================================================================
+	 * OVERRIDES
+	 * ======================================================================
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -307,11 +354,7 @@ public abstract class Rule {
 	/**
 	 * @param variations the variations to set
 	 */
-	void setVariations(Rule[] variations) throws IllegalArgumentException {
-		if (variations == null)
-			return;
-		if (variations.length > 3)
-			throw new IllegalArgumentException("Each layer must not contain more than 3 rules/variations");
+	private void setVariations(Rule[] variations) {
 		this.variations = variations;
 	}
 

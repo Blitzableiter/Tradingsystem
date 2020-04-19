@@ -61,13 +61,18 @@ public final class Util {
 	 * @param values    {@code double[]} values to be scaled by the forecast scalar
 	 * @param baseScale {@code double} base scale for scaling of the forecast scalar
 	 * @return {@code double} forecast scalar to scale the given values to fit the
-	 *         given scalar base
+	 *         given scalar base. Returns Double.NaN if the average of absolute
+	 *         values is 0
 	 * @throws IllegalArgumentException if the average of the absolutes of the given
 	 *                                  values is zero
+	 * @throws IllegalArgumentException if the given baseScale is zero
 	 */
 	public static double calculateForecastScalar(double[] values, double baseScale) throws IllegalArgumentException {
 		if (values.length == 0)
 			throw new IllegalArgumentException("Given array of values must not be empty");
+
+		if (baseScale == 0)
+			throw new IllegalArgumentException("Base scale must not be 0.");
 
 		/* helper array */
 		double[] absoluteValues = new double[values.length];
@@ -85,7 +90,7 @@ public final class Util {
 		double averageOfAbsolutes = stats.getAverage();
 
 		if (averageOfAbsolutes == 0)
-			throw new IllegalArgumentException("Average of absolutes must not be zero");
+			return Double.NaN;
 
 		return baseScale / averageOfAbsolutes;
 	}
