@@ -28,32 +28,160 @@ public abstract class Rule {
 	private LocalDateTime startOfReferenceWindow;
 	private LocalDateTime endOfReferenceWindow;
 	private BaseValue baseValue;
+	private double baseScale;
+	private ValueDateTupel[] forecasts;
 
 	/**
 	 * 
 	 * @param variations {@link Rule[]} or {@code null}
 	 */
 	public Rule(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
-			LocalDateTime endOfReferenceWindow, int baseScale) {
+			LocalDateTime endOfReferenceWindow, double baseScale) {
 		this.setBaseValue(baseValue);
 		this.validateSetAndWeighVariations(variations);
 		this.setStartOfReferenceWindow(startOfReferenceWindow);
 		this.setEndOfReferenceWindow(endOfReferenceWindow);
-		this.calculateAndSetForecastScalar(baseScale);
+		this.setBaseScale(baseScale);
+
+		this.calculateAndSetForecastScalar(this.getBaseScale());
 	}
 
-	abstract double calculateRawForecast();
+	abstract double calculateRawForecast(LocalDateTime forecastDateTime);
 
-	abstract ValueDateTupel[] calculateForecasts(LocalDateTime calculateFrom, LocalDateTime calculateTo);
+	/**
+	 * Calculate the scaled forecasts
+	 * 
+	 * @param calculateFrom
+	 * @param calculateTo
+	 * @return
+	 */
+	final ValueDateTupel[] calculateForecasts(LocalDateTime calculateFrom, LocalDateTime calculateTo) {
+		ValueDateTupel[] forecasts = {};
+
+		Rule[] variations = this.getVariations();
+		/*
+		 * If a rule has variations only their forecasts matter. This rules forecasts
+		 * are the set to equal the forecasts of its varations.
+		 */
+		if (variations != null) {
+			ValueDateTupel[][] variationsForecasts = {};
+			double[] weights = {};
+
+			/* Extract forecasts and weights of all variations. */
+			for (Rule variation : variations) {
+				variationsForecasts = ArrayUtils.add(variationsForecasts,
+						variation.calculateForecasts(calculateFrom, calculateTo));
+				weights = ArrayUtils.add(weights, variation.getWeight());
+			}
+
+			/* Loop over all variations */
+			for (int varIndex = 0; varIndex < variationsForecasts.length; varIndex++) {
+
+				/* Loop over all forecasts for each variation. */
+				for (int i = 0; i < variationsForecasts[varIndex].length; i++) {
+					/*
+					 * Add the weighted forecast of each variation for each LocalDateTime to the
+					 * forecast for each LocalDateTime for this rule.
+					 */
+					forecasts[i].setValue(
+							forecasts[i].getValue() + variationsForecasts[varIndex][i].getValue() * weights[varIndex]);
+				}
+			}
+
+			return forecasts;
+
+		}
+		LocalDateTime[] relevantDates = ValueDateTupel
+				.getDates(ValueDateTupel.getElements(this.getBaseValue().getValues(), calculateFrom, calculateTo));
+		for (LocalDateTime dt : relevantDates)
+			forecasts = ArrayUtils.add(forecasts, new ValueDateTupel(dt, this.calculateScaledForecast(dt)));
+
+		return forecasts;
+	}
+
+	/**
+	 * Calculates the standard deviation adjusted Forecast for a given
+	 * LocalDateTime.
+	 * 
+	 * @param forecastDateTime {@link LocalDateTime} The LocalDateTime the forecast
+	 *                         is to be calculated of.
+	 * @return {@code double} The standard deviation adjusted value. Double.NaN if
+	 *         the standard deviation at the given LocalDateTime is zero.
+	 */
+	// TODO SANITIZE INPUTS
+	private double calculateSdAdjustedForecast(LocalDateTime forecastDateTime) {
+		if (this.getVariations() != null) {
+			return Double.NaN;
+		}
+
+		double rawForecast = this.calculateRawForecast(forecastDateTime);
+		double sdValue = ValueDateTupel.getElement(this.getBaseValue().getStandardDeviationValues(), forecastDateTime)
+				.getValue();
+		try {
+			return Util.adjustForStandardDeviation(rawForecast, sdValue);
+		} catch (IllegalArgumentException e) {
+			return Double.NaN;
+		}
+	}
+
+	/**
+	 * Calculate the scaled forecast for the given LocalDateTime. Cut off forecast
+	 * values if they exceed 2 * base scale positively or -2 * base scale
+	 * negatively.
+	 * 
+	 * @param forecastDateTime {@link LocalDateTime} The LocalDateTime the scaled
+	 *                         forecast is to be calculated for.
+	 * @return {@code double} he scaled forecast value.
+	 */
+	// TODO SANITIZE INPUTS
+	double calculateScaledForecast(LocalDateTime forecastDateTime) {
+		double baseScale = this.getBaseScale();
+		double forecastScalar = this.getForecastScalar();
+
+		final double MAX_FORECAST = baseScale * 2;
+		final double MIN_FORECAST = 0 - MAX_FORECAST;
+
+		double scaledForecast = this.calculateSdAdjustedForecast(forecastDateTime) * forecastScalar;
+
+		if (scaledForecast > MAX_FORECAST)
+			return MAX_FORECAST;
+
+		if (scaledForecast < MIN_FORECAST)
+			return MIN_FORECAST;
+
+		return scaledForecast;
+
+	}
 
 	// TODO COMMENT ME
-	private void calculateAndSetForecastScalar(int baseScale) {
-		ValueDateTupel[] forecasts = this.calculateForecasts(this.getStartOfReferenceWindow(),
-				this.getEndOfReferenceWindow());
+	private void calculateAndSetForecastScalar(double baseScale) {
+		// TODO
+		// TODO
+		/*
+		 * If the rule has variations, use the variations
+		 * calculateForecasts(LocalDateTime, LocalDateTime) method to get the base for
+		 * the forecast scalar.
+		 * 
+		 * If not, use this rules sd adjusted forecast values.
+		 */
+		// TODO
+		// TODO
+		Rule[] variations = this.getVariations();
+		if (variations != null) {
 
-		double forecastScalar = Util.calculateForecastScalar(ValueDateTupel.getValues(forecasts), baseScale);
+		}
+
+		LocalDateTime[] relevantDates = ValueDateTupel.getDates(this.getBaseValue().getValues());
+
+		ValueDateTupel[] sdAdjustedForecasts = {};
+		for (LocalDateTime dt : relevantDates) {
+			sdAdjustedForecasts = ArrayUtils.add(sdAdjustedForecasts,
+					new ValueDateTupel(dt, this.calculateSdAdjustedForecast(dt)));
+		}
+
+		double forecastScalar = Util.calculateForecastScalar(ValueDateTupel.getValues(sdAdjustedForecasts), baseScale);
 		if (Double.isNaN(forecastScalar))
-			this.setForecastScalar(0);
+			forecastScalar = 0;
 
 		this.setForecastScalar(forecastScalar);
 	}
@@ -74,7 +202,7 @@ public abstract class Rule {
 	 *                                  more than 3 elements.
 	 * @throws IllegalArgumentException if the given array contains null.
 	 */
-	private void validateSetAndWeighVariations(Rule[] variations) throws IllegalArgumentException {
+	final private void validateSetAndWeighVariations(Rule[] variations) throws IllegalArgumentException {
 		if (variations != null && variations.length > 3)
 			throw new IllegalArgumentException("Each layer must not contain more than 3 rules/variations");
 		this.setVariations(variations);
@@ -384,6 +512,34 @@ public abstract class Rule {
 	 */
 	void setEndOfReferenceWindow(LocalDateTime endOfReferenceWindow) {
 		this.endOfReferenceWindow = endOfReferenceWindow;
+	}
+
+	/**
+	 * @return baseScale Rule
+	 */
+	public double getBaseScale() {
+		return baseScale;
+	}
+
+	/**
+	 * @param baseScale the baseScale to set
+	 */
+	private void setBaseScale(double baseScale) {
+		this.baseScale = baseScale;
+	}
+
+	/**
+	 * @return forecasts Rule
+	 */
+	public ValueDateTupel[] getForecasts() {
+		return forecasts;
+	}
+
+	/**
+	 * @param forecasts the forecasts to set
+	 */
+	private void setForecasts(ValueDateTupel[] forecasts) {
+		this.forecasts = forecasts;
 	}
 
 }

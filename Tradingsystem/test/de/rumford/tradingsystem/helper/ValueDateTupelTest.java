@@ -585,14 +585,14 @@ class ValueDateTupelTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#getValue(ValueDateTupel[], LocalDateTime)}.
+	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#getElement(ValueDateTupel[], LocalDateTime)}.
 	 */
 	@Test
 	void testContainsLocalDateTime_existingLocalDateTime() {
 		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3, valueDateTupel4 };
 		ValueDateTupel expectedValue = valueDateTupel1;
 
-		ValueDateTupel actualValue = ValueDateTupel.getValue(valueDateTupelArray, date_20200101);
+		ValueDateTupel actualValue = ValueDateTupel.getElement(valueDateTupelArray, date_20200101);
 
 		assertEquals(expectedValue, actualValue, "Value cannot be properly found");
 	}

@@ -16,6 +16,7 @@ class EWMACTest {
 	int longHorizon;
 
 	final String BASE_VALUE_NAME = "Base value name";
+	final int BASE_SCALE = 10;
 
 	static LocalDateTime localDateTimeJan01_22_00_00;
 	static LocalDateTime localDateTimeJan02_22_00_00;
@@ -39,7 +40,7 @@ class EWMACTest {
 		shortHorizon = 2;
 		longHorizon = 8;
 		ewmac = new EWMAC(BaseValue.jan1_jan4_val200_400_500_200_calc_short(BASE_VALUE_NAME), null,
-				localDateTimeJan01_22_00_00, localDateTimeJan04_22_00_00, longHorizon, shortHorizon);
+				localDateTimeJan01_22_00_00, localDateTimeJan04_22_00_00, longHorizon, shortHorizon, BASE_SCALE);
 	}
 
 	@Test

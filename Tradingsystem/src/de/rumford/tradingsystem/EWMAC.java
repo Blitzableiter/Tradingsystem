@@ -15,25 +15,41 @@ public class EWMAC extends Rule {
 	private EWMA shortHorizonEwma;
 
 	public EWMAC(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
-			LocalDateTime endOfReferenceWindow, int longHorizon, int shortHorizon, int baseScale) {
+			LocalDateTime endOfReferenceWindow, int longHorizon, int shortHorizon, double baseScale) {
 
 		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
 
 		// TODO Validate longHorizon and shortHorizon
-		EWMA longHorizonEwma = new EWMA(longHorizon);
-		EWMA shortHorizonEwma = new EWMA(shortHorizon);
+		EWMA longHorizonEwma = new EWMA(this.getBaseValue().getValues(), longHorizon);
+		EWMA shortHorizonEwma = new EWMA(this.getBaseValue().getValues(), shortHorizon);
 		this.setLongHorizonEwma(longHorizonEwma);
 		this.setShortHorizonEwma(shortHorizonEwma);
 	}
 
 	@Override
-	double calculateRawForecast() {
-		// TODO Auto-generated method stub
-		return 0;
+	double calculateRawForecast(LocalDateTime forecastDateTime) {
+		double longHorizonEwmaValue = ValueDateTupel
+				.getElement(this.getLongHorizonEwma().getEwmaValues(), forecastDateTime).getValue();
+		double shortHorizonEwmaValue = ValueDateTupel
+				.getElement(this.getShortHorizonEwma().getEwmaValues(), forecastDateTime).getValue();
+
+		return shortHorizonEwmaValue - longHorizonEwmaValue;
 	}
 
 	@Override
 	ValueDateTupel[] calculateForecasts(LocalDateTime calculateFrom, LocalDateTime calculateTo) {
+		// TODO INPUT SANITIZATION
+		ValueDateTupel[] relevantLongHorizonEwmaValues = ValueDateTupel
+				.getElements(this.getLongHorizonEwma().getEwmaValues(), calculateFrom, calculateTo);
+		ValueDateTupel[] relevantShortHorizonEwmaValues = ValueDateTupel
+				.getElements(this.getShortHorizonEwma().getEwmaValues(), calculateFrom, calculateTo);
+
+		ValueDateTupel[] forecasts = {};
+
+		for (int i = 0; i < relevantLongHorizonEwmaValues.length; i++) {
+			double rawForecast = this.calculateRawForecast(relevantShortHorizonEwmaValues[i].getDate());
+		}
+
 		// TODO Auto-generated method stub
 		return null;
 	}

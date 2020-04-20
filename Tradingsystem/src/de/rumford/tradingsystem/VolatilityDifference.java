@@ -42,7 +42,7 @@ public class VolatilityDifference extends Rule {
 	 *                               {@code startOfReferenceWindow}.
 	 */
 	public VolatilityDifference(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
-			LocalDateTime endOfReferenceWindow, int lookbackWindow, int baseScale) throws IllegalArgumentException {
+			LocalDateTime endOfReferenceWindow, int lookbackWindow, double baseScale) throws IllegalArgumentException {
 		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
 		/* Check if base value fulfills requirements. */
 		if (baseValue == null)
@@ -67,9 +67,9 @@ public class VolatilityDifference extends Rule {
 		 * Check if there are values in baseValue with startOfReferenceWindow and
 		 * endOfReferenceWindow date values.
 		 */
-		if (ValueDateTupel.getValue(baseValue.getValues(), startOfReferenceWindow) == null)
+		if (ValueDateTupel.getElement(baseValue.getValues(), startOfReferenceWindow) == null)
 			throw new IllegalArgumentException("Base values do not include given start value for reference window");
-		if (ValueDateTupel.getValue(baseValue.getValues(), endOfReferenceWindow) == null)
+		if (ValueDateTupel.getElement(baseValue.getValues(), endOfReferenceWindow) == null)
 			throw new IllegalArgumentException("Base values do not include given end value for reference window");
 
 		/* Only if all checks are successful begin setting of instance values */
@@ -87,9 +87,9 @@ public class VolatilityDifference extends Rule {
 	}
 
 	@Override
-	double calculateRawForecast() {
-		// TODO Auto-generated method stub
-		return 0;
+	double calculateRawForecast(LocalDateTime forecastDateTime) {
+		double currentVolatilty = ValueDateTupel.getElement(this.getVolatilityIndices(), forecastDateTime).getValue();
+		return calculateRawForecast(currentVolatilty);
 	}
 
 	@Override

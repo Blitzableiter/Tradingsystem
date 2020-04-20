@@ -28,6 +28,7 @@ public class BaseValue {
 	private String name;
 	private ValueDateTupel[] values;
 	private ValueDateTupel[] shortIndexValues;
+	private ValueDateTupel[] standardDeviationValues;
 
 	/**
 	 * Creates a new {@link BaseValue} instance using the passed {@code String} for
@@ -107,6 +108,63 @@ public class BaseValue {
 
 		this.setName(name);
 		this.setValues(values);
+		this.setStandardDeviationValues(this.calculateStandardDeviationValues(values));
+	}
+
+	/**
+	 * Calculate the standard deviation values for the given base values. The first
+	 * value is always Double.NaN.
+	 * <p>
+	 * {@code sd = baseValue * sqrt[ EWMA( return² ) ]}
+	 * 
+	 * @param values {@code ValueDateTupel[]} the given base values.
+	 * @return {@code ValueDateTupel[]} the calculated standard deviation values.
+	 */
+	// TODO INPUT SANITIZATION
+	private ValueDateTupel[] calculateStandardDeviationValues(ValueDateTupel[] values) {
+
+		/* Initiate the squared returns. The first value is always Double.NaN */
+		ValueDateTupel[] squaredReturns = {};
+		squaredReturns = ArrayUtils.add(squaredReturns, new ValueDateTupel(values[0].getDate(), Double.NaN));
+		/* Calculate the squared returns */
+		for (int i = 1; i < values.length; i++) {
+			double returns;
+			try {
+				returns = Util.calculateReturn(values[i - 1].getValue(), values[i].getValue());
+			} catch (IllegalArgumentException e) {
+				/*
+				 * If the value cannot be calculated because the first value is zero set the
+				 * returns to Double.Nan
+				 */
+				returns = Double.NaN;
+			}
+			squaredReturns = ArrayUtils.add(squaredReturns,
+					new ValueDateTupel(values[i].getDate(), Math.pow(returns, 2)));
+		}
+
+		/* Instantiate the EWMA used for the standard deviation. */
+		EWMA ewmaOfStandardDeviation = new EWMA(squaredReturns, 25);
+		double previousStandardDeviationEwma = 0;
+
+		/*
+		 * The first value is always Double.NaN, as the first value cannot have standard
+		 * deviation from itself.
+		 */
+		ValueDateTupel[] standardDeviationValues = {};
+		standardDeviationValues = ArrayUtils.add(values, new ValueDateTupel(values[0].getDate(), Double.NaN));
+
+		/* Fill in the calculated values. */
+		for (int i = 1; i < squaredReturns.length; i++) {
+			double squaredEwmaOfVolatility = ewmaOfStandardDeviation.calculateEWMA(previousStandardDeviationEwma,
+					values[i].getValue());
+			double ewmaOfVolatility = Math.sqrt(squaredEwmaOfVolatility);
+			double standardDeviation = ewmaOfVolatility * values[i].getValue();
+			standardDeviationValues = ArrayUtils.add(standardDeviationValues,
+					new ValueDateTupel(values[i].getDate(), standardDeviation));
+		}
+
+		/* Return the standard deviations. */
+		return standardDeviationValues;
 	}
 
 	/**
@@ -398,5 +456,19 @@ public class BaseValue {
 	 */
 	private void setShortIndexValues(ValueDateTupel[] shortIndexValues) {
 		this.shortIndexValues = shortIndexValues;
+	}
+
+	/**
+	 * @return standardDeviationValues BaseValue
+	 */
+	public ValueDateTupel[] getStandardDeviationValues() {
+		return standardDeviationValues;
+	}
+
+	/**
+	 * @param standardDeviationValues the standardDeviationValues to set
+	 */
+	private void setStandardDeviationValues(ValueDateTupel[] standardDeviationValues) {
+		this.standardDeviationValues = standardDeviationValues;
 	}
 }

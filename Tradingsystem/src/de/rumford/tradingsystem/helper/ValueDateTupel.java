@@ -356,7 +356,7 @@ public class ValueDateTupel {
 	 * {@link ValueDateTupel}. Will only find exact matches.
 	 * 
 	 * @param valueDateTupels {@code ValueDateTupel[]} Array to be searched in.
-	 * @param vdtToBeFound  {@link ValueDateTupel} Value to be searched for.
+	 * @param vdtToBeFound    {@link ValueDateTupel} Value to be searched for.
 	 * @return {@code boolean} True, if the given value can be found in the given
 	 *         array, false otherwise.
 	 */
@@ -370,7 +370,7 @@ public class ValueDateTupel {
 	 * {@link LocalDateTime}.
 	 * 
 	 * @param valueDateTupels {@code ValueDateTupel[]} Array to be searched in.
-	 * @param dtToBeFound        {@link LocalDateTime} Value to be searched for.
+	 * @param dtToBeFound     {@link LocalDateTime} Value to be searched for.
 	 * @return {@code boolean} True, if the given value can be found inside the
 	 *         given array, false otherwise.
 	 * @throws IllegalArgumentException If the given array of {@link ValueDateTupel}
@@ -395,10 +395,10 @@ public class ValueDateTupel {
 	 * {@link ValueDateTupel} at the given position. Returns the given array
 	 * extended with the given single value.
 	 * 
-	 * @param valueDateTupels         {@code ValueDateTupel[]} Array to be extended.
-	 * @param vdtToBeAdded {@link ValueDateTupel} Value to be added.
-	 * @param position                {@code int} Position the given value shall be
-	 *                                put into.
+	 * @param valueDateTupels {@code ValueDateTupel[]} Array to be extended.
+	 * @param vdtToBeAdded    {@link ValueDateTupel} Value to be added.
+	 * @param position        {@code int} Position the given value shall be put
+	 *                        into.
 	 * @return {@code ValueDateTupel[]} The extended array.
 	 * @throws IllegalArgumentException If the given array is null.
 	 * @throws IllegalArgumentException If the given value to be added is null.
@@ -406,8 +406,8 @@ public class ValueDateTupel {
 	 * @throws IllegalArgumentException If the given position is > the length of the
 	 *                                  given array.
 	 */
-	public static ValueDateTupel[] addOneAt(ValueDateTupel[] valueDateTupels, ValueDateTupel vdtToBeAdded,
-			int position) throws IllegalArgumentException {
+	public static ValueDateTupel[] addOneAt(ValueDateTupel[] valueDateTupels, ValueDateTupel vdtToBeAdded, int position)
+			throws IllegalArgumentException {
 		if (valueDateTupels == null)
 			throw new IllegalArgumentException("Given array of ValueDateTupel must not be null");
 		if (vdtToBeAdded == null)
@@ -451,22 +451,23 @@ public class ValueDateTupel {
 	 * {@link ValueDateTupel} if so, returns {@code null} otherwise.
 	 * 
 	 * @param dtToBeFound {@link LocalDateTime} Value to be found inside the
-	 *                     {@link BaseValue} values.
+	 *                    {@link BaseValue} values.
 	 * @return {@link ValueDateTupel} containing the given {@link LocalDateTime}.
 	 *         {@code null} if the given {@link LocalDateTime} cannot be found.
 	 */
-	public static ValueDateTupel getValue(ValueDateTupel[] valueDateTupels, LocalDateTime dtToBeFound) {
+	public static ValueDateTupel getElement(ValueDateTupel[] valueDateTupels, LocalDateTime dtToBeFound) {
 		for (ValueDateTupel value : valueDateTupels) {
 			if (value.getDate().equals(dtToBeFound))
 				return value;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get all values from an array of {@link ValueDateTupel[]}.
 	 * 
-	 * @param valueDateTupels {@link ValueDateTupel[]} An array of {@link ValueDateTupel}}.
+	 * @param valueDateTupels {@link ValueDateTupel[]} An array of
+	 *                        {@link ValueDateTupel}}.
 	 * @return {@code double[]} An array of values of the given
 	 *         {@link ValueDateTupel[]}. Returns an empty array if the given array
 	 *         is empty.
@@ -484,7 +485,8 @@ public class ValueDateTupel {
 	/**
 	 * Get all {@link LocalDateTime} from an array of {@link ValueDateTupel[]}.
 	 * 
-	 * @param valueDateTupels {@link ValueDateTupel[]} An array of {@link ValueDateTupel}}.
+	 * @param valueDateTupels {@link ValueDateTupel[]} An array of
+	 *                        {@link ValueDateTupel}}.
 	 * @return {@code LocalDateTime[]} An array of {@link LocalDateTime} of the
 	 *         given {@link ValueDateTupel[]}. Returns an empty array if the given
 	 *         array is empty.
@@ -497,6 +499,69 @@ public class ValueDateTupel {
 		for (ValueDateTupel tupel : valueDateTupels)
 			values = ArrayUtils.add(values, tupel.getDate());
 		return values;
+	}
+
+	/**
+	 * Get all elements between two given DateTimes (inclusive) from the given
+	 * array.
+	 * 
+	 * @param valueDateTupels {@code ValueDateTupel[]} The base array.
+	 * @param dtFrom          {@link LocalDateTime} The first DateTime to be
+	 *                        included.
+	 * @param dtTo            {@link LocalDateTime} The last DateTime to be
+	 *                        included.
+	 * @return {@code ValueDateTupel[]} The found elements. null, if dtFrom or dtTo
+	 *         cannot be found in the given array.
+	 */
+	// TODO INPUT SANITIZATION
+	public static ValueDateTupel[] getElements(ValueDateTupel[] valueDateTupels, LocalDateTime dtFrom,
+			LocalDateTime dtTo) {
+		/* Get the position indices of the given LocalDateTime values. */
+		int positionFrom = ValueDateTupel.getPosition(valueDateTupels, dtFrom);
+		int positionTo = ValueDateTupel.getPosition(valueDateTupels, dtTo);
+
+		/*
+		 * If the given LocalDateTime values cannot be found in the given array return
+		 * null.
+		 */
+		if (positionFrom == Integer.MIN_VALUE || positionTo == Integer.MIN_VALUE)
+			return null;
+
+		ValueDateTupel[] elements = {};
+		/* Add all elements between the two found positions ... */
+		for (int i = positionFrom; i <= positionTo; i++) {
+			ArrayUtils.add(elements, valueDateTupels[i]);
+		}
+		/* ... and return them. */
+		return elements;
+	}
+
+	/**
+	 * Finds the position of a given {@link LocalDateTime} in a given array of
+	 * {@link ValueDateTupel}.
+	 * 
+	 * @param valueDateTupels {@code ValueDateTupel[]} The array to be searched.
+	 * @param dtToBeFound     {@link LocalDateTime} The value to be found.
+	 * @return {@code int} The position the given LocalDateTime was found. If the
+	 *         given LocalDateTime cannot be found, Integer.MIN_VALUE is returned.
+	 */
+	// TODO INPUT SANITIZATION
+	public static int getPosition(ValueDateTupel[] valueDateTupels, LocalDateTime dtToBeFound) {
+		/*
+		 * if the given LocalDateTime is not in the given array, return
+		 * Integer.MIN_VALUE
+		 */
+		if (!ValueDateTupel.containsDate(valueDateTupels, dtToBeFound))
+			return Integer.MIN_VALUE;
+
+		/* Otherwise, return the position of the given LocalDateTime */
+		for (int i = 0; i < valueDateTupels.length; i++) {
+			if (valueDateTupels[i].getDate().equals(dtToBeFound))
+				return i;
+		}
+
+		/* return to satisfy Compiler */
+		return Integer.MIN_VALUE;
 	}
 
 	/**
