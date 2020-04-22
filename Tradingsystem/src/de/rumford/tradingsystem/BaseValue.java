@@ -23,7 +23,7 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
  */
 public class BaseValue {
 
-	private final static double SHORT_INDEX_INITIAL_VALUE = 1000d;
+	private static final double SHORT_INDEX_INITIAL_VALUE = 1000d;
 
 	private String name;
 	private ValueDateTupel[] values;
@@ -45,14 +45,8 @@ public class BaseValue {
 	 *                                  specification
 	 */
 	public BaseValue(String name, ValueDateTupel[] values) throws IllegalArgumentException {
-
-		try {
-			this.validateAndSetInput(name, values);
-		} catch (IllegalArgumentException e) {
-			throw e;
-		}
-		ValueDateTupel[] shortIndexValues = this.calculateShortIndexValues(values);
-		this.setShortIndexValues(shortIndexValues);
+		this.validateAndSetInput(name, values);
+		this.setShortIndexValues(this.calculateShortIndexValues(values));
 	}
 
 	/**
@@ -100,11 +94,7 @@ public class BaseValue {
 		if (values.length == 0)
 			throw new IllegalArgumentException("Values must not be an empty array");
 
-		try {
-			validateDates(values);
-		} catch (IllegalArgumentException e) {
-			throw e;
-		}
+		validateDates(values);
 
 		this.setName(name);
 		this.setValues(values);

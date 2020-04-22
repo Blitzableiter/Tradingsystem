@@ -7,12 +7,16 @@ import org.apache.commons.math3.linear.BlockRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
+import de.rumford.tradingsystem.helper.ValueDateTupel;
+
 public class Treiber {
 
 	public static void main(String[] args) throws IOException {
 
-		System.out.println(Math.pow(Double.NaN, 2));
 
+		ValueDateTupel[] test = ValueDateTupel.createEmptyArray(5);
+		System.out.println(test[0]!=null);
+		
 	}
 
 }

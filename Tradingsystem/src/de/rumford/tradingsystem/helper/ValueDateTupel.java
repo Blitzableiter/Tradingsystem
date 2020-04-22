@@ -503,22 +503,37 @@ public class ValueDateTupel {
 
 	/**
 	 * Get all elements between two given DateTimes (inclusive) from the given
-	 * array.
+	 * array. If null is passed for either LocalDateTime, the representing border
+	 * will be set to the boundaries of the given array.
 	 * 
 	 * @param valueDateTupels {@code ValueDateTupel[]} The base array.
 	 * @param dtFrom          {@link LocalDateTime} The first DateTime to be
-	 *                        included.
+	 *                        included. If null, all values up until dtTo will be
+	 *                        given.
 	 * @param dtTo            {@link LocalDateTime} The last DateTime to be
-	 *                        included.
+	 *                        included. If null, all values starting from dtFrom
+	 *                        will be given.
 	 * @return {@code ValueDateTupel[]} The found elements. null, if dtFrom or dtTo
 	 *         cannot be found in the given array.
 	 */
-	// TODO INPUT SANITIZATION
 	public static ValueDateTupel[] getElements(ValueDateTupel[] valueDateTupels, LocalDateTime dtFrom,
 			LocalDateTime dtTo) {
-		/* Get the position indices of the given LocalDateTime values. */
-		int positionFrom = ValueDateTupel.getPosition(valueDateTupels, dtFrom);
-		int positionTo = ValueDateTupel.getPosition(valueDateTupels, dtTo);
+		int positionFrom;
+		int positionTo;
+		/*
+		 * Get the position indices of the given LocalDateTime values. If null is
+		 * passed, set the positions to be the respective boundaries of the given array.
+		 */
+		if (dtFrom == null) {
+			positionFrom = 0;
+		} else {
+			positionFrom = ValueDateTupel.getPosition(valueDateTupels, dtFrom);
+		}
+		if (dtTo == null) {
+			positionTo = valueDateTupels.length - 1;
+		} else {
+			positionTo = ValueDateTupel.getPosition(valueDateTupels, dtTo);
+		}
 
 		/*
 		 * If the given LocalDateTime values cannot be found in the given array return

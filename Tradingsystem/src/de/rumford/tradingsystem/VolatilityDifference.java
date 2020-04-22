@@ -29,39 +29,33 @@ public class VolatilityDifference extends Rule {
 	 * 
 	 * @param baseValue              {@link BaseValue} The base value to be used for
 	 *                               this {@link VolatilityDifference}. Must not be
-	 *                               null. Values array must be of of length >
-	 *                               {@code 0}.
+	 *                               null.
+	 * @param variations             {@code VolatilityDifference[]} An array of
+	 *                               three or less rules. Represents the variations
+	 *                               of this rule.
+	 * @param startOfReferenceWindow {@link LocalDateTime} First DateTime value to
+	 *                               be considered in average calculation. Must be <
+	 *                               {@code endOfReferenceWindow}. Must not be null.
+	 * @param endOfReferenceWindow   {@link LocalDateTime} Last DateTime value to be
+	 *                               considered in average calculation. Must be >
+	 *                               {@code startOfReferenceWindow}. Must not be
+	 *                               null.
 	 * @param lookbackWindow         {@code int} The lookback window to be used for
 	 *                               this {@link VolatilityDifference}. Must be >
 	 *                               {@code 1}.
-	 * @param startOfReferenceWindow {@link LocalDateTime} First DateTime value to
-	 *                               be considered in average calculation. Must be <
-	 *                               {@code endOfReferenceWindow}.
-	 * @param endOfReferenceWindow   {@link LocalDateTime} Last DateTime value to be
-	 *                               considered in average calculation. Must be >
-	 *                               {@code startOfReferenceWindow}.
+	 * @param baseScale              {@code double} The base scale used for the
+	 *                               calculation of the forecast scalar and thus in
+	 *                               scaled forecast calculations as well.
+	 * @throws IllegalArgumentException If the given arguments to not satisfy
+	 *                                  specifications.
 	 */
-	public VolatilityDifference(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
-			LocalDateTime endOfReferenceWindow, int lookbackWindow, double baseScale) throws IllegalArgumentException {
+	public VolatilityDifference(BaseValue baseValue, VolatilityDifference[] variations,
+			LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow, int lookbackWindow,
+			double baseScale) {
 		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
-		/* Check if base value fulfills requirements. */
-		if (baseValue == null)
-			throw new IllegalArgumentException("Base value must not be null");
 
 		/* Check if lookback window fulfills requirements. */
-		if (lookbackWindow <= 1)
-			throw new IllegalArgumentException("Lookback window must be at least 2");
-
-		/* Check if LocalDates are null */
-		if (startOfReferenceWindow == null)
-			throw new IllegalArgumentException("Start of reference window value must not be null");
-		if (endOfReferenceWindow == null)
-			throw new IllegalArgumentException("End of reference window value must not be null");
-
-		/* Check if reference window is properly defined: end must be after start */
-		if (!endOfReferenceWindow.isAfter(startOfReferenceWindow))
-			throw new IllegalArgumentException(
-					"End of reference window value must be after start of reference window value");
+		this.validateLookbackWindow(lookbackWindow);
 
 		/*
 		 * Check if there are values in baseValue with startOfReferenceWindow and
@@ -86,16 +80,20 @@ public class VolatilityDifference extends Rule {
 		this.setAverageVolatility(this.calculateAverageVolatility(startOfReferenceWindow, endOfReferenceWindow));
 	}
 
+	/**
+	 * Validates the given lookback window. The lookback window must be >= 1.
+	 * 
+	 * @param lookbackWindow {@code int} The lookback window to be validated.
+	 */
+	public void validateLookbackWindow(int lookbackWindow) {
+		if (lookbackWindow <= 1)
+			throw new IllegalArgumentException("Lookback window must be at least 2");
+	}
+
 	@Override
 	double calculateRawForecast(LocalDateTime forecastDateTime) {
 		double currentVolatilty = ValueDateTupel.getElement(this.getVolatilityIndices(), forecastDateTime).getValue();
 		return calculateRawForecast(currentVolatilty);
-	}
-
-	@Override
-	ValueDateTupel[] calculateForecasts(LocalDateTime calculateFrom, LocalDateTime calculateTo) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	private double calculateRawForecast(double currentVolatilty) {
