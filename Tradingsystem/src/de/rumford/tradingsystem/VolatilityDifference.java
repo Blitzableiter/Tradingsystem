@@ -52,26 +52,54 @@ public class VolatilityDifference extends Rule {
 	public VolatilityDifference(BaseValue baseValue, VolatilityDifference[] variations,
 			LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow, int lookbackWindow,
 			double baseScale) {
+		this(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, lookbackWindow, baseScale,
+				calculateVolatilityIndices(baseValue, lookbackWindow));
+	}
+
+	/**
+	 * Creates a new {@link VolatilityDifference} instance using the passed
+	 * {@link BaseValue} to calculate the volatility indices and the average
+	 * volatility.
+	 * 
+	 * @param baseValue              {@link BaseValue} The base value to be used for
+	 *                               this {@link VolatilityDifference}. Must not be
+	 *                               null.
+	 * @param variations             {@code VolatilityDifference[]} An array of
+	 *                               three or less rules. Represents the variations
+	 *                               of this rule.
+	 * @param startOfReferenceWindow {@link LocalDateTime} First DateTime value to
+	 *                               be considered in average calculation. Must be <
+	 *                               {@code endOfReferenceWindow}. Must not be null.
+	 * @param endOfReferenceWindow   {@link LocalDateTime} Last DateTime value to be
+	 *                               considered in average calculation. Must be >
+	 *                               {@code startOfReferenceWindow}. Must not be
+	 *                               null.
+	 * @param lookbackWindow         {@code int} The lookback window to be used for
+	 *                               this {@link VolatilityDifference}. Must be >
+	 *                               {@code 1}.
+	 * @param baseScale              {@code double} The base scale used for the
+	 *                               calculation of the forecast scalar and thus in
+	 *                               scaled forecast calculations as well.
+	 * @param volatilityIndices      {@code ValueDateTupel[]} The volatility indices
+	 *                               used for forecast calculations.
+	 * @throws IllegalArgumentException If the given arguments to not satisfy
+	 *                                  specifications.
+	 */
+	public VolatilityDifference(BaseValue baseValue, VolatilityDifference[] variations,
+			LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow, int lookbackWindow,
+			double baseScale, ValueDateTupel[] volatilityIndices) {
 		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
+		// TODO CHECK CONSTRCTOR CALLS
 
 		/* Check if lookback window fulfills requirements. */
 		this.validateLookbackWindow(lookbackWindow);
-
-		/*
-		 * Check if there are values in baseValue with startOfReferenceWindow and
-		 * endOfReferenceWindow date values.
-		 */
-		if (ValueDateTupel.getElement(baseValue.getValues(), startOfReferenceWindow) == null)
-			throw new IllegalArgumentException("Base values do not include given start value for reference window");
-		if (ValueDateTupel.getElement(baseValue.getValues(), endOfReferenceWindow) == null)
-			throw new IllegalArgumentException("Base values do not include given end value for reference window");
-
-		/* Only if all checks are successful begin setting of instance values */
-		this.setBaseValue(baseValue);
 		this.setLookbackWindow(lookbackWindow);
 
 		/* Calculate volatility index values based on the base value and set it */
-		this.setVolatilityIndices(this.calculateVolatilityIndices());
+		// TODO validate volatilityIndices
+		this.setVolatilityIndices(volatilityIndices);
+
+		// TODO ALIGN volatilityIndices and baseValue
 
 		/*
 		 * Calculate the average volatility for the base value over all available
@@ -111,9 +139,8 @@ public class VolatilityDifference extends Rule {
 	 *         values until the lookback window is reached contain
 	 *         {@code Double.NaN}, the rest contains real volatility index values.
 	 */
-	private ValueDateTupel[] calculateVolatilityIndices() {
-		ValueDateTupel[] baseValues = this.getBaseValue().getValues();
-		int lookbackWindow = this.getLookbackWindow();
+	private static ValueDateTupel[] calculateVolatilityIndices(BaseValue baseValue, int lookbackWindow) {
+		ValueDateTupel[] baseValues = baseValue.getValues();
 
 		ValueDateTupel[] volatilityIndices = ValueDateTupel.createEmptyArray();
 

@@ -58,6 +58,15 @@ public abstract class Rule {
 			throw new IllegalArgumentException(
 					"End of reference window value must be after start of reference window value");
 
+		/*
+		 * Check if there are values in baseValue with startOfReferenceWindow and
+		 * endOfReferenceWindow date values.
+		 */
+		if (ValueDateTupel.getElement(baseValue.getValues(), startOfReferenceWindow) == null)
+			throw new IllegalArgumentException("Base values do not include given start value for reference window");
+		if (ValueDateTupel.getElement(baseValue.getValues(), endOfReferenceWindow) == null)
+			throw new IllegalArgumentException("Base values do not include given end value for reference window");
+
 		this.setBaseValue(baseValue);
 		this.validateSetAndWeighVariations(variations);
 		this.setStartOfReferenceWindow(startOfReferenceWindow);
@@ -219,7 +228,7 @@ public abstract class Rule {
 	 *                           value to be scaled.
 	 * @return {@code double} the scaled forecast value.
 	 */
-	double calculateScaledForecast(double sdAdjustedForecast) {
+	public final double calculateScaledForecast(double sdAdjustedForecast) {
 		double instanceBaseScale = this.getBaseScale();
 		double instanceForecastScalar = this.getForecastScalar();
 
@@ -319,7 +328,7 @@ public abstract class Rule {
 	 *                                  more than 3 elements.
 	 * @throws IllegalArgumentException if the given array contains null.
 	 */
-	private final void validateSetAndWeighVariations(Rule[] variations) throws IllegalArgumentException {
+	private void validateSetAndWeighVariations(Rule[] variations) throws IllegalArgumentException {
 		if (variations != null && variations.length > 3)
 			throw new IllegalArgumentException("Each layer must not contain more than 3 rules/variations");
 		this.setVariations(variations);
@@ -341,8 +350,7 @@ public abstract class Rule {
 	 * Systematic Trading (2015), p. 79, Table 8). Using the actual table would
 	 * muddy the weights and render them inaccurate.
 	 */
-
-	private final void weighVariations() {
+	private void weighVariations() {
 		Rule[] instanceVariations = this.getVariations();
 
 		/* If there is only 1 variation then its weight is 100% */
@@ -413,7 +421,7 @@ public abstract class Rule {
 	 * @throws IllegalArgumentException if the given array is not of length 3.
 	 * @throws IllegalArgumentException if a correlation value is < -1 or > 1.
 	 */
-	private static final double[] calculateWeights(double[] correlations) throws IllegalArgumentException {
+	private static double[] calculateWeights(double[] correlations) throws IllegalArgumentException {
 		/* The given array must no be null */
 		if (correlations == null)
 			throw new IllegalArgumentException("Array of correlations must not be null");
@@ -540,16 +548,21 @@ public abstract class Rule {
 	 */
 
 	/**
-	 * @return baseValue Rule
+	 * Get the base value of this rule.
+	 * 
+	 * @return baseValue {@link BaseValue} The base value of this instance of rule.
 	 */
 	public BaseValue getBaseValue() {
 		return baseValue;
 	}
 
 	/**
-	 * @param baseValue the baseValue to set
+	 * Set the base value of this rule.
+	 * 
+	 * @param baseValue {@link BaseValue} the baseValue to bet set for this instance
+	 *                  of rule.
 	 */
-	void setBaseValue(BaseValue baseValue) {
+	private void setBaseValue(BaseValue baseValue) {
 		this.baseValue = baseValue;
 	}
 
@@ -567,7 +580,7 @@ public abstract class Rule {
 	 * 
 	 * @param forecastScalar {@code double} forecast scalar to be set for this rule
 	 */
-	void setForecastScalar(double forecastScalar) {
+	private void setForecastScalar(double forecastScalar) {
 		this.forecastScalar = forecastScalar;
 	}
 
@@ -585,14 +598,14 @@ public abstract class Rule {
 	 * 
 	 * @param weight {@code double} the weight to be set for this rule
 	 */
-	void setWeight(double weight) {
+	private void setWeight(double weight) {
 		this.weight = weight;
 	}
 
 	/**
 	 * @return variations Rule
 	 */
-	private Rule[] getVariations() {
+	public Rule[] getVariations() {
 		return variations;
 	}
 
@@ -613,7 +626,7 @@ public abstract class Rule {
 	/**
 	 * @param startOfReferenceWindow the startOfReferenceWindow to set
 	 */
-	void setStartOfReferenceWindow(LocalDateTime startOfReferenceWindow) {
+	private void setStartOfReferenceWindow(LocalDateTime startOfReferenceWindow) {
 		this.startOfReferenceWindow = startOfReferenceWindow;
 	}
 
@@ -627,7 +640,7 @@ public abstract class Rule {
 	/**
 	 * @param endOfReferenceWindow the endOfReferenceWindow to set
 	 */
-	void setEndOfReferenceWindow(LocalDateTime endOfReferenceWindow) {
+	private void setEndOfReferenceWindow(LocalDateTime endOfReferenceWindow) {
 		this.endOfReferenceWindow = endOfReferenceWindow;
 	}
 
@@ -662,7 +675,7 @@ public abstract class Rule {
 	/**
 	 * @return sdAdjustedForecasts Rule
 	 */
-	private ValueDateTupel[] getSdAdjustedForecasts() {
+	public ValueDateTupel[] getSdAdjustedForecasts() {
 		return sdAdjustedForecasts;
 	}
 

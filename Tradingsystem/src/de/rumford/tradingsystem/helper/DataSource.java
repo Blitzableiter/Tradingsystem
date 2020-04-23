@@ -51,8 +51,7 @@ public class DataSource {
 	 * @throws IllegalArgumentException if any of the rows in the read CSV file does
 	 *                                  not contain exactly 3 columns.
 	 */
-	public static ValueDateTupel[] getDataFromCsv(String sourcePath, CsvFormat format)
-			throws IOException, IllegalArgumentException {
+	public static ValueDateTupel[] getDataFromCsv(String sourcePath, CsvFormat format) throws IOException {
 		File file;
 		try {
 			file = new File(sourcePath);
@@ -67,12 +66,7 @@ public class DataSource {
 		if (!file.canRead())
 			throw new IOException("Given file path cannot be read");
 
-		BufferedReader br;
-		try {
-			br = new BufferedReader(new FileReader(file));
-		} catch (FileNotFoundException e) {
-			throw e;
-		}
+		BufferedReader br = new BufferedReader(new FileReader(file));
 
 		String line;
 
