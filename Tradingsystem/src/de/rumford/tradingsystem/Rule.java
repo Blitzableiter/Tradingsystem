@@ -10,7 +10,13 @@ import de.rumford.tradingsystem.helper.Util;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
+ * 
+ * Abstract class to be extend on developing new rules for the trading system.
+ * 
  * @author Max Rumford
+ * @apiNote {@link #calculateAndSetDerivedValues()} must be called after the
+ *          construction of any extending classes to ensure that all forecasts
+ *          are calculated.
  *
  */
 public abstract class Rule {
@@ -44,7 +50,43 @@ public abstract class Rule {
 	 */
 	public Rule(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
 			LocalDateTime endOfReferenceWindow, double baseScale) {
-		// TODO input sanitization in own methods
+
+		this.validateInputs(baseValue, startOfReferenceWindow, endOfReferenceWindow, baseScale);
+
+		this.setBaseValue(baseValue);
+		this.validateSetAndWeighVariations(variations);
+		this.setStartOfReferenceWindow(startOfReferenceWindow);
+		this.setEndOfReferenceWindow(endOfReferenceWindow);
+		this.setBaseScale(baseScale);
+	}
+
+	/**
+	 * Method to be called by extending classes to calculate derived values. This
+	 * takes into consideration that not all relevant values might be known upon
+	 * call of Rule constructor.
+	 */
+	final void calculateAndSetDerivedValues() {
+		this.setSdAdjustedForecasts(this.calculateSdAdjustedForecasts());
+		this.setForecastScalar(this.calculateForecastScalar());
+		this.setForecasts(this.calculateScaledForecasts());
+	}
+
+	/**
+	 * Validates if the given instance variables meet specifications.
+	 * 
+	 * @param baseValue              {@link BaseValue} The base value to be used in
+	 *                               this rule's calculations.
+	 * @param startOfReferenceWindow {@link LocalDateTime} The first LocalDateTime
+	 *                               to be considered in calculations such as
+	 *                               forecast scalar.
+	 * @param endOfReferenceWindow   {@link LocalDateTime} The last LocalDateTime to
+	 *                               be considered in calculations such as forecast
+	 *                               scalar.
+	 * @param baseScale              {@code double} How the forecasts shall be
+	 *                               scaled.
+	 */
+	private void validateInputs(BaseValue baseValue, LocalDateTime startOfReferenceWindow,
+			LocalDateTime endOfReferenceWindow, double baseScale) {
 		/* Check if base value fulfills requirements. */
 		if (baseValue == null)
 			throw new IllegalArgumentException("Base value must not be null");
@@ -57,7 +99,6 @@ public abstract class Rule {
 		if (!endOfReferenceWindow.isAfter(startOfReferenceWindow))
 			throw new IllegalArgumentException(
 					"End of reference window value must be after start of reference window value");
-
 		/*
 		 * Check if there are values in baseValue with startOfReferenceWindow and
 		 * endOfReferenceWindow date values.
@@ -67,14 +108,9 @@ public abstract class Rule {
 		if (ValueDateTupel.getElement(baseValue.getValues(), endOfReferenceWindow) == null)
 			throw new IllegalArgumentException("Base values do not include given end value for reference window");
 
-		this.setBaseValue(baseValue);
-		this.validateSetAndWeighVariations(variations);
-		this.setStartOfReferenceWindow(startOfReferenceWindow);
-		this.setEndOfReferenceWindow(endOfReferenceWindow);
-		this.setBaseScale(baseScale);
-		this.setSdAdjustedForecasts(this.calculateSdAdjustedForecasts());
-		this.setForecastScalar(this.calculateForecastScalar());
-		this.setForecasts(this.calculateScaledForecasts());
+		/* Check for a meaningful scale. */
+		if (baseScale <= 0)
+			throw new IllegalArgumentException("The given baseScale must a positiv non-zero decimal.");
 	}
 
 	/**

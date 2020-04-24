@@ -14,7 +14,6 @@ public class Treiber {
 
 	public static void main(String[] args) throws IOException {
 
-		DataSource ds = new DataSour
 
 	}
 

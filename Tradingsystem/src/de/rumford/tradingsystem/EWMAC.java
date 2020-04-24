@@ -45,7 +45,6 @@ public class EWMAC extends Rule {
 	 */
 	public EWMAC(BaseValue baseValue, EWMAC[] variations, LocalDateTime startOfReferenceWindow,
 			LocalDateTime endOfReferenceWindow, int longHorizon, int shortHorizon, double baseScale) {
-
 		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
 
 		this.validateHorizonValues(longHorizon, shortHorizon);
@@ -54,6 +53,8 @@ public class EWMAC extends Rule {
 		EWMA localShortHorizonEwma = new EWMA(this.getBaseValue().getValues(), shortHorizon);
 		this.setLongHorizonEwma(localLongHorizonEwma);
 		this.setShortHorizonEwma(localShortHorizonEwma);
+
+		super.calculateAndSetDerivedValues();
 	}
 
 	/**

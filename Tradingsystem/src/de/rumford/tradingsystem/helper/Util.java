@@ -30,8 +30,7 @@ public final class Util {
 	 * @return {@code double} standard deviation adjusted value
 	 * @throws IllegalArgumentException if the given standard deviation is zero
 	 */
-	public static double adjustForStandardDeviation(double value, double standardDeviation)
-			throws IllegalArgumentException {
+	public static double adjustForStandardDeviation(double value, double standardDeviation) {
 		if (standardDeviation == 0)
 			throw new IllegalArgumentException("Standard deviation must not be zero");
 		return value / standardDeviation;
@@ -107,7 +106,7 @@ public final class Util {
 	 *         represented in percentage points
 	 * @throws IllegalArgumentException if the given former value is zero
 	 */
-	public static double calculateReturn(double formerValue, double latterValue) throws IllegalArgumentException {
+	public static double calculateReturn(double formerValue, double latterValue) {
 		if (formerValue == 0)
 			throw new IllegalArgumentException("Former value cannot be zero");
 		return latterValue / formerValue - 1d;
@@ -132,7 +131,7 @@ public final class Util {
 	 *                                  the same length.
 	 * 
 	 */
-	public static double[] calculateCorrelationsOfThreeRows(double[][] values) throws IllegalArgumentException {
+	public static double[] calculateCorrelationsOfThreeRows(double[][] values) {
 		/* Check if the given array is null */
 		if (values == null)
 			throw new IllegalArgumentException("The given array of arrays is null.");
@@ -167,14 +166,14 @@ public final class Util {
 		/*
 		 * E.g. the correlation between the columns 0 and 1 is at matrix position 0/1.
 		 */
-		double correlation_0_1 = correlationMatrix.getEntry(0, 1);
-		double correlation_1_2 = correlationMatrix.getEntry(1, 2);
-		double correlation_0_2 = correlationMatrix.getEntry(0, 2);
+		double correlation01 = correlationMatrix.getEntry(0, 1);
+		double correlation12 = correlationMatrix.getEntry(1, 2);
+		double correlation02 = correlationMatrix.getEntry(0, 2);
 
 		double[] correlations = {};
-		correlations = ArrayUtils.add(correlations, correlation_0_1);
-		correlations = ArrayUtils.add(correlations, correlation_1_2);
-		correlations = ArrayUtils.add(correlations, correlation_0_2);
+		correlations = ArrayUtils.add(correlations, correlation01);
+		correlations = ArrayUtils.add(correlations, correlation12);
+		correlations = ArrayUtils.add(correlations, correlation02);
 
 		return correlations;
 	}

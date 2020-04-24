@@ -22,11 +22,42 @@ public class EWMA {
 	 * @param horizon {@code int} horizon this EWMA is to be over
 	 */
 	public EWMA(ValueDateTupel[] baseValues, int horizon) {
-		// TODO INPUT SANITATION
+		this.validateBaseValues(baseValues);
+		this.validateHorizon(horizon);
+
+		this.setBaseValues(baseValues);
 		this.setHorizon(horizon);
 		this.setDecay(this.calculateDecay(this.getHorizon()));
-		this.setBaseValues(baseValues);
 		this.setEwmaValues(this.calculateEwmaValues(this.getBaseValues()));
+	}
+
+	/**
+	 * Validates the given horizon.
+	 * 
+	 * @param horizon {@code int} the horizon to be validated.
+	 * @throws IllegalArgumentException if the given horizon is < 2.
+	 */
+	private void validateHorizon(int horizon) {
+		if (horizon < 2)
+			throw new IllegalArgumentException("The horizon must not be < 2");
+	}
+
+	/**
+	 * Validates the given base values.
+	 * 
+	 * @param baseValues {@code ValueDateTupel[]} the base values the EWMA is to be
+	 *                   calculated on.
+	 * @throws IllegalArgumentException if the length of the base values array is 0.
+	 * @throws IllegalArgumentException if {@code validateDates(ValueDateTupel[])}
+	 *                                  in {@code BaseValue} throws an
+	 *                                  IllegalArgumentException.
+	 */
+	private void validateBaseValues(ValueDateTupel[] baseValues) {
+		/* Check if passed values array contains elements */
+		if (baseValues.length == 0)
+			throw new IllegalArgumentException("Base values must not be an empty array");
+
+		BaseValue.validateDates(baseValues);
 	}
 
 	/**
@@ -38,8 +69,7 @@ public class EWMA {
 	 */
 	public double calculateEWMA(double previousEWMA, double baseValue) {
 		/* E_t = A * P_t + [E_t-1 * ( 1 - A ) ] */
-		double _ewma = this.getDecay() * baseValue + (previousEWMA * (1d - this.getDecay()));
-		return _ewma;
+		return this.getDecay() * baseValue + (previousEWMA * (1d - this.getDecay()));
 	}
 
 	/**

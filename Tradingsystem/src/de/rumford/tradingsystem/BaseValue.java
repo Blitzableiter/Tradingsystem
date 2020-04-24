@@ -44,7 +44,7 @@ public class BaseValue {
 	 * @throws IllegalArgumentException if the input values are not within
 	 *                                  specification
 	 */
-	public BaseValue(String name, ValueDateTupel[] values) throws IllegalArgumentException {
+	public BaseValue(String name, ValueDateTupel[] values) {
 		this.validateAndSetInput(name, values);
 		this.setShortIndexValues(this.calculateShortIndexValues(values));
 	}
@@ -65,13 +65,8 @@ public class BaseValue {
 	 * @throws IllegalArgumentException if the input values are not within
 	 *                                  specification
 	 */
-	public BaseValue(String name, ValueDateTupel[] values, ValueDateTupel[] shortIndexValues)
-			throws IllegalArgumentException {
-		try {
-			this.validateAndSetInput(name, values, shortIndexValues);
-		} catch (IllegalArgumentException e) {
-			throw e;
-		}
+	public BaseValue(String name, ValueDateTupel[] values, ValueDateTupel[] shortIndexValues) {
+		this.validateAndSetInput(name, values, shortIndexValues);
 	}
 
 	/**
@@ -175,49 +170,23 @@ public class BaseValue {
 	 * @throws IllegalArgumentException if one of the above specifications is not
 	 *                                  met.
 	 */
-	private void validateAndSetInput(String name, ValueDateTupel[] values, ValueDateTupel[] shortIndexValues)
-			throws IllegalArgumentException {
+	private void validateAndSetInput(String name, ValueDateTupel[] values, ValueDateTupel[] shortIndexValues) {
 		/* Check if passed values array contains elements */
 		if (shortIndexValues.length == 0)
 			throw new IllegalArgumentException("Short index values must not be an empty array");
 
-		try {
-			validateAndSetInput(name, values);
-		} catch (IllegalArgumentException e) {
-			throw e;
-		}
-
-		try {
-			validateDates(shortIndexValues);
-		} catch (IllegalArgumentException e) {
-			throw e;
-		}
+		validateAndSetInput(name, values);
+		validateDates(shortIndexValues);
 
 		this.setShortIndexValues(shortIndexValues);
 	}
 
-	private static void validateDates(ValueDateTupel[] values) throws IllegalArgumentException {
-		/* Extract dates out of the values array and add it to a HashSet */
-		Set<LocalDateTime> set = new HashSet<>();
-		for (ValueDateTupel value : values)
-			set.add(value.getDate());
+	static void validateDates(ValueDateTupel[] values) {
 		/*
-		 * HashSets only store unique values. If the set has a smaller size than the
-		 * original values array there must have been duplicate dates in the values
-		 * array
+		 * The values cannot be used if they are not in ascending order.
 		 */
-		if (values.length != set.size())
-			throw new IllegalArgumentException("Date/time values in given values array are not unique");
-
-		/* Check if values are in correct order */
-		for (int i = 1; i < values.length; i++) {
-
-			/*
-			 * The values cannot be used if they are not in ascending order.
-			 */
-			if (!ValueDateTupel.isSortedAscending(values))
-				throw new IllegalArgumentException("Given values are not properly sorted");
-		}
+		if (!ValueDateTupel.isSortedAscending(values))
+			throw new IllegalArgumentException("Given values are not properly sorted or there are non-unique values.");
 	}
 
 	/**
@@ -344,18 +313,18 @@ public class BaseValue {
 	 * FACTORIES
 	 * ======================================================================
 	 */
-	final static BaseValue jan1_jan5_val100_500_calc_short(String name) {
-		LocalDateTime localDateTimeJan01_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan02_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan03_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan04_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan05_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 5), LocalTime.of(22, 0));
+	static final BaseValue jan1_jan5_val100_500_calc_short(String name) {
+		LocalDateTime localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5), LocalTime.of(22, 0));
 
-		ValueDateTupel valuedatetupel1 = new ValueDateTupel(localDateTimeJan01_22_00_00, 100d);
-		ValueDateTupel valuedatetupel2 = new ValueDateTupel(localDateTimeJan02_22_00_00, 200d);
-		ValueDateTupel valuedatetupel3 = new ValueDateTupel(localDateTimeJan03_22_00_00, 300d);
-		ValueDateTupel valuedatetupel4 = new ValueDateTupel(localDateTimeJan04_22_00_00, 400d);
-		ValueDateTupel valuedatetupel5 = new ValueDateTupel(localDateTimeJan05_22_00_00, 500d);
+		ValueDateTupel valuedatetupel1 = new ValueDateTupel(localDateTimeJan01220000, 100d);
+		ValueDateTupel valuedatetupel2 = new ValueDateTupel(localDateTimeJan02220000, 200d);
+		ValueDateTupel valuedatetupel3 = new ValueDateTupel(localDateTimeJan03220000, 300d);
+		ValueDateTupel valuedatetupel4 = new ValueDateTupel(localDateTimeJan04220000, 400d);
+		ValueDateTupel valuedatetupel5 = new ValueDateTupel(localDateTimeJan05220000, 500d);
 
 		ValueDateTupel[] values = ValueDateTupel.createEmptyArray();
 		values = ArrayUtils.add(values, valuedatetupel1);
@@ -367,16 +336,16 @@ public class BaseValue {
 		return new BaseValue(name, values);
 	}
 
-	final static BaseValue jan1_jan4_val200_400_500_200_calc_short(String name) {
-		LocalDateTime localDateTimeJan01_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan02_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan03_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan04_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
+	static final BaseValue jan1_jan4_val200_400_500_200_calc_short(String name) {
+		LocalDateTime localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
 
-		ValueDateTupel valuedatetupel1 = new ValueDateTupel(localDateTimeJan01_22_00_00, 200d);
-		ValueDateTupel valuedatetupel2 = new ValueDateTupel(localDateTimeJan02_22_00_00, 400d);
-		ValueDateTupel valuedatetupel3 = new ValueDateTupel(localDateTimeJan03_22_00_00, 500d);
-		ValueDateTupel valuedatetupel4 = new ValueDateTupel(localDateTimeJan04_22_00_00, 200d);
+		ValueDateTupel valuedatetupel1 = new ValueDateTupel(localDateTimeJan01220000, 200d);
+		ValueDateTupel valuedatetupel2 = new ValueDateTupel(localDateTimeJan02220000, 400d);
+		ValueDateTupel valuedatetupel3 = new ValueDateTupel(localDateTimeJan03220000, 500d);
+		ValueDateTupel valuedatetupel4 = new ValueDateTupel(localDateTimeJan04220000, 200d);
 
 		ValueDateTupel[] values = ValueDateTupel.createEmptyArray();
 		values = ArrayUtils.add(values, valuedatetupel1);

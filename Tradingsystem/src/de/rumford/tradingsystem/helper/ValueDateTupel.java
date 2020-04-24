@@ -545,7 +545,7 @@ public class ValueDateTupel {
 		ValueDateTupel[] elements = {};
 		/* Add all elements between the two found positions ... */
 		for (int i = positionFrom; i <= positionTo; i++) {
-			ArrayUtils.add(elements, valueDateTupels[i]);
+			elements = ArrayUtils.add(elements, valueDateTupels[i]);
 		}
 		/* ... and return them. */
 		return elements;
