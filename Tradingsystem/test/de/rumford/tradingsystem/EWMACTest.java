@@ -39,7 +39,7 @@ class EWMACTest {
 	void setUp() throws Exception {
 		shortHorizon = 2;
 		longHorizon = 8;
-		ewmac = new EWMAC(BaseValue.jan1_jan4_val200_400_500_200_calc_short(BASE_VALUE_NAME), null,
+		ewmac = new EWMAC(BaseValue.jan1_jan4_22_00_00_val200_400_500_200_calc_short(BASE_VALUE_NAME), null,
 				localDateTimeJan01_22_00_00, localDateTimeJan04_22_00_00, longHorizon, shortHorizon, BASE_SCALE);
 	}
 

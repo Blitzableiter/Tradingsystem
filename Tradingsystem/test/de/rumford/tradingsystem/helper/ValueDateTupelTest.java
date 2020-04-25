@@ -159,7 +159,7 @@ class ValueDateTupelTest {
 	@Test
 	void testIsSortedAscending_arrayContainsNull() {
 		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, null, valueDateTupel2 };
-		String expectedMessage = "The given array must not contain any null values";
+		String expectedMessage = "The given array must not contain any null LocalDateTime";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.isSortedAscending(valueDateTupelArray),
@@ -224,7 +224,7 @@ class ValueDateTupelTest {
 	@Test
 	void testIsSortedDescending_arrayContainsNull() {
 		ValueDateTupel[] valueDateTupelArray = { valueDateTupel2, null, valueDateTupel1 };
-		String expectedMessage = "The given array must not contain any null values";
+		String expectedMessage = "The given array must not contain any null LocalDateTime";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.isSortedDescending(valueDateTupelArray),

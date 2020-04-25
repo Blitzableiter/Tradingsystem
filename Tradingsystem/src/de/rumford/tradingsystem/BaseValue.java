@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -313,7 +312,7 @@ public class BaseValue {
 	 * FACTORIES
 	 * ======================================================================
 	 */
-	static final BaseValue jan1_jan5_val100_500_calc_short(String name) {
+	static final BaseValue jan1_jan5_22_00_00_val100_500_calc_short(String name) {
 		LocalDateTime localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
 		LocalDateTime localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
 		LocalDateTime localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
@@ -336,7 +335,7 @@ public class BaseValue {
 		return new BaseValue(name, values);
 	}
 
-	static final BaseValue jan1_jan4_val200_400_500_200_calc_short(String name) {
+	static final BaseValue jan1_jan4_22_00_00_val200_400_500_200_calc_short(String name) {
 		LocalDateTime localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
 		LocalDateTime localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
 		LocalDateTime localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));

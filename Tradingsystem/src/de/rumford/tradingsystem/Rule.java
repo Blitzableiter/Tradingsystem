@@ -14,9 +14,8 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
  * Abstract class to be extend on developing new rules for the trading system.
  * 
  * @author Max Rumford
- * @apiNote {@link #calculateAndSetDerivedValues()} must be called after the
- *          construction of any extending classes to ensure that all forecasts
- *          are calculated.
+ * @apiNote {@link #calculateAndSetDerivedValues()} is called on first
+ *          invocation of {@link #getSdAdjustedForecasts()}.
  *
  */
 public abstract class Rule {
@@ -29,7 +28,7 @@ public abstract class Rule {
 	private BaseValue baseValue;
 	private double baseScale;
 	private ValueDateTupel[] forecasts;
-	private ValueDateTupel[] sdAdjustedForecasts;
+	private ValueDateTupel[] sdAdjustedForecasts = null;
 
 	/**
 	 * Public constructor for class Rule. Rule is an abstract class and depends on
@@ -695,9 +694,17 @@ public abstract class Rule {
 	}
 
 	/**
-	 * @return forecasts Rule
+	 * Get the adjusted and scaled forecasts of this Rule. Invokes
+	 * {@link #calculateAndSetDerivedValues()} if
+	 * {@code (this.sdAdjustedForecasts == null)} evaluates to {@code true}.
+	 * 
+	 * @return forecasts {@code ValueDateuTupel[]} The adjusted and scaled forecasts
+	 *         of this Rule.
 	 */
 	public ValueDateTupel[] getForecasts() {
+		if (sdAdjustedForecasts == null)
+			this.calculateAndSetDerivedValues();
+
 		return forecasts;
 	}
 
@@ -709,13 +716,19 @@ public abstract class Rule {
 	}
 
 	/**
+	 * Get the standard deviation adjusted forecasts for this rule.
+	 * <p>
+	 * Is set to private as the forecast values have no meaning unscaled.
+	 * 
 	 * @return sdAdjustedForecasts Rule
 	 */
-	public ValueDateTupel[] getSdAdjustedForecasts() {
+	private ValueDateTupel[] getSdAdjustedForecasts() {
 		return sdAdjustedForecasts;
 	}
 
 	/**
+	 * Set the standard deviation adjusted forecasts of this Rule.
+	 * 
 	 * @param sdAdjustedForecasts the sdAdjustedForecasts to set
 	 */
 	private void setSdAdjustedForecasts(ValueDateTupel[] sdAdjustedForecasts) {

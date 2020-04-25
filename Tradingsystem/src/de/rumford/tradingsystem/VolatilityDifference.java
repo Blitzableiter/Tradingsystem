@@ -105,14 +105,14 @@ public class VolatilityDifference extends Rule {
 		 * volatility index values
 		 */
 		this.setAverageVolatility(this.calculateAverageVolatility(startOfReferenceWindow, endOfReferenceWindow));
-
-		super.calculateAndSetDerivedValues();
 	}
 
 	/**
 	 * Validates the given lookback window. The lookback window must be >= 1.
 	 * 
 	 * @param lookbackWindow {@code int} The lookback window to be validated.
+	 * @throws IllegalArgumentException if the given lookbackWindow does not meet
+	 *                                  specifications
 	 */
 	public void validateLookbackWindow(int lookbackWindow) {
 		if (lookbackWindow <= 1)
@@ -120,11 +120,12 @@ public class VolatilityDifference extends Rule {
 	}
 
 	/**
-	 * Validates the given volatility indices. There must be 1 or more indices,
-	 * DateTime values must be unique and properly sorted.
+	 * Validates the given volatility indices.
 	 * 
 	 * @param volatilityIndices {@code ValueDateTupel[]} the array of volatility
 	 *                          indices to be validated.
+	 * @throws IllegalArgumentException if the given volatility indices do not meet
+	 *                                  specifications.
 	 */
 	private void validateVolatilityIndices(ValueDateTupel[] volatilityIndices) {
 		/* Check if passed values array contains elements */
@@ -138,6 +139,33 @@ public class VolatilityDifference extends Rule {
 		if (!ValueDateTupel.isSortedAscending(volatilityIndices))
 			throw new IllegalArgumentException(
 					"Given volatility indices are not properly sorted or there are duplicate LocalDateTime values");
+
+		/*
+		 * The given startOfReferenceWindow must be included in the given
+		 * volatilityIndices array.
+		 */
+		if (!ValueDateTupel.containsDate(volatilityIndices, this.getStartOfReferenceWindow()))
+			throw new IllegalArgumentException(
+					"The given startOfReferenceWindow is not included in the given volatilityIndices array.");
+		/*
+		 * The given startOfReferenceWindow must be included in the given
+		 * volatilityIndices array.
+		 */
+		if (!ValueDateTupel.containsDate(volatilityIndices, this.getEndOfReferenceWindow()))
+			throw new IllegalArgumentException(
+					"The given endOfReferenceWindow is not included in the given volatilityIndices array.");
+
+		/*
+		 * The given volatility indices value must not contain NaNs in the area
+		 * delimited by startOfReferenceWindow and endOfReferenceWindow.
+		 */
+		int startOfReferencePosition = ValueDateTupel.getPosition(volatilityIndices, this.getStartOfReferenceWindow());
+		int endOfReferencePosition = ValueDateTupel.getPosition(volatilityIndices, this.getEndOfReferenceWindow());
+		for (int i = startOfReferencePosition; i <= endOfReferencePosition; i++) {
+			if (Double.isNaN(volatilityIndices[i].getValue()))
+				throw new IllegalArgumentException(
+						"There must not be NaN-Values in the given volatility indices values in the area delimited by startOfReferenceWindow and endOfReferenceWindow");
+		}
 
 		/* Extract dates out of the base value's values array and add it to a HashSet */
 		Set<LocalDateTime> baseValueSet = new HashSet<>();
@@ -188,16 +216,17 @@ public class VolatilityDifference extends Rule {
 
 		ValueDateTupel[] baseValues = baseValue.getValues();
 
-		ValueDateTupel[] volatilityIndices = ValueDateTupel.createEmptyArray();
+		ValueDateTupel[] volatilityIndices = null;
 
 		/**
 		 * If there are less base values than the lookback window is long no volatility
 		 * values can be calculated. The volatility values only have any true meaning,
 		 * when the lookback window is used in its entirety.
 		 */
-		// TODO Test me
 		if (baseValues.length < lookbackWindow)
-			return volatilityIndices;
+			throw new IllegalArgumentException(
+					"The amount of base values must not be smaller than the lookback window. Number of base values: "
+							+ baseValues.length + ", lookback window: " + lookbackWindow + ".");
 
 		/**
 		 * Fill the spaces before reaching lookbackWindow with NaN
@@ -252,16 +281,6 @@ public class VolatilityDifference extends Rule {
 		/* Get all volatility index values */
 		ValueDateTupel[] allVolatilityIndices = this.getVolatilityIndices();
 
-		/*
-		 * If the last volatility index value is NaN then no volatility index values
-		 * were calculated due to there not being enough values. If this is the case,
-		 * the average volatility is set to be Double.NaN
-		 */
-		// TODO Test me
-		if (allVolatilityIndices[allVolatilityIndices.length - 1].getValue() == Double.NaN) {
-			return Double.NaN;
-		}
-
 		int startIndex = 0;
 		int endIndex = 0;
 
@@ -291,8 +310,8 @@ public class VolatilityDifference extends Rule {
 		int lookbackWindow = this.getLookbackWindow();
 
 		/*
-		 * If starting point lies before reaching lookback Window the volatility index
-		 * value is Double.NaN
+		 * If starting point lies before reaching lookback Window the results wouldn't
+		 * be meaningful.
 		 */
 		// TODO Test me
 		if (startIndex < lookbackWindow - 1)

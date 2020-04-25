@@ -53,8 +53,6 @@ public class EWMAC extends Rule {
 		EWMA localShortHorizonEwma = new EWMA(this.getBaseValue().getValues(), shortHorizon);
 		this.setLongHorizonEwma(localLongHorizonEwma);
 		this.setShortHorizonEwma(localShortHorizonEwma);
-
-		super.calculateAndSetDerivedValues();
 	}
 
 	/**

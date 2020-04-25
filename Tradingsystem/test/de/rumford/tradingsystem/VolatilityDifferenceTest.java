@@ -63,7 +63,7 @@ class VolatilityDifferenceTest {
 	 */
 	@BeforeEach
 	void setUp() throws Exception {
-		baseValue = BaseValue.jan1_jan4_val200_400_500_200_calc_short(BASE_VALUE_NAME);
+		baseValue = BaseValue.jan1_jan4_22_00_00_val200_400_500_200_calc_short(BASE_VALUE_NAME);
 
 		lookbackWindow = 2;
 	}
@@ -262,6 +262,79 @@ class VolatilityDifferenceTest {
 	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
+	void testVolatilityDifference_startOfReferenceWindowNotInVolatilityIndicesArray() {
+		String expectedMessage = "The given startOfReferenceWindow is not included in the given volatilityIndices array.";
+
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan02220000, Double.NaN);
+		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan03220000, 100d);
+		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan04220000, 5d);
+		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan05220000, 10d);
+		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex4);
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan01220000,
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
+				"Invalid start of reference window value is not correctly handled");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 */
+	@Test
+	void testVolatilityDifference_endOfReferenceWindowNotInVolatilityIndicesArray() {
+		String expectedMessage = "The given endOfReferenceWindow is not included in the given volatilityIndices array.";
+
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
+		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
+		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000, 5d);
+		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan01220000,
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
+				"Invalid end of reference window value is not correctly handled");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 */
+	@Test
+	void testVolatilityDifference_nansInRelevantAreaOfVolatilityIndicesArray() {
+		String expectedMessage = "There must not be NaN-Values in the given volatility indices values in the area delimited by startOfReferenceWindow and endOfReferenceWindow";
+
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, 100d);
+		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
+		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000, Double.NaN);
+		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04220000, 10d);
+		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex4);
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
+				"NaNs in relevant area of volatility indices are not correctly handled");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 */
+	@Test
 	void testVolatilityDifference_baseValueVolatilityIndicesNotAligned() {
 		String expectedMessage = "Base value and volatility index values are not properly aligned."
 				+ " Utilize ValueDateTupel.alignDates(ValueDateTupel[][]) before creating a new VolatilityDifference.";
@@ -292,26 +365,15 @@ class VolatilityDifferenceTest {
 	@Test
 	void testVolatilityDifference_lessBaseValuesThanLookbackWindow() {
 		int lookbackWindowTooGreat = 10;
-		ValueDateTupel[] expectedVolatilityIndices = ValueDateTupel.createEmptyArray();
+		String expectedMessage = "The amount of base values must not be smaller than the lookback window. Number of base values: 4, lookback window: 10.";
 
-		VolatilityDifference vd = new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-				localDateTime2020Jan04220000, lookbackWindowTooGreat, BASE_SCALE);
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan04220000, lookbackWindowTooGreat, BASE_SCALE),
+				"Too great of a lookback window is not correctly handled");
 
-		ValueDateTupel[] actualVolatilityIndices = vd.getVolatilityIndices();
-		assertArrayEquals(expectedVolatilityIndices, actualVolatilityIndices,
-				"Too great of a lookback window is not correctly handled.");
+		assertEquals(expectedMessage, thrown.getMessage(), "Too great of a lookback window is not correctly handled.");
 	}
-
-
-	/**
-	 * If there are less base values than the lookback window is long no volatility
-	 * values can be calculated. The volatility values only have any true meaning,
-	 * when the lookback window is used in its entirety.
-	 */
-	// TODO Test me
-	/*
-	 * if (baseValues.length < lookbackWindow) return volatilityIndices;
-	 */
 
 	/*
 	 * Test method for {@link
@@ -345,7 +407,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#calculateAverageVolatility()}.
+	 * {@link de.rumford.tradingsystem.VolatilityDifference#calculateAverageVolatility(LocalDateTime, LocalDateTime)}.
 	 */
 	@Test
 	void testCalculateAverageVolatility() {
@@ -367,6 +429,34 @@ class VolatilityDifferenceTest {
 		double actualValue = volDif.getAverageVolatility();
 
 		assertEquals(expectedValue, actualValue, "The average volatilty is not correctly calculated");
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.VolatilityDifference#calculateAverageVolatility(LocalDateTime, LocalDateTime)}.
+	 */
+	@Test
+	void testVolatilityDifference_startOfRefereanceWindowBeforeLookbackWindowIsReached() {
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
+		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
+		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000, 5d);
+		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04220000, 10d);
+		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex4);
+
+		lookbackWindow = 3;
+
+		String expectedMessage = "Start of reference window is set before lookback window is reached";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
+				"Too early startOfReferenceWindow in relation the the lookback window is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 //	/**
