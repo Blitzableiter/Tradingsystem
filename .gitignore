@@ -1,3 +1,5 @@
 /.metadata/
-/lib/
 /.sonarlint/
+Tradingsystem/lib/
+Tradingsystem/target/
+Tradingsystem/.settings/
