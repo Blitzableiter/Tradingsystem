@@ -22,6 +22,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src/main/java"/>
-	<classpathentry kind="src" path="src/main/test"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

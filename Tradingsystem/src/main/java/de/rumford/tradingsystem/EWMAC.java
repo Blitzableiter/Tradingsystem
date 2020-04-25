@@ -64,7 +64,7 @@ public class EWMAC extends Rule {
 	 *                                  short horizon.
 	 * @throws IllegalArgumentException if the short horizon is smaller than 0.
 	 */
-	public void validateHorizonValues(int longHorizon, int shortHorizon) {
+	private void validateHorizonValues(int longHorizon, int shortHorizon) {
 		if (longHorizon <= shortHorizon)
 			throw new IllegalArgumentException("The long horizon must be greater than the short horizon");
 

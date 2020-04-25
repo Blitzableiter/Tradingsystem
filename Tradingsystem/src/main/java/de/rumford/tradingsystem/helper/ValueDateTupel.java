@@ -29,7 +29,8 @@ public class ValueDateTupel {
 	private LocalDateTime date;
 
 	/**
-	 * Creates a new {@link ValueDateTupel} instance using... TODO
+	 * Creates a new {@link ValueDateTupel} instance using the given LocaDateTime
+	 * and double.
 	 * 
 	 * @param date  {@link LocalDateTime} The dateTime to be set for this
 	 *              {@link ValueDateTupel}
@@ -560,8 +561,16 @@ public class ValueDateTupel {
 	 * @return {@code int} The position the given LocalDateTime was found. If the
 	 *         given LocalDateTime cannot be found, Integer.MIN_VALUE is returned.
 	 */
-	// TODO INPUT SANITIZATION
 	public static int getPosition(ValueDateTupel[] valueDateTupels, LocalDateTime dtToBeFound) {
+
+		/* Check if given array is null */
+		if (valueDateTupels == null)
+			throw new IllegalArgumentException("The given array of ValueDateTupel must not be null");
+
+		/* Check if given LocalDateTime is null */
+		if (dtToBeFound == null)
+			throw new IllegalArgumentException("The given date to be found must not be null");
+
 		/*
 		 * if the given LocalDateTime is not in the given array, return
 		 * Integer.MIN_VALUE
@@ -616,7 +625,7 @@ public class ValueDateTupel {
 
 	@Override
 	public String toString() {
-		return "ValueDateTupel [value=" + value + ", date=" + date + "]";
+		return "ValueDateTupel [date=" + date + ", value=" + value + "]";
 	}
 
 	/**

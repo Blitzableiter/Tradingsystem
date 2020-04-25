@@ -64,7 +64,7 @@ public abstract class Rule {
 	 * takes into consideration that not all relevant values might be known upon
 	 * call of Rule constructor.
 	 */
-	final void calculateAndSetDerivedValues() {
+	private void calculateAndSetDerivedValues() {
 		this.setSdAdjustedForecasts(this.calculateSdAdjustedForecasts());
 		this.setForecastScalar(this.calculateForecastScalar());
 		this.setForecasts(this.calculateScaledForecasts());
@@ -167,7 +167,7 @@ public abstract class Rule {
 	 * @param calculateTo   {@link LocalDateTime} The ending dateTime.
 	 * @return {@code ValueDateTupel[]} An array of scaled forecasts.
 	 */
-	final ValueDateTupel[] calculateScaledForecasts(LocalDateTime calculateFrom, LocalDateTime calculateTo) {
+	private ValueDateTupel[] calculateScaledForecasts(LocalDateTime calculateFrom, LocalDateTime calculateTo) {
 		ValueDateTupel[] calculatedScaledForecasts = {};
 
 		Rule[] instanceVariations = this.getVariations();
@@ -245,6 +245,7 @@ public abstract class Rule {
 		}
 
 		double rawForecast = this.calculateRawForecast(forecastDateTime);
+
 		double sdValue = ValueDateTupel.getElement(this.getBaseValue().getStandardDeviationValues(), forecastDateTime)
 				.getValue();
 		try {
@@ -263,7 +264,7 @@ public abstract class Rule {
 	 *                           value to be scaled.
 	 * @return {@code double} the scaled forecast value.
 	 */
-	public final double calculateScaledForecast(double sdAdjustedForecast) {
+	private double calculateScaledForecast(double sdAdjustedForecast) {
 		double instanceBaseScale = this.getBaseScale();
 		double instanceForecastScalar = this.getForecastScalar();
 
@@ -339,6 +340,9 @@ public abstract class Rule {
 			relevantForecastValues = this.getSdAdjustedForecasts();
 		}
 
+		relevantForecastValues = ValueDateTupel.getElements(relevantForecastValues, this.getStartOfReferenceWindow(),
+				this.getEndOfReferenceWindow());
+		
 		double calculatedForecastScalar = Util.calculateForecastScalar(ValueDateTupel.getValues(relevantForecastValues),
 				instanceBaseScale);
 		if (Double.isNaN(calculatedForecastScalar))
@@ -587,7 +591,7 @@ public abstract class Rule {
 	 * 
 	 * @return baseValue {@link BaseValue} The base value of this instance of rule.
 	 */
-	public BaseValue getBaseValue() {
+	public final BaseValue getBaseValue() {
 		return baseValue;
 	}
 
@@ -606,7 +610,9 @@ public abstract class Rule {
 	 * 
 	 * @return {@code double} forecast scalar of this rule
 	 */
-	public double getForecastScalar() {
+	public final double getForecastScalar() {
+		if (sdAdjustedForecasts == null)
+			this.calculateAndSetDerivedValues();
 		return forecastScalar;
 	}
 
@@ -624,7 +630,7 @@ public abstract class Rule {
 	 * 
 	 * @return {@code double} the weight of this rule
 	 */
-	public double getWeight() {
+	public final double getWeight() {
 		return weight;
 	}
 
@@ -640,7 +646,7 @@ public abstract class Rule {
 	/**
 	 * @return variations Rule
 	 */
-	public Rule[] getVariations() {
+	public final Rule[] getVariations() {
 		return variations;
 	}
 
@@ -654,7 +660,7 @@ public abstract class Rule {
 	/**
 	 * @return startOfReferenceWindow Rule
 	 */
-	public LocalDateTime getStartOfReferenceWindow() {
+	public final LocalDateTime getStartOfReferenceWindow() {
 		return startOfReferenceWindow;
 	}
 
@@ -668,7 +674,7 @@ public abstract class Rule {
 	/**
 	 * @return endOfReferenceWindow Rule
 	 */
-	public LocalDateTime getEndOfReferenceWindow() {
+	public final LocalDateTime getEndOfReferenceWindow() {
 		return endOfReferenceWindow;
 	}
 
@@ -682,7 +688,7 @@ public abstract class Rule {
 	/**
 	 * @return baseScale Rule
 	 */
-	public double getBaseScale() {
+	public final double getBaseScale() {
 		return baseScale;
 	}
 
@@ -701,10 +707,9 @@ public abstract class Rule {
 	 * @return forecasts {@code ValueDateuTupel[]} The adjusted and scaled forecasts
 	 *         of this Rule.
 	 */
-	public ValueDateTupel[] getForecasts() {
+	public final ValueDateTupel[] getForecasts() {
 		if (sdAdjustedForecasts == null)
 			this.calculateAndSetDerivedValues();
-
 		return forecasts;
 	}
 

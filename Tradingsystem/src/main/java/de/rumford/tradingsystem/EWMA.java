@@ -1,5 +1,7 @@
 package de.rumford.tradingsystem;
 
+import java.util.Arrays;
+
 import org.apache.commons.lang3.ArrayUtils;
 
 import de.rumford.tradingsystem.helper.ValueDateTupel;
@@ -95,12 +97,17 @@ public class EWMA {
 		double previousEwma = 0;
 		/* Calculate all EWMA-Values */
 		for (ValueDateTupel baseValue : baseValues) {
-			/* Calculate the new values */
-			double newValue = this.calculateEWMA(previousEwma, baseValue.getValue());
+			double newValue = 0;
+			if (Double.isNaN(baseValue.getValue())) {
+				newValue = Double.NaN;
+				previousEwma = 0;
+			} else {
+				/* Calculate the new values */
+				newValue = this.calculateEWMA(previousEwma, baseValue.getValue());
+				previousEwma = newValue;
+			}
 			/* Add the new value to the array of EWMA values */
 			ewmaValues = ArrayUtils.add(ewmaValues, new ValueDateTupel(baseValue.getDate(), newValue));
-			/* Set previousEwma to be that value for calculation of next value */
-			previousEwma = newValue;
 		}
 		return ewmaValues;
 	}

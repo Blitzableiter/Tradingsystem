@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
-import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -101,20 +100,23 @@ public class BaseValue {
 	 * <p>
 	 * {@code sd = baseValue * sqrt[ EWMA( return² ) ]}
 	 * 
-	 * @param values {@code ValueDateTupel[]} the given base values.
+	 * @param baseValues {@code ValueDateTupel[]} the given base values.
 	 * @return {@code ValueDateTupel[]} the calculated standard deviation values.
 	 */
-	// TODO INPUT SANITIZATION
-	private ValueDateTupel[] calculateStandardDeviationValues(ValueDateTupel[] values) {
+	private ValueDateTupel[] calculateStandardDeviationValues(ValueDateTupel[] baseValues) {
+
+		/* Check if given array is null */
+		if (baseValues == null)
+			throw new IllegalArgumentException("Given base values must not be null");
 
 		/* Initiate the squared returns. The first value is always Double.NaN */
 		ValueDateTupel[] squaredReturns = {};
-		squaredReturns = ArrayUtils.add(squaredReturns, new ValueDateTupel(values[0].getDate(), Double.NaN));
+		squaredReturns = ArrayUtils.add(squaredReturns, new ValueDateTupel(baseValues[0].getDate(), Double.NaN));
 		/* Calculate the squared returns */
-		for (int i = 1; i < values.length; i++) {
+		for (int i = 1; i < baseValues.length; i++) {
 			double returns;
 			try {
-				returns = Util.calculateReturn(values[i - 1].getValue(), values[i].getValue());
+				returns = Util.calculateReturn(baseValues[i - 1].getValue(), baseValues[i].getValue());
 			} catch (IllegalArgumentException e) {
 				/*
 				 * If the value cannot be calculated because the first value is zero set the
@@ -123,28 +125,27 @@ public class BaseValue {
 				returns = Double.NaN;
 			}
 			squaredReturns = ArrayUtils.add(squaredReturns,
-					new ValueDateTupel(values[i].getDate(), Math.pow(returns, 2)));
+					new ValueDateTupel(baseValues[i].getDate(), Math.pow(returns, 2)));
 		}
 
 		/* Instantiate the EWMA used for the standard deviation. */
 		EWMA ewmaOfStandardDeviation = new EWMA(squaredReturns, 25);
-		double previousStandardDeviationEwma = 0;
 
 		/*
 		 * The first value is always Double.NaN, as the first value cannot have standard
 		 * deviation from itself.
 		 */
 		ValueDateTupel[] standardDeviationValues = {};
-		standardDeviationValues = ArrayUtils.add(values, new ValueDateTupel(values[0].getDate(), Double.NaN));
+		standardDeviationValues = ArrayUtils.add(standardDeviationValues,
+				new ValueDateTupel(baseValues[0].getDate(), Double.NaN));
 
 		/* Fill in the calculated values. */
 		for (int i = 1; i < squaredReturns.length; i++) {
-			double squaredEwmaOfVolatility = ewmaOfStandardDeviation.calculateEWMA(previousStandardDeviationEwma,
-					values[i].getValue());
+			double squaredEwmaOfVolatility = ewmaOfStandardDeviation.getEwmaValues()[i].getValue();
 			double ewmaOfVolatility = Math.sqrt(squaredEwmaOfVolatility);
-			double standardDeviation = ewmaOfVolatility * values[i].getValue();
+			double standardDeviation = ewmaOfVolatility * baseValues[i].getValue();
 			standardDeviationValues = ArrayUtils.add(standardDeviationValues,
-					new ValueDateTupel(values[i].getDate(), standardDeviation));
+					new ValueDateTupel(baseValues[i].getDate(), standardDeviation));
 		}
 
 		/* Return the standard deviations. */
@@ -351,6 +352,107 @@ public class BaseValue {
 		values = ArrayUtils.add(values, valuedatetupel2);
 		values = ArrayUtils.add(values, valuedatetupel3);
 		values = ArrayUtils.add(values, valuedatetupel4);
+
+		return new BaseValue(name, values);
+	}
+
+	static final BaseValue jan1_jan31_22_00_00_calc_short(String name) {
+		LocalDateTime localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan06220000 = LocalDateTime.of(LocalDate.of(2020, 1, 6), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan07220000 = LocalDateTime.of(LocalDate.of(2020, 1, 7), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan08220000 = LocalDateTime.of(LocalDate.of(2020, 1, 8), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan09220000 = LocalDateTime.of(LocalDate.of(2020, 1, 9), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan10220000 = LocalDateTime.of(LocalDate.of(2020, 1, 10), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan11220000 = LocalDateTime.of(LocalDate.of(2020, 1, 11), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan12220000 = LocalDateTime.of(LocalDate.of(2020, 1, 12), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan13220000 = LocalDateTime.of(LocalDate.of(2020, 1, 13), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan14220000 = LocalDateTime.of(LocalDate.of(2020, 1, 14), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan15220000 = LocalDateTime.of(LocalDate.of(2020, 1, 15), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan16220000 = LocalDateTime.of(LocalDate.of(2020, 1, 16), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan17220000 = LocalDateTime.of(LocalDate.of(2020, 1, 17), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan18220000 = LocalDateTime.of(LocalDate.of(2020, 1, 18), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan19220000 = LocalDateTime.of(LocalDate.of(2020, 1, 19), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan20220000 = LocalDateTime.of(LocalDate.of(2020, 1, 20), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan21220000 = LocalDateTime.of(LocalDate.of(2020, 1, 21), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan22220000 = LocalDateTime.of(LocalDate.of(2020, 1, 22), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan23220000 = LocalDateTime.of(LocalDate.of(2020, 1, 23), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan24220000 = LocalDateTime.of(LocalDate.of(2020, 1, 24), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan25220000 = LocalDateTime.of(LocalDate.of(2020, 1, 25), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan26220000 = LocalDateTime.of(LocalDate.of(2020, 1, 26), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan27220000 = LocalDateTime.of(LocalDate.of(2020, 1, 27), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan28220000 = LocalDateTime.of(LocalDate.of(2020, 1, 28), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan29220000 = LocalDateTime.of(LocalDate.of(2020, 1, 29), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan30220000 = LocalDateTime.of(LocalDate.of(2020, 1, 30), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan31220000 = LocalDateTime.of(LocalDate.of(2020, 1, 31), LocalTime.of(22, 0));
+
+		ValueDateTupel valuedatetupel1 = new ValueDateTupel(localDateTimeJan01220000, 200d);
+		ValueDateTupel valuedatetupel2 = new ValueDateTupel(localDateTimeJan02220000, 400d);
+		ValueDateTupel valuedatetupel3 = new ValueDateTupel(localDateTimeJan03220000, 500d);
+		ValueDateTupel valuedatetupel4 = new ValueDateTupel(localDateTimeJan04220000, 200d);
+		ValueDateTupel valuedatetupel5 = new ValueDateTupel(localDateTimeJan05220000, 100d);
+		ValueDateTupel valuedatetupel6 = new ValueDateTupel(localDateTimeJan06220000, 150d);
+		ValueDateTupel valuedatetupel7 = new ValueDateTupel(localDateTimeJan07220000, 200d);
+		ValueDateTupel valuedatetupel8 = new ValueDateTupel(localDateTimeJan08220000, 250d);
+		ValueDateTupel valuedatetupel9 = new ValueDateTupel(localDateTimeJan09220000, 300d);
+		ValueDateTupel valuedatetupel10 = new ValueDateTupel(localDateTimeJan10220000, 200d);
+		ValueDateTupel valuedatetupel11 = new ValueDateTupel(localDateTimeJan11220000, 400d);
+		ValueDateTupel valuedatetupel12 = new ValueDateTupel(localDateTimeJan12220000, 300d);
+		ValueDateTupel valuedatetupel13 = new ValueDateTupel(localDateTimeJan13220000, 200d);
+		ValueDateTupel valuedatetupel14 = new ValueDateTupel(localDateTimeJan14220000, 250d);
+		ValueDateTupel valuedatetupel15 = new ValueDateTupel(localDateTimeJan15220000, 300d);
+		ValueDateTupel valuedatetupel16 = new ValueDateTupel(localDateTimeJan16220000, 400d);
+		ValueDateTupel valuedatetupel17 = new ValueDateTupel(localDateTimeJan17220000, 500d);
+		ValueDateTupel valuedatetupel18 = new ValueDateTupel(localDateTimeJan18220000, 900d);
+		ValueDateTupel valuedatetupel19 = new ValueDateTupel(localDateTimeJan19220000, 500d);
+		ValueDateTupel valuedatetupel20 = new ValueDateTupel(localDateTimeJan20220000, 450d);
+		ValueDateTupel valuedatetupel21 = new ValueDateTupel(localDateTimeJan21220000, 400d);
+		ValueDateTupel valuedatetupel22 = new ValueDateTupel(localDateTimeJan22220000, 450d);
+		ValueDateTupel valuedatetupel23 = new ValueDateTupel(localDateTimeJan23220000, 400d);
+		ValueDateTupel valuedatetupel24 = new ValueDateTupel(localDateTimeJan24220000, 350d);
+		ValueDateTupel valuedatetupel25 = new ValueDateTupel(localDateTimeJan25220000, 300d);
+		ValueDateTupel valuedatetupel26 = new ValueDateTupel(localDateTimeJan26220000, 200d);
+		ValueDateTupel valuedatetupel27 = new ValueDateTupel(localDateTimeJan27220000, 150d);
+		ValueDateTupel valuedatetupel28 = new ValueDateTupel(localDateTimeJan28220000, 175d);
+		ValueDateTupel valuedatetupel29 = new ValueDateTupel(localDateTimeJan29220000, 175d);
+		ValueDateTupel valuedatetupel30 = new ValueDateTupel(localDateTimeJan30220000, 200d);
+		ValueDateTupel valuedatetupel31 = new ValueDateTupel(localDateTimeJan31220000, 180d);
+
+		ValueDateTupel[] values = ValueDateTupel.createEmptyArray();
+		values = ArrayUtils.add(values, valuedatetupel1);
+		values = ArrayUtils.add(values, valuedatetupel2);
+		values = ArrayUtils.add(values, valuedatetupel3);
+		values = ArrayUtils.add(values, valuedatetupel4);
+		values = ArrayUtils.add(values, valuedatetupel5);
+		values = ArrayUtils.add(values, valuedatetupel6);
+		values = ArrayUtils.add(values, valuedatetupel7);
+		values = ArrayUtils.add(values, valuedatetupel8);
+		values = ArrayUtils.add(values, valuedatetupel9);
+		values = ArrayUtils.add(values, valuedatetupel10);
+		values = ArrayUtils.add(values, valuedatetupel11);
+		values = ArrayUtils.add(values, valuedatetupel12);
+		values = ArrayUtils.add(values, valuedatetupel13);
+		values = ArrayUtils.add(values, valuedatetupel14);
+		values = ArrayUtils.add(values, valuedatetupel15);
+		values = ArrayUtils.add(values, valuedatetupel16);
+		values = ArrayUtils.add(values, valuedatetupel17);
+		values = ArrayUtils.add(values, valuedatetupel18);
+		values = ArrayUtils.add(values, valuedatetupel19);
+		values = ArrayUtils.add(values, valuedatetupel20);
+		values = ArrayUtils.add(values, valuedatetupel21);
+		values = ArrayUtils.add(values, valuedatetupel22);
+		values = ArrayUtils.add(values, valuedatetupel23);
+		values = ArrayUtils.add(values, valuedatetupel24);
+		values = ArrayUtils.add(values, valuedatetupel25);
+		values = ArrayUtils.add(values, valuedatetupel26);
+		values = ArrayUtils.add(values, valuedatetupel27);
+		values = ArrayUtils.add(values, valuedatetupel28);
+		values = ArrayUtils.add(values, valuedatetupel29);
+		values = ArrayUtils.add(values, valuedatetupel30);
+		values = ArrayUtils.add(values, valuedatetupel31);
 
 		return new BaseValue(name, values);
 	}

@@ -127,7 +127,7 @@ class BaseValueTest {
 	 */
 	@Test
 	void testBaseValue_name_duplicateDatesInValues() {
-		String expectedMessage = "Date/time values in given values array are not unique";
+		String expectedMessage = "Given values are not properly sorted or there are non-unique values.";
 		values = ArrayUtils.add(values, valuedatetupel1);
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
@@ -142,7 +142,7 @@ class BaseValueTest {
 	 */
 	@Test
 	void testBaseValue_name_datesInIncorrectOrder() {
-		String expectedMessage = "Given values are not properly sorted";
+		String expectedMessage = "Given values are not properly sorted or there are non-unique values.";
 		values = ValueDateTupel.createEmptyArray();
 		values = ArrayUtils.add(values, valuedatetupel1);
 		values = ArrayUtils.add(values, valuedatetupel3);
@@ -214,7 +214,7 @@ class BaseValueTest {
 	 */
 	@Test
 	void testBaseValue_name_values_duplicateShortIndexValues() {
-		String expectedMessage = "Date/time values in given values array are not unique";
+		String expectedMessage = "Given values are not properly sorted or there are non-unique values.";
 		shortValues = ArrayUtils.add(shortValues, valuedatetupel1);
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,

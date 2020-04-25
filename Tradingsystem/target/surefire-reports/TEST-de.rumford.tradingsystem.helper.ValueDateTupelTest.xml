@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.044" tests="38" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="sun.desktop" value="windows"/>
+    <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
+    <property name="java.specification.version" value="11"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="java.class.path" value="C:\dev\eclipse-workspaces\Thesis-Workspace\Tradingsystem\target\test-classes;C:\dev\eclipse-workspaces\Thesis-Workspace\Tradingsystem\target\classes;C:\Users\monst\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.6.0\junit-jupiter-api-5.6.0.jar;C:\Users\monst\.m2\repository\org\apiguardian\apiguardian-api\1.1.0\apiguardian-api-1.1.0.jar;C:\Users\monst\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\monst\.m2\repository\org\junit\platform\junit-platform-commons\1.6.0\junit-platform-commons-1.6.0.jar;C:\Users\monst\.m2\repository\org\apache\commons\commons-lang3\3.10\commons-lang3-3.10.jar;C:\Users\monst\.m2\repository\org\apache\commons\commons-math3\3.6.1\commons-math3-3.6.1.jar;"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="http://java.oracle.com/"/>
+    <property name="user.timezone" value=""/>
+    <property name="java.vm.specification.version" value="11"/>
+    <property name="os.name" value="Windows 10"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="DE"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-11.0.3\bin"/>
+    <property name="sun.java.command" value="C:\Users\monst\AppData\Local\Temp\surefire3610546595657693944\surefirebooter12290148625735979397.jar C:\Users\monst\AppData\Local\Temp\surefire3610546595657693944 2020-04-25T18-04-34_745-jvmRun1 surefire9019624125240204171tmp surefire_017636165694993109251tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="C:\dev\eclipse-workspaces\Thesis-Workspace\Tradingsystem\target\test-classes;C:\dev\eclipse-workspaces\Thesis-Workspace\Tradingsystem\target\classes;C:\Users\monst\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.6.0\junit-jupiter-api-5.6.0.jar;C:\Users\monst\.m2\repository\org\apiguardian\apiguardian-api\1.1.0\apiguardian-api-1.1.0.jar;C:\Users\monst\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\monst\.m2\repository\org\junit\platform\junit-platform-commons\1.6.0\junit-platform-commons-1.6.0.jar;C:\Users\monst\.m2\repository\org\apache\commons\commons-lang3\3.10\commons-lang3-3.10.jar;C:\Users\monst\.m2\repository\org\apache\commons\commons-math3\3.6.1\commons-math3-3.6.1.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\monst"/>
+    <property name="user.language" value="de"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2019-04-16"/>
+    <property name="java.home" value="C:\Program Files\Java\jdk-11.0.3"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\dev\eclipse-workspaces\Thesis-Workspace\Tradingsystem"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
+    <property name="surefire.real.class.path" value="C:\Users\monst\AppData\Local\Temp\surefire3610546595657693944\surefirebooter12290148625735979397.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="11.0.3+12-LTS"/>
+    <property name="user.name" value="monst"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="file.encoding" value="Cp1252"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="java.vendor.version" value="18.9"/>
+    <property name="localRepository" value="C:\Users\monst\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="http://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\monst\AppData\Local\Temp\"/>
+    <property name="java.version" value="11.0.3"/>
+    <property name="user.dir" value="C:\dev\eclipse-workspaces\Thesis-Workspace\Tradingsystem"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="java.awt.printerjob" value="sun.awt.windows.WPrinterJob"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk-11.0.3\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:/Program Files/Java/jdk-11.0.3/bin/server;C:/Program Files/Java/jdk-11.0.3/bin;C:\Python27\;C:\Python27\Scripts;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\iCLS\;C:\Program Files\Intel\Intel(R) Management Engine Components\iCLS\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Microsoft VS Code Insiders\bin;C:\Git\cmd;C:\Users\monst\AppData\Roaming\nvm;C:\nodejs;C:\ProgramData\chocolatey\bin;C:\Program Files\Java\jdk-11.0.3\bin;C:\Program Files\MiKTeX 2.9\miktex\bin\x64\;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\monst\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\monst\Desktop;;."/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.vm.version" value="11.0.3+12-LTS"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="55.0"/>
+  </properties>
+  <testcase name="testIsSortedDescending_arrayNull" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0"/>
+  <testcase name="testContainsDate_unknownDate" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.002"/>
+  <testcase name="testAlignDates" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0"/>
+  <testcase name="testIsSortedDescending" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0"/>
+  <testcase name="testAddOneAt_position_end" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0"/>
+  <testcase name="testGetDates" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0"/>
+  <testcase name="testalignDates_arrayContainsNull" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testContains_unknownElement" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0"/>
+  <testcase name="testContainsDate" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0"/>
+  <testcase name="testAddOneAt_position_0" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0"/>
+  <testcase name="testGetValues_arrayNull" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testAddOneAt_position_greater_arrayLength" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.004"/>
+  <testcase name="testContainsDate_dateTimeNull" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testIsSortedAscending_notInOrder" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0"/>
+  <testcase name="testalignDates_arrayNull" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testCreateEmptyArray" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testEqualsObject" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0"/>
+  <testcase name="testalignDates_arrayOfArraysNull" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0"/>
+  <testcase name="testCreateEmptyArrayInt" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0"/>
+  <testcase name="testContainsDate_arrayNull" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testAddOneAt_position_negative" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testContains" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testIsSortedAscending_arrayNull" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testContainsLocalDateTime_existingLocalDateTime" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testalignDates" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.002"/>
+  <testcase name="testIsSortedAscending_arrayContainsNull" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testIsSortedAscending" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testIsSortedDescending_notInOrder" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0"/>
+  <testcase name="testIsSortedDescending_arrayContainsNull" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testAddOneAt_arrayNull" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testGetValues" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testalignDates_onlyNaN" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testalignDates_arrayNotSortedAscending" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testIsSortedAscending_twoEqualDates" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0"/>
+  <testcase name="testIsSortedDescending_twoEqualDates" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testAddOneAt_position_between" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0"/>
+  <testcase name="testAddOneAt_valueNull" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+  <testcase name="testGetDates_arrayNull" classname="de.rumford.tradingsystem.helper.ValueDateTupelTest" time="0.001"/>
+</testsuite>

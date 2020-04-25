@@ -1,0 +1,76 @@
+-------------------------------------------------------------------------------
+Test set: de.rumford.tradingsystem.DiversificationMultiplierTest
+-------------------------------------------------------------------------------
+Tests run: 14, Failures: 8, Errors: 4, Skipped: 0, Time elapsed: 0.049 s <<< FAILURE! - in de.rumford.tradingsystem.DiversificationMultiplierTest
+testDiversificationMultiplier_numberOfCorrelationRowsNotEqualColumns  Time elapsed: 0.029 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: Inequal number of correlation rows and columns are not being correctly handled ==> Unexpected exception type thrown ==> expected: <java.lang.IllegalArgumentException> but was: <java.lang.ArrayIndexOutOfBoundsException>
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testDiversificationMultiplier_numberOfCorrelationRowsNotEqualColumns(DiversificationMultiplierTest.java:63)
+Caused by: java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.lambda$2(DiversificationMultiplierTest.java:63)
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testDiversificationMultiplier_numberOfCorrelationRowsNotEqualColumns(DiversificationMultiplierTest.java:63)
+
+testDiversificationMultiplier_negativeWeights  Time elapsed: 0.001 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: Negative weights are not being correctly handled ==> Unexpected exception type thrown ==> expected: <java.lang.IllegalArgumentException> but was: <java.lang.ArrayIndexOutOfBoundsException>
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testDiversificationMultiplier_negativeWeights(DiversificationMultiplierTest.java:87)
+Caused by: java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.lambda$4(DiversificationMultiplierTest.java:87)
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testDiversificationMultiplier_negativeWeights(DiversificationMultiplierTest.java:87)
+
+testGetValue  Time elapsed: 0.001 s  <<< ERROR!
+java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testGetValue(DiversificationMultiplierTest.java:133)
+
+testGetCorrelations  Time elapsed: 0.001 s  <<< ERROR!
+java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testGetCorrelations(DiversificationMultiplierTest.java:201)
+
+testDiversificationMultiplier_noWeights  Time elapsed: 0.001 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: No weights are not being correctly handled ==> Unexpected exception type thrown ==> expected: <java.lang.IllegalArgumentException> but was: <java.lang.ArrayIndexOutOfBoundsException>
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testDiversificationMultiplier_noWeights(DiversificationMultiplierTest.java:51)
+Caused by: java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.lambda$1(DiversificationMultiplierTest.java:51)
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testDiversificationMultiplier_noWeights(DiversificationMultiplierTest.java:51)
+
+testDiversificationMultiplier_invalidSelfCorrelations  Time elapsed: 0.002 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: Invalid self correlations are not being correctly handled ==> Unexpected exception type thrown ==> expected: <java.lang.IllegalArgumentException> but was: <java.lang.ArrayIndexOutOfBoundsException>
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testDiversificationMultiplier_invalidSelfCorrelations(DiversificationMultiplierTest.java:123)
+Caused by: java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.lambda$7(DiversificationMultiplierTest.java:123)
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testDiversificationMultiplier_invalidSelfCorrelations(DiversificationMultiplierTest.java:123)
+
+testDiversificationMultiplier  Time elapsed: 0.001 s  <<< ERROR!
+java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testDiversificationMultiplier(DiversificationMultiplierTest.java:26)
+
+testDiversificationMultiplier_noCorrelations  Time elapsed: 0.001 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: No correlations are not being correctly handled ==> Unexpected exception type thrown ==> expected: <java.lang.IllegalArgumentException> but was: <java.lang.ArrayIndexOutOfBoundsException>
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testDiversificationMultiplier_noCorrelations(DiversificationMultiplierTest.java:39)
+Caused by: java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.lambda$0(DiversificationMultiplierTest.java:39)
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testDiversificationMultiplier_noCorrelations(DiversificationMultiplierTest.java:39)
+
+testDiversificationMultiplier_assymetricalCorrelationsMatrix  Time elapsed: 0 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: Assymetrical correlations matrix is not being correctly handled ==> Unexpected exception type thrown ==> expected: <java.lang.IllegalArgumentException> but was: <java.lang.ArrayIndexOutOfBoundsException>
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testDiversificationMultiplier_assymetricalCorrelationsMatrix(DiversificationMultiplierTest.java:111)
+Caused by: java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.lambda$6(DiversificationMultiplierTest.java:111)
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testDiversificationMultiplier_assymetricalCorrelationsMatrix(DiversificationMultiplierTest.java:111)
+
+testGetWeights  Time elapsed: 0 s  <<< ERROR!
+java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testGetWeights(DiversificationMultiplierTest.java:187)
+
+testDiversificationMultiplier_weightsDontAddUpTo1  Time elapsed: 0.002 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: Weights not adding up to 1 is not being correctly handled ==> Unexpected exception type thrown ==> expected: <java.lang.IllegalArgumentException> but was: <java.lang.ArrayIndexOutOfBoundsException>
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testDiversificationMultiplier_weightsDontAddUpTo1(DiversificationMultiplierTest.java:99)
+Caused by: java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.lambda$5(DiversificationMultiplierTest.java:99)
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testDiversificationMultiplier_weightsDontAddUpTo1(DiversificationMultiplierTest.java:99)
+
+testDiversificationMultiplier_numberOfWeightsNotEqualNumberOfCorrelations  Time elapsed: 0.002 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: Inequal number of correlations and weights is not being correctly handled ==> Unexpected exception type thrown ==> expected: <java.lang.IllegalArgumentException> but was: <java.lang.ArrayIndexOutOfBoundsException>
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testDiversificationMultiplier_numberOfWeightsNotEqualNumberOfCorrelations(DiversificationMultiplierTest.java:75)
+Caused by: java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.lambda$3(DiversificationMultiplierTest.java:75)
+	at de.rumford.tradingsystem.DiversificationMultiplierTest.testDiversificationMultiplier_numberOfWeightsNotEqualNumberOfCorrelations(DiversificationMultiplierTest.java:75)
+
