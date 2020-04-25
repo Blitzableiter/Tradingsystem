@@ -6,6 +6,11 @@
 	<groupId>de.rumford.tradingsystem</groupId>
 	<artifactId>Tradingsystem</artifactId>
 	<version>1</version>
+	<properties>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<project.build.testSourceDirectory>src/main/test</project.build.testSourceDirectory>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>

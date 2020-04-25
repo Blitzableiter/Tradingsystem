@@ -14,10 +14,10 @@ class EWMATest {
 	
 	@BeforeEach
 	void setUp() throws Exception {
-		ewma2 = new EWMA(2);
-		ewma2_1 = new EWMA(2);
-		ewma4 = new EWMA(4);
-		ewma8 = new EWMA(8);
+//		ewma2 = new EWMA(2);
+//		ewma2_1 = new EWMA(2);
+//		ewma4 = new EWMA(4);
+//		ewma8 = new EWMA(8);
 	}
 	
 	@Test

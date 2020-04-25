@@ -15,8 +15,8 @@ class EWMACTest {
 	int shortHorizon;
 	int longHorizon;
 
-	final String BASE_VALUE_NAME = "Base value name";
-	final int BASE_SCALE = 10;
+	static final String BASE_VALUE_NAME = "Base value name";
+	static final int BASE_SCALE = 10;
 
 	static LocalDateTime localDateTimeJan01_22_00_00;
 	static LocalDateTime localDateTimeJan02_22_00_00;
@@ -43,37 +43,37 @@ class EWMACTest {
 				localDateTimeJan01_22_00_00, localDateTimeJan04_22_00_00, longHorizon, shortHorizon, BASE_SCALE);
 	}
 
-	@Test
-	void testCalculateRawForecast_negativeRawForecast() {
-		double shortHorizonForecast = 12d;
-		double longHorizonForecast = 15d;
-		double expectedValue = -3d;
+//	@Test
+//	void testCalculateRawForecast_negativeRawForecast() {
+//		double shortHorizonForecast = 12d;
+//		double longHorizonForecast = 15d;
+//		double expectedValue = -3d;
+//
+//		double actualValue = ewmac.calculateRawForecast(shortHorizonForecast, longHorizonForecast);
+//
+//		assertEquals(expectedValue, actualValue, "Negative raw Forecast is not correctly calculated");
+//	}
 
-		double actualValue = ewmac.calculateRawForecast(shortHorizonForecast, longHorizonForecast);
+//	@Test
+//	void testCalculateRawForecast_positiveRawForecast() {
+//		double shortHorizonForecast = 15d;
+//		double longHorizonForecast = 12d;
+//		double expectedValue = 3d;
+//
+//		double actualValue = ewmac.calculateRawForecast(shortHorizonForecast, longHorizonForecast);
+//
+//		assertEquals(expectedValue, actualValue, "Positive raw Forecast is not correctly calculated");
+//	}
 
-		assertEquals(expectedValue, actualValue, "Negative raw Forecast is not correctly calculated");
-	}
-
-	@Test
-	void testCalculateRawForecast_positiveRawForecast() {
-		double shortHorizonForecast = 15d;
-		double longHorizonForecast = 12d;
-		double expectedValue = 3d;
-
-		double actualValue = ewmac.calculateRawForecast(shortHorizonForecast, longHorizonForecast);
-
-		assertEquals(expectedValue, actualValue, "Positive raw Forecast is not correctly calculated");
-	}
-
-	@Test
-	void testCalculateRawForecast_rawForecast0() {
-		double shortHorizonForecast = 15d;
-		double longHorizonForecast = 15d;
-		double expectedValue = 0d;
-
-		double actualValue = ewmac.calculateRawForecast(shortHorizonForecast, longHorizonForecast);
-
-		assertEquals(expectedValue, actualValue, "Zero raw Forecast is not correctly calculated");
-	}
+//	@Test
+//	void testCalculateRawForecast_rawForecast0() {
+//		double shortHorizonForecast = 15d;
+//		double longHorizonForecast = 15d;
+//		double expectedValue = 0d;
+//
+//		double actualValue = ewmac.calculateRawForecast(shortHorizonForecast, longHorizonForecast);
+//
+//		assertEquals(expectedValue, actualValue, "Zero raw Forecast is not correctly calculated");
+//	}
 
 }

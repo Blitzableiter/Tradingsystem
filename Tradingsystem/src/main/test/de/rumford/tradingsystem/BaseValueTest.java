@@ -15,8 +15,9 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 class BaseValueTest {
 
-	final static String NAME_OF_TEST_BASE_VALUES = "Test Base Value";
-	final static String EMPTY_STRING = "";
+	static final String NAME_OF_TEST_BASE_VALUES = "Test Base Value";
+	static final String EMPTY_STRING = "";
+	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";
 
 	final static int NUMBER_OF_VALUES = 4;
 	static ValueDateTupel valuedatetupel1;
@@ -104,7 +105,7 @@ class BaseValueTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class, () -> new BaseValue(EMPTY_STRING, values),
 				"Empty name not properly rejected");
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -117,7 +118,7 @@ class BaseValueTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, emptyValues), "Empty values not properly rejected");
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -132,7 +133,7 @@ class BaseValueTest {
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values),
 				"Duplicate date/time values are not properly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -151,7 +152,7 @@ class BaseValueTest {
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values),
 				"Date/time values in incorrect order are not properly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -176,7 +177,7 @@ class BaseValueTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new BaseValue(EMPTY_STRING, values, shortValues), "Empty name not properly rejected");
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -190,7 +191,7 @@ class BaseValueTest {
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, emptyValues, shortValues),
 				"Empty values not properly rejected");
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -204,7 +205,7 @@ class BaseValueTest {
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values, emptyValues),
 				"Empty short index values not properly rejected");
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -219,7 +220,7 @@ class BaseValueTest {
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values, shortValues),
 				"Duplicate date/time values in short index values are not properly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
