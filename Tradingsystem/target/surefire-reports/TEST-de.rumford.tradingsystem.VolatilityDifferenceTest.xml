@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.043" tests="19" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.056" tests="19" errors="0" skipped="0" failures="0">
   <properties>
     <property name="sun.desktop" value="windows"/>
     <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
@@ -17,7 +17,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="DE"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-11.0.3\bin"/>
-    <property name="sun.java.command" value="C:\Users\monst\AppData\Local\Temp\surefire3610546595657693944\surefirebooter12290148625735979397.jar C:\Users\monst\AppData\Local\Temp\surefire3610546595657693944 2020-04-25T18-04-34_745-jvmRun1 surefire9019624125240204171tmp surefire_017636165694993109251tmp"/>
+    <property name="sun.java.command" value="C:\Users\monst\AppData\Local\Temp\surefire13695628114529521296\surefirebooter8378224342036132117.jar C:\Users\monst\AppData\Local\Temp\surefire13695628114529521296 2020-04-25T19-39-08_237-jvmRun1 surefire16203223652974768738tmp surefire_04381043612088167901tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\dev\eclipse-workspaces\Thesis-Workspace\Tradingsystem\target\test-classes;C:\dev\eclipse-workspaces\Thesis-Workspace\Tradingsystem\target\classes;C:\Users\monst\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.6.0\junit-jupiter-api-5.6.0.jar;C:\Users\monst\.m2\repository\org\apiguardian\apiguardian-api\1.1.0\apiguardian-api-1.1.0.jar;C:\Users\monst\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\monst\.m2\repository\org\junit\platform\junit-platform-commons\1.6.0\junit-platform-commons-1.6.0.jar;C:\Users\monst\.m2\repository\org\apache\commons\commons-lang3\3.10\commons-lang3-3.10.jar;C:\Users\monst\.m2\repository\org\apache\commons\commons-math3\3.6.1\commons-math3-3.6.1.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -33,7 +33,7 @@
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
-    <property name="surefire.real.class.path" value="C:\Users\monst\AppData\Local\Temp\surefire3610546595657693944\surefirebooter12290148625735979397.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\monst\AppData\Local\Temp\surefire13695628114529521296\surefirebooter8378224342036132117.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="11.0.3+12-LTS"/>
@@ -60,22 +60,22 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="55.0"/>
   </properties>
-  <testcase name="testVolatilityDifference_illegalEndOfReferenceWindow" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.022"/>
-  <testcase name="testVolatilityDifference_lessBaseValuesThanLookbackWindow" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>
-  <testcase name="testVolatilityDifference_baseValueVolatilityIndicesNotAligned" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0"/>
-  <testcase name="testVolatilityDifference_lookbackWindow_1" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0"/>
+  <testcase name="testVolatilityDifference_illegalEndOfReferenceWindow" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.028"/>
+  <testcase name="testVolatilityDifference_lessBaseValuesThanLookbackWindow" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.002"/>
+  <testcase name="testVolatilityDifference_baseValueVolatilityIndicesNotAligned" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>
+  <testcase name="testVolatilityDifference_lookbackWindow_1" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>
   <testcase name="testVolatilityDifference_startOfRefereanceWindowBeforeLookbackWindowIsReached" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>
-  <testcase name="testVolatilityDifference_unsortedVolatilityIndicesArray" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0"/>
-  <testcase name="testVolatilityDifference_startOfReferenceWindowNotInVolatilityIndicesArray" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0"/>
-  <testcase name="testVolatilityDifference_emptyVolatilityIndicesArray" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0"/>
+  <testcase name="testVolatilityDifference_unsortedVolatilityIndicesArray" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>
+  <testcase name="testVolatilityDifference_startOfReferenceWindowNotInVolatilityIndicesArray" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>
+  <testcase name="testVolatilityDifference_emptyVolatilityIndicesArray" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>
   <testcase name="testVolatilityDifference" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>
-  <testcase name="testVolatilityDifference_endOfReferenceWindow_before_startOfReferenceWindow" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>
+  <testcase name="testVolatilityDifference_endOfReferenceWindow_before_startOfReferenceWindow" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.002"/>
   <testcase name="testVolatilityDifference_endOfReferenceWindow_null" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>
   <testcase name="testVolatilityDifference_duplicatesInVolatilityIndicesArray" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>
   <testcase name="testVolatilityDifference_startOfReferenceWindow_null" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>
   <testcase name="testVolatilityDifference_illegalStartOfReferenceWindow" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>
   <testcase name="testVolatilityDifference_nansInRelevantAreaOfVolatilityIndicesArray" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>
-  <testcase name="testCalculateAverageVolatility" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>
+  <testcase name="testCalculateAverageVolatility" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.002"/>
   <testcase name="testVolatilityDifference_baseValue_null" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>
   <testcase name="testCalculateVolatilityIndices" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>
   <testcase name="testVolatilityDifference_endOfReferenceWindowNotInVolatilityIndicesArray" classname="de.rumford.tradingsystem.VolatilityDifferenceTest" time="0.001"/>

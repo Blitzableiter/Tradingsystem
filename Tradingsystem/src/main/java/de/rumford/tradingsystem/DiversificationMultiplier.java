@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 /**
  * @author Max Rumford
@@ -23,21 +22,13 @@ public class DiversificationMultiplier {
 	 * TODO siehe setCorrelations -> bekommt nicht double[][] correlations, sondern
 	 * double[][] values und nutzt dann set.Correlations
 	 */
-	public DiversificationMultiplier(double[] weights, double[][] correlations) throws IllegalArgumentException {
+	public DiversificationMultiplier(double[] weights, double[][] correlations) {
+		this.validateConstructorArguments(weights, correlations);
+
 		this.setWeights(weights);
 		this.setCorrelations(correlations);
 
-		try {
-			this.validateConstructorArguments();
-		} catch (IllegalArgumentException e) {
-			throw e;
-		}
-
-		try {
-			this.value = this.calculateDiversificiationMultiplierValue();
-		} catch (IllegalArgumentException e) {
-			throw e;
-		}
+		this.setValue(this.calculateDiversificiationMultiplierValue());
 	}
 
 	/**
@@ -54,7 +45,7 @@ public class DiversificationMultiplier {
 	 *                                  correlations: same amount of rows and
 	 *                                  columns
 	 */
-	private double calculateDiversificiationMultiplierValue() throws IllegalArgumentException {
+	private double calculateDiversificiationMultiplierValue() {
 		double[][] correlations = this.getCorrelations();
 		double[] weights = this.getWeights();
 
@@ -78,7 +69,7 @@ public class DiversificationMultiplier {
 				// {0.75d, 0.6d, 1d}
 				// }
 				if (correlations[row][col] != correlations[col][row])
-					throw new IllegalArgumentException("Correlations matrix is not properly populated");
+					throw new IllegalArgumentException("Correlations matrix is not symmetrically populated");
 
 				/* multiply the correlation with both corresponding weights */
 				sumOfCorrelationsWeights += correlations[row][col] * weights[row] * weights[col];
@@ -98,7 +89,15 @@ public class DiversificationMultiplier {
 	 * 
 	 * @throws IllegalArgumentException if any constraint is not fulfilled
 	 */
-	private void validateConstructorArguments() throws IllegalArgumentException {
+	private void validateConstructorArguments(double[] weights, double[][] correlations) {
+		/* Check if given weights are null */
+		if (weights == null)
+			throw new IllegalArgumentException("Given weights must not be null");
+
+		/* Check if given correlations are null */
+		if (correlations == null)
+			throw new IllegalArgumentException("Given correlations must not be null");
+
 		/* Check if correlations has values in it */
 		if (correlations.length == 0)
 			throw new IllegalArgumentException("Correlations must not have zero values");
@@ -113,7 +112,7 @@ public class DiversificationMultiplier {
 		 */
 		for (int i = 0; i < correlations.length; i++) {
 			if (correlations.length != correlations[i].length)
-				throw new IllegalArgumentException("Correlations must have as many rows as columns"
+				throw new IllegalArgumentException("Correlations must have as many rows as columns "
 						+ "and all columns and rows must have the same length.");
 		}
 
@@ -190,6 +189,13 @@ public class DiversificationMultiplier {
 	}
 
 	/**
+	 * @param value the value to set
+	 */
+	private void setValue(double value) {
+		this.value = value;
+	}
+
+	/**
 	 * Get the weights considered in this {@link DiversificationMultiplier}
 	 * 
 	 * @return {@code double[]} Weights in this {@link DiversificationMultiplier}
@@ -224,16 +230,6 @@ public class DiversificationMultiplier {
 	 * {@link DiversificationMultiplier}
 	 */
 	private void setCorrelations(double[][] correlations) {
-		/* TODO */
-		/* TODO */
-		/* TODO */
-		/* TODO */
-		double[][] data = {};
-		PearsonsCorrelation corr = new PearsonsCorrelation(data);
-		/* TODO */
-		/* TODO */
-		/* TODO */
-		/* TODO */
 		this.correlations = correlations;
 	}
 

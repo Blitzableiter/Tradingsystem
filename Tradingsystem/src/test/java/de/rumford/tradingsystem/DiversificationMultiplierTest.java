@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
  */
 class DiversificationMultiplierTest {
 
+	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";
+
 	final double[] weights = { 0.5d, 0.5d };
 	final double[][] correlations = { { 1d, 0.75d }, { 0.75d, 1d } };
 	DiversificationMultiplier dm;
@@ -59,9 +61,13 @@ class DiversificationMultiplierTest {
 	@Test
 	void testDiversificationMultiplier_numberOfCorrelationRowsNotEqualColumns() {
 		double[][] correlations = { { 1d, 0.75d }, { 0.75d } };
+		String expectedMessage = "Correlations must have as many rows as columns and all columns and rows must have the same length.";
 
-		assertThrows(IllegalArgumentException.class, () -> new DiversificationMultiplier(weights, correlations),
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new DiversificationMultiplier(weights, correlations),
 				"Inequal number of correlation rows and columns are not being correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -71,9 +77,13 @@ class DiversificationMultiplierTest {
 	@Test
 	void testDiversificationMultiplier_numberOfWeightsNotEqualNumberOfCorrelations() {
 		double[] weights = { 0.75d };
+		String expectedMessage = "There must be as many weights as correlations columns/rows";
 
-		assertThrows(IllegalArgumentException.class, () -> new DiversificationMultiplier(weights, correlations),
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new DiversificationMultiplier(weights, correlations),
 				"Inequal number of correlations and weights is not being correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -83,9 +93,13 @@ class DiversificationMultiplierTest {
 	@Test
 	void testDiversificationMultiplier_negativeWeights() {
 		double[] weights = { -1d, 1d };
+		String expectedMessage = "Negative weights are not allowed";
 
-		assertThrows(IllegalArgumentException.class, () -> new DiversificationMultiplier(weights, correlations),
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new DiversificationMultiplier(weights, correlations),
 				"Negative weights are not being correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -95,9 +109,29 @@ class DiversificationMultiplierTest {
 	@Test
 	void testDiversificationMultiplier_weightsDontAddUpTo1() {
 		double[] weights = { 0.75d, 0.75d };
+		String expectedMessage = "Weights don't sum up to 1";
 
-		assertThrows(IllegalArgumentException.class, () -> new DiversificationMultiplier(weights, correlations),
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new DiversificationMultiplier(weights, correlations),
 				"Weights not adding up to 1 is not being correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
+	 */
+	@Test
+	void testDiversificationMultiplier_invalidSelfCorrelations() {
+		double[][] correlations = { { 0.8d, 0.75d }, { 0.75d, 0.8d } };
+		String expectedMessage = "Self correlations are not properly populated";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new DiversificationMultiplier(weights, correlations),
+				"Invalid self correlations are not being correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -107,26 +141,19 @@ class DiversificationMultiplierTest {
 	@Test
 	void testDiversificationMultiplier_assymetricalCorrelationsMatrix() {
 		double[][] correlations = { { 1d, 0.75d }, { 0.6d, 1d } };
+		String expectedMessage = "Correlations matrix is not symmetrically populated";
 
-		assertThrows(IllegalArgumentException.class, () -> new DiversificationMultiplier(weights, correlations),
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new DiversificationMultiplier(weights, correlations),
 				"Assymetrical correlations matrix is not being correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+
 	}
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
-	 */
-	@Test
-	void testDiversificationMultiplier_invalidSelfCorrelations() {
-		double[][] correlations = { { 1d, 0.75d }, { 0.75d, 0.8d } };
-
-		assertThrows(IllegalArgumentException.class, () -> new DiversificationMultiplier(weights, correlations),
-				"Invalid self correlations are not being correctly handled");
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#getValue()}.
+	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#calculateDiversificiationMultiplierValue()}.
 	 */
 	@Test
 	void testGetValue() {
