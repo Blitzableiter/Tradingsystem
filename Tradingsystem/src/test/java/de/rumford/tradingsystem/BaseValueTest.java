@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,7 +16,7 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 class BaseValueTest {
 
-	static final String NAME_OF_TEST_BASE_VALUES = "Test Base Value";
+	final String NAME_OF_TEST_BASE_VALUES = "Test Base Value";
 	static final String EMPTY_STRING = "";
 	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";
 
@@ -100,7 +101,50 @@ class BaseValueTest {
 	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[])}.
 	 */
 	@Test
-	void testBaseValue_emptyName_values() {
+	void testToString() {
+		baseValue = new BaseValue(NAME_OF_TEST_BASE_VALUES, values);
+		String expectedStringRepresentation = "BaseValue [name=" + NAME_OF_TEST_BASE_VALUES + ", values="
+				+ Arrays.toString(baseValue.getValues()) + ", shortIndexValues="
+				+ Arrays.toString(baseValue.getShortIndexValues()) + "]";
+
+		assertEquals(expectedStringRepresentation, baseValue.toString(),
+				"Incorrect String representation in toString()");
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[])}.
+	 */
+	@Test
+	void testBaseValue_nullName() {
+		String nullName = null;
+		String expectedMessage = "The given name must not be null";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class, () -> new BaseValue(nullName, values),
+				"Empty name not properly rejected");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[])}.
+	 */
+	@Test
+	void testBaseValue_nullValues() {
+		ValueDateTupel[] nullValues = null;
+		String expectedMessage = "The given values must not be null";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, nullValues), "Empty name not properly rejected");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[])}.
+	 */
+	@Test
+	void testBaseValue_emptyName() {
 		String expectedMessage = "Name must not be an empty String";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class, () -> new BaseValue(EMPTY_STRING, values),
@@ -113,7 +157,7 @@ class BaseValueTest {
 	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[])}.
 	 */
 	@Test
-	void testBaseValue_name_emptyValues() {
+	void testBaseValue_emptyValues() {
 		String expectedMessage = "Values must not be an empty array";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
@@ -126,7 +170,7 @@ class BaseValueTest {
 	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[])}.
 	 */
 	@Test
-	void testBaseValue_name_duplicateDatesInValues() {
+	void testBaseValue_duplicateDatesInValues() {
 		String expectedMessage = "Given values are not properly sorted or there are non-unique values.";
 		values = ArrayUtils.add(values, valuedatetupel1);
 
@@ -141,7 +185,7 @@ class BaseValueTest {
 	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[])}.
 	 */
 	@Test
-	void testBaseValue_name_datesInIncorrectOrder() {
+	void testBaseValue_datesInIncorrectOrder() {
 		String expectedMessage = "Given values are not properly sorted or there are non-unique values.";
 		values = ValueDateTupel.createEmptyArray();
 		values = ArrayUtils.add(values, valuedatetupel1);
@@ -230,6 +274,23 @@ class BaseValueTest {
 	@Test
 	void testCalculateShortIndexValues() {
 		baseValue = new BaseValue(NAME_OF_TEST_BASE_VALUES, values);
+
+		ValueDateTupel[] actualValues = baseValue.getShortIndexValues();
+
+		assertArrayEquals(shortValues, actualValues, "The calculated short index values are not as expected");
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.BaseValue#calculateShortIndexValues(ValueDateTupel[])}.
+	 */
+	@Test
+	void testCalculateShortIndexValues_1valueInBaseValue() {
+		values = ValueDateTupel.createEmptyArray();
+		values = ArrayUtils.add(values, valuedatetupel1);
+		baseValue = new BaseValue(NAME_OF_TEST_BASE_VALUES, values);
+		shortValues = ValueDateTupel.createEmptyArray();
+		shortValues = ArrayUtils.add(shortValues, valuedatetupel5);
 
 		ValueDateTupel[] actualValues = baseValue.getShortIndexValues();
 

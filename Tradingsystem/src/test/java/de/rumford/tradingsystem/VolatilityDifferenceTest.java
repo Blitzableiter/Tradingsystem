@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import de.rumford.tradingsystem.helper.BaseValueFactory;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
@@ -63,7 +64,7 @@ class VolatilityDifferenceTest {
 	 */
 	@BeforeEach
 	void setUp() throws Exception {
-		baseValue = BaseValue.jan1_jan4_22_00_00_val200_400_500_200_calc_short(BASE_VALUE_NAME);
+		baseValue = BaseValueFactory.jan1Jan4calcShort(BASE_VALUE_NAME);
 
 		lookbackWindow = 2;
 	}
@@ -142,6 +143,38 @@ class VolatilityDifferenceTest {
 				IllegalArgumentException.class, () -> new VolatilityDifference(baseValue, null,
 						localDateTime2020Jan02220000, null, lookbackWindow, BASE_SCALE),
 				"endOfReferenceWindow of null is not correctly handled");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 */
+	@Test
+	void testVolatilityDifference_baseScale_0() {
+		String expectedMessage = "The given baseScale must a positiv non-zero decimal.";
+		double zeroBaseScale = 0;
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan04220000, lookbackWindow, zeroBaseScale),
+				"baseScale of zero is not correctly handled");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 */
+	@Test
+	void testVolatilityDifference_baseScale_sub0() {
+		String expectedMessage = "The given baseScale must a positiv non-zero decimal.";
+		double subZeroBaseScale = -1;
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan04220000, lookbackWindow, subZeroBaseScale),
+				"baseScale of less than zero is not correctly handled");
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 

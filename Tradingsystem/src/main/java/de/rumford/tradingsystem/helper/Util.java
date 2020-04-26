@@ -108,7 +108,7 @@ public final class Util {
 	 */
 	public static double calculateReturn(double formerValue, double latterValue) {
 		if (formerValue == 0)
-			throw new IllegalArgumentException("Former value cannot be zero");
+			return Double.NaN;
 		return latterValue / formerValue - 1d;
 	}
 

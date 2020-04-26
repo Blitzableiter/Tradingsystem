@@ -35,11 +35,47 @@ class DiversificationMultiplierTest {
 	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
 	 */
 	@Test
-	void testDiversificationMultiplier_noCorrelations() {
-		double[][] correlations = { {}, {} };
+	void testDiversificationMultiplier_nullCorrelations() {
+		double[][] correlations = null;
+		String expectedMessage = "Given correlations must not be null";
 
-		assertThrows(IllegalArgumentException.class, () -> new DiversificationMultiplier(weights, correlations),
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new DiversificationMultiplier(weights, correlations),
+				"Null correlations are not being correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
+	 */
+	@Test
+	void testDiversificationMultiplier_nullWeights() {
+		double[] weights = null;
+		String expectedMessage = "Given weights must not be null";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new DiversificationMultiplier(weights, correlations),
+				"Null weights are not being correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
+	 */
+	@Test
+	void testDiversificationMultiplier_noCorrelations() {
+		double[][] correlations = {};
+		String expectedMessage = "Correlations must not have zero values";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new DiversificationMultiplier(weights, correlations),
 				"No correlations are not being correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -49,9 +85,13 @@ class DiversificationMultiplierTest {
 	@Test
 	void testDiversificationMultiplier_noWeights() {
 		double[] weights = {};
+		String expectedMessage = "Weights must not have zero values";
 
-		assertThrows(IllegalArgumentException.class, () -> new DiversificationMultiplier(weights, correlations),
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new DiversificationMultiplier(weights, correlations),
 				"No weights are not being correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -66,6 +106,22 @@ class DiversificationMultiplierTest {
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new DiversificationMultiplier(weights, correlations),
 				"Inequal number of correlation rows and columns are not being correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
+	 */
+	@Test
+	void testDiversificationMultiplier_emptyCorrelationsObjects() {
+		double[][] correlations = { {}, {} };
+		String expectedMessage = "Correlations must have as many rows as columns and all columns and rows must have the same length.";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new DiversificationMultiplier(weights, correlations),
+				"No correlations are not being correctly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}

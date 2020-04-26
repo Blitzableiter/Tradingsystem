@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import de.rumford.tradingsystem.helper.BaseValueFactory;
+
 class EWMATest {
 
 	EWMA ewma2;
@@ -12,7 +14,7 @@ class EWMATest {
 	EWMA ewma4;
 	EWMA ewma8;
 
-	BaseValue baseValue = BaseValue.jan1_jan5_22_00_00_val100_500_calc_short("My base value");
+	BaseValue baseValue = BaseValueFactory.jan1Jan5calcShort("My base value");
 
 	@BeforeEach
 	void setUp() throws Exception {

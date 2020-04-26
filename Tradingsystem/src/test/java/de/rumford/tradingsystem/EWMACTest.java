@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import de.rumford.tradingsystem.helper.BaseValueFactory;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 class EWMACTest {
@@ -59,7 +60,7 @@ class EWMACTest {
 	 */
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		baseValue = BaseValue.jan1_jan31_22_00_00_calc_short(BASE_VALUE_NAME);
+		baseValue = BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME);
 
 		localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
 		localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
@@ -157,12 +158,46 @@ class EWMACTest {
 	/**
 	 * Test method for
 	 * 
+	 * {@link de.rumford.tradingsystem.EWMAC#calculateForecastScalar()}.
+	 */
+	@Test
+	void testCalculateForecastScalar_FC0() {
+		double expectedValue = 0;
+
+		EWMAC ewmac = new EWMAC(BaseValueFactory.jan1Jan31allVal0calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan15220000, localDateTimeJan21220000, 8, 2, BASE_SCALE);
+
+		double actualValue = ewmac.getForecastScalar();
+
+		assertEquals(expectedValue, actualValue, "Forecast scalar of zero is not correctly calculated");
+	}
+
+	/**
+	 * Test method for
+	 * 
 	 * {@link de.rumford.tradingsystem.EWMAC#calculateScaledForecasts()}.
 	 */
 	@Test
 	void testCalculateForecasts() {
 		double expectedValue = 4.28213669891743; // Excel: 4.28213669891743
 
+		double actualValue = ValueDateTupel.getElement(ewmac.getForecasts(), localDateTimeJan10220000).getValue();
+
+		assertEquals(expectedValue, actualValue, "Forecasts are not correctly calculated");
+	}
+
+	/**
+	 * Test method for
+	 * 
+	 * {@link de.rumford.tradingsystem.EWMAC#calculateScaledForecasts()}.
+	 * 
+	 * @throws InterruptedException
+	 */
+	@Test
+	void testCalculateForecasts_unchangedOverTime() throws InterruptedException {
+		double expectedValue = 4.28213669891743; // Excel: 4.28213669891743
+
+		ValueDateTupel.getElement(ewmac.getForecasts(), localDateTimeJan10220000).getValue();
 		double actualValue = ValueDateTupel.getElement(ewmac.getForecasts(), localDateTimeJan10220000).getValue();
 
 		assertEquals(expectedValue, actualValue, "Forecasts are not correctly calculated");

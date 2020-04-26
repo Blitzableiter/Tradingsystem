@@ -1,17 +1,22 @@
 package de.rumford.tradingsystem;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
+import org.apache.log4j.helpers.Loader;
+
+import de.rumford.tradingsystem.helper.BaseValueFactory;
+
 public class Treiber {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 
-		EWMAC e1 = new EWMAC(BaseValue.jan1_jan5_22_00_00_val100_500_calc_short("test"), null,
-				LocalDateTime.of(2020, 1, 1, 22, 0), LocalDateTime.of(2020, 1, 5, 22, 0), 4, 2, 10);
-		System.out.println(Arrays.toString(e1.getForecasts()));
-		System.out.println(e1.toString());
+		if (Double.NaN > 0.5) {
+			System.out.println("yeah");
+		} else {
+			System.out.println("no");
+		}
+
 	}
 
 }

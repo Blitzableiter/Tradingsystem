@@ -84,12 +84,13 @@ class UtilTest {
 	void testCalculateForecastScalar_absoluteAverage0() {
 		double[] values = { 0d, -0d };
 		double baseScale = 10d;
-		
+
 		double expectedValue = Double.NaN;
-		
+
 		double actualValue = Util.calculateForecastScalar(values, baseScale);
-		
-		assertEquals(expectedValue, actualValue, "Forecast scalar is not correctly calculated when average of absolute values is zero");
+
+		assertEquals(expectedValue, actualValue,
+				"Forecast scalar is not correctly calculated when average of absolute values is zero");
 	}
 
 	/**
@@ -143,9 +144,10 @@ class UtilTest {
 	void testCalculateReturn_formerValue0() {
 		double formerValue = 0d;
 		double latterValue = 10d;
+		double expectedValue = Double.NaN;
 
-		assertThrows(IllegalArgumentException.class, () -> Util.calculateReturn(formerValue, latterValue),
-				"IllegalArgumentException is not thrown when formerValue is zero");
+		double actualValue = Util.calculateReturn(formerValue, latterValue);
 
+		assertEquals(expectedValue, actualValue, "Former value of 0 is not properly handled");
 	}
 }
