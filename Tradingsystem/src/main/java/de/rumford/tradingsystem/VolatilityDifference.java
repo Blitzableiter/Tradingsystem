@@ -342,6 +342,7 @@ public class VolatilityDifference extends Rule {
 	 * OVERRIDES
 	 * ======================================================================
 	 */
+	@JaCoCoIgnore
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -354,6 +355,7 @@ public class VolatilityDifference extends Rule {
 		return result;
 	}
 
+	@JaCoCoIgnore
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -372,6 +374,7 @@ public class VolatilityDifference extends Rule {
 		return true;
 	}
 
+	@JaCoCoIgnore
 	@Override
 	public String toString() {
 		return "VolatilityDifference [volatilityIndices=" + Arrays.toString(volatilityIndices) + ", averageVolatility="

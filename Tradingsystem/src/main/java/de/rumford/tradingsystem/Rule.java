@@ -342,7 +342,7 @@ public abstract class Rule {
 
 		relevantForecastValues = ValueDateTupel.getElements(relevantForecastValues, this.getStartOfReferenceWindow(),
 				this.getEndOfReferenceWindow());
-		
+
 		double calculatedForecastScalar = Util.calculateForecastScalar(ValueDateTupel.getValues(relevantForecastValues),
 				instanceBaseScale);
 		if (Double.isNaN(calculatedForecastScalar))
@@ -512,6 +512,7 @@ public abstract class Rule {
 		return averageCorrelations;
 	}
 
+	@JaCoCoIgnore
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -532,6 +533,7 @@ public abstract class Rule {
 		return result;
 	}
 
+	@JaCoCoIgnore
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -571,6 +573,7 @@ public abstract class Rule {
 		return true;
 	}
 
+	@JaCoCoIgnore
 	@Override
 	public String toString() {
 		return "Rule [forecastScalar=" + forecastScalar + ", weight=" + weight + ", variations="

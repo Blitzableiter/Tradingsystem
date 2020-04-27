@@ -4,6 +4,7 @@
 package de.rumford.tradingsystem.helper;
 
 import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.TreeSet;
 import org.apache.commons.lang3.ArrayUtils;
 
 import de.rumford.tradingsystem.BaseValue;
+import de.rumford.tradingsystem.JaCoCoIgnore;
 
 /**
  * @author Max Rumford
@@ -593,6 +595,7 @@ public class ValueDateTupel {
 	 * OVERRIDES
 	 * ======================================================================
 	 */
+	@JaCoCoIgnore
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -604,6 +607,7 @@ public class ValueDateTupel {
 		return result;
 	}
 
+	@JaCoCoIgnore
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -623,6 +627,7 @@ public class ValueDateTupel {
 		return true;
 	}
 
+	@JaCoCoIgnore
 	@Override
 	public String toString() {
 		return "ValueDateTupel [date=" + date + ", value=" + value + "]";

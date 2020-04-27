@@ -1,7 +1,5 @@
 package de.rumford.tradingsystem;
 
-import java.util.Arrays;
-
 import org.apache.commons.lang3.ArrayUtils;
 
 import de.rumford.tradingsystem.helper.ValueDateTupel;
@@ -117,6 +115,7 @@ public class EWMA {
 	 * OVERRIDES
 	 * ======================================================================
 	 */
+	@JaCoCoIgnore
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -125,6 +124,7 @@ public class EWMA {
 		return result;
 	}
 
+	@JaCoCoIgnore
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -139,6 +139,7 @@ public class EWMA {
 		return true;
 	}
 
+	@JaCoCoIgnore
 	@Override
 	public String toString() {
 		return "EWMA [horizon=" + horizon + "]";

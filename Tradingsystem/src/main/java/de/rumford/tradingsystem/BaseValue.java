@@ -41,7 +41,7 @@ public class BaseValue {
 	 */
 	public BaseValue(String name, ValueDateTupel[] values) {
 		this.validateInput(name, values);
-		
+
 		this.setName(name);
 		this.setValues(values);
 
@@ -267,6 +267,7 @@ public class BaseValue {
 	 * OVERRIDES
 	 * ======================================================================
 	 */
+	@JaCoCoIgnore
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -277,6 +278,7 @@ public class BaseValue {
 		return result;
 	}
 
+	@JaCoCoIgnore
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -298,6 +300,7 @@ public class BaseValue {
 		return true;
 	}
 
+	@JaCoCoIgnore
 	@Override
 	public String toString() {
 		return "BaseValue [name=" + this.getName() + ", values=" + Arrays.toString(this.getValues())

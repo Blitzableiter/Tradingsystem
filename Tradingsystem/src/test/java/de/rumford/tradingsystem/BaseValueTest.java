@@ -1,6 +1,8 @@
 package de.rumford.tradingsystem;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -101,7 +103,7 @@ class BaseValueTest {
 	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[])}.
 	 */
 	@Test
-	void testToString() {
+	void testBaseValue_ToString() {
 		baseValue = new BaseValue(NAME_OF_TEST_BASE_VALUES, values);
 		String expectedStringRepresentation = "BaseValue [name=" + NAME_OF_TEST_BASE_VALUES + ", values="
 				+ Arrays.toString(baseValue.getValues()) + ", shortIndexValues="

@@ -76,6 +76,7 @@ public class EWMAC extends Rule {
 	 * Calculates the raw forecast for a given LocalDateTime by subtracting the long
 	 * horizon EWMA value from the short horizon EWMA value for this LocalDateTime.
 	 */
+	@Override
 	double calculateRawForecast(LocalDateTime forecastDateTime) {
 		double longHorizonEwmaValue = ValueDateTupel
 				.getElement(this.getLongHorizonEwma().getEwmaValues(), forecastDateTime).getValue();
@@ -85,6 +86,7 @@ public class EWMAC extends Rule {
 		return shortHorizonEwmaValue - longHorizonEwmaValue;
 	}
 
+	@JaCoCoIgnore
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -94,6 +96,7 @@ public class EWMAC extends Rule {
 		return result;
 	}
 
+	@JaCoCoIgnore
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -116,6 +119,7 @@ public class EWMAC extends Rule {
 		return true;
 	}
 
+	@JaCoCoIgnore
 	@Override
 	public String toString() {
 		return "EWMAC [longHorizonEwma=" + longHorizonEwma + ", shortHorizonEwma=" + shortHorizonEwma + ", toString()="

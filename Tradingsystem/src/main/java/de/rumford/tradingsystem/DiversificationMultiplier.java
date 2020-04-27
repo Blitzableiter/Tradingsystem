@@ -138,6 +138,7 @@ public class DiversificationMultiplier {
 	 * ======================================================================
 	 */
 
+	@JaCoCoIgnore
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -150,6 +151,7 @@ public class DiversificationMultiplier {
 		return result;
 	}
 
+	@JaCoCoIgnore
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -168,6 +170,7 @@ public class DiversificationMultiplier {
 		return true;
 	}
 
+	@JaCoCoIgnore
 	@Override
 	public String toString() {
 		return "DiversificationMultiplier [value=" + value + ", weights=" + Arrays.toString(weights) + ", correlations="
