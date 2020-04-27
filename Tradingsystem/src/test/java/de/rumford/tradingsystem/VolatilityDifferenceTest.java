@@ -3,15 +3,15 @@
  */
 package de.rumford.tradingsystem;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.DoubleSummaryStatistics;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
  * de.rumford.tradingsystem
  * 
  * @author Max Rumford
- *
+ * 
  */
 class VolatilityDifferenceTest {
 
@@ -42,6 +42,10 @@ class VolatilityDifferenceTest {
 	static LocalDateTime localDateTime2020Jan03220000;
 	static LocalDateTime localDateTime2020Jan04220000;
 	static LocalDateTime localDateTime2020Jan05220000;
+	static LocalDateTime localDateTime2020Jan08220000;
+	static LocalDateTime localDateTime2020Jan09220000;
+	static LocalDateTime localDateTime2020Jan10220000;
+	static LocalDateTime localDateTime2020Jan11220000;
 
 	VolatilityDifference volatilityDifference;
 	VolatilityDifference volatilityDifference2;
@@ -57,6 +61,10 @@ class VolatilityDifferenceTest {
 		localDateTime2020Jan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
 		localDateTime2020Jan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
 		localDateTime2020Jan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5), LocalTime.of(22, 0));
+		localDateTime2020Jan08220000 = LocalDateTime.of(LocalDate.of(2020, 1, 8), LocalTime.of(22, 0));
+		localDateTime2020Jan09220000 = LocalDateTime.of(LocalDate.of(2020, 1, 9), LocalTime.of(22, 0));
+		localDateTime2020Jan10220000 = LocalDateTime.of(LocalDate.of(2020, 1, 10), LocalTime.of(22, 0));
+		localDateTime2020Jan11220000 = LocalDateTime.of(LocalDate.of(2020, 1, 11), LocalTime.of(22, 0));
 	}
 
 	/**
@@ -75,9 +83,9 @@ class VolatilityDifferenceTest {
 	 */
 	@Test
 	void testVolatilityDifference() {
-		volatilityDifference = new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+		volatilityDifference = new VolatilityDifference(baseValue, null, localDateTime2020Jan03220000,
 				localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE);
-		volatilityDifference2 = new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+		volatilityDifference2 = new VolatilityDifference(baseValue, null, localDateTime2020Jan03220000,
 				localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE);
 
 		assertEquals(volatilityDifference, volatilityDifference2,
@@ -414,15 +422,10 @@ class VolatilityDifferenceTest {
 	 */
 	@Test
 	void testCalculateVolatilityIndices() {
-		StandardDeviation sd = new StandardDeviation();
-		double[] values1 = { 200d, 400d };
-		double expectedVolatilityValue1 = sd.evaluate(values1);
-		double[] values2 = { 400d, 500d };
-		double expectedVolatilityValue2 = sd.evaluate(values2);
-		double[] values3 = { 500d, 200d };
-		double expectedVolatilityValue3 = sd.evaluate(values3);
+		double expectedVolatilityValue2 = 0.5303300858899106; // Excel: 0.530330085889911
+		double expectedVolatilityValue3 = 0.6010407640085653; // Excel: 0.601040764008565
 		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
-		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, expectedVolatilityValue1);
+		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, Double.NaN);
 		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000, expectedVolatilityValue2);
 		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04220000, expectedVolatilityValue3);
 		ValueDateTupel[] expectedValues = ValueDateTupel.createEmptyArray();
@@ -431,7 +434,7 @@ class VolatilityDifferenceTest {
 		expectedValues = ArrayUtils.add(expectedValues, volatilityIndex3);
 		expectedValues = ArrayUtils.add(expectedValues, volatilityIndex4);
 
-		volatilityDifference = new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+		volatilityDifference = new VolatilityDifference(baseValue, null, localDateTime2020Jan03220000,
 				localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE);
 		ValueDateTupel[] actualValues = volatilityDifference.getVolatilityIndices();
 
@@ -440,83 +443,18 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#calculateAverageVolatility(LocalDateTime, LocalDateTime)}.
+	 * {@link de.rumford.tradingsystem.VolatilityDifference#calculateRawForecast(double)}.
 	 */
 	@Test
-	void testCalculateAverageVolatility() {
-		StandardDeviation sd = new StandardDeviation();
-		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();
+	void testCalculateRawForecast() {
+		baseValue = BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME);
+		double expectedValue = -0.5604475969404489; /* Excel: -0.560447596940449 */
 
-		double[] sdValues1 = { 200d, 400d };
-		double volatilityValue1 = sd.evaluate(sdValues1); /* ~ 141.42136 */
-		stats.accept(volatilityValue1);
+		VolatilityDifference volDif = new VolatilityDifference(baseValue, null, localDateTime2020Jan08220000,
+				localDateTime2020Jan10220000, lookbackWindow, BASE_SCALE);
+		double actualValue = volDif.calculateRawForecast(localDateTime2020Jan11220000);
 
-		double[] sdValues2 = { 400d, 500d };
-		double volatilityValue2 = sd.evaluate(sdValues2); /* ~ 70.71068 */
-		stats.accept(volatilityValue2);
-
-		double expectedValue = stats.getAverage(); /* ~ 106.066017 */
-
-		VolatilityDifference volDif = new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-				localDateTime2020Jan03220000, lookbackWindow, BASE_SCALE);
-		double actualValue = volDif.getAverageVolatility();
-
-		assertEquals(expectedValue, actualValue, "The average volatilty is not correctly calculated");
+		assertEquals(expectedValue, actualValue, "Raw Forecast is not correctly calculated");
 	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#calculateAverageVolatility(LocalDateTime, LocalDateTime)}.
-	 */
-	@Test
-	void testVolatilityDifference_startOfRefereanceWindowBeforeLookbackWindowIsReached() {
-		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
-		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
-		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000, 5d);
-		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04220000, 10d);
-		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex4);
-
-		lookbackWindow = 3;
-
-		String expectedMessage = "Start of reference window is set before lookback window is reached";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
-				"Too early startOfReferenceWindow in relation the the lookback window is not correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-//	/**
-//	 * Test method for
-//	 * {@link de.rumford.tradingsystem.VolatilityDifference#calculateRawForecast(double)}.
-//	 */
-//	@Test
-//	void testCalculateRawForecast() {
-//		double currentVolatility = 100d;
-//		StandardDeviation sd = new StandardDeviation();
-//		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();
-//
-//		double[] sdValues1 = { 200d, 400d };
-//		double volatilityValue1 = sd.evaluate(sdValues1); /* ~ 141.42136 */
-//		stats.accept(volatilityValue1);
-//
-//		double[] sdValues2 = { 400d, 500d };
-//		double volatilityValue2 = sd.evaluate(sdValues2); /* ~ 70.71068 */
-//		stats.accept(volatilityValue2);
-//
-//		double expectedValue = stats.getAverage() - currentVolatility; /* ~ 6.066017 */
-//
-//		VolatilityDifference volDif = new VolatilityDifference(baseValue, null, localDateTime2020Jan02_22_00_00,
-//				localDateTime2020Jan03_22_00_00, lookbackWindow, BASE_SCALE);
-//		double actualValue = volDif.calculateRawForecast(currentVolatility);
-//
-//		assertEquals(expectedValue, actualValue, "Raw Forecast is not correctly calculated");
-//	}
 
 }
