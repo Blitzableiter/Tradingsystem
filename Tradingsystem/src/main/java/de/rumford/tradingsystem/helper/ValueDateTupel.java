@@ -13,7 +13,6 @@ import java.util.TreeSet;
 import org.apache.commons.lang3.ArrayUtils;
 
 import de.rumford.tradingsystem.BaseValue;
-import de.rumford.tradingsystem.JaCoCoIgnore;
 
 /**
  * @author Max Rumford
@@ -595,7 +594,7 @@ public class ValueDateTupel {
 	 * OVERRIDES
 	 * ======================================================================
 	 */
-	@JaCoCoIgnore
+	@GeneratedCode
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -607,7 +606,7 @@ public class ValueDateTupel {
 		return result;
 	}
 
-	@JaCoCoIgnore
+	@GeneratedCode
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -627,7 +626,7 @@ public class ValueDateTupel {
 		return true;
 	}
 
-	@JaCoCoIgnore
+	@GeneratedCode
 	@Override
 	public String toString() {
 		return "ValueDateTupel [date=" + date + ", value=" + value + "]";

@@ -1,4 +1,4 @@
-package de.rumford.tradingsystem;
+package de.rumford.tradingsystem.helper;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
@@ -8,6 +8,6 @@ import java.lang.annotation.Target;
  * calculation.
  */
 @Target(ElementType.METHOD)
-public @interface JaCoCoIgnore {
+public @interface GeneratedCode {
 
 }

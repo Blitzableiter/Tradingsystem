@@ -5,6 +5,8 @@ import java.util.Collections;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import de.rumford.tradingsystem.helper.GeneratedCode;
+
 /**
  * @author Max Rumford
  *
@@ -138,7 +140,7 @@ public class DiversificationMultiplier {
 	 * ======================================================================
 	 */
 
-	@JaCoCoIgnore
+	@GeneratedCode
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -151,7 +153,7 @@ public class DiversificationMultiplier {
 		return result;
 	}
 
-	@JaCoCoIgnore
+	@GeneratedCode
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -170,7 +172,7 @@ public class DiversificationMultiplier {
 		return true;
 	}
 
-	@JaCoCoIgnore
+	@GeneratedCode
 	@Override
 	public String toString() {
 		return "DiversificationMultiplier [value=" + value + ", weights=" + Arrays.toString(weights) + ", correlations="

@@ -6,6 +6,7 @@ import java.util.stream.DoubleStream;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import de.rumford.tradingsystem.helper.GeneratedCode;
 import de.rumford.tradingsystem.helper.Util;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
@@ -512,7 +513,7 @@ public abstract class Rule {
 		return averageCorrelations;
 	}
 
-	@JaCoCoIgnore
+	@GeneratedCode
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -533,7 +534,7 @@ public abstract class Rule {
 		return result;
 	}
 
-	@JaCoCoIgnore
+	@GeneratedCode
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -573,7 +574,7 @@ public abstract class Rule {
 		return true;
 	}
 
-	@JaCoCoIgnore
+	@GeneratedCode
 	@Override
 	public String toString() {
 		return "Rule [forecastScalar=" + forecastScalar + ", weight=" + weight + ", variations="

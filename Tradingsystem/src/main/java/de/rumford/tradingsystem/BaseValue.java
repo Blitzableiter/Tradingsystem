@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import de.rumford.tradingsystem.helper.GeneratedCode;
 import de.rumford.tradingsystem.helper.Util;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
@@ -267,7 +268,7 @@ public class BaseValue {
 	 * OVERRIDES
 	 * ======================================================================
 	 */
-	@JaCoCoIgnore
+	@GeneratedCode
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -278,7 +279,7 @@ public class BaseValue {
 		return result;
 	}
 
-	@JaCoCoIgnore
+	@GeneratedCode
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -300,7 +301,7 @@ public class BaseValue {
 		return true;
 	}
 
-	@JaCoCoIgnore
+	@GeneratedCode
 	@Override
 	public String toString() {
 		return "BaseValue [name=" + this.getName() + ", values=" + Arrays.toString(this.getValues())

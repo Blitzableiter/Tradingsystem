@@ -2,6 +2,7 @@ package de.rumford.tradingsystem;
 
 import java.time.LocalDateTime;
 
+import de.rumford.tradingsystem.helper.GeneratedCode;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
@@ -86,7 +87,7 @@ public class EWMAC extends Rule {
 		return shortHorizonEwmaValue - longHorizonEwmaValue;
 	}
 
-	@JaCoCoIgnore
+	@GeneratedCode
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -96,7 +97,7 @@ public class EWMAC extends Rule {
 		return result;
 	}
 
-	@JaCoCoIgnore
+	@GeneratedCode
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -119,7 +120,7 @@ public class EWMAC extends Rule {
 		return true;
 	}
 
-	@JaCoCoIgnore
+	@GeneratedCode
 	@Override
 	public String toString() {
 		return "EWMAC [longHorizonEwma=" + longHorizonEwma + ", shortHorizonEwma=" + shortHorizonEwma + ", toString()="
