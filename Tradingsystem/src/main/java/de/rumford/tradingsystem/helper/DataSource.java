@@ -3,11 +3,7 @@
  */
 package de.rumford.tradingsystem.helper;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
@@ -153,19 +149,11 @@ public class DataSource {
 	 */
 	private static LocalDateTime parseLocalDateTime(String[] columns, CsvFormat format)
 			throws IllegalArgumentException {
-		if (columns.length != 2)
-			throw new IllegalArgumentException("Given date and time cannot be parsed into LocalDateTime");
-
 		/* Extract the relevant date values */
 		String[] date = columns[0].split(Pattern.quote(format.getDateSeparator()));
 
 		/* Evaluate the date pattern */
-		int[] datePositions = new int[3];
-		try {
-			datePositions = evaluateDatePattern(format);
-		} catch (IllegalArgumentException e) {
-			throw e;
-		}
+		int[] datePositions = evaluateDatePattern(format);
 
 		int dayOfMonth;
 		int month;
@@ -181,7 +169,7 @@ public class DataSource {
 		}
 		/*
 		 * Catch Exception so BufferedReader can be closed (in calling method) on
-		 * unknown Exceptions to memory avoid leakage.
+		 * unknown Exceptions to avoid memory leakage.
 		 */
 		catch (Exception e) {
 			throw e;
@@ -225,7 +213,9 @@ public class DataSource {
 	 *                                  recognized.
 	 */
 	public static int[] evaluateDatePattern(CsvFormat format) throws IllegalArgumentException {
-		int monthPosition, dayPosition, yearPosition;
+		int monthPosition;
+		int dayPosition;
+		int yearPosition;
 		if (format.getMonthDayOrder() == MonthDayOrder.DAY_MONTH_YEAR) {
 			dayPosition = 0;
 			monthPosition = 1;
@@ -264,7 +254,7 @@ public class DataSource {
 			valueString = valueString.replaceAll(Pattern.quote(format.getThousandsSeparator()), "");
 		}
 		/* Replace non-US decimal points with US decimal points */
-		if (format.getDecimalPoint() != CsvFormat.US.getDecimalPoint()) {
+		if (!format.getDecimalPoint().equals(CsvFormat.US.getDecimalPoint())) {
 			valueString = valueString.replace(format.getDecimalPoint(), CsvFormat.US.getDecimalPoint());
 		}
 
