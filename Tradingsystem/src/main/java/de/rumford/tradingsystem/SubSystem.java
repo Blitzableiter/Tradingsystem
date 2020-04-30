@@ -21,22 +21,22 @@ public class SubSystem {
 	 * 
 	 */
 	public SubSystem(BaseValue baseValue, Rule[] rules, double capital) throws IllegalArgumentException {
-		try {
-			this.evaluateAndSetRules(rules);
-		} catch (Exception e) {
-			throw e;
-		}
+		this.evaluateAndSetRules(rules);
 
 		this.setBaseValue(baseValue);
 		this.setCapital(capital);
 
 		/* Calculates and recursively sets weights for all rules and their variations */
 		this.calculateRuleWeights();
-
 	}
-	
-	private boolean areRulesUnique(Rule[] rules) {
-		return false;
+
+	public boolean areRulesUnique(Rule[] rules) {
+		for (int i = 0; i < rules.length - 1; i++) {
+			if (rules[i].equals(rules[i + 1])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -46,8 +46,9 @@ public class SubSystem {
 	 * @return
 	 */
 	private boolean evaluateAndSetRules(Rule[] rules) {
-		if (!areRulesUnique(rules)) throw new IllegalArgumentException("The given rules are not unique. Only unique rules can be used.");
-		
+		if (!areRulesUnique(rules))
+			throw new IllegalArgumentException("The given rules are not unique. Only unique rules can be used.");
+
 		/* If rules are unique set them. */
 		this.setRules(rules);
 
@@ -82,7 +83,7 @@ public class SubSystem {
 	/**
 	 * @return baseValue SubSystem
 	 */
-	private BaseValue getBaseValue() {
+	public BaseValue getBaseValue() {
 		return baseValue;
 	}
 
@@ -96,7 +97,7 @@ public class SubSystem {
 	/**
 	 * @return capital SubSystem
 	 */
-	private double getCapital() {
+	public double getCapital() {
 		return capital;
 	}
 
@@ -110,7 +111,7 @@ public class SubSystem {
 	/**
 	 * @return weight SubSystem
 	 */
-	private double getWeight() {
+	public double getWeight() {
 		return weight;
 	}
 
@@ -124,7 +125,7 @@ public class SubSystem {
 	/**
 	 * @return diversificationMultiplier SubSystem
 	 */
-	private DiversificationMultiplier getDiversificationMultiplier() {
+	public DiversificationMultiplier getDiversificationMultiplier() {
 		return diversificationMultiplier;
 	}
 
