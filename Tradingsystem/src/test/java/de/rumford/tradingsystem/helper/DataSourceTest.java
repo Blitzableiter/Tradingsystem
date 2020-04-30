@@ -3,7 +3,9 @@
  */
 package de.rumford.tradingsystem.helper;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,11 +14,7 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 /**
  * de.rumford.tradingsystem.helper
@@ -28,6 +26,8 @@ class DataSourceTest {
 
 	final static String FILE_NAME_CORRECT_FILE_EUR = RandomStringUtils.randomAlphanumeric(12);
 	final static String FILE_NAME_CORRECT_FILE_US = RandomStringUtils.randomAlphanumeric(12);
+	final static String FILE_NAME_CORRECT_FILE_EUR_YMD = RandomStringUtils.randomAlphanumeric(12);
+	final static String FILE_NAME_CORRECT_FILE_EU_THOUSANDS_SEPARATOR = RandomStringUtils.randomAlphanumeric(12);
 	final static String FILE_NAME_NULL = null;
 	final static String FILE_NAME_UNKOWN = RandomStringUtils.randomAlphanumeric(12);
 	final static String FILE_NAME_DIRECTORY = RandomStringUtils.randomAlphanumeric(12);
@@ -44,6 +44,8 @@ class DataSourceTest {
 	static String[] FILE_NAMES = { //
 			FILE_NAME_CORRECT_FILE_EUR, //
 			FILE_NAME_CORRECT_FILE_US, //
+			FILE_NAME_CORRECT_FILE_EUR_YMD, //
+			FILE_NAME_CORRECT_FILE_EU_THOUSANDS_SEPARATOR, //
 			FILE_NAME_DIRECTORY, //
 			FILE_NAME_FILE_HAS_HEADINGS, //
 			FILE_NAME_FOUR_COLUMNS, //
@@ -59,6 +61,8 @@ class DataSourceTest {
 
 	static BufferedWriter bw_eu_ok;
 	static BufferedWriter bw_us_ok;
+	static BufferedWriter bw_eu_ymd;
+	static BufferedWriter bw_eu_thousands_separator;
 	static BufferedWriter bw_headings;
 	static BufferedWriter bw_four_columns;
 	static BufferedWriter bw_day_non_integer;
@@ -79,6 +83,10 @@ class DataSourceTest {
 	static void setUpBeforeClass() throws Exception {
 		bw_eu_ok = new BufferedWriter(new FileWriter(new File(FILE_NAME_CORRECT_FILE_EUR)));
 		bw_us_ok = new BufferedWriter(new FileWriter(new File(FILE_NAME_CORRECT_FILE_US)));
+		bw_eu_ymd = new BufferedWriter(new FileWriter(new File(FILE_NAME_CORRECT_FILE_EUR_YMD)));
+		bw_eu_thousands_separator = new BufferedWriter(
+				new FileWriter(new File(FILE_NAME_CORRECT_FILE_EU_THOUSANDS_SEPARATOR)));
+
 		/*
 		 * No Writer for FILE_NAME_NULL and FILE_NAME_UNKOWN
 		 */
@@ -96,6 +104,8 @@ class DataSourceTest {
 
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_eu_ok);
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_us_ok);
+		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_eu_ymd);
+		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_eu_thousands_separator);
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_headings);
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_four_columns);
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_day_non_integer);
@@ -139,8 +149,7 @@ class DataSourceTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.DataSource#getDataFromCsv(java.lang.String, de.rumford.tradingsystem.helper.CsvFormat)}.
+	 * Test method for {@link DataSource#getDataFromCsv(String, CsvFormat)}.
 	 */
 	@Test
 	void testGetDataFromCsv_EU_ok() {
@@ -187,8 +196,7 @@ class DataSourceTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.DataSource#getDataFromCsv(java.lang.String, de.rumford.tradingsystem.helper.CsvFormat)}.
+	 * Test method for {@link DataSource#getDataFromCsv(String, CsvFormat)}.
 	 */
 	@Test
 	void testGetDataFromCsv_US_ok() {
@@ -235,8 +243,102 @@ class DataSourceTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.DataSource#getDataFromCsv(java.lang.String, de.rumford.tradingsystem.helper.CsvFormat)}.
+	 * Test method for {@link DataSource#getDataFromCsv(String, CsvFormat)}.
+	 */
+	@Test
+	void testGetDataFromCsv_EuYMD_ok() {
+		String line1 = "1981.01.01;22:00:00;480,92";
+		String line2 = "1981.01.02;22:00:00;490,04";
+		String line3 = "1981.01.03;22:00:00;493,05";
+		String line4 = "1981.01.04;22:00:00;494,97";
+		String line5 = "1981.01.05;22:00:00;489,89";
+		String line6 = "1981.01.06;22:00:00;489,32";
+		final int expectedValue = 6;
+		try {
+			bw_eu_ymd.write(line1);
+			bw_eu_ymd.newLine();
+			bw_eu_ymd.write(line2);
+			bw_eu_ymd.newLine();
+			bw_eu_ymd.write(line3);
+			bw_eu_ymd.newLine();
+			bw_eu_ymd.write(line4);
+			bw_eu_ymd.newLine();
+			bw_eu_ymd.write(line5);
+			bw_eu_ymd.newLine();
+			bw_eu_ymd.write(line6);
+			bw_eu_ymd.newLine();
+			bw_eu_ymd.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail("File could not be written");
+		}
+
+		ValueDateTupel[] values = {};
+		try {
+			values = DataSource.getDataFromCsv(FILE_NAME_CORRECT_FILE_EUR_YMD, CsvFormat.EU_YEAR_MONTH_DAY);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			fail("IllegalArgumentException getting Data");
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail("IOException getting Data");
+		}
+
+		final int actualValue = values.length;
+
+		assertEquals(expectedValue, actualValue, "Number of read files are not correct");
+	}
+
+	/**
+	 * Test method for {@link DataSource#getDataFromCsv(String, CsvFormat)}.
+	 */
+	@Test
+	void testGetDataFromCsv_EU_thousandsSeparator() {
+		String line1 = "1981.01.01;22:00:00;1.480";
+		String line2 = "1981.01.02;22:00:00;490,19";
+		String line3 = "1981.01.03;22:00:00;2.493,99";
+		String line4 = "1981.01.04;22:00:00;494";
+		String line5 = "1981.01.05;22:00:00;999.999.489,2";
+		String line6 = "1981.01.06;22:00:00;489";
+		final int expectedValue = 6;
+		try {
+			bw_eu_thousands_separator.write(line1);
+			bw_eu_thousands_separator.newLine();
+			bw_eu_thousands_separator.write(line2);
+			bw_eu_thousands_separator.newLine();
+			bw_eu_thousands_separator.write(line3);
+			bw_eu_thousands_separator.newLine();
+			bw_eu_thousands_separator.write(line4);
+			bw_eu_thousands_separator.newLine();
+			bw_eu_thousands_separator.write(line5);
+			bw_eu_thousands_separator.newLine();
+			bw_eu_thousands_separator.write(line6);
+			bw_eu_thousands_separator.newLine();
+			bw_eu_thousands_separator.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail("File could not be written");
+		}
+
+		ValueDateTupel[] values = {};
+		try {
+			values = DataSource.getDataFromCsv(FILE_NAME_CORRECT_FILE_EU_THOUSANDS_SEPARATOR,
+					CsvFormat.EU_YEAR_MONTH_DAY);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			fail("IllegalArgumentException getting Data");
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail("IOException getting Data");
+		}
+
+		final int actualValue = values.length;
+
+		assertEquals(expectedValue, actualValue, "Number of read files are not correct");
+	}
+
+	/**
+	 * Test method for {@link DataSource#getDataFromCsv(String, CsvFormat)}.
 	 */
 	@Test
 	void testGetDataFromCsv_fileName_null() {
@@ -248,8 +350,7 @@ class DataSourceTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.DataSource#getDataFromCsv(java.lang.String, de.rumford.tradingsystem.helper.CsvFormat)}.
+	 * Test method for {@link DataSource#getDataFromCsv(String, CsvFormat)}.
 	 */
 	@Test
 	void testGetDataFromCsv_nonExistant_file() {
@@ -261,8 +362,7 @@ class DataSourceTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.DataSource#getDataFromCsv(java.lang.String, de.rumford.tradingsystem.helper.CsvFormat)}.
+	 * Test method for {@link DataSource#getDataFromCsv(String, CsvFormat)}.
 	 */
 	@Test
 	void testGetDataFromCsv_directory() {
@@ -274,8 +374,7 @@ class DataSourceTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.DataSource#getDataFromCsv(java.lang.String, de.rumford.tradingsystem.helper.CsvFormat)}.
+	 * Test method for {@link DataSource#getDataFromCsv(String, CsvFormat)}.
 	 */
 	@Test
 	void testGetDataFromCsv_headings() {
@@ -297,8 +396,7 @@ class DataSourceTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.DataSource#getDataFromCsv(java.lang.String, de.rumford.tradingsystem.helper.CsvFormat)}.
+	 * Test method for {@link DataSource#getDataFromCsv(String, CsvFormat)}.
 	 */
 	@Test
 	void testGetDataFromCsv_four_columns() {
@@ -320,8 +418,7 @@ class DataSourceTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.DataSource#getDataFromCsv(java.lang.String, de.rumford.tradingsystem.helper.CsvFormat)}.
+	 * Test method for {@link DataSource#getDataFromCsv(String, CsvFormat)}.
 	 */
 	@Test
 	void testGetDataFromCsv_day_non_integer() {
@@ -343,8 +440,7 @@ class DataSourceTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.DataSource#getDataFromCsv(java.lang.String, de.rumford.tradingsystem.helper.CsvFormat)}.
+	 * Test method for {@link DataSource#getDataFromCsv(String, CsvFormat)}.
 	 */
 	@Test
 	void testGetDataFromCsv_month_non_integer() {
@@ -366,8 +462,7 @@ class DataSourceTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.DataSource#getDataFromCsv(java.lang.String, de.rumford.tradingsystem.helper.CsvFormat)}.
+	 * Test method for {@link DataSource#getDataFromCsv(String, CsvFormat)}.
 	 */
 	@Test
 	void testGetDataFromCsv_year_non_integer() {
@@ -389,8 +484,7 @@ class DataSourceTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.DataSource#getDataFromCsv(java.lang.String, de.rumford.tradingsystem.helper.CsvFormat)}.
+	 * Test method for {@link DataSource#getDataFromCsv(String, CsvFormat)}.
 	 */
 	@Test
 	void testGetDataFromCsv_hour_non_integer() {
@@ -412,8 +506,7 @@ class DataSourceTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.DataSource#getDataFromCsv(java.lang.String, de.rumford.tradingsystem.helper.CsvFormat)}.
+	 * Test method for {@link DataSource#getDataFromCsv(String, CsvFormat)}.
 	 */
 	@Test
 	void testGetDataFromCsv_minute_non_integer() {
@@ -435,8 +528,7 @@ class DataSourceTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.DataSource#getDataFromCsv(java.lang.String, de.rumford.tradingsystem.helper.CsvFormat)}.
+	 * Test method for {@link DataSource#getDataFromCsv(String, CsvFormat)}.
 	 */
 	@Test
 	void testGetDataFromCsv_second_non_integer() {
@@ -458,8 +550,7 @@ class DataSourceTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.DataSource#getDataFromCsv(java.lang.String, de.rumford.tradingsystem.helper.CsvFormat)}.
+	 * Test method for {@link DataSource#getDataFromCsv(String, CsvFormat)}.
 	 */
 	@Test
 	void testGetDataFromCsv_date_out_of_range() {
@@ -481,8 +572,7 @@ class DataSourceTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.DataSource#getDataFromCsv(java.lang.String, de.rumford.tradingsystem.helper.CsvFormat)}.
+	 * Test method for {@link DataSource#getDataFromCsv(String, CsvFormat)}.
 	 */
 	@Test
 	void testGetDataFromCsv_course_value_invalid() {

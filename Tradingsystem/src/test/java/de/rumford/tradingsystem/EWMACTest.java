@@ -1,6 +1,7 @@
 package de.rumford.tradingsystem;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,6 +15,8 @@ import de.rumford.tradingsystem.helper.BaseValueFactory;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 class EWMACTest {
+
+	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";
 
 	EWMAC ewmac;
 	int shortHorizon;
@@ -105,7 +108,7 @@ class EWMACTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.EWMAC#EWMAC(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, int, double)}.
+	 * {@link EWMAC#EWMAC(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, int, double)}.
 	 */
 	@Test
 	void testEWMAC() {
@@ -116,8 +119,58 @@ class EWMACTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.EWMAC#calculateRawForecast(LocalDateTime)}.
+	 * Test method for {@link EWMAC#validateHorizonValues(LocalDateTime)}.
+	 */
+	@Test
+	void testValidateHorizonValues_longSmallerThanShort() {
+		int shortHorizonValue = 8;
+		int longHorizonValue = 4;
+		String expectedMessage = "The long horizon must be greater than the short horizon";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new EWMAC(baseValue, null, localDateTimeJan08220000, localDateTimeJan10220000, longHorizonValue,
+						shortHorizonValue, BASE_SCALE),
+				"Short horizon greater than long horizon is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link EWMAC#validateHorizonValues(LocalDateTime)}.
+	 */
+	@Test
+	void testValidateHorizonValues_longEqualsShort() {
+		int shortHorizonValue = 4;
+		int longHorizonValue = 4;
+		String expectedMessage = "The long horizon must be greater than the short horizon";
+
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> new EWMAC(baseValue, null, localDateTimeJan08220000,
+						localDateTimeJan10220000, longHorizonValue, shortHorizonValue, BASE_SCALE),
+				"Short horizon equal to long horizon is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link EWMAC#validateHorizonValues(LocalDateTime)}.
+	 */
+	@Test
+	void testValidateHorizonValues_shortLessThan2() {
+		int shortHorizonValue = 1;
+		int longHorizonValue = 4;
+		String expectedMessage = "The short horizon must not be < 2";
+
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> new EWMAC(baseValue, null, localDateTimeJan08220000,
+						localDateTimeJan10220000, longHorizonValue, shortHorizonValue, BASE_SCALE),
+				"Short horizon < 2 is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link EWMAC#calculateRawForecast(LocalDateTime)}.
 	 */
 	@Test
 	void testCalculateRawForecast_negativeRawForecast() {
@@ -129,8 +182,7 @@ class EWMACTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.EWMAC#calculateRawForecast(LocalDateTime)}.
+	 * Test method for {@link EWMAC#calculateRawForecast(LocalDateTime)}.
 	 */
 	@Test
 	void testCalculateRawForecast_positiveRawForecast() {
@@ -144,7 +196,7 @@ class EWMACTest {
 	/**
 	 * Test method for
 	 * 
-	 * {@link de.rumford.tradingsystem.EWMAC#calculateForecastScalar()}.
+	 * {@link EWMAC#calculateForecastScalar()}.
 	 */
 	@Test
 	void testCalculateForecastScalar() {
@@ -158,7 +210,7 @@ class EWMACTest {
 	/**
 	 * Test method for
 	 * 
-	 * {@link de.rumford.tradingsystem.EWMAC#calculateForecastScalar()}.
+	 * {@link EWMAC#calculateForecastScalar()}.
 	 */
 	@Test
 	void testCalculateForecastScalar_FC0() {
@@ -175,7 +227,7 @@ class EWMACTest {
 	/**
 	 * Test method for
 	 * 
-	 * {@link de.rumford.tradingsystem.EWMAC#calculateScaledForecasts()}.
+	 * {@link EWMAC#calculateScaledForecasts()}.
 	 */
 	@Test
 	void testCalculateForecasts() {
@@ -189,7 +241,7 @@ class EWMACTest {
 	/**
 	 * Test method for
 	 * 
-	 * {@link de.rumford.tradingsystem.EWMAC#calculateScaledForecasts()}.
+	 * {@link EWMAC#calculateScaledForecasts()}.
 	 * 
 	 * @throws InterruptedException
 	 */

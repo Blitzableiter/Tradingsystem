@@ -79,7 +79,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference() {
@@ -94,7 +94,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference_baseValue_null() {
@@ -110,7 +110,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference_lookbackWindow_1() {
@@ -126,7 +126,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference_startOfReferenceWindow_null() {
@@ -141,7 +141,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference_endOfReferenceWindow_null() {
@@ -156,7 +156,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference_baseScale_0() {
@@ -172,7 +172,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference_baseScale_sub0() {
@@ -188,7 +188,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference_endOfReferenceWindow_before_startOfReferenceWindow() {
@@ -203,7 +203,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference_illegalStartOfReferenceWindow() {
@@ -218,7 +218,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference_illegalEndOfReferenceWindow() {
@@ -233,7 +233,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference_emptyVolatilityIndicesArray() {
@@ -250,7 +250,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference_unsortedVolatilityIndicesArray() {
@@ -275,7 +275,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference_duplicatesInVolatilityIndicesArray() {
@@ -300,7 +300,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference_startOfReferenceWindowNotInVolatilityIndicesArray() {
@@ -325,7 +325,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference_endOfReferenceWindowNotInVolatilityIndicesArray() {
@@ -348,7 +348,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference_nansInRelevantAreaOfVolatilityIndicesArray() {
@@ -373,7 +373,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#VolatilityDifference(de.rumford.tradingsystem.BaseValue, de.rumford.tradingsystem.Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference_baseValueVolatilityIndicesNotAligned() {
@@ -401,7 +401,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#calculateVolatilityIndices(BaseValue, int)}.
+	 * {@link VolatilityDifference#calculateVolatilityIndices(BaseValue, int)}.
 	 */
 	@Test
 	void testVolatilityDifference_lessBaseValuesThanLookbackWindow() {
@@ -417,8 +417,7 @@ class VolatilityDifferenceTest {
 	}
 
 	/*
-	 * Test method for {@link
-	 * de.rumford.tradingsystem.VolatilityDifference#calculateVolatilityIndices()}.
+	 * Test method for {@link VolatilityDifference#calculateVolatilityIndices()}.
 	 */
 	@Test
 	void testCalculateVolatilityIndices() {
@@ -442,8 +441,7 @@ class VolatilityDifferenceTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.VolatilityDifference#calculateRawForecast(double)}.
+	 * Test method for {@link VolatilityDifference#calculateRawForecast(double)}.
 	 */
 	@Test
 	void testCalculateRawForecast() {

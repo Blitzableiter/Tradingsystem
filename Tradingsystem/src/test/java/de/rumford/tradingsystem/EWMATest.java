@@ -1,13 +1,18 @@
 package de.rumford.tradingsystem;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.rumford.tradingsystem.helper.BaseValueFactory;
+import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 class EWMATest {
+
+	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";
 
 	EWMA ewma2;
 	EWMA ewma2_1;
@@ -24,12 +29,46 @@ class EWMATest {
 		ewma8 = new EWMA(baseValue.getValues(), 8);
 	}
 
+	/**
+	 * Test method for {@link EWMA#EWMA(ValueDateTupel[], int)}.
+	 */
 	@Test
 	void testEWMA_ewma_instanceof_EWMA() {
 		assertTrue(ewma2 instanceof EWMA, "ewma2 is instanceof EWMA");
 		assertEquals(ewma2, ewma2_1, "Two EWMAs with the same horizon are equal");
 	}
 
+	/**
+	 * Test method for {@link EWMA#validateHorizon(int)}.
+	 */
+	@Test
+	void testValidateHorizon_Horizon1() {
+		int horizonOf1 = 1;
+		String expectedMessage = "The horizon must not be < 2";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new EWMA(baseValue.getValues(), horizonOf1), "Horizon less than 2 is not properly handled.");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link EWMA#validateBaseValues(ValueDateTupel[])}.
+	 */
+	@Test
+	void testValidateBaseValues_emptyBaseValuesArray() {
+		ValueDateTupel[] emptyValuesArray = ValueDateTupel.createEmptyArray();
+		String expectedMessage = "Base values must not be an empty array";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class, () -> new EWMA(emptyValuesArray, 2),
+				"Empty base values array is not properly handled.");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link EWMA#calculateEWMA(double, double)}.
+	 */
 	@Test
 	void testCalculateEWMA_Horizon2_baseValue786point75_Is_524point5() {
 		double calculatedValue = ewma2.calculateEWMA(0d, 786.75d);
@@ -37,6 +76,9 @@ class EWMATest {
 		assertEquals(expectedValue, calculatedValue, "Calculated EWMA is expected EWMA");
 	}
 
+	/**
+	 * Test method for {@link EWMA#calculateEWMA(double, double)}.
+	 */
 	@Test
 	void testCalculateEWMA_Horizon8_baseValue786point75_Is_174point833() {
 		double calculatedValue = ewma2.calculateEWMA(0d, 100d);
@@ -44,8 +86,11 @@ class EWMATest {
 		assertEquals(expectedValue, calculatedValue, "Calculated EWMA is expected EWMA");
 	}
 
+	/**
+	 * Test method for {@link EWMA#calculateDecay(int)}.
+	 */
 	@Test
-	void testGetDecay_DecayForHorizon2_Is_point67() {
+	void testCalculateDecay_DecayForHorizon2_Is_point67() {
 		double expectedValue = 2d / 3d;
 		assertEquals(expectedValue, ewma2.getDecay(), "Calculated Decay is expected Decay");
 	}
