@@ -43,9 +43,7 @@ public final class Util {
 	 * @param scalar           {@code double} scalar to scale the unscaled forecast
 	 * @return {@code double} the scaled forecast
 	 */
-	public static double calculateForecast(double unscaledForecast, double scalar) throws IllegalArgumentException {
-		if (scalar == 0)
-			throw new IllegalArgumentException("Forecast scalar must not be zero");
+	public static double calculateForecast(double unscaledForecast, double scalar) {
 		return unscaledForecast * scalar;
 	}
 

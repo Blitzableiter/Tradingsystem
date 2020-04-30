@@ -1,13 +1,16 @@
 package de.rumford.tradingsystem.helper;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
 class UtilTest {
+
+	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";
+
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.Util#adjustForStandardDeviation(double, double)}.
+	 * Test method for {@link Util#adjustForStandardDeviation(double, double)}.
 	 */
 	@Test
 	void testAdjustForStandardDeviation() {
@@ -21,21 +24,23 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.Util#adjustForStandardDeviation(double, double)}.
+	 * Test method for {@link Util#adjustForStandardDeviation(double, double)}.
 	 */
 	@Test
 	void testAdjustForStandardDeviation_sd0() {
 		double value = 100d;
 		double standardDeviation = 0d;
+		String expectedMessage = "Standard deviation must not be zero";
 
-		assertThrows(IllegalArgumentException.class, () -> Util.adjustForStandardDeviation(value, standardDeviation),
-				"IllegalArgumentException is not thrown when standard deviation is zero");
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> Util.adjustForStandardDeviation(value, standardDeviation),
+				"Standard deviation of zero is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.Util#calculateForecast(double, double)}.
+	 * Test method for {@link Util#calculateForecast(double, double)}.
 	 */
 	@Test
 	void testCalculateForecast() {
@@ -49,21 +54,7 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.Util#calculateForecast(double, double)}.
-	 */
-	@Test
-	void testCalculateForecast_scalar0() {
-		double unscaledForecast = 2.5d;
-		double scalar = 0d;
-
-		assertThrows(IllegalArgumentException.class, () -> Util.calculateForecast(unscaledForecast, scalar),
-				"IllegalArgumentException is not thrown when scalar is zero");
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.Util#calculateForecastScalar(double[], double)}.
+	 * Test method for {@link Util#calculateForecastScalar(double[], double)}.
 	 */
 	@Test
 	void testCalculateForecastScalar() {
@@ -77,14 +68,12 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.Util#calculateForecastScalar(double[], double)}.
+	 * Test method for {@link Util#calculateForecastScalar(double[], double)}.
 	 */
 	@Test
 	void testCalculateForecastScalar_absoluteAverage0() {
 		double[] values = { 0d, -0d };
 		double baseScale = 10d;
-
 		double expectedValue = Double.NaN;
 
 		double actualValue = Util.calculateForecastScalar(values, baseScale);
@@ -94,21 +83,37 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.Util#calculateForecastScalar(double[], double)}.
+	 * Test method for {@link Util#calculateForecastScalar(double[], double)}.
 	 */
 	@Test
 	void testCalculateForecastScalar_noValues() {
 		double[] values = {};
 		double baseScale = 10d;
+		String expectedMessage = "Given array of values must not be empty";
 
-		assertThrows(IllegalArgumentException.class, () -> Util.calculateForecastScalar(values, baseScale),
-				"IllegalArgumentException is not thrown when no values are given");
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> Util.calculateForecastScalar(values, baseScale), "Empty values array is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.Util#calculateReturn(double, double)}.
+	 * Test method for {@link Util#calculateForecastScalar(double[], double)}.
+	 */
+	@Test
+	void testCalculateForecastScalar_baseScale0() {
+		double[] values = { 10d, 4d, -1d, 6d, -4d };
+		double baseScale = 0;
+		String expectedMessage = "Base scale must not be 0.";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> Util.calculateForecastScalar(values, baseScale), "Base scale of 0 is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Util#calculateReturn(double, double)}.
 	 */
 	@Test
 	void testCalculateReturn_former200_latter300() {
@@ -122,8 +127,7 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.Util#calculateReturn(double, double)}.
+	 * Test method for {@link Util#calculateReturn(double, double)}.
 	 */
 	@Test
 	void testCalculateReturn_former300_latter200() {
@@ -137,8 +141,7 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.Util#calculateReturn(double, double)}.
+	 * Test method for {@link Util#calculateReturn(double, double)}.
 	 */
 	@Test
 	void testCalculateReturn_formerValue0() {
