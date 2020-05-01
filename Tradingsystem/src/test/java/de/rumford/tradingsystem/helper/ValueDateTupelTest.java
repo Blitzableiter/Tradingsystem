@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 
 class ValueDateTupelTest {
 
+	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";
+
 	static double value1;
 	static double value2;
 	static double value3;
@@ -52,8 +54,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#equals(Object)}.
+	 * Test method for {@link ValueDateTupel#equals(Object)}.
 	 */
 	@Test
 	void testEqualsObject() {
@@ -63,8 +64,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#createEmptyArray()}.
+	 * Test method for {@link ValueDateTupel#createEmptyArray()}.
 	 */
 	@Test
 	void testCreateEmptyArray() {
@@ -76,8 +76,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#createEmptyArray(int)}.
+	 * Test method for {@link ValueDateTupel#createEmptyArray(int)}.
 	 */
 	@Test
 	void testCreateEmptyArrayInt() {
@@ -89,22 +88,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#alignDates(ValueDateTupel[][])}.
-	 */
-	// FIXME
-	@Test
-	void testAlignDates() {
-		ValueDateTupel[] expectedArray = new ValueDateTupel[0];
-
-		ValueDateTupel[] actualArray = ValueDateTupel.createEmptyArray();
-
-		assertArrayEquals(expectedArray, actualArray, "A non empty array is created");
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending() {
@@ -115,8 +99,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending_notInOrder() {
@@ -127,8 +110,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending_twoEqualDates() {
@@ -139,8 +121,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending_arrayNull() {
@@ -149,12 +130,11 @@ class ValueDateTupelTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.isSortedAscending(valueDateTupelArray), "A null array is not properly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending_arrayContainsNull() {
@@ -164,12 +144,11 @@ class ValueDateTupelTest {
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.isSortedAscending(valueDateTupelArray),
 				"An array containing null is not properly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending() {
@@ -180,8 +159,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending_notInOrder() {
@@ -192,8 +170,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending_twoEqualDates() {
@@ -204,8 +181,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending_arrayNull() {
@@ -214,12 +190,11 @@ class ValueDateTupelTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.isSortedDescending(valueDateTupelArray), "A null array is not properly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending_arrayContainsNull() {
@@ -229,12 +204,11 @@ class ValueDateTupelTest {
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.isSortedDescending(valueDateTupelArray),
 				"An array containing null is not properly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#alignDates(ValueDateTupel[][])}.
+	 * Test method for {@link ValueDateTupel#alignDates(ValueDateTupel[][])}.
 	 */
 	@Test
 	void testalignDates() {
@@ -278,27 +252,35 @@ class ValueDateTupelTest {
 				valueDateTupel3, //
 				vdtCalculated20200104_300, //
 				vdtCalculated20200105_300 };
+		ValueDateTupel[] expectedVdtArray6 = { //
+				valueDateTupel1, //
+				valueDateTupel2, //
+				valueDateTupel3, //
+				valueDateTupel4, //
+				valueDateTupel5 };
 		ValueDateTupel[][] expectedValue = { //
 				expectedVdtArray1, //
 				expectedVdtArray2, //
 				expectedVdtArray3, //
 				expectedVdtArray4, //
-				expectedVdtArray5 };
+				expectedVdtArray5, //
+				expectedVdtArray6 };
 
 		ValueDateTupel[] vdtArray1 = { valueDateTupel1, valueDateTupel3, valueDateTupel5 };
 		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3, valueDateTupel4 };
 		ValueDateTupel[] vdtArray3 = { valueDateTupel1, valueDateTupel4, valueDateTupel5 };
 		ValueDateTupel[] vdtArray4 = { valueDateTupel3, valueDateTupel4, valueDateTupel5 };
 		ValueDateTupel[] vdtArray5 = { valueDateTupel1, valueDateTupel2, valueDateTupel3 };
-		ValueDateTupel[][] vdtArraysArray = { vdtArray1, vdtArray2, vdtArray3, vdtArray4, vdtArray5 };
+		ValueDateTupel[] vdtArray6 = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4,
+				valueDateTupel5 };
+		ValueDateTupel[][] vdtArraysArray = { vdtArray1, vdtArray2, vdtArray3, vdtArray4, vdtArray5, vdtArray6 };
 		ValueDateTupel[][] actualValue = ValueDateTupel.alignDates(vdtArraysArray);
 
 		assertArrayEquals(expectedValue, actualValue, "Dates aren't correct after aligning ValueDateTuples");
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#alignDates(ValueDateTupel[][])}.
+	 * Test method for {@link ValueDateTupel#alignDates(ValueDateTupel[][])}.
 	 */
 	@Test
 	void testalignDates_arrayOfArraysNull() {
@@ -310,12 +292,11 @@ class ValueDateTupelTest {
 				() -> ValueDateTupel.alignDates(vdtArraysArray), //
 				"Array of arrays = null is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Expcetion message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#alignDates(ValueDateTupel[][])}.
+	 * Test method for {@link ValueDateTupel#alignDates(ValueDateTupel[][])}.
 	 */
 	@Test
 	void testalignDates_arrayNull() {
@@ -329,12 +310,11 @@ class ValueDateTupelTest {
 				() -> ValueDateTupel.alignDates(vdtArraysArray), //
 				"null in array of arrays is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Expcetion message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#alignDates(ValueDateTupel[][])}.
+	 * Test method for {@link ValueDateTupel#alignDates(ValueDateTupel[][])}.
 	 */
 	@Test
 	void testalignDates_arrayContainsNull() {
@@ -348,12 +328,11 @@ class ValueDateTupelTest {
 				() -> ValueDateTupel.alignDates(vdtArraysArray), //
 				"null in array is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Expcetion message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#alignDates(ValueDateTupel[][])}.
+	 * Test method for {@link ValueDateTupel#alignDates(ValueDateTupel[][])}.
 	 */
 	@Test
 	void testalignDates_arrayNotSortedAscending() {
@@ -367,12 +346,11 @@ class ValueDateTupelTest {
 				() -> ValueDateTupel.alignDates(vdtArraysArray), //
 				"Unsorted array is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Expcetion message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#alignDates(ValueDateTupel[][])}.
+	 * Test method for {@link ValueDateTupel#alignDates(ValueDateTupel[][])}.
 	 */
 	@Test
 	void testalignDates_onlyNaN() {
@@ -391,12 +369,12 @@ class ValueDateTupelTest {
 				() -> ValueDateTupel.alignDates(vdtArraysArray), //
 				"Only NaN values in ValueDateTupel is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Expcetion message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#contains(ValueDateTupel[], ValueDateTupel)}.
+	 * {@link ValueDateTupel#contains(ValueDateTupel[], ValueDateTupel)}.
 	 */
 	@Test
 	void testContains() {
@@ -408,7 +386,7 @@ class ValueDateTupelTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#contains(ValueDateTupel[], ValueDateTupel)}.
+	 * {@link ValueDateTupel#contains(ValueDateTupel[], ValueDateTupel)}.
 	 */
 	@Test
 	void testContains_unknownElement() {
@@ -420,7 +398,7 @@ class ValueDateTupelTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#containsDate(ValueDateTupel[], LocalDateTime)}.
+	 * {@link ValueDateTupel#containsDate(ValueDateTupel[], LocalDateTime)}.
 	 */
 	@Test
 	void testContainsDate() {
@@ -432,7 +410,7 @@ class ValueDateTupelTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#containsDate(ValueDateTupel[], LocalDateTime)}.
+	 * {@link ValueDateTupel#containsDate(ValueDateTupel[], LocalDateTime)}.
 	 */
 	@Test
 	void testContainsDate_unknownDate() {
@@ -444,7 +422,7 @@ class ValueDateTupelTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#containsDate(ValueDateTupel[], LocalDateTime)}.
+	 * {@link ValueDateTupel#containsDate(ValueDateTupel[], LocalDateTime)}.
 	 */
 	@Test
 	void testContainsDate_arrayNull() {
@@ -455,12 +433,12 @@ class ValueDateTupelTest {
 				() -> ValueDateTupel.containsDate(valueDateTupelArray, date_20200101),
 				"Null array is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage());
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#containsDate(ValueDateTupel[], LocalDateTime)}.
+	 * {@link ValueDateTupel#containsDate(ValueDateTupel[], LocalDateTime)}.
 	 */
 	@Test
 	void testContainsDate_dateTimeNull() {
@@ -471,12 +449,12 @@ class ValueDateTupelTest {
 				() -> ValueDateTupel.containsDate(valueDateTupelArray, null),
 				"LocalDateTime of null is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage());
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#addOneAt(ValueDateTupel[], ValueDateTupel, int)}.
+	 * {@link ValueDateTupel#addOneAt(ValueDateTupel[], ValueDateTupel, int)}.
 	 */
 	@Test
 	void testAddOneAt_position_0() {
@@ -490,7 +468,7 @@ class ValueDateTupelTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#addOneAt(ValueDateTupel[], ValueDateTupel, int)}.
+	 * {@link ValueDateTupel#addOneAt(ValueDateTupel[], ValueDateTupel, int)}.
 	 */
 	@Test
 	void testAddOneAt_position_end() {
@@ -504,7 +482,7 @@ class ValueDateTupelTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#addOneAt(ValueDateTupel[], ValueDateTupel, int)}.
+	 * {@link ValueDateTupel#addOneAt(ValueDateTupel[], ValueDateTupel, int)}.
 	 */
 	@Test
 	void testAddOneAt_position_between() {
@@ -518,7 +496,7 @@ class ValueDateTupelTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#addOneAt(ValueDateTupel[], ValueDateTupel, int)}.
+	 * {@link ValueDateTupel#addOneAt(ValueDateTupel[], ValueDateTupel, int)}.
 	 */
 	@Test
 	void testAddOneAt_arrayNull() {
@@ -529,12 +507,12 @@ class ValueDateTupelTest {
 				() -> ValueDateTupel.addOneAt(valueDateTupelArray, valueDateTupel1, 0),
 				"Array of null is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#addOneAt(ValueDateTupel[], ValueDateTupel, int)}.
+	 * {@link ValueDateTupel#addOneAt(ValueDateTupel[], ValueDateTupel, int)}.
 	 */
 	@Test
 	void testAddOneAt_valueNull() {
@@ -545,12 +523,12 @@ class ValueDateTupelTest {
 				() -> ValueDateTupel.addOneAt(valueDateTupelArray, null, 0),
 				"New value of null is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#addOneAt(ValueDateTupel[], ValueDateTupel, int)}.
+	 * {@link ValueDateTupel#addOneAt(ValueDateTupel[], ValueDateTupel, int)}.
 	 */
 	@Test
 	void testAddOneAt_position_negative() {
@@ -562,12 +540,12 @@ class ValueDateTupelTest {
 				() -> ValueDateTupel.addOneAt(valueDateTupelArray, valueDateTupel1, negativePosition),
 				"Position < 0 is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#addOneAt(ValueDateTupel[], ValueDateTupel, int)}.
+	 * {@link ValueDateTupel#addOneAt(ValueDateTupel[], ValueDateTupel, int)}.
 	 */
 	@Test
 	void testAddOneAt_position_greater_arrayLength() {
@@ -580,12 +558,12 @@ class ValueDateTupelTest {
 				() -> ValueDateTupel.addOneAt(valueDateTupelArray, valueDateTupel1, tooLargeAPosition),
 				"Position > array.length is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#getElement(ValueDateTupel[], LocalDateTime)}.
+	 * {@link ValueDateTupel#getElement(ValueDateTupel[], LocalDateTime)}.
 	 */
 	@Test
 	void testContainsLocalDateTime_existingLocalDateTime() {
@@ -610,8 +588,7 @@ class ValueDateTupelTest {
 //	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#getValues(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#getValues(ValueDateTupel[])}.
 	 */
 	@Test
 	void testGetValues() {
@@ -628,8 +605,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#getValues(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#getValues(ValueDateTupel[])}.
 	 */
 	@Test
 	void testGetValues_arrayNull() {
@@ -639,12 +615,11 @@ class ValueDateTupelTest {
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.getValues(valueDateTupelArray), "Null array is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#getDates(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#getDates(ValueDateTupel[])}.
 	 */
 	@Test
 	void testGetDates() {
@@ -661,8 +636,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.helper.ValueDateTupel#getDates(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#getDates(ValueDateTupel[])}.
 	 */
 	@Test
 	void testGetDates_arrayNull() {
@@ -672,6 +646,137 @@ class ValueDateTupelTest {
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.getDates(valueDateTupelArray), "Null array is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link ValueDateTupel#getElements(ValueDateTupel[], LocalDateTime, LocalDateTime)}.
+	 */
+	@Test
+	void testGetElements() {
+		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4,
+				valueDateTupel5 };
+		ValueDateTupel[] expectedValue = { valueDateTupel2, valueDateTupel3, valueDateTupel4 };
+
+		ValueDateTupel[] actualValue = ValueDateTupel.getElements(vdtArray, date_20200102, date_20200104);
+
+		assertArrayEquals(expectedValue, actualValue, "Elements cannot be correctly retrieved.");
+	}
+
+	/**
+	 * Test method for
+	 * {@link ValueDateTupel#getElements(ValueDateTupel[], LocalDateTime, LocalDateTime)}.
+	 */
+	@Test
+	void testGetElements_dtFromNull() {
+		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4,
+				valueDateTupel5 };
+		ValueDateTupel[] expectedValue = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4 };
+
+		ValueDateTupel[] actualValue = ValueDateTupel.getElements(vdtArray, null, date_20200104);
+
+		assertArrayEquals(expectedValue, actualValue, "Elements cannot be correctly retrieved when dtFrom is null.");
+	}
+
+	/**
+	 * Test method for
+	 * {@link ValueDateTupel#getElements(ValueDateTupel[], LocalDateTime, LocalDateTime)}.
+	 */
+	@Test
+	void testGetElements_dtToNull() {
+		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4,
+				valueDateTupel5 };
+		ValueDateTupel[] expectedValue = { valueDateTupel2, valueDateTupel3, valueDateTupel4, valueDateTupel5 };
+
+		ValueDateTupel[] actualValue = ValueDateTupel.getElements(vdtArray, date_20200102, null);
+
+		assertArrayEquals(expectedValue, actualValue, "Elements cannot be correctly retrieved when dtTo is null.");
+	}
+
+	/**
+	 * Test method for
+	 * {@link ValueDateTupel#getElements(ValueDateTupel[], LocalDateTime, LocalDateTime)}.
+	 */
+	@Test
+	void testGetElements_dtFromEqualsDtTo() {
+		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4,
+				valueDateTupel5 };
+		ValueDateTupel[] expectedValue = { valueDateTupel2 };
+
+		ValueDateTupel[] actualValue = ValueDateTupel.getElements(vdtArray, date_20200102, date_20200102);
+
+		assertArrayEquals(expectedValue, actualValue,
+				"Elements cannot be correctly retrieved when dtFrom equals dtTo.");
+	}
+
+	/**
+	 * Test method for
+	 * {@link ValueDateTupel#getElements(ValueDateTupel[], LocalDateTime, LocalDateTime)}.
+	 */
+	@Test
+	void testGetElements_dtFromNotInArray() {
+		ValueDateTupel[] vdtArray = { valueDateTupel4, valueDateTupel5 };
+
+		assertNull(ValueDateTupel.getElements(vdtArray, date_20200102, date_20200105),
+				"dtFrom not in array is not properly handled.");
+	}
+
+	/**
+	 * Test method for
+	 * {@link ValueDateTupel#getElements(ValueDateTupel[], LocalDateTime, LocalDateTime)}.
+	 */
+	@Test
+	void testGetElements_dtToNotInArray() {
+		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2 };
+
+		assertNull(ValueDateTupel.getElements(vdtArray, date_20200102, date_20200105),
+				"dtTo not in array is not properly handled.");
+	}
+
+	/**
+	 * Test method for
+	 * {@link ValueDateTupel#getPosition(ValueDateTupel[], LocalDateTime)}.
+	 */
+	@Test
+	void testGetPosition() {
+		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4,
+				valueDateTupel5 };
+		int expectedValue = 1;
+
+		int actualValue = ValueDateTupel.getPosition(vdtArray, date_20200102);
+
+		assertEquals(expectedValue, actualValue, "Position cannot be correctly retrieved");
+	}
+
+	/**
+	 * Test method for
+	 * {@link ValueDateTupel#getPosition(ValueDateTupel[], LocalDateTime)}.
+	 */
+	@Test
+	void testGetPosition_arrayNull() {
+		ValueDateTupel[] vdtArray = null;
+		String expectedMessage = "The given array of ValueDateTupel must not be null";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> ValueDateTupel.getPosition(vdtArray, date_20200102), "Array of null is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link ValueDateTupel#getPosition(ValueDateTupel[], LocalDateTime)}.
+	 */
+	@Test
+	void testGetPosition_dtToBeFoundNull() {
+		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4,
+				valueDateTupel5 };
+		String expectedMessage = "The given date to be found must not be null";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> ValueDateTupel.getPosition(vdtArray, null), "Date to be found of null is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 }
