@@ -742,11 +742,14 @@ class ValueDateTupelTest {
 	void testGetPosition() {
 		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4,
 				valueDateTupel5 };
-		int expectedValue = 1;
+		int expectedValueFirstPosition = 0;
+		int expectedValueLastPosition = 4;
 
-		int actualValue = ValueDateTupel.getPosition(vdtArray, date_20200102);
+		int actualValueFirstPosition = ValueDateTupel.getPosition(vdtArray, date_20200101);
+		int actualValueLastPosition = ValueDateTupel.getPosition(vdtArray, date_20200105);
 
-		assertEquals(expectedValue, actualValue, "Position cannot be correctly retrieved");
+		assertEquals(expectedValueLastPosition, actualValueLastPosition, "Position cannot be correctly retrieved");
+		assertEquals(expectedValueFirstPosition, actualValueFirstPosition, "Position cannot be correctly retrieved");
 	}
 
 	/**
@@ -762,6 +765,19 @@ class ValueDateTupelTest {
 				() -> ValueDateTupel.getPosition(vdtArray, date_20200102), "Array of null is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link ValueDateTupel#getPosition(ValueDateTupel[], LocalDateTime)}.
+	 */
+	@Test
+	void testGetPosition_arrayEmpty() {
+		ValueDateTupel[] vdtArray = {};
+		int expectedValue = Integer.MIN_VALUE;
+
+		assertEquals(expectedValue, ValueDateTupel.getPosition(vdtArray, date_20200102),
+				"Empty array is not properly handled");
 	}
 
 	/**
