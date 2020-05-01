@@ -46,6 +46,8 @@ class VolatilityDifferenceTest {
 	static LocalDateTime localDateTime2020Jan09220000;
 	static LocalDateTime localDateTime2020Jan10220000;
 	static LocalDateTime localDateTime2020Jan11220000;
+	static LocalDateTime localDateTime2020Jan12220000;
+	static LocalDateTime localDateTime2020Jan31220000;
 
 	VolatilityDifference volatilityDifference;
 	VolatilityDifference volatilityDifference2;
@@ -65,6 +67,8 @@ class VolatilityDifferenceTest {
 		localDateTime2020Jan09220000 = LocalDateTime.of(LocalDate.of(2020, 1, 9), LocalTime.of(22, 0));
 		localDateTime2020Jan10220000 = LocalDateTime.of(LocalDate.of(2020, 1, 10), LocalTime.of(22, 0));
 		localDateTime2020Jan11220000 = LocalDateTime.of(LocalDate.of(2020, 1, 11), LocalTime.of(22, 0));
+		localDateTime2020Jan12220000 = LocalDateTime.of(LocalDate.of(2020, 1, 12), LocalTime.of(22, 0));
+		localDateTime2020Jan31220000 = LocalDateTime.of(LocalDate.of(2020, 1, 31), LocalTime.of(22, 0));
 	}
 
 	/**
@@ -79,7 +83,7 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, VolatilityDifference[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
 	void testVolatilityDifference() {
@@ -94,330 +98,54 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, VolatilityDifference[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
-	void testVolatilityDifference_baseValue_null() {
-		BaseValue nullBaseValue = null;
-		String expectedMessage = "Base value must not be null";
+	void testVolatilityDifference_withThreeVariations() {
+		baseValue = BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME);
+		lookbackWindow = 2;
+		int lookbackWindow4 = 4;
+		int lookbackWindow8 = 8;
 
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(nullBaseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE),
-				"Base value of null is not correctly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
+		VolatilityDifference variation1 = new VolatilityDifference(baseValue, null, localDateTime2020Jan10220000,
+				localDateTime2020Jan12220000, lookbackWindow, BASE_SCALE);
+		VolatilityDifference variation2 = new VolatilityDifference(baseValue, null, localDateTime2020Jan10220000,
+				localDateTime2020Jan12220000, lookbackWindow4, BASE_SCALE);
+		VolatilityDifference variation3 = new VolatilityDifference(baseValue, null, localDateTime2020Jan10220000,
+				localDateTime2020Jan12220000, lookbackWindow8, BASE_SCALE);
 
-	/**
-	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
-	 */
-	@Test
-	void testVolatilityDifference_lookbackWindow_1() {
-		int lookbackWindowOne = 1;
-		String expectedMessage = "Lookback window must be at least 2";
+		VolatilityDifference[] variations = { variation1, variation2, variation3 };
 
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindowOne, BASE_SCALE),
-				"Lookback window <= 1 is not correctly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
+		VolatilityDifference volDifMain = new VolatilityDifference(baseValue, variations, localDateTime2020Jan10220000,
+				localDateTime2020Jan12220000, lookbackWindow, BASE_SCALE);
 
-	/**
-	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
-	 */
-	@Test
-	void testVolatilityDifference_startOfReferenceWindow_null() {
-		String expectedMessage = "Start of reference window value must not be null";
+		double expectedWeight1 = 0.23172841303547406; // Excel: 0.231728413035474
+		double expectedWeight2 = 0.2698029771482523; // Excel: 0.269802977148252
+		double expectedWeight3 = 0.4984686098162736; // Excel: 0.498468609816274
 
-		Exception thrown = assertThrows(
-				IllegalArgumentException.class, () -> new VolatilityDifference(baseValue, null, null,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE),
-				"startOfReferenceWindow of null is not correctly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
+		double expectedForecastValue31 = 16.949535171171593; // Excel: 16.9495351711716
 
-	/**
-	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
-	 */
-	@Test
-	void testVolatilityDifference_endOfReferenceWindow_null() {
-		String expectedMessage = "End of reference window value must not be null";
+		ValueDateTupel[] expectedCombinedForecasts = ValueDateTupel.createEmptyArray();
+		expectedCombinedForecasts = ArrayUtils.add(expectedCombinedForecasts,
+				new ValueDateTupel(localDateTime2020Jan10220000, 1));
 
-		Exception thrown = assertThrows(
-				IllegalArgumentException.class, () -> new VolatilityDifference(baseValue, null,
-						localDateTime2020Jan02220000, null, lookbackWindow, BASE_SCALE),
-				"endOfReferenceWindow of null is not correctly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
+		ValueDateTupel[] actualForecasts = volDifMain.getForecasts();
 
-	/**
-	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
-	 */
-	@Test
-	void testVolatilityDifference_baseScale_0() {
-		String expectedMessage = "The given baseScale must a positiv non-zero decimal.";
-		double zeroBaseScale = 0;
+		assertEquals(expectedWeight1, volDifMain.getVariations()[0].getWeight(),
+				"Forecast scalar for variation 1 is not correclty calculated.");
+		assertEquals(expectedWeight2, volDifMain.getVariations()[1].getWeight(),
+				"Forecast scalar for variation 2 is not correclty calculated.");
+		assertEquals(expectedWeight3, volDifMain.getVariations()[2].getWeight(),
+				"Forecast scalar for variation 3 is not correclty calculated.");
 
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, zeroBaseScale),
-				"baseScale of zero is not correctly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
-	 */
-	@Test
-	void testVolatilityDifference_baseScale_sub0() {
-		String expectedMessage = "The given baseScale must a positiv non-zero decimal.";
-		double subZeroBaseScale = -1;
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, subZeroBaseScale),
-				"baseScale of less than zero is not correctly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
-	 */
-	@Test
-	void testVolatilityDifference_endOfReferenceWindow_before_startOfReferenceWindow() {
-		String expectedMessage = "End of reference window value must be after start of reference window value";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan04220000,
-						localDateTime2020Jan02220000, lookbackWindow, BASE_SCALE),
-				"endOfReferenceWindow before startOfReferenceWindow is not correctly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
-	 */
-	@Test
-	void testVolatilityDifference_illegalStartOfReferenceWindow() {
-		String expectedMessage = "Base values do not include given start value for reference window";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2019Dec31220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE),
-				"Not included startOfReferenceWindow is not correctly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
-	 */
-	@Test
-	void testVolatilityDifference_illegalEndOfReferenceWindow() {
-		String expectedMessage = "Base values do not include given end value for reference window";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan05220000, lookbackWindow, BASE_SCALE),
-				"Not included endOfReferenceWindow is not correctly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
-	 */
-	@Test
-	void testVolatilityDifference_emptyVolatilityIndicesArray() {
-		String expectedMessage = "Volatility indices must not be an empty array";
-
-		ValueDateTupel[] emptyVolatilityIndicesArray = ValueDateTupel.createEmptyArray();
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, emptyVolatilityIndicesArray),
-				"Empty array of volatlilty indices is not correctly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
-	 */
-	@Test
-	void testVolatilityDifference_unsortedVolatilityIndicesArray() {
-		String expectedMessage = "Given volatility indices are not properly sorted or there are duplicate LocalDateTime values";
-
-		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
-		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
-		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan04220000, 5d);
-		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan03220000, 10d);
-		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex4);
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
-				"Improperly sorted volatility indices are not correctly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
-	 */
-	@Test
-	void testVolatilityDifference_duplicatesInVolatilityIndicesArray() {
-		String expectedMessage = "Given volatility indices are not properly sorted or there are duplicate LocalDateTime values";
-
-		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
-		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
-		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan02220000, 5d);
-		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04220000, 10d);
-		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex4);
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
-				"Duplicate volatility indices are not correctly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
-	 */
-	@Test
-	void testVolatilityDifference_startOfReferenceWindowNotInVolatilityIndicesArray() {
-		String expectedMessage = "The given startOfReferenceWindow is not included in the given volatilityIndices array.";
-
-		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan02220000, Double.NaN);
-		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan03220000, 100d);
-		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan04220000, 5d);
-		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan05220000, 10d);
-		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex4);
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan01220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
-				"Invalid start of reference window value is not correctly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
-	 */
-	@Test
-	void testVolatilityDifference_endOfReferenceWindowNotInVolatilityIndicesArray() {
-		String expectedMessage = "The given endOfReferenceWindow is not included in the given volatilityIndices array.";
-
-		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
-		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
-		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000, 5d);
-		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan01220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
-				"Invalid end of reference window value is not correctly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
-	 */
-	@Test
-	void testVolatilityDifference_nansInRelevantAreaOfVolatilityIndicesArray() {
-		String expectedMessage = "There must not be NaN-Values in the given volatility indices values in the area delimited by startOfReferenceWindow and endOfReferenceWindow";
-
-		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, 100d);
-		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
-		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000, Double.NaN);
-		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04220000, 10d);
-		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex4);
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
-				"NaNs in relevant area of volatility indices are not correctly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, double)}.
-	 */
-	@Test
-	void testVolatilityDifference_baseValueVolatilityIndicesNotAligned() {
-		String expectedMessage = "Base value and volatility index values are not properly aligned."
-				+ " Utilize ValueDateTupel.alignDates(ValueDateTupel[][]) before creating a new VolatilityDifference.";
-
-		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
-		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
-		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000, 5d);
-		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04220000, 10d);
-		ValueDateTupel volatilityIndex5 = new ValueDateTupel(localDateTime2020Jan05220000, 99d);
-		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex4);
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex5);
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
-				"Not aligned base value and volatility indices are not correctly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedForecastValue31,
+				ValueDateTupel.getElement(actualForecasts, localDateTime2020Jan31220000).getValue(),
+				"Combined forecasts are not properly calculated.");
 	}
 
 	/**
 	 * Test method for
 	 * {@link VolatilityDifference#calculateVolatilityIndices(BaseValue, int)}.
-	 */
-	@Test
-	void testVolatilityDifference_lessBaseValuesThanLookbackWindow() {
-		int lookbackWindowTooGreat = 10;
-		String expectedMessage = "The amount of base values must not be smaller than the lookback window. Number of base values: 4, lookback window: 10.";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindowTooGreat, BASE_SCALE),
-				"Too great of a lookback window is not correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), "Too great of a lookback window is not correctly handled.");
-	}
-
-	/*
-	 * Test method for {@link VolatilityDifference#calculateVolatilityIndices()}.
 	 */
 	@Test
 	void testCalculateVolatilityIndices() {
@@ -438,6 +166,363 @@ class VolatilityDifferenceTest {
 		ValueDateTupel[] actualValues = volatilityDifference.getVolatilityIndices();
 
 		assertArrayEquals(expectedValues, actualValues, "Volatility index values are not properly calculated");
+	}
+
+	/**
+	 * Test method for
+	 * {@link VolatilityDifference#calculateVolatilityIndices(BaseValue, int)}.
+	 */
+	@Test
+	void testCalculateVolatilityIndices_baseValue_null() {
+		BaseValue nullBaseValue = null;
+		String expectedMessage = "Base value must not be null";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(nullBaseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE),
+				"Base value of null is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link VolatilityDifference#calculateVolatilityIndices(BaseValue, int)}.
+	 */
+	@Test
+	void testCalculateVolatilityIndices_lessBaseValuesThanLookbackWindow() {
+		int lookbackWindowTooGreat = 10;
+		String expectedMessage = "The amount of base values must not be smaller than the lookback window. Number of base values: 4, lookback window: 10.";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan04220000, lookbackWindowTooGreat, BASE_SCALE),
+				"Too great of a lookback window is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), "Too great of a lookback window is not correctly handled.");
+	}
+
+	/**
+	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
+	 * LocalDateTime, double}.
+	 */
+	@Test
+	void testValidateInputs_baseValue_null_volIndGiven() {
+		BaseValue nullBaseValue = null;
+		ValueDateTupel[] volatilityIndices = {};
+		String expectedMessage = "Base value must not be null";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(nullBaseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndices),
+				"Base value of null is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
+	 * LocalDateTime, double}.
+	 */
+	@Test
+	void testValidateInputs_startOfReferenceWindow_null() {
+		String expectedMessage = "Start of reference window value must not be null";
+
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> new VolatilityDifference(baseValue, null, null,
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE),
+				"startOfReferenceWindow of null is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
+	 * LocalDateTime, double}.
+	 */
+	@Test
+	void testValidateInputs_endOfReferenceWindow_null() {
+		String expectedMessage = "End of reference window value must not be null";
+
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> new VolatilityDifference(baseValue, null,
+						localDateTime2020Jan02220000, null, lookbackWindow, BASE_SCALE),
+				"endOfReferenceWindow of null is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
+	 * LocalDateTime, double}.
+	 */
+	@Test
+	void testValidateInputs_baseScale_0() {
+		String expectedMessage = "The given baseScale must a positiv non-zero decimal.";
+		double zeroBaseScale = 0;
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan04220000, lookbackWindow, zeroBaseScale),
+				"baseScale of zero is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
+	 * LocalDateTime, double}.
+	 */
+	@Test
+	void testValidateInputs_baseScale_sub0() {
+		String expectedMessage = "The given baseScale must a positiv non-zero decimal.";
+		double subZeroBaseScale = -1;
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan04220000, lookbackWindow, subZeroBaseScale),
+				"baseScale of less than zero is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
+	 * LocalDateTime, double}.
+	 */
+	@Test
+	void testValidateInputs_endOfReferenceWindow_before_startOfReferenceWindow() {
+		String expectedMessage = "End of reference window value must be after start of reference window value";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan04220000,
+						localDateTime2020Jan02220000, lookbackWindow, BASE_SCALE),
+				"endOfReferenceWindow before startOfReferenceWindow is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
+	 * LocalDateTime, double}.
+	 */
+	@Test
+	void testValidateInputs_illegalStartOfReferenceWindow() {
+		String expectedMessage = "Base values do not include given start value for reference window";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2019Dec31220000,
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE),
+				"Not included startOfReferenceWindow is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
+	 * LocalDateTime, double}.
+	 */
+	@Test
+	void testValidateInputs_illegalEndOfReferenceWindow() {
+		String expectedMessage = "Base values do not include given end value for reference window";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan05220000, lookbackWindow, BASE_SCALE),
+				"Not included endOfReferenceWindow is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link VolatilityDifference#validateLookbackWindow(int)}.
+	 */
+	@Test
+	void testValidateLookbackWindow_lookbackWindow_1() {
+		int lookbackWindowOne = 1;
+		String expectedMessage = "Lookback window must be at least 2";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan04220000, lookbackWindowOne, BASE_SCALE),
+				"Lookback window <= 1 is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link VolatilityDifference#validateVolatilityIndices(ValueDateTupel[])}.
+	 */
+	@Test
+	void testValidateVolatilityIndices_emptyVolatilityIndicesArray() {
+		String expectedMessage = "Volatility indices must not be an empty array";
+
+		ValueDateTupel[] emptyVolatilityIndicesArray = ValueDateTupel.createEmptyArray();
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, emptyVolatilityIndicesArray),
+				"Empty array of volatlilty indices is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link VolatilityDifference#validateVolatilityIndices(ValueDateTupel[])}.
+	 */
+	@Test
+	void testValidateVolatilityIndices_unsortedVolatilityIndicesArray() {
+		String expectedMessage = "Given volatility indices are not properly sorted or there are duplicate LocalDateTime values";
+
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
+		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
+		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan04220000, 5d);
+		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan03220000, 10d);
+		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex4);
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
+				"Improperly sorted volatility indices are not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link VolatilityDifference#validateVolatilityIndices(ValueDateTupel[])}.
+	 */
+	@Test
+	void testValidateVolatilityIndices_duplicatesInVolatilityIndicesArray() {
+		String expectedMessage = "Given volatility indices are not properly sorted or there are duplicate LocalDateTime values";
+
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
+		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
+		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan02220000, 5d);
+		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04220000, 10d);
+		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex4);
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
+				"Duplicate volatility indices are not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link VolatilityDifference#validateVolatilityIndices(ValueDateTupel[])}.
+	 */
+	@Test
+	void testValidateVolatilityIndices_startOfReferenceWindowNotInVolatilityIndicesArray() {
+		String expectedMessage = "The given startOfReferenceWindow is not included in the given volatilityIndices array.";
+
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan02220000, Double.NaN);
+		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan03220000, 100d);
+		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan04220000, 5d);
+		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan05220000, 10d);
+		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex4);
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan01220000,
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
+				"Invalid start of reference window value is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link VolatilityDifference#validateVolatilityIndices(ValueDateTupel[])}.
+	 */
+	@Test
+	void testValidateVolatilityIndices_endOfReferenceWindowNotInVolatilityIndicesArray() {
+		String expectedMessage = "The given endOfReferenceWindow is not included in the given volatilityIndices array.";
+
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
+		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
+		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000, 5d);
+		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan01220000,
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
+				"Invalid end of reference window value is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link VolatilityDifference#validateVolatilityIndices(ValueDateTupel[])}.
+	 */
+	@Test
+	void testValidateVolatilityIndices_nansInRelevantAreaOfVolatilityIndicesArray() {
+		String expectedMessage = "There must not be NaN-Values in the given volatility indices values in the area delimited by startOfReferenceWindow and endOfReferenceWindow";
+
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, 100d);
+		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
+		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000, Double.NaN);
+		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04220000, 10d);
+		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex4);
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
+				"NaNs in relevant area of volatility indices are not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link VolatilityDifference#validateVolatilityIndices(ValueDateTupel[])}.
+	 */
+	@Test
+	void testValidateVolatilityIndices_baseValueVolatilityIndicesNotAligned() {
+		String expectedMessage = "Base value and volatility index values are not properly aligned."
+				+ " Utilize ValueDateTupel.alignDates(ValueDateTupel[][]) before creating a new VolatilityDifference.";
+
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
+		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
+		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000, 5d);
+		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04220000, 10d);
+		ValueDateTupel volatilityIndex5 = new ValueDateTupel(localDateTime2020Jan05220000, 99d);
+		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex4);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex5);
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
+				"Not aligned base value and volatility indices are not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**

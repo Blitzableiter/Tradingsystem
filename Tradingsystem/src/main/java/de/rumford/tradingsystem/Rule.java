@@ -54,9 +54,9 @@ public abstract class Rule {
 		this.validateInputs(baseValue, startOfReferenceWindow, endOfReferenceWindow, baseScale);
 
 		this.setBaseValue(baseValue);
-		this.validateSetAndWeighVariations(variations);
 		this.setStartOfReferenceWindow(startOfReferenceWindow);
 		this.setEndOfReferenceWindow(endOfReferenceWindow);
+		this.validateSetAndWeighVariations(variations);
 		this.setBaseScale(baseScale);
 	}
 
@@ -169,7 +169,7 @@ public abstract class Rule {
 	 * @return {@code ValueDateTupel[]} An array of scaled forecasts.
 	 */
 	private ValueDateTupel[] calculateScaledForecasts(LocalDateTime calculateFrom, LocalDateTime calculateTo) {
-		ValueDateTupel[] calculatedScaledForecasts = {};
+		ValueDateTupel[] calculatedScaledForecasts = null;
 
 		Rule[] instanceVariations = this.getVariations();
 		/*
@@ -186,6 +186,8 @@ public abstract class Rule {
 				variationsWeights = ArrayUtils.add(variationsWeights, variation.getWeight());
 			}
 
+			calculatedScaledForecasts = ValueDateTupel.createEmptyArray(variationsForecasts[0].length);
+
 			/* Loop over all variations */
 			for (int variationsIndex = 0; variationsIndex < variationsForecasts.length; variationsIndex++) {
 
@@ -193,8 +195,8 @@ public abstract class Rule {
 				for (int i = 0; i < variationsForecasts[variationsIndex].length; i++) {
 
 					/* Add the weighted and scaled variation's forecast */
-					double valueToBeAdded = this.calculateScaledForecast(
-							variationsForecasts[variationsIndex][i].getValue() * variationsWeights[variationsIndex]);
+					double valueToBeAdded = variationsForecasts[variationsIndex][i].getValue()
+							* variationsWeights[variationsIndex];
 
 					/*
 					 * If the scaled and weighted forecast value at this position is null (i.e. when
@@ -304,11 +306,10 @@ public abstract class Rule {
 		 */
 		if (instanceVariations != null) {
 			/* local array of weighted and combined variations' forecasts. */
-			relevantForecastValues = ValueDateTupel.createEmptyArray(this.getBaseValue().getValues().length);
+			relevantForecastValues = ValueDateTupel.createEmptyArray(instanceVariations[0].getForecasts().length);
 
 			/* Loop over each variation */
 			for (Rule variation : instanceVariations) {
-
 				/* Loop over each forecast value inside each variation. */
 				for (int i = 0; i < variation.getForecasts().length; i++) {
 
@@ -333,6 +334,7 @@ public abstract class Rule {
 					}
 				}
 			}
+
 		} else {
 			/*
 			 * If the rule doesn't have variations use this rules sd adjusted forecast
@@ -405,11 +407,11 @@ public abstract class Rule {
 			break;
 		case 3:
 			ValueDateTupel[] forecasts0 = ValueDateTupel.getElements(instanceVariations[0].getForecasts(),
-					startOfReferenceWindow, endOfReferenceWindow);
+					this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
 			ValueDateTupel[] forecasts1 = ValueDateTupel.getElements(instanceVariations[1].getForecasts(),
-					startOfReferenceWindow, endOfReferenceWindow);
+					this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
 			ValueDateTupel[] forecasts2 = ValueDateTupel.getElements(instanceVariations[2].getForecasts(),
-					startOfReferenceWindow, endOfReferenceWindow);
+					this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
 
 			ValueDateTupel[][] variationsForecasts = {};
 			variationsForecasts = ArrayUtils.add(variationsForecasts, forecasts0);
