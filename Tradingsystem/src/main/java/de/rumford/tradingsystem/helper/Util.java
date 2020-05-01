@@ -20,7 +20,7 @@ public final class Util {
 	 * private constructor
 	 */
 	private Util() {
-	};
+	}
 
 	/**
 	 * Adjusts a given value for the given standard deviation
@@ -136,13 +136,19 @@ public final class Util {
 		/* Check if the given array contains exactly three values. */
 		if (values.length != 3)
 			throw new IllegalArgumentException("The given array of arrays contains " + values.length
-					+ " elements altough only 3 values were expected.");
+					+ " elements altough exactly 3 values were expected.");
 
-		/* Check if the array contains null. */
 		for (int i = 0; i < values.length; i++) {
+			/* Check if the array contains null. */
 			if (values[i] == null)
 				throw new IllegalArgumentException(
 						"The given array contains null at position " + i + " although null is not permitted.");
+
+			/* Check if the arrays contain values */
+			if (values[i].length == 0)
+				throw new IllegalArgumentException("Array at position " + i + " has a length of 0.");
+
+			/* Check if the arrays contain Double.NaN */
 			for (int j = 0; j < values[i].length; j++)
 				if (Double.isNaN(values[i][j]))
 					throw new IllegalArgumentException(
