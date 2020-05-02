@@ -540,4 +540,20 @@ class VolatilityDifferenceTest {
 		assertEquals(expectedValue, actualValue, "Raw Forecast is not correctly calculated");
 	}
 
+	/**
+	 * Test method for {@link VolatilityDifference#calculateRawForecast(double)}.
+	 */
+	@Test
+	void testCalculateSdAdjustedForecasts_sd0() {
+		baseValue = BaseValueFactory.jan1Jan31allVal0calcShort(BASE_VALUE_NAME);
+		String expectedMessage = "Base values contain zeroes in given reference window which is not allowed for volatility index calculation.";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan08220000,
+						localDateTime2020Jan10220000, lookbackWindow, BASE_SCALE),
+				"Base values of zero in reference window are not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
 }

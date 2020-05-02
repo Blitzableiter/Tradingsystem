@@ -99,14 +99,30 @@ public abstract class Rule {
 		if (!endOfReferenceWindow.isAfter(startOfReferenceWindow))
 			throw new IllegalArgumentException(
 					"End of reference window value must be after start of reference window value");
+
 		/*
-		 * Check if there are values in baseValue with startOfReferenceWindow and
-		 * endOfReferenceWindow date values.
+		 * The given startOfReferenceWindow must be included in the given base values.
 		 */
-		if (ValueDateTupel.getElement(baseValue.getValues(), startOfReferenceWindow) == null)
+		if (!ValueDateTupel.containsDate(baseValue.getValues(), startOfReferenceWindow))
 			throw new IllegalArgumentException("Base values do not include given start value for reference window");
-		if (ValueDateTupel.getElement(baseValue.getValues(), endOfReferenceWindow) == null)
+		/*
+		 * The given startOfReferenceWindow must be included in the given base values.
+		 */
+		if (!ValueDateTupel.containsDate(baseValue.getValues(), endOfReferenceWindow))
 			throw new IllegalArgumentException("Base values do not include given end value for reference window");
+
+		/*
+		 * The given base values must not contain NaNs in the area delimited by
+		 * startOfReferenceWindow and endOfReferenceWindow.
+		 */
+		int startOfReferencePosition = ValueDateTupel.getPosition(baseValue.getValues(), startOfReferenceWindow);
+		int endOfReferencePosition = ValueDateTupel.getPosition(baseValue.getValues(), endOfReferenceWindow);
+
+		for (int i = startOfReferencePosition; i <= endOfReferencePosition; i++) {
+			if (Double.isNaN(baseValue.getValues()[i].getValue()))
+				throw new IllegalArgumentException(
+						"There must not be NaN-Values in the given base values in the area delimited by startOfReferenceWindow and endOfReferenceWindow");
+		}
 
 		/* Check for a meaningful scale. */
 		if (baseScale <= 0)
@@ -251,11 +267,8 @@ public abstract class Rule {
 
 		double sdValue = ValueDateTupel.getElement(this.getBaseValue().getStandardDeviationValues(), forecastDateTime)
 				.getValue();
-		try {
-			return Util.adjustForStandardDeviation(rawForecast, sdValue);
-		} catch (IllegalArgumentException e) {
-			return Double.NaN;
-		}
+
+		return Util.adjustForStandardDeviation(rawForecast, sdValue);
 	}
 
 	/**

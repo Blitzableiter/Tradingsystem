@@ -3,6 +3,7 @@ package de.rumford.tradingsystem.helper;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -31,13 +32,10 @@ class UtilTest {
 	void testAdjustForStandardDeviation_sd0() {
 		double value = 100d;
 		double standardDeviation = 0d;
-		String expectedMessage = "Standard deviation must not be zero";
 
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> Util.adjustForStandardDeviation(value, standardDeviation),
-				"Standard deviation of zero is not properly handled");
+		double actualValue = Util.adjustForStandardDeviation(value, standardDeviation);
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertTrue(Double.isNaN(actualValue), "Stanard deviation of zero is not properly handled");
 	}
 
 	/**

@@ -27,12 +27,12 @@ public final class Util {
 	 * 
 	 * @param value             {@code double} value to be adjusted
 	 * @param standardDeviation {@code double} standard deviation to be adjusted for
-	 * @return {@code double} standard deviation adjusted value
-	 * @throws IllegalArgumentException if the given standard deviation is zero
+	 * @return {@code double} standard deviation adjusted value. Double.NaN, if the
+	 *         given standard deviation is zero.
 	 */
 	public static double adjustForStandardDeviation(double value, double standardDeviation) {
 		if (standardDeviation == 0)
-			throw new IllegalArgumentException("Standard deviation must not be zero");
+			return Double.NaN;
 		return value / standardDeviation;
 	}
 

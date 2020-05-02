@@ -56,8 +56,22 @@ public class VolatilityDifference extends Rule {
 	public VolatilityDifference(BaseValue baseValue, VolatilityDifference[] variations,
 			LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow, int lookbackWindow,
 			double baseScale) {
-		this(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, lookbackWindow, baseScale,
-				calculateVolatilityIndices(baseValue, lookbackWindow));
+		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
+
+		/*
+		 * Validate if the given base value can be used to calculate volatility index
+		 * values
+		 */
+		this.validateBaseValue(baseValue);
+
+		/* Check if lookback window fulfills requirements. */
+		this.validateLookbackWindow(lookbackWindow);
+		this.setLookbackWindow(lookbackWindow);
+
+		/* Calculate volatility index values based on the base value and set it */
+		ValueDateTupel[] calculatedVolatilityIndices = calculateVolatilityIndices(baseValue, lookbackWindow);
+		this.validateVolatilityIndices(calculatedVolatilityIndices);
+		this.setVolatilityIndices(calculatedVolatilityIndices);
 	}
 
 	/**
@@ -105,6 +119,24 @@ public class VolatilityDifference extends Rule {
 	}
 
 	/**
+	 * Validates the given base value to the purposes of volatility index
+	 * calculation.
+	 * 
+	 * @param baseValue {@link BaseValue} The given base value.
+	 * @throws IllegalArgumentException if the given base value contains Double.NaN
+	 *                                  in the given reference window.
+	 */
+	private void validateBaseValue(BaseValue baseValue) {
+		ValueDateTupel[] referenceValues = ValueDateTupel.getElements(baseValue.getValues(),
+				this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
+
+		for (ValueDateTupel referenceValue : referenceValues)
+			if (referenceValue.getValue() == 0)
+				throw new IllegalArgumentException(
+						"Base values contain zeroes in given reference window which is not allowed for volatility index calculation.");
+	}
+
+	/**
 	 * Validates the given lookback window. The lookback window must be >= 1.
 	 * 
 	 * @param lookbackWindow {@code int} The lookback window to be validated.
@@ -125,6 +157,10 @@ public class VolatilityDifference extends Rule {
 	 *                                  specifications.
 	 */
 	private void validateVolatilityIndices(ValueDateTupel[] volatilityIndices) {
+		/* Check if passed volatility indices are null */
+		if (volatilityIndices == null)
+			throw new IllegalArgumentException("Volatility indices must not be null.");
+
 		/* Check if passed values array contains elements */
 		if (volatilityIndices.length == 0)
 			throw new IllegalArgumentException("Volatility indices must not be an empty array");
