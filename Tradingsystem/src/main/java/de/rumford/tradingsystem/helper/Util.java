@@ -101,8 +101,8 @@ public final class Util {
 	 * @param latterValue {@code double} "new" value which represents a changed
 	 *                    value in comparison to formerValue
 	 * @return {@code double} difference between formerValue and latterValue
-	 *         represented in percentage points
-	 * @throws IllegalArgumentException if the given former value is zero
+	 *         represented in percentage points. Double.NaN if the given formerValue
+	 *         is zero.
 	 */
 	public static double calculateReturn(double formerValue, double latterValue) {
 		if (formerValue == 0)
