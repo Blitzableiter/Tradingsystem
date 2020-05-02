@@ -111,19 +111,6 @@ public abstract class Rule {
 		if (!ValueDateTupel.containsDate(baseValue.getValues(), endOfReferenceWindow))
 			throw new IllegalArgumentException("Base values do not include given end value for reference window");
 
-		/*
-		 * The given base values must not contain NaNs in the area delimited by
-		 * startOfReferenceWindow and endOfReferenceWindow.
-		 */
-		int startOfReferencePosition = ValueDateTupel.getPosition(baseValue.getValues(), startOfReferenceWindow);
-		int endOfReferencePosition = ValueDateTupel.getPosition(baseValue.getValues(), endOfReferenceWindow);
-
-		for (int i = startOfReferencePosition; i <= endOfReferencePosition; i++) {
-			if (Double.isNaN(baseValue.getValues()[i].getValue()))
-				throw new IllegalArgumentException(
-						"There must not be NaN-Values in the given base values in the area delimited by startOfReferenceWindow and endOfReferenceWindow");
-		}
-
 		/* Check for a meaningful scale. */
 		if (baseScale <= 0)
 			throw new IllegalArgumentException("The given baseScale must a positiv non-zero decimal.");
