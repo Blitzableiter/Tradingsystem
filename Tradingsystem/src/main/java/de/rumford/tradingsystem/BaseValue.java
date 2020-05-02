@@ -30,7 +30,7 @@ public class BaseValue {
 	 * Creates a new {@link BaseValue} instance using the passed {@code String} for
 	 * identification and stores the passed {@link ValueDateTupel[]} as values.
 	 * Short index values are calculated based on the given values as specified in
-	 * {@link de.rumford.tradingsystem.BaseValue#calculateShortIndexValues(double[])}.
+	 * {@link BaseValue#calculateShortIndexValues(double[])}.
 	 * 
 	 * @param name   {@code String} Name used to identify the represented base
 	 *               value. Is not used for calculation of any kind. Must be of
@@ -101,6 +101,8 @@ public class BaseValue {
 		if (values.length == 0)
 			throw new IllegalArgumentException("Values must not be an empty array");
 
+		validateValues(values);
+
 		validateDates(values);
 	}
 
@@ -153,15 +155,15 @@ public class BaseValue {
 	/**
 	 * Validates the given parameters. Used by the Constructors to validate the
 	 * constructor parameters. Utilizes
-	 * {@link de.rumford.tradingsystem.BaseValue#validateInput(String, double[])}.
+	 * {@link BaseValue#validateInput(String, double[])}.
 	 * 
 	 * 
 	 * @param name             {@code String} Name to be set for a
 	 *                         {@link BaseValue}. Specifications see
-	 *                         {@link de.rumford.tradingsystem.BaseValue#validateInput(String, double[])}.
+	 *                         {@link BaseValue#validateInput(String, double[])}.
 	 * @param values           {@link ValueDateTupel[]} Values to be set for a
 	 *                         {@link BaseValue}. Specifications see
-	 *                         {@link de.rumford.tradingsystem.BaseValue#validateInput(String, double[])}.
+	 *                         {@link BaseValue#validateInput(String, double[])}.
 	 * @param shortIndexValues {@link ValueDateTupel[]} Short index values to be set
 	 *                         for a {@link BaseValue}. Must contain at least
 	 *                         {@code 1} element.
@@ -174,14 +176,51 @@ public class BaseValue {
 			throw new IllegalArgumentException("Short index values must not be an empty array");
 
 		validateDates(shortIndexValues);
+
+		for (ValueDateTupel value : shortIndexValues) {
+			/* Validate if there are null values in the given short index values array. */
+			if (value == null)
+				throw new IllegalArgumentException("Given short index values must not contain null.");
+
+			/* Validate if there are NaN values in the given short index values array. */
+			if (Double.isNaN(value.getValue()))
+				throw new IllegalArgumentException("Given shrot index values must not contain NaN.");
+
+		}
 	}
 
+	/**
+	 * Validates if the given array of ValueDateTupel is sorted in an ascending
+	 * order.
+	 * 
+	 * @param values {@code ValueDateTupel[]} The given array of values.
+	 */
 	static void validateDates(ValueDateTupel[] values) {
 		/*
 		 * The values cannot be used if they are not in ascending order.
 		 */
 		if (!ValueDateTupel.isSortedAscending(values))
 			throw new IllegalArgumentException("Given values are not properly sorted or there are non-unique values.");
+	}
+
+	/**
+	 * Validates if the given array of ValueDateTupel contains illegal values.
+	 * 
+	 * @param values2 {@code ValueDateTupel[]} The given values.
+	 */
+	static void validateValues(ValueDateTupel[] values) {
+
+		for (ValueDateTupel value : values) {
+			/* Validate if there are null values in the given values array. */
+			if (value == null)
+				throw new IllegalArgumentException("Given values must not contain null.");
+
+			/* Validate if there are NaN values in the given values array. */
+			if (Double.isNaN(value.getValue()))
+				throw new IllegalArgumentException("Given values must not contain NaN.");
+
+		}
+
 	}
 
 	/**
@@ -217,15 +256,15 @@ public class BaseValue {
 		 * Declare the return value. There are always as many short index values as
 		 * there are base values.
 		 */
-		ValueDateTupel[] shortIndexValues = new ValueDateTupel[values.length];
-		shortIndexValues[0] = new ValueDateTupel(values[0].getDate(), SHORT_INDEX_INITIAL_VALUE);
+		ValueDateTupel[] calculatedShortIndexValues = ValueDateTupel.createEmptyArray(values.length);
+		calculatedShortIndexValues[0] = new ValueDateTupel(values[0].getDate(), SHORT_INDEX_INITIAL_VALUE);
 
 		/**
 		 * If the values array only contains one element no calculation has to take
 		 * place and the array is preemptively returned.
 		 */
 		if (values.length == 1) {
-			return shortIndexValues;
+			return calculatedShortIndexValues;
 		}
 
 		ValueDateTupel formerValue;
@@ -249,18 +288,18 @@ public class BaseValue {
 				returnPercentagePoints = 0.5;
 
 			/* Handle returnPercentagePoints == Double.NaN */
-			double shortIndexValue = 0;
+			double shortIndexValue;
 			if (Double.isNaN(returnPercentagePoints)) {
 				shortIndexValue = returnPercentagePoints;
 			} else {
-				shortIndexValue = shortIndexValues[i - 1].getValue()
-						- shortIndexValues[i - 1].getValue() * returnPercentagePoints;
+				shortIndexValue = calculatedShortIndexValues[i - 1].getValue()
+						- calculatedShortIndexValues[i - 1].getValue() * returnPercentagePoints;
 			}
 
-			shortIndexValues[i] = new ValueDateTupel(latterValue.getDate(), shortIndexValue);
+			calculatedShortIndexValues[i] = new ValueDateTupel(latterValue.getDate(), shortIndexValue);
 		}
 
-		return shortIndexValues;
+		return calculatedShortIndexValues;
 	}
 
 	/**
