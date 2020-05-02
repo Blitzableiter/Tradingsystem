@@ -1,7 +1,9 @@
+/**
+ * 
+ */
 package de.rumford.tradingsystem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,15 +14,38 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.rumford.tradingsystem.helper.BaseValueFactory;
+import de.rumford.tradingsystem.helper.ValueDateTupel;
 
-class EWMACTest {
+/**
+ * de.rumford.tradingsystem
+ * 
+ * @author Max Rumford
+ *
+ */
+class RuleTest {
+
+	private class RealRule extends Rule {
+
+		private double variator;
+
+		public RealRule(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
+				LocalDateTime endOfReferenceWindow, double baseScale, double variator) {
+			super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
+			this.variator = variator;
+		}
+
+		@Override
+		double calculateRawForecast(LocalDateTime forecastDateTime) {
+			return ValueDateTupel.getElement(this.getBaseValue().getValues(), forecastDateTime).getValue()
+					+ this.variator * 100;
+		}
+	}
 
 	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";
 
-	EWMAC ewmac;
-	int shortHorizon;
-	int longHorizon;
+	RealRule realRule;
 	static BaseValue baseValue;
+	static double variator;
 
 	static final String BASE_VALUE_NAME = "Base value name";
 	static final int BASE_SCALE = 10;
@@ -96,97 +121,60 @@ class EWMACTest {
 
 	@BeforeEach
 	void setUp() {
-		shortHorizon = 2;
-		longHorizon = 8;
-		ewmac = new EWMAC(baseValue, null, localDateTimeJan08220000, localDateTimeJan10220000, longHorizon,
-				shortHorizon, BASE_SCALE);
+		variator = 1;
+		realRule = new RealRule(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
 	}
 
 	/**
-	 * Test method for
-	 * {@link EWMAC#EWMAC(BaseValue, Rule[], LocalDateTime, LocalDateTime, int, int, double)}.
+	 * Test method for {@link Rule#calculateForecastScalar()}.
 	 */
 	@Test
-	void testEWMAC() {
-		EWMAC ewmac2 = new EWMAC(baseValue, null, localDateTimeJan08220000, localDateTimeJan10220000, longHorizon,
-				shortHorizon, BASE_SCALE);
+	void testCalculateForecastScalar() {
+		double expectedValue = 2.793618728459556; // Excel: 2.79361872845956
 
-		assertEquals(ewmac, ewmac2, "Two identical instances do not equal");
+		double actualValue = realRule.getForecastScalar();
+
+		assertEquals(expectedValue, actualValue, "Forecast scalar is not correctly calculated");
 	}
 
 	/**
-	 * Test method for {@link EWMAC#validateHorizonValues(LocalDateTime)}.
+	 * Test method for {@link Rule#calculateForecastScalar()}.
 	 */
 	@Test
-	void testValidateHorizonValues_longSmallerThanShort() {
-		int shortHorizonValue = 8;
-		int longHorizonValue = 4;
-		String expectedMessage = "The long horizon must be greater than the short horizon";
+	void testCalculateForecastScalar_FC0() {
+		double expectedValue = 0;
 
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new EWMAC(baseValue, null, localDateTimeJan08220000, localDateTimeJan10220000, longHorizonValue,
-						shortHorizonValue, BASE_SCALE),
-				"Short horizon greater than long horizon is not properly handled");
+		realRule = new RealRule(BaseValueFactory.jan1Jan31allVal0calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		double actualValue = realRule.getForecastScalar();
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedValue, actualValue, "Forecast scalar of zero is not correctly calculated");
 	}
 
 	/**
-	 * Test method for {@link EWMAC#validateHorizonValues(LocalDateTime)}.
+	 * Test method for {@link Rule#calculateScaledForecasts()}.
 	 */
 	@Test
-	void testValidateHorizonValues_longEqualsShort() {
-		int shortHorizonValue = 4;
-		int longHorizonValue = 4;
-		String expectedMessage = "The long horizon must be greater than the short horizon";
+	void testCalculateForecasts() {
+		double expectedValue = 12.66459427439483; // Excel: 12.6645942743948
 
-		Exception thrown = assertThrows(
-				IllegalArgumentException.class, () -> new EWMAC(baseValue, null, localDateTimeJan08220000,
-						localDateTimeJan10220000, longHorizonValue, shortHorizonValue, BASE_SCALE),
-				"Short horizon equal to long horizon is not properly handled");
+		double actualValue = ValueDateTupel.getElement(realRule.getForecasts(), localDateTimeJan10220000).getValue();
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedValue, actualValue, "Forecasts are not correctly calculated");
 	}
 
 	/**
-	 * Test method for {@link EWMAC#validateHorizonValues(LocalDateTime)}.
+	 * Test method for {@link Rule#calculateScaledForecasts()}.
 	 */
 	@Test
-	void testValidateHorizonValues_shortLessThan2() {
-		int shortHorizonValue = 1;
-		int longHorizonValue = 4;
-		String expectedMessage = "The short horizon must not be < 2";
+	void testCalculateForecasts_unchangedOverTime() {
+		double expectedValue = 12.66459427439483; // Excel: 12.6645942743948
 
-		Exception thrown = assertThrows(
-				IllegalArgumentException.class, () -> new EWMAC(baseValue, null, localDateTimeJan08220000,
-						localDateTimeJan10220000, longHorizonValue, shortHorizonValue, BASE_SCALE),
-				"Short horizon < 2 is not properly handled");
+		ValueDateTupel.getElement(realRule.getForecasts(), localDateTimeJan10220000).getValue();
+		double actualValue = ValueDateTupel.getElement(realRule.getForecasts(), localDateTimeJan10220000).getValue();
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for {@link EWMAC#calculateRawForecast(LocalDateTime)}.
-	 */
-	@Test
-	void testCalculateRawForecast_negativeRawForecast() {
-		double expectedValue = -13.177732526197076; // Excel: -13.1777325261971
-
-		double actualValue = ewmac.calculateRawForecast(localDateTimeJan13220000);
-
-		assertEquals(expectedValue, actualValue, "Negative raw Forecast is not correctly calculated");
-	}
-
-	/**
-	 * Test method for {@link EWMAC#calculateRawForecast(LocalDateTime)}.
-	 */
-	@Test
-	void testCalculateRawForecast_positiveRawForecast() {
-		double expectedValue = 32.171834876807424; // Excel: 32.1718348768074
-
-		double actualValue = ewmac.calculateRawForecast(localDateTimeJan08220000);
-
-		assertEquals(expectedValue, actualValue, "Positive raw Forecast is not correctly calculated");
+		assertEquals(expectedValue, actualValue, "Forecasts are not correctly calculated");
 	}
 
 }
