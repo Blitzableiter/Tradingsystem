@@ -3,9 +3,19 @@
  */
 package de.rumford.tradingsystem;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import de.rumford.tradingsystem.helper.BaseValueFactory;
+import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
  * @author Max Rumford
@@ -15,278 +25,117 @@ class DiversificationMultiplierTest {
 
 	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";
 
-	final double[] weights = { 0.5d, 0.5d };
-	final double[][] correlations = { { 1d, 0.75d }, { 0.75d, 1d } };
-	DiversificationMultiplier dm;
+	static DiversificationMultiplier dm;
+
+	static RealRule ss1;
+	static RealRule ss2;
+	static RealRule ss3;
+	static RealRule s1;
+	static RealRule s2;
+	static RealRule s3;
+	static RealRule s4;
+	static RealRule s5;
+	static RealRule t1;
+	static RealRule t2;
+
+	static RealRule realRule;
+	static Rule[] variations;
+	static BaseValue baseValue;
+	static double variator;
+
+	static final String BASE_VALUE_NAME = "Base value name";
+	static final int BASE_SCALE = 10;
+
+	static LocalDateTime localDateTimeJan02220000;
+	static LocalDateTime localDateTimeJan04220000;
+	static LocalDateTime localDateTimeJan05220000;
+	static LocalDateTime localDateTimeJan07220000;
+	static LocalDateTime localDateTimeJan10220000;
+	static LocalDateTime localDateTimeJan12220000;
+	static LocalDateTime localDateTimeJan13220000;
+	static LocalDateTime localDateTimeJan15220000;
+	static LocalDateTime localDateTimeJan16220000;
+	static LocalDateTime localDateTimeJan18220000;
+
+	private class RealRule extends Rule {
+		private double variator;
+
+		public RealRule(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
+				LocalDateTime endOfReferenceWindow, double baseScale, double variator) {
+			super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
+			this.variator = variator;
+		}
+
+		@Override
+		double calculateRawForecast(LocalDateTime forecastDateTime) {
+			return ValueDateTupel.getElement(this.getBaseValue().getValues(), forecastDateTime).getValue()
+					+ this.variator * 100;
+		}
+	}
+
+	@BeforeAll
+	static void setUpBeforeClass() {
+		baseValue = BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME);
+
+		localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
+		localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
+		localDateTimeJan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5), LocalTime.of(22, 0));
+		localDateTimeJan07220000 = LocalDateTime.of(LocalDate.of(2020, 1, 7), LocalTime.of(22, 0));
+		localDateTimeJan10220000 = LocalDateTime.of(LocalDate.of(2020, 1, 10), LocalTime.of(22, 0));
+		localDateTimeJan12220000 = LocalDateTime.of(LocalDate.of(2020, 1, 12), LocalTime.of(22, 0));
+		localDateTimeJan13220000 = LocalDateTime.of(LocalDate.of(2020, 1, 13), LocalTime.of(22, 0));
+		localDateTimeJan15220000 = LocalDateTime.of(LocalDate.of(2020, 1, 15), LocalTime.of(22, 0));
+		localDateTimeJan16220000 = LocalDateTime.of(LocalDate.of(2020, 1, 16), LocalTime.of(22, 0));
+		localDateTimeJan18220000 = LocalDateTime.of(LocalDate.of(2020, 1, 18), LocalTime.of(22, 0));
+	}
+
+	@BeforeEach
+	void setUp() {
+		variator = 1;
+		ss1 = new RealRule(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 1);
+		ss2 = new RealRule(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, .5);
+		ss3 = new RealRule(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, -1.07);
+		Rule[] s1variations = { ss1, ss2, ss3 };
+		s1 = new RealRule(baseValue, s1variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, -1);
+		s2 = new RealRule(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, -2.32);
+		s3 = new RealRule(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, -14);
+		Rule[] t1variations = { s1, s2, s3 };
+		t1 = new RealRule(baseValue, t1variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, .5);
+
+		s4 = new RealRule(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 0.8);
+		s5 = new RealRule(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, -4.67);
+		Rule[] t2variations = { s4, s5 };
+		t2 = new RealRule(baseValue, t2variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, -10);
+		Rule[] realRuleVariations = { t1, t2 };
+
+		realRule = new RealRule(baseValue, realRuleVariations, localDateTimeJan10220000, localDateTimeJan12220000,
+				BASE_SCALE, variator);
+		variations = realRule.getVariations();
+
+		dm = new DiversificationMultiplier(variations);
+	}
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
+	 * {@link DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
 	 */
 	@Test
 	void testDiversificationMultiplier() {
-		dm = new DiversificationMultiplier(weights, correlations);
-
 		assertTrue(dm instanceof DiversificationMultiplier, "Instance of DiversificationMultiplier not recognized");
 	}
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
+	 * {@link DiversificationMultiplier#calculateDiversificiationMultiplierValue()}.
 	 */
 	@Test
-	void testDiversificationMultiplier_nullCorrelations() {
-		double[][] correlations = null;
-		String expectedMessage = "Given correlations must not be null";
+	void testCalculateDiversificiationMultiplierValue() {
+		double expectedDiversificationMultiplier = 3.862140866820605; // Excel: 3. 8621408668206
 
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new DiversificationMultiplier(weights, correlations),
-				"Null correlations are not being correctly handled");
+		double actualDiversificationMultiplier = dm.getValue();
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
-	 */
-	@Test
-	void testDiversificationMultiplier_nullWeights() {
-		double[] weights = null;
-		String expectedMessage = "Given weights must not be null";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new DiversificationMultiplier(weights, correlations),
-				"Null weights are not being correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
-	 */
-	@Test
-	void testDiversificationMultiplier_noCorrelations() {
-		double[][] correlations = {};
-		String expectedMessage = "Correlations must not have zero values";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new DiversificationMultiplier(weights, correlations),
-				"No correlations are not being correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
-	 */
-	@Test
-	void testDiversificationMultiplier_noWeights() {
-		double[] weights = {};
-		String expectedMessage = "Weights must not have zero values";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new DiversificationMultiplier(weights, correlations),
-				"No weights are not being correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
-	 */
-	@Test
-	void testDiversificationMultiplier_numberOfCorrelationRowsNotEqualColumns() {
-		double[][] correlations = { { 1d, 0.75d }, { 0.75d } };
-		String expectedMessage = "Correlations must have as many rows as columns and all columns and rows must have the same length.";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new DiversificationMultiplier(weights, correlations),
-				"Inequal number of correlation rows and columns are not being correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
-	 */
-	@Test
-	void testDiversificationMultiplier_emptyCorrelationsObjects() {
-		double[][] correlations = { {}, {} };
-		String expectedMessage = "Correlations must have as many rows as columns and all columns and rows must have the same length.";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new DiversificationMultiplier(weights, correlations),
-				"No correlations are not being correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
-	 */
-	@Test
-	void testDiversificationMultiplier_numberOfWeightsNotEqualNumberOfCorrelations() {
-		double[] weights = { 0.75d };
-		String expectedMessage = "There must be as many weights as correlations columns/rows";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new DiversificationMultiplier(weights, correlations),
-				"Inequal number of correlations and weights is not being correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
-	 */
-	@Test
-	void testDiversificationMultiplier_negativeWeights() {
-		double[] weights = { -1d, 1d };
-		String expectedMessage = "Negative weights are not allowed";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new DiversificationMultiplier(weights, correlations),
-				"Negative weights are not being correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
-	 */
-	@Test
-	void testDiversificationMultiplier_weightsDontAddUpTo1() {
-		double[] weights = { 0.75d, 0.75d };
-		String expectedMessage = "Weights don't sum up to 1";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new DiversificationMultiplier(weights, correlations),
-				"Weights not adding up to 1 is not being correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
-	 */
-	@Test
-	void testDiversificationMultiplier_invalidSelfCorrelations() {
-		double[][] correlations = { { 0.8d, 0.75d }, { 0.75d, 0.8d } };
-		String expectedMessage = "Self correlations are not properly populated";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new DiversificationMultiplier(weights, correlations),
-				"Invalid self correlations are not being correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#DiversificationMultiplier(double[], double[][])}.
-	 */
-	@Test
-	void testDiversificationMultiplier_assymetricalCorrelationsMatrix() {
-		double[][] correlations = { { 1d, 0.75d }, { 0.6d, 1d } };
-		String expectedMessage = "Correlations matrix is not symmetrically populated";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new DiversificationMultiplier(weights, correlations),
-				"Assymetrical correlations matrix is not being correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#calculateDiversificiationMultiplierValue()}.
-	 */
-	@Test
-	void testGetValue() {
-		dm = new DiversificationMultiplier(weights, correlations);
-		double expectedValue = 1 / Math.sqrt(0.875d);
-
-		double actualValue = dm.getValue();
-
-		assertEquals(expectedValue, actualValue, "Value is not correctly calculated");
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#getValue()}.
-	 */
-	@Test
-	void testGetValue_incorrectPopulationOfWeights() {
-		double[] weights = { 0.5d, 0.6d };
-
-		try {
-			dm = new DiversificationMultiplier(weights, correlations);
-		} catch (Exception e) {
-			/**
-			 * See testDiversificationMultiplier_weightsDontAddUpTo1()
-			 */
-		}
-
-		assertThrows(NullPointerException.class, () -> dm.getValue(),
-				"No error is thrown although instanciation variables were not in spec");
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#getValue()}.
-	 */
-	@Test
-	void testGetValue_incorrectPopulationOfCorrelations() {
-		double[][] correlations = { { 1d, 0.5d }, { 0.6d, 1d } };
-
-		try {
-			dm = new DiversificationMultiplier(weights, correlations);
-		} catch (Exception e) {
-			/**
-			 * See testDiversificationMultiplier_assymetricalCorrelationsMatrix()
-			 */
-		}
-
-		assertThrows(NullPointerException.class, () -> dm.getValue(),
-				"No error is thrown although instanciation variables were not in spec");
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#getWeights()}.
-	 */
-	@Test
-	void testGetWeights() {
-		dm = new DiversificationMultiplier(weights, correlations);
-
-		double[] localWeights = dm.getWeights();
-
-		assertEquals(weights, localWeights,
-				"Weights were either not correctly set or could not be correctly retrieved");
-	}
-
-	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.DiversificationMultiplier#getCorrelations()}.
-	 */
-	@Test
-	void testGetCorrelations() {
-		dm = new DiversificationMultiplier(weights, correlations);
-
-		double[][] localCorrelations = dm.getCorrelations();
-
-		assertEquals(correlations, localCorrelations,
-				"Correlations were either not correctly set or could not be correctly retrieved");
+		assertEquals(expectedDiversificationMultiplier, actualDiversificationMultiplier,
+				"Diversification multiplier value is not correctly calculated");
 	}
 
 }

@@ -114,10 +114,9 @@ public final class Util {
 	/**
 	 * Calculate the correlations between the given array of value arrays.
 	 * 
-	 * @param valuesMatrix {@code double[][]} An array of 3 arrays, A, B, and C, of
-	 *                     values.
-	 * @return {@code double[]} The correlations between the given rows A, B, and C
-	 *         as { corr_AB, corr_BC, corr_CA }.
+	 * @param valuesMatrix {@code double[][]} An array of n arrays of values.
+	 * @return {@code double[]} The correlations between the given rows as by
+	 *         {@link PearsonsCorrelation#getCorrelationMatrix()}.
 	 * @throws IllegalArgumentException if the given array is null.
 	 * @throws IllegalArgumentException if the given array does not contain exactly
 	 *                                  3 values.
@@ -130,45 +129,18 @@ public final class Util {
 	 *                                  the same length.
 	 * 
 	 */
-	public static double[] calculateCorrelationsOfThreeRows(double[][] valuesMatrix) {
-		/* Check if the given array is null */
-		if (valuesMatrix == null)
-			throw new IllegalArgumentException("The given array of arrays is null.");
-		/* Check if the given array contains exactly three values. */
-		if (valuesMatrix.length != 3)
-			throw new IllegalArgumentException("The given array of arrays contains " + valuesMatrix.length
-					+ " elements altough exactly 3 values were expected.");
-
-		for (int i = 0; i < valuesMatrix.length; i++) {
-			/* Check if the array contains null. */
-			if (valuesMatrix[i] == null)
-				throw new IllegalArgumentException(
-						"The given array contains null at position " + i + " although null is not permitted.");
-
-			/* Check if the arrays contain values */
-			if (valuesMatrix[i].length == 0)
-				throw new IllegalArgumentException("Array at position " + i + " has a length of 0.");
-
-			/* Check if the arrays contain Double.NaN */
-			for (int j = 0; j < valuesMatrix[i].length; j++)
-				if (Double.isNaN(valuesMatrix[i][j]))
-					throw new IllegalArgumentException(
-							"Array at position " + i + " contains Double.NaN at position " + j);
-		}
-		/* Check if the given arrays all have the same length. */
-		if (valuesMatrix[0].length != valuesMatrix[1].length || valuesMatrix[0].length != valuesMatrix[2].length)
-			throw new IllegalArgumentException("The given arrays are not of the same length.");
-
+	public static double[] calculateCorrelationsOfRows(double[][] valuesMatrix) {
 		/*
 		 * If one of the rows contains all identical values no correlation can be
 		 * calculated, as a division by zero will occur in correlations calculation.
 		 */
 		for (int i = 0; i < valuesMatrix.length; i++) {
 			double[] noDuplicates = DoubleStream.of(valuesMatrix[i]).distinct().toArray();
-			if (noDuplicates.length == 1)
+			if (noDuplicates.length == 1) {
 				throw new IllegalArgumentException(
 						"Correlations cannot be calculated caused by all identical values in row at position " + i
 								+ ".");
+			}
 		}
 
 		/* Load the given values into rows of a matrix */
@@ -180,17 +152,13 @@ public final class Util {
 		PearsonsCorrelation pearsonsCorrelations = new PearsonsCorrelation(matrix);
 		RealMatrix correlationMatrix = pearsonsCorrelations.getCorrelationMatrix();
 
-		/*
-		 * E.g. the correlation between the columns 0 and 1 is at matrix position 0/1.
-		 */
-		double correlation01 = correlationMatrix.getEntry(0, 1);
-		double correlation12 = correlationMatrix.getEntry(1, 2);
-		double correlation02 = correlationMatrix.getEntry(0, 2);
-
 		double[] correlations = {};
-		correlations = ArrayUtils.add(correlations, correlation01);
-		correlations = ArrayUtils.add(correlations, correlation12);
-		correlations = ArrayUtils.add(correlations, correlation02);
+		for (int rowIndex = 0; rowIndex < correlationMatrix.getRowDimension(); rowIndex++) {
+			for (int columnIndex = 0; columnIndex < correlationMatrix.getColumnDimension(); columnIndex++) {
+				if (columnIndex < rowIndex)
+					correlations = ArrayUtils.add(correlations, correlationMatrix.getEntry(rowIndex, columnIndex));
+			}
+		}
 
 		return correlations;
 	}

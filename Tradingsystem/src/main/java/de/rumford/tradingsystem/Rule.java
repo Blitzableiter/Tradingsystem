@@ -217,6 +217,7 @@ public abstract class Rule {
 					}
 				}
 			}
+			System.out.println(Arrays.toString(calculatedScaledForecasts));
 			return calculatedScaledForecasts;
 		}
 		/*
@@ -246,7 +247,7 @@ public abstract class Rule {
 	 *         the standard deviation at the given LocalDateTime is zero.
 	 */
 	private double calculateSdAdjustedForecast(LocalDateTime forecastDateTime) {
-		if (this.getVariations() != null) {
+		if (this.hasVariations()) {
 			return Double.NaN;
 		}
 
@@ -348,8 +349,10 @@ public abstract class Rule {
 
 		double calculatedForecastScalar = Util.calculateForecastScalar(ValueDateTupel.getValues(relevantForecastValues),
 				instanceBaseScale);
+		System.out.println(calculatedForecastScalar);
 		if (Double.isNaN(calculatedForecastScalar))
-			calculatedForecastScalar = 0;
+			throw new IllegalArgumentException(
+					"Illegal values in calulated forecast values. Given reference window might be off.");
 
 		return calculatedForecastScalar;
 	}
@@ -433,12 +436,14 @@ public abstract class Rule {
 			/* Find the correlations for the given variations. */
 			double[] correlations;
 			try {
-				correlations = Util.calculateCorrelationsOfThreeRows(variationsForecastValues);
+				correlations = Util.calculateCorrelationsOfRows(variationsForecastValues);
 			} catch (Exception e) {
-				throw new IllegalArgumentException(
-						"Given reference window cannot be used as it contains all identical forecast values for at least one variation.",
-						e);
+				throw new IllegalArgumentException("Given variations cannot be weighed", e);
 			}
+
+			if (ArrayUtils.contains(correlations, Double.NaN))
+				throw new IllegalArgumentException(
+						"Correlations cannot be calculated due to illegal values in given variations.");
 
 			double[] weights = {};
 			/*
@@ -470,8 +475,8 @@ public abstract class Rule {
 	 * 
 	 * @param correlations {@code double[]} Three values representing the
 	 *                     correlations between the rows A, B and C. The expected
-	 *                     array is constructed as follows: { corr_AB, corr_BC,
-	 *                     corr_CA }.
+	 *                     array is constructed as follows: { corr_AB, corr_AC,
+	 *                     corr_BC }.
 	 * @return {@code double[]} The calculated weights { w_A, w_B, w_C }.
 	 * @throws IllegalArgumentException if a correlation value is < -1 or > 1.
 	 */
@@ -487,9 +492,9 @@ public abstract class Rule {
 		}
 
 		/* Get the average correlation each row of values has */
-		double averageCorrelationA = (correlations[0] + correlations[2]) / 2;
-		double averageCorrelationB = (correlations[1] + correlations[0]) / 2;
-		double averageCorrelationC = (correlations[2] + correlations[1]) / 2;
+		double averageCorrelationA = (correlations[0] + correlations[1]) / 2;
+		double averageCorrelationB = (correlations[0] + correlations[2]) / 2;
+		double averageCorrelationC = (correlations[1] + correlations[2]) / 2;
 
 		double[] averageCorrelations = {};
 		averageCorrelations = ArrayUtils.add(averageCorrelations, averageCorrelationA);
@@ -502,14 +507,32 @@ public abstract class Rule {
 
 		/* Calculate the sum of average calculations. */
 		double sumOfAverageCorrelations = DoubleStream.of(averageCorrelations).sum();
+
+		double[] weights = new double[averageCorrelations.length];
 		/*
 		 * Normalize the average correlations so they sum up to 1. These normalized
 		 * values are the weights.
 		 */
 		for (int i = 0; i < averageCorrelations.length; i++)
-			averageCorrelations[i] = averageCorrelations[i] / sumOfAverageCorrelations;
+			weights[i] = averageCorrelations[i] / sumOfAverageCorrelations;
 
-		return averageCorrelations;
+		return weights;
+	}
+
+	/**
+	 * Extract the relevant forecast values for this rule.
+	 * 
+	 * @return {@code double[]} An array of the relevant forecast values for this
+	 *         rule.
+	 */
+	public double[] getRelevantForecastValues() {
+		ValueDateTupel[] relevantForecasts = ValueDateTupel.getElements(this.getForecasts(),
+				this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
+		return ValueDateTupel.getValues(relevantForecasts);
+	}
+
+	public boolean hasVariations() {
+		return this.getVariations() != null;
 	}
 
 	@GeneratedCode

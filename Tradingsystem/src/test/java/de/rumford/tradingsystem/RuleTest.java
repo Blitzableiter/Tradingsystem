@@ -27,7 +27,6 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
 class RuleTest {
 
 	private class RealRule extends Rule {
-
 		private double variator;
 
 		public RealRule(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
@@ -52,7 +51,9 @@ class RuleTest {
 	static final String BASE_VALUE_NAME = "Base value name";
 	static final int BASE_SCALE = 10;
 
+	static LocalDateTime localDateTimeJan01220000;
 	static LocalDateTime localDateTimeJan02220000;
+	static LocalDateTime localDateTimeJan03220000;
 	static LocalDateTime localDateTimeJan04220000;
 	static LocalDateTime localDateTimeJan05220000;
 	static LocalDateTime localDateTimeJan07220000;
@@ -64,7 +65,9 @@ class RuleTest {
 	static void setUpBeforeClass() {
 		baseValue = BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME);
 
+		localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
 		localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
+		localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
 		localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
 		localDateTimeJan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5), LocalTime.of(22, 0));
 		localDateTimeJan07220000 = LocalDateTime.of(LocalDate.of(2020, 1, 7), LocalTime.of(22, 0));
@@ -280,6 +283,32 @@ class RuleTest {
 	}
 
 	/**
+	 * Test method for {@link Rule#calculateForecastScalar()}.
+	 */
+	// TODO INVESTIGATE WHY ERROR IS NOT THROWN AT VAR 3
+	@Test
+	void testCalculateForecastScalar_referenceWindowContainsIllegalValues() {
+		String expectedMessage = "Illegal values in calulated forecast values. Given reference window might be off.";
+		double variator1 = -1;
+		double variator2 = 0.5;
+		double variator3 = 1;
+		RealRule var1 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator1);
+		RealRule var2 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator2);
+		RealRule var3 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan01220000, localDateTimeJan03220000, BASE_SCALE, variator3);
+		RealRule[] variations = { var1, var2, var3 };
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), variations,
+						localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator),
+				"Invalid values in forecast values are not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
 	 * Test method for {@link Rule#calculateWeights(double[])}.
 	 */
 	@Test
@@ -314,7 +343,7 @@ class RuleTest {
 	 */
 	@Test
 	void testCalculateWeights_allEqualForecastValuesInReferenceWindow() {
-		String expectedMessage = "Given reference window cannot be used as it contains all identical forecast values for at least one variation.";
+		String expectedMessage = "Given variations cannot be weighed";
 		String expectedCause = "Correlations cannot be calculated caused by all identical values in row at position 0.";
 
 		BaseValue baseValue = BaseValueFactory.jan1Jan7lowValscalcShort(BASE_VALUE_NAME);
@@ -337,5 +366,21 @@ class RuleTest {
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#getRelevantForecastValues()}.
+	 */
+	@Test
+	void testGetRelevantForecastValues() {
+		double[] expectedValues = { //
+				12.66459427439483, // Excel: 12.6645942743948
+				8.277321595406873, // Excel: 8.27732159540687
+				9.058084130198298, // Excel: 9.0580841301983
+		};
+
+		double[] actualValues = realRule.getRelevantForecastValues();
+
+		assertArrayEquals(expectedValues, actualValues, "Relevant forecasts are not properly extracted");
 	}
 }

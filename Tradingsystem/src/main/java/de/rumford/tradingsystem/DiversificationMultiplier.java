@@ -1,9 +1,10 @@
 package de.rumford.tradingsystem;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.math3.linear.BlockRealMatrix;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import de.rumford.tradingsystem.helper.GeneratedCode;
 
@@ -15,22 +16,71 @@ public class DiversificationMultiplier {
 
 	private double value = 0d;
 	private double[] weights;
+	private double[][] relevantForecasts;
 	private double[][] correlations;
 
-	/**
-	 * 
-	 */
-	/*
-	 * TODO siehe setCorrelations -> bekommt nicht double[][] correlations, sondern
-	 * double[][] values und nutzt dann set.Correlations
-	 */
-	public DiversificationMultiplier(double[] weights, double[][] correlations) {
-		this.validateConstructorArguments(weights, correlations);
+	public DiversificationMultiplier(Rule[] rules) {
+		this.setWeights(getWeightsFromRules(rules));
+		this.setRelevantForecasts(getRelevantForecastsFromRules(rules));
 
-		this.setWeights(weights);
-		this.setCorrelations(correlations);
+		this.setCorrelations(getCorrelationsFromForecasts(this.getRelevantForecasts()));
 
 		this.setValue(this.calculateDiversificiationMultiplierValue());
+	}
+
+	/**
+	 * Recursively get the weights from the given array of Rules.
+	 * 
+	 * @param rules {@code Rule[]} The array of rules to be searched.
+	 * @return {@code double[]} The extracted from the given array of Rules.
+	 */
+	private static double[] getWeightsFromRules(Rule[] rules) {
+		double[] weights = {};
+		/* Iterate over the given rules */
+		for (Rule rule : rules) {
+			/* If a rule has variations get their weights */
+			if (rule.hasVariations()) {
+				double[] weightsToAdd = getWeightsFromRules(rule.getVariations());
+				for (double weight : weightsToAdd)
+					weights = ArrayUtils.add(weights, weight * rule.getWeight());
+			} else {
+				weights = ArrayUtils.add(weights, rule.getWeight());
+			}
+		}
+		return weights;
+	}
+
+	/**
+	 * Recursively get the weights from the given array of Rules.
+	 * 
+	 * @param rules {@code Rule[]} The array of rules to be searched.
+	 * @return {@code double[]} The extracted from the given array of Rules.
+	 */
+	private static double[][] getRelevantForecastsFromRules(Rule[] rules) {
+		double[][] relevantForecasts = {};
+		/* Iterate over the given rules */
+		for (Rule rule : rules) {
+			/* If a rule has variations get their forecasts */
+			if (rule.hasVariations()) {
+				double[][] forecastsToAdd = getRelevantForecastsFromRules(rule.getVariations());
+				for (double[] forecasts : forecastsToAdd)
+					relevantForecasts = ArrayUtils.add(relevantForecasts, forecasts);
+			} else {
+				relevantForecasts = ArrayUtils.add(relevantForecasts, rule.getRelevantForecastValues());
+			}
+		}
+		return relevantForecasts;
+	}
+
+	private static double[][] getCorrelationsFromForecasts(double[][] forecasts) {
+		/* Load the given values into rows of a matrix */
+		BlockRealMatrix matrix = new BlockRealMatrix(forecasts);
+		/* Transpose the values into columns to get the correct correlations */
+		matrix = matrix.transpose();
+
+		/* Get the correlations of the passed value arrays */
+		PearsonsCorrelation pearsonsCorrelations = new PearsonsCorrelation(matrix);
+		return pearsonsCorrelations.getCorrelationMatrix().getData();
 	}
 
 	/**
@@ -47,34 +97,21 @@ public class DiversificationMultiplier {
 	 *                                  correlations: same amount of rows and
 	 *                                  columns
 	 */
-	private double calculateDiversificiationMultiplierValue() {
-		double[][] correlations = this.getCorrelations();
-		double[] weights = this.getWeights();
+	public double calculateDiversificiationMultiplierValue() {
+		double[][] instanceCorrelations = this.getCorrelations();
+		double[] instanceWeights = this.getWeights();
 
 		/* local field to hold sum of correlations multiplied with weights */
 		double sumOfCorrelationsWeights = 0f;
 
-		/* Get the sum of all correlations multiplier with both corresponding weights */
-		for (int row = 0; row < correlations.length; row++) {
-			// Check if self correlations are correctly filled (diagonal line) from "top
-			// left" to "bottom right" (these values have to be 1), e.g.
-			// { {1d, 0.5d, 0.75d},
-			// {0.5d, 1d, 0.6d},
-			// {0.75d, 0.6d, 1d}
-			// }
-			if (correlations[row][row] != 1d)
-				throw new IllegalArgumentException("Self correlations are not properly populated");
-			for (int col = 0; col < correlations.length; col++) {
-				// Check if correlations matrix is symmetrical, e.g.
-				// { {1d, 0.5d, 0.75d},
-				// {0.5d, 1d, 0.6d},
-				// {0.75d, 0.6d, 1d}
-				// }
-				if (correlations[row][col] != correlations[col][row])
-					throw new IllegalArgumentException("Correlations matrix is not symmetrically populated");
-
-				/* multiply the correlation with both corresponding weights */
-				sumOfCorrelationsWeights += correlations[row][col] * weights[row] * weights[col];
+		/*
+		 * Get the sum of all correlations multiplier with both corresponding weights...
+		 */
+		for (int row = 0; row < instanceCorrelations.length; row++) {
+			for (int col = 0; col < instanceCorrelations.length; col++) {
+				/* ... by multiplying the correlation with both corresponding weights */
+				sumOfCorrelationsWeights += instanceCorrelations[row][col] * instanceWeights[row]
+						* instanceWeights[col];
 			}
 		}
 
@@ -83,55 +120,6 @@ public class DiversificationMultiplier {
 		 * > 0 and at least on correlation > 0 (self correlation)
 		 */
 		return 1 / Math.sqrt(sumOfCorrelationsWeights);
-	}
-
-	/**
-	 * Check if the arguments passed to the constructor meet the constraints for
-	 * calculating a diversification multiplier
-	 * 
-	 * @throws IllegalArgumentException if any constraint is not fulfilled
-	 */
-	private void validateConstructorArguments(double[] weights, double[][] correlations) {
-		/* Check if given weights are null */
-		if (weights == null)
-			throw new IllegalArgumentException("Given weights must not be null");
-
-		/* Check if given correlations are null */
-		if (correlations == null)
-			throw new IllegalArgumentException("Given correlations must not be null");
-
-		/* Check if correlations has values in it */
-		if (correlations.length == 0)
-			throw new IllegalArgumentException("Correlations must not have zero values");
-
-		/* Check if weights has values in it */
-		if (weights.length == 0)
-			throw new IllegalArgumentException("Weights must not have zero values");
-
-		/*
-		 * Check if correlations is a square two dimensional array (number of rows and
-		 * columns are the same on every row)
-		 */
-		for (int i = 0; i < correlations.length; i++) {
-			if (correlations.length != correlations[i].length)
-				throw new IllegalArgumentException("Correlations must have as many rows as columns "
-						+ "and all columns and rows must have the same length.");
-		}
-
-		/* Check if weights and correlations arrays have the same length */
-		if (weights.length != correlations.length)
-			throw new IllegalArgumentException("There must be as many weights as correlations columns/rows");
-
-		/* Check for negative weights */
-		Double[] list = ArrayUtils.toObject(weights);
-		double min = Collections.min(Arrays.asList(list));
-		if (min < 0)
-			throw new IllegalArgumentException("Negative weights are not allowed");
-
-		/* Check if weights add up to 1 */
-		double sum = Arrays.stream(weights).sum();
-		if (sum != 1)
-			throw new IllegalArgumentException("Weights don't sum up to 1");
 	}
 
 	/**
@@ -146,6 +134,7 @@ public class DiversificationMultiplier {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + Arrays.deepHashCode(correlations);
+		result = prime * result + Arrays.deepHashCode(relevantForecasts);
 		long temp;
 		temp = Double.doubleToLongBits(value);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -165,6 +154,8 @@ public class DiversificationMultiplier {
 		DiversificationMultiplier other = (DiversificationMultiplier) obj;
 		if (!Arrays.deepEquals(correlations, other.correlations))
 			return false;
+		if (!Arrays.deepEquals(relevantForecasts, other.relevantForecasts))
+			return false;
 		if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value))
 			return false;
 		if (!Arrays.equals(weights, other.weights))
@@ -175,7 +166,8 @@ public class DiversificationMultiplier {
 	@GeneratedCode
 	@Override
 	public String toString() {
-		return "DiversificationMultiplier [value=" + value + ", weights=" + Arrays.toString(weights) + ", correlations="
+		return "DiversificationMultiplier [value=" + value + ", weights=" + Arrays.toString(weights)
+				+ ", relevantForecasts=" + Arrays.toString(relevantForecasts) + ", correlations="
 				+ Arrays.toString(correlations) + "]";
 	}
 
@@ -216,6 +208,20 @@ public class DiversificationMultiplier {
 	 */
 	private void setWeights(double[] weights) {
 		this.weights = weights;
+	}
+
+	/**
+	 * @return relevantForecasts DiversificationMultiplier
+	 */
+	public double[][] getRelevantForecasts() {
+		return relevantForecasts;
+	}
+
+	/**
+	 * @param relevantForecasts the relevantForecasts to set
+	 */
+	private void setRelevantForecasts(double[][] relevantForecasts) {
+		this.relevantForecasts = relevantForecasts;
 	}
 
 	/**
