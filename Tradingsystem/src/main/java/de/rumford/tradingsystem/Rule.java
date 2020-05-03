@@ -434,17 +434,25 @@ public abstract class Rule {
 			double[] correlations;
 			correlations = Util.calculateCorrelationsOfThreeRows(variationsForecastValues);
 
-			/* Find the weights corresponding to those correlations. */
-			double[] weights;
-			weights = Rule.calculateWeights(correlations);
+			double[] weights = {};
+			/*
+			 * Catch three correlations of 1 as they will break calculateWeights(double[])
+			 */
+			if (correlations[0] == 1 && correlations[0] == correlations[1] && correlations[0] == correlations[2]) {
+				double correlationOfOneThird = 1d / 3d;
+				weights = ArrayUtils.add(weights, correlationOfOneThird);
+				weights = ArrayUtils.add(weights, correlationOfOneThird);
+				weights = ArrayUtils.add(weights, correlationOfOneThird);
+			} else {
+				/* Find the weights corresponding to the calculated correlations. */
+				weights = Rule.calculateWeights(correlations);
+			}
 
 			/* Set the weights of the underlying variations */
 			for (int i = 0; i < weights.length; i++) {
 				instanceVariations[i].setWeight(weights[i]);
 			}
 			break;
-		default:
-			throw new IllegalStateException("There should not be this many variations: " + instanceVariations.length);
 		}
 	}
 
@@ -459,31 +467,14 @@ public abstract class Rule {
 	 *                     array is constructed as follows: { corr_AB, corr_BC,
 	 *                     corr_CA }.
 	 * @return {@code double[]} The calculated weights { w_A, w_B, w_C }.
-	 * @throws IllegalArgumentException if the given array is null.
-	 * @throws IllegalArgumentException if the given array is not of length 3.
 	 * @throws IllegalArgumentException if a correlation value is < -1 or > 1.
 	 */
 	private static double[] calculateWeights(double[] correlations) throws IllegalArgumentException {
-		/* The given array must no be null */
-		if (correlations == null)
-			throw new IllegalArgumentException("Array of correlations must not be null");
-
-		/*
-		 * There must be exactly three rows of values for this method to work properly.
-		 */
-		if (correlations.length != 3)
-			throw new IllegalArgumentException("Given array of correlations contains " + correlations.length
-					+ " items although an array of length 3 was expected.");
-
 		/*
 		 * Correlation values are within the bounds of -1 and +1. Other values cannot be
 		 * real correlation values.
 		 */
 		for (int i = 0; i < correlations.length; i++) {
-			if (correlations[i] < -1 || correlations[i] > 1)
-				throw new IllegalArgumentException("Correlation value " + correlations[i] + " at position " + i
-						+ " is out of bounds. Correlation values must be between -1 and +1 (including).");
-
 			/* Floor negative correlations at 0 (See Carver: "Systematic Trading", p. 79) */
 			if (correlations[i] < 0)
 				correlations[i] = 0;

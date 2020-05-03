@@ -3,7 +3,9 @@
  */
 package de.rumford.tradingsystem;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -50,73 +52,17 @@ class RuleTest {
 	static final String BASE_VALUE_NAME = "Base value name";
 	static final int BASE_SCALE = 10;
 
-	static LocalDateTime localDateTimeJan01220000;
-	static LocalDateTime localDateTimeJan02220000;
-	static LocalDateTime localDateTimeJan03220000;
-	static LocalDateTime localDateTimeJan04220000;
-	static LocalDateTime localDateTimeJan05220000;
-	static LocalDateTime localDateTimeJan06220000;
-	static LocalDateTime localDateTimeJan07220000;
-	static LocalDateTime localDateTimeJan08220000;
-	static LocalDateTime localDateTimeJan09220000;
 	static LocalDateTime localDateTimeJan10220000;
-	static LocalDateTime localDateTimeJan11220000;
 	static LocalDateTime localDateTimeJan12220000;
-	static LocalDateTime localDateTimeJan13220000;
-	static LocalDateTime localDateTimeJan14220000;
-	static LocalDateTime localDateTimeJan15220000;
-	static LocalDateTime localDateTimeJan16220000;
-	static LocalDateTime localDateTimeJan17220000;
-	static LocalDateTime localDateTimeJan18220000;
-	static LocalDateTime localDateTimeJan19220000;
-	static LocalDateTime localDateTimeJan20220000;
-	static LocalDateTime localDateTimeJan21220000;
-	static LocalDateTime localDateTimeJan22220000;
-	static LocalDateTime localDateTimeJan23220000;
-	static LocalDateTime localDateTimeJan24220000;
-	static LocalDateTime localDateTimeJan25220000;
-	static LocalDateTime localDateTimeJan26220000;
-	static LocalDateTime localDateTimeJan27220000;
-	static LocalDateTime localDateTimeJan28220000;
-	static LocalDateTime localDateTimeJan29220000;
-	static LocalDateTime localDateTimeJan30220000;
-	static LocalDateTime localDateTimeJan31220000;
+	static LocalDateTime localDateTimeFeb05220000;
 
 	@BeforeAll
 	static void setUpBeforeClass() {
 		baseValue = BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME);
 
-		localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
-		localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
-		localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
-		localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
-		localDateTimeJan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5), LocalTime.of(22, 0));
-		localDateTimeJan06220000 = LocalDateTime.of(LocalDate.of(2020, 1, 6), LocalTime.of(22, 0));
-		localDateTimeJan07220000 = LocalDateTime.of(LocalDate.of(2020, 1, 7), LocalTime.of(22, 0));
-		localDateTimeJan08220000 = LocalDateTime.of(LocalDate.of(2020, 1, 8), LocalTime.of(22, 0));
-		localDateTimeJan09220000 = LocalDateTime.of(LocalDate.of(2020, 1, 9), LocalTime.of(22, 0));
 		localDateTimeJan10220000 = LocalDateTime.of(LocalDate.of(2020, 1, 10), LocalTime.of(22, 0));
-		localDateTimeJan11220000 = LocalDateTime.of(LocalDate.of(2020, 1, 11), LocalTime.of(22, 0));
 		localDateTimeJan12220000 = LocalDateTime.of(LocalDate.of(2020, 1, 12), LocalTime.of(22, 0));
-		localDateTimeJan13220000 = LocalDateTime.of(LocalDate.of(2020, 1, 13), LocalTime.of(22, 0));
-		localDateTimeJan14220000 = LocalDateTime.of(LocalDate.of(2020, 1, 14), LocalTime.of(22, 0));
-		localDateTimeJan15220000 = LocalDateTime.of(LocalDate.of(2020, 1, 15), LocalTime.of(22, 0));
-		localDateTimeJan16220000 = LocalDateTime.of(LocalDate.of(2020, 1, 16), LocalTime.of(22, 0));
-		localDateTimeJan17220000 = LocalDateTime.of(LocalDate.of(2020, 1, 17), LocalTime.of(22, 0));
-		localDateTimeJan18220000 = LocalDateTime.of(LocalDate.of(2020, 1, 18), LocalTime.of(22, 0));
-		localDateTimeJan19220000 = LocalDateTime.of(LocalDate.of(2020, 1, 19), LocalTime.of(22, 0));
-		localDateTimeJan20220000 = LocalDateTime.of(LocalDate.of(2020, 1, 20), LocalTime.of(22, 0));
-		localDateTimeJan21220000 = LocalDateTime.of(LocalDate.of(2020, 1, 21), LocalTime.of(22, 0));
-		localDateTimeJan22220000 = LocalDateTime.of(LocalDate.of(2020, 1, 22), LocalTime.of(22, 0));
-		localDateTimeJan23220000 = LocalDateTime.of(LocalDate.of(2020, 1, 23), LocalTime.of(22, 0));
-		localDateTimeJan24220000 = LocalDateTime.of(LocalDate.of(2020, 1, 24), LocalTime.of(22, 0));
-		localDateTimeJan25220000 = LocalDateTime.of(LocalDate.of(2020, 1, 25), LocalTime.of(22, 0));
-		localDateTimeJan26220000 = LocalDateTime.of(LocalDate.of(2020, 1, 26), LocalTime.of(22, 0));
-		localDateTimeJan27220000 = LocalDateTime.of(LocalDate.of(2020, 1, 27), LocalTime.of(22, 0));
-		localDateTimeJan28220000 = LocalDateTime.of(LocalDate.of(2020, 1, 28), LocalTime.of(22, 0));
-		localDateTimeJan29220000 = LocalDateTime.of(LocalDate.of(2020, 1, 29), LocalTime.of(22, 0));
-		localDateTimeJan30220000 = LocalDateTime.of(LocalDate.of(2020, 1, 30), LocalTime.of(22, 0));
-		localDateTimeJan31220000 = LocalDateTime.of(LocalDate.of(2020, 1, 31), LocalTime.of(22, 0));
+		localDateTimeFeb05220000 = LocalDateTime.of(LocalDate.of(2020, 2, 5), LocalTime.of(22, 0));
 	}
 
 	@BeforeEach
@@ -175,6 +121,184 @@ class RuleTest {
 		double actualValue = ValueDateTupel.getElement(realRule.getForecasts(), localDateTimeJan10220000).getValue();
 
 		assertEquals(expectedValue, actualValue, "Forecasts are not correctly calculated");
+	}
+
+	/**
+	 * Test method for {@link Rule#calculateScaledForecast(double)}.
+	 */
+	@Test
+	void testCalculateScaledForecast_FcNegative20() {
+		double expectedValue = -20d;
+		variator = -0.1d;
+		realRule = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null, localDateTimeJan10220000,
+				localDateTimeJan12220000, BASE_SCALE, variator);
+
+		ValueDateTupel.getElement(realRule.getForecasts(), localDateTimeFeb05220000).getValue();
+		double actualValue = ValueDateTupel.getElement(realRule.getForecasts(), localDateTimeFeb05220000).getValue();
+
+		assertEquals(expectedValue, actualValue, "Forecasts < -20 are not correctly calculated");
+	}
+
+	/**
+	 * Test method for {@link Rule#validateSetAndWeighVariations(Rule[])}.
+	 */
+	@Test
+	void testValidateSetAndWeighVariations_moreThan3Variations() {
+		String expectedMessage = "Each layer must not contain more than 3 rules/variations";
+		RealRule var1 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var2 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var3 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var4 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule[] variations = { var1, var2, var3, var4 };
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), variations,
+						localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator),
+				"> 3 variations is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#validateSetAndWeighVariations(Rule[])}.
+	 */
+	@Test
+	void testValidateSetAndWeighVariations_variationIsNull() {
+		String expectedMessage = "The variation at position 2 in the given variations array is null.";
+		RealRule var1 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var2 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var3 = null;
+		RealRule[] variations = { var1, var2, var3 };
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), variations,
+						localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator),
+				"Variation = null is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#weighVariations()}.
+	 */
+	@Test
+	void testWeighVariations_1Variation() {
+		double expectedValue = 1;
+		RealRule var1 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule[] variations = { var1 };
+
+		RealRule realRule = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), variations,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		double actualValue = realRule.getVariations()[0].getWeight();
+
+		assertEquals(expectedValue, actualValue, "Weight for 1 variation is not correctly calculated");
+	}
+
+	/**
+	 * Test method for {@link Rule#weighVariations()}.
+	 */
+	@Test
+	void testWeighVariations_2Variations() {
+		double[] expectedValue = { 0.5, 0.5 };
+		RealRule var1 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var2 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule[] variations = { var1, var2 };
+
+		RealRule realRule = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), variations,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		double[] actualValue = { realRule.getVariations()[0].getWeight(), realRule.getVariations()[1].getWeight() };
+
+		assertArrayEquals(expectedValue, actualValue, "Weights for 2 variation are not correctly calculated");
+	}
+
+	/**
+	 * Test method for {@link Rule#weighVariations()}.
+	 */
+	@Test
+	void testWeighVariations_3EqualVariations() {
+		double[] expectedValue = { 1d / 3d, 1d / 3d, 1d / 3d };
+		RealRule var1 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var2 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var3 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule[] variations = { var1, var2, var3 };
+
+		RealRule realRule = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), variations,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		double[] actualValue = { realRule.getVariations()[0].getWeight(), realRule.getVariations()[1].getWeight(),
+				realRule.getVariations()[2].getWeight() };
+
+		assertArrayEquals(expectedValue, actualValue, "Weights for 3 equal variations are not correctly calculated");
+	}
+
+	/**
+	 * Test method for {@link Rule#weighVariations()}.
+	 */
+	@Test
+	void testWeighVariations_3Variations() {
+		double[] expectedValue = { //
+				0.19285828960561063, // Excel: 0.192858289605609
+				0.3259968088978676, // Excel: 0.325996808897865
+				0.4811449014965218, // Excel: 0.481144901496526
+		};
+		double variator1 = 1;
+		double variator2 = 3.19;
+		double variator3 = -0.1;
+		RealRule var1 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator1);
+		RealRule var2 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator2);
+		RealRule var3 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator3);
+		RealRule[] variations = { var1, var2, var3 };
+
+		RealRule realRule = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), variations,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		double[] actualValue = { realRule.getVariations()[0].getWeight(), realRule.getVariations()[1].getWeight(),
+				realRule.getVariations()[2].getWeight() };
+
+		assertArrayEquals(expectedValue, actualValue, "Weights for 3 inequal variations are not correctly calculated");
+	}
+
+	/**
+	 * Test method for {@link Rule#calculateWeights(double[])}.
+	 */
+	@Test
+	void testCalculateWeights_negativeCorrelations() {
+		double[] expectedValue = { //
+				0.4999239558356957, // Excel: 0.499923955835696
+				0.2500380220821522, // Excel: 0.250038022082152
+				0.2500380220821522, // Excel: 0.250038022082152
+		};
+		double variator1 = -1;
+		double variator2 = 0.5;
+		double variator3 = 1;
+		RealRule var1 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator1);
+		RealRule var2 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator2);
+		RealRule var3 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator3);
+		RealRule[] variations = { var1, var2, var3 };
+
+		RealRule realRule = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), variations,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		double[] actualValue = { realRule.getVariations()[0].getWeight(), realRule.getVariations()[1].getWeight(),
+				realRule.getVariations()[2].getWeight() };
+
+		assertArrayEquals(expectedValue, actualValue,
+				"Weights for variations with negative correlations are not correctly calculated");
 	}
 
 }
