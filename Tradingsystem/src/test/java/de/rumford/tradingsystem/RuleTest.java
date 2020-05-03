@@ -285,24 +285,14 @@ class RuleTest {
 	/**
 	 * Test method for {@link Rule#calculateForecastScalar()}.
 	 */
-	// TODO INVESTIGATE WHY ERROR IS NOT THROWN AT VAR 3
 	@Test
 	void testCalculateForecastScalar_referenceWindowContainsIllegalValues() {
 		String expectedMessage = "Illegal values in calulated forecast values. Given reference window might be off.";
-		double variator1 = -1;
-		double variator2 = 0.5;
 		double variator3 = 1;
-		RealRule var1 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator1);
-		RealRule var2 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator2);
 		RealRule var3 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
 				localDateTimeJan01220000, localDateTimeJan03220000, BASE_SCALE, variator3);
-		RealRule[] variations = { var1, var2, var3 };
 
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), variations,
-						localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator),
+		Exception thrown = assertThrows(IllegalArgumentException.class, () -> var3.getForecasts(),
 				"Invalid values in forecast values are not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);

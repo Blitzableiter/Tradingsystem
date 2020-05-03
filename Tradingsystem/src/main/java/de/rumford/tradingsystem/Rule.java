@@ -349,7 +349,6 @@ public abstract class Rule {
 
 		double calculatedForecastScalar = Util.calculateForecastScalar(ValueDateTupel.getValues(relevantForecastValues),
 				instanceBaseScale);
-		System.out.println(calculatedForecastScalar);
 		if (Double.isNaN(calculatedForecastScalar))
 			throw new IllegalArgumentException(
 					"Illegal values in calulated forecast values. Given reference window might be off.");
