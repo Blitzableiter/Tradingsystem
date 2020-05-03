@@ -69,7 +69,11 @@ public class BaseValue {
 	public BaseValue(String name, ValueDateTupel[] values, ValueDateTupel[] shortIndexValues) {
 		this(name, values);
 
-		this.validateInput(shortIndexValues);
+		try {
+			validateValues(shortIndexValues);
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Given short index values do not meet the specifications.", e);
+		}
 		this.setShortIndexValues(shortIndexValues);
 	}
 
@@ -153,49 +157,13 @@ public class BaseValue {
 	}
 
 	/**
-	 * Validates the given parameters. Used by the Constructors to validate the
-	 * constructor parameters. Utilizes
-	 * {@link BaseValue#validateInput(String, double[])}.
-	 * 
-	 * 
-	 * @param name             {@code String} Name to be set for a
-	 *                         {@link BaseValue}. Specifications see
-	 *                         {@link BaseValue#validateInput(String, double[])}.
-	 * @param values           {@link ValueDateTupel[]} Values to be set for a
-	 *                         {@link BaseValue}. Specifications see
-	 *                         {@link BaseValue#validateInput(String, double[])}.
-	 * @param shortIndexValues {@link ValueDateTupel[]} Short index values to be set
-	 *                         for a {@link BaseValue}. Must contain at least
-	 *                         {@code 1} element.
-	 * @throws IllegalArgumentException if one of the above specifications is not
-	 *                                  met.
-	 */
-	private void validateInput(ValueDateTupel[] shortIndexValues) {
-		/* Check if passed values array contains elements */
-		if (shortIndexValues.length == 0)
-			throw new IllegalArgumentException("Short index values must not be an empty array");
-
-		validateDates(shortIndexValues);
-
-		for (ValueDateTupel value : shortIndexValues) {
-			/* Validate if there are null values in the given short index values array. */
-			if (value == null)
-				throw new IllegalArgumentException("Given short index values must not contain null.");
-
-			/* Validate if there are NaN values in the given short index values array. */
-			if (Double.isNaN(value.getValue()))
-				throw new IllegalArgumentException("Given shrot index values must not contain NaN.");
-
-		}
-	}
-
-	/**
 	 * Validates if the given array of ValueDateTupel is sorted in an ascending
 	 * order.
 	 * 
 	 * @param values {@code ValueDateTupel[]} The given array of values.
+	 * @throws IllegalArgumentException if the specifications above are not met.
 	 */
-	static void validateDates(ValueDateTupel[] values) {
+	static void validateDates(ValueDateTupel[] values) throws IllegalArgumentException {
 		/*
 		 * The values cannot be used if they are not in ascending order.
 		 */
@@ -204,11 +172,25 @@ public class BaseValue {
 	}
 
 	/**
-	 * Validates if the given array of ValueDateTupel contains illegal values.
+	 * Validates the given array of ValueDateTupel. The given array must fulfill the
+	 * following specifications:
+	 * <ul>
+	 * <li>Be of length > 0</li>
+	 * <li>Pass {@link #validateDates(ValueDateTupel[])}</li>
+	 * <li>Not contain null</li>
+	 * <li>Not contain NaNs as values</li>
+	 * </ul>
 	 * 
-	 * @param values2 {@code ValueDateTupel[]} The given values.
+	 * @param values {@code ValueDateTupel[]} The given values.
+	 * @throws IllegalArgumentException if the given array does not meet the above
+	 *                                  specifications.
 	 */
 	static void validateValues(ValueDateTupel[] values) {
+		/* Check if passed values array contains elements */
+		if (values.length == 0)
+			throw new IllegalArgumentException("Values must not be an empty array");
+
+		validateDates(values);
 
 		for (ValueDateTupel value : values) {
 			/* Validate if there are null values in the given values array. */
@@ -218,9 +200,7 @@ public class BaseValue {
 			/* Validate if there are NaN values in the given values array. */
 			if (Double.isNaN(value.getValue()))
 				throw new IllegalArgumentException("Given values must not contain NaN.");
-
 		}
-
 	}
 
 	/**

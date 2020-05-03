@@ -18,7 +18,7 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 class BaseValueTest {
 
-	final String NAME_OF_TEST_BASE_VALUES = "Test Base Value";
+	static final String NAME_OF_TEST_BASE_VALUES = "Test Base Value";
 	static final String EMPTY_STRING = "";
 	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";
 
@@ -87,8 +87,7 @@ class BaseValueTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[])}.
+	 * Test method for {@link BaseValue#BaseValue(String, ValueDateTupel[])}.
 	 */
 	@Test
 	void testBaseValue_name_values() {
@@ -99,8 +98,7 @@ class BaseValueTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[])}.
+	 * Test method for {@link BaseValue#BaseValue(String, ValueDateTupel[])}.
 	 */
 	@Test
 	void testBaseValue_ToString() {
@@ -114,8 +112,7 @@ class BaseValueTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[])}.
+	 * Test method for {@link BaseValue#BaseValue(String, ValueDateTupel[])}.
 	 */
 	@Test
 	void testBaseValue_nullName() {
@@ -128,8 +125,7 @@ class BaseValueTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[])}.
+	 * Test method for {@link BaseValue#BaseValue(String, ValueDateTupel[])}.
 	 */
 	@Test
 	void testBaseValue_nullValues() {
@@ -142,8 +138,7 @@ class BaseValueTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[])}.
+	 * Test method for {@link BaseValue#BaseValue(String, ValueDateTupel[])}.
 	 */
 	@Test
 	void testBaseValue_emptyName() {
@@ -155,8 +150,7 @@ class BaseValueTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[])}.
+	 * Test method for {@link BaseValue#BaseValue(String, ValueDateTupel[])}.
 	 */
 	@Test
 	void testBaseValue_emptyValues() {
@@ -168,8 +162,7 @@ class BaseValueTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[])}.
+	 * Test method for {@link BaseValue#BaseValue(String, ValueDateTupel[])}.
 	 */
 	@Test
 	void testBaseValue_duplicateDatesInValues() {
@@ -183,8 +176,7 @@ class BaseValueTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[])}.
+	 * Test method for {@link BaseValue#BaseValue(String, ValueDateTupel[])}.
 	 */
 	@Test
 	void testBaseValue_datesInIncorrectOrder() {
@@ -203,7 +195,7 @@ class BaseValueTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[], ValueDateTupel[])}.
+	 * {@link BaseValue#BaseValue(String, ValueDateTupel[], ValueDateTupel[])}.
 	 */
 	@Test
 	void testBaseValue_name_values_shortIndexValues() {
@@ -215,7 +207,7 @@ class BaseValueTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[], ValueDateTupel[])}.
+	 * {@link BaseValue#BaseValue(String, ValueDateTupel[], ValueDateTupel[])}.
 	 */
 	@Test
 	void testBaseValue_emptyName_values_shortIndexValues() {
@@ -228,7 +220,7 @@ class BaseValueTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[], ValueDateTupel[])}.
+	 * {@link BaseValue#BaseValue(String, ValueDateTupel[], ValueDateTupel[])}.
 	 */
 	@Test
 	void testBaseValue_name_emptyValues_shortIndexValues() {
@@ -242,36 +234,56 @@ class BaseValueTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[], ValueDateTupel[])}.
+	 * {@link BaseValue#BaseValue(String, ValueDateTupel[], ValueDateTupel[])}.
 	 */
 	@Test
 	void testBaseValue_name_values_emptyShortIndexValues() {
-		String expectedMessage = "Short index values must not be an empty array";
+		String expectedMessage = "Given short index values do not meet the specifications.";
+		String expectedCauseMessage = "Values must not be an empty array";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values, emptyValues),
 				"Empty short index values not properly rejected");
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCauseMessage, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.BaseValue#BaseValue(String, ValueDateTupel[], ValueDateTupel[])}.
+	 * {@link BaseValue#BaseValue(String, ValueDateTupel[], ValueDateTupel[])}.
 	 */
 	@Test
 	void testBaseValue_name_values_duplicateShortIndexValues() {
-		String expectedMessage = "Given values are not properly sorted or there are non-unique values.";
+		String expectedMessage = "Given short index values do not meet the specifications.";
+		String expectedCauseMessage = "Given values are not properly sorted or there are non-unique values.";
 		shortValues = ArrayUtils.add(shortValues, valuedatetupel1);
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values, shortValues),
 				"Duplicate date/time values in short index values are not properly handled");
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCauseMessage, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link BaseValue#validateInput(ValueDateTupel[])}.
+	 */
+	@Test
+	void testBaseValue_name_values_nanInShortIndexValues() {
+		String expectedMessage = "Given short index values do not meet the specifications.";
+		String expectedCauseMessage = "Given values must not contain NaN.";
+		shortValues = ArrayUtils.add(shortValues, new ValueDateTupel(localDateTimeJan05_22_00_00, Double.NaN));
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values, shortValues),
+				"NaN values in short index values are not properly handled");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCauseMessage, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.BaseValue#calculateShortIndexValues(ValueDateTupel[])}.
+	 * {@link BaseValue#calculateShortIndexValues(ValueDateTupel[])}.
 	 */
 	@Test
 	void testCalculateShortIndexValues() {
@@ -284,7 +296,7 @@ class BaseValueTest {
 
 	/**
 	 * Test method for
-	 * {@link de.rumford.tradingsystem.BaseValue#calculateShortIndexValues(ValueDateTupel[])}.
+	 * {@link BaseValue#calculateShortIndexValues(ValueDateTupel[])}.
 	 */
 	@Test
 	void testCalculateShortIndexValues_1valueInBaseValue() {
