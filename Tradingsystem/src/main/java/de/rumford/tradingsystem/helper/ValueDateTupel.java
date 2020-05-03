@@ -83,7 +83,7 @@ public class ValueDateTupel {
 		if (valueDateTupels == null)
 			throw new IllegalArgumentException("The given array must not be null");
 		if (ValueDateTupel.contains(valueDateTupels, null))
-			throw new IllegalArgumentException("The given array must not contain any null LocalDateTime");
+			throw new IllegalArgumentException("The given array must not contain any nulls");
 
 		for (int i = 1; i < valueDateTupels.length; i++) {
 			if (!valueDateTupels[i].getDate().isAfter(valueDateTupels[i - 1].getDate())) {
