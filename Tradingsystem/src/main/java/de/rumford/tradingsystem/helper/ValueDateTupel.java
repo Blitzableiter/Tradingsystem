@@ -29,6 +29,8 @@ public class ValueDateTupel {
 	private double value;
 	private LocalDateTime date;
 
+	static final String MESSAGE_ARRAY_MUST_NOT_BE_NULL = "Given array must not be null";
+
 	/**
 	 * Creates a new {@link ValueDateTupel} instance using the given LocaDateTime
 	 * and double.
@@ -81,7 +83,7 @@ public class ValueDateTupel {
 	 */
 	public static boolean isSortedAscending(ValueDateTupel[] valueDateTupels) throws IllegalArgumentException {
 		if (valueDateTupels == null)
-			throw new IllegalArgumentException("The given array must not be null");
+			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
 		if (ValueDateTupel.contains(valueDateTupels, null))
 			throw new IllegalArgumentException("The given array must not contain any nulls");
 
@@ -112,7 +114,7 @@ public class ValueDateTupel {
 	 */
 	public static boolean isSortedDescending(ValueDateTupel[] valueDateTupels) throws IllegalArgumentException {
 		if (valueDateTupels == null)
-			throw new IllegalArgumentException("The given array must not be null");
+			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
 		if (ValueDateTupel.contains(valueDateTupels, null))
 			throw new IllegalArgumentException("The given array must not contain any null LocalDateTime");
 
@@ -458,6 +460,13 @@ public class ValueDateTupel {
 	 *         {@code null} if the given {@link LocalDateTime} cannot be found.
 	 */
 	public static ValueDateTupel getElement(ValueDateTupel[] valueDateTupels, LocalDateTime dtToBeFound) {
+		/* Check if given array is null */
+		if (valueDateTupels == null)
+			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
+
+		if (dtToBeFound == null)
+			throw new IllegalArgumentException("The given date to be found must not be null");
+
 		for (ValueDateTupel value : valueDateTupels) {
 			if (value.getDate().equals(dtToBeFound))
 				return value;
@@ -477,7 +486,7 @@ public class ValueDateTupel {
 	 */
 	public static double[] getValues(ValueDateTupel[] valueDateTupels) throws IllegalArgumentException {
 		if (valueDateTupels == null)
-			throw new IllegalArgumentException("Given array must not be null");
+			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
 		double[] values = {};
 		for (ValueDateTupel tupel : valueDateTupels)
 			values = ArrayUtils.add(values, tupel.getValue());
@@ -496,7 +505,7 @@ public class ValueDateTupel {
 	 */
 	public static LocalDateTime[] getDates(ValueDateTupel[] valueDateTupels) throws IllegalArgumentException {
 		if (valueDateTupels == null)
-			throw new IllegalArgumentException("Given array must not be null");
+			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
 		LocalDateTime[] values = {};
 		for (ValueDateTupel tupel : valueDateTupels) {
 			values = ArrayUtils.add(values, tupel.getDate());
@@ -562,11 +571,18 @@ public class ValueDateTupel {
 	 * @param dtToBeFound     {@link LocalDateTime} The value to be found.
 	 * @return {@code int} The position the given LocalDateTime was found. If the
 	 *         given LocalDateTime cannot be found, Integer.MIN_VALUE is returned.
+	 *         If the given array's length is 0 Integer.MIN_VALUE is returned.
 	 */
 	public static int getPosition(ValueDateTupel[] valueDateTupels, LocalDateTime dtToBeFound) {
+		final int defaultReturnValue = Integer.MIN_VALUE;
+
 		/* Check if given array is null */
 		if (valueDateTupels == null)
 			throw new IllegalArgumentException("The given array of ValueDateTupel must not be null");
+
+		/* If there are no values in the given array return the default return value. */
+		if (valueDateTupels.length == 0)
+			return defaultReturnValue;
 
 		/* Check if given LocalDateTime is null */
 		if (dtToBeFound == null)
@@ -575,15 +591,13 @@ public class ValueDateTupel {
 		/*
 		 * if the given LocalDateTime is in the given array, return its position.
 		 */
-		if (ValueDateTupel.containsDate(valueDateTupels, dtToBeFound)) {
-			for (int i = 0; i < valueDateTupels.length; i++) {
-				if (valueDateTupels[i].getDate().equals(dtToBeFound))
-					return i;
-			}
+		for (int i = 0; i < valueDateTupels.length; i++) {
+			if (valueDateTupels[i].getDate().equals(dtToBeFound))
+				return i;
 		}
 
 		/* Otherwise, return Integer.MIN_VALUE */
-		return Integer.MIN_VALUE;
+		return defaultReturnValue;
 	}
 
 	/**
