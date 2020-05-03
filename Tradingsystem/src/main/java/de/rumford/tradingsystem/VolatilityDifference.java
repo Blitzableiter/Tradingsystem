@@ -239,10 +239,6 @@ public class VolatilityDifference extends Rule {
 	 *         {@code Double.NaN}, the rest contains real volatility index values.
 	 */
 	private static ValueDateTupel[] calculateVolatilityIndices(BaseValue baseValue, int lookbackWindow) {
-		/* Check if base value fulfills requirements. */
-		if (baseValue == null)
-			throw new IllegalArgumentException("Base value must not be null");
-
 		ValueDateTupel[] baseValues = baseValue.getValues();
 
 		ValueDateTupel[] volatilityIndices = null;

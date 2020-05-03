@@ -101,6 +101,30 @@ class VolatilityDifferenceTest {
 	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, VolatilityDifference[], LocalDateTime, LocalDateTime, int, double)}.
 	 */
 	@Test
+	void testVolatilityDifference_volatilityIndicesGiven() {
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
+		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
+		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000, 5d);
+		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04220000, 10d);
+		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
+		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex4);
+
+		VolatilityDifference volDif = new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+				localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray);
+		VolatilityDifference volDif2 = new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+				localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray);
+
+		assertEquals(volDif, volDif2, "Two identical instances are not considered identical");
+	}
+
+	/**
+	 * Test method for
+	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, VolatilityDifference[], LocalDateTime, LocalDateTime, int, double)}.
+	 */
+	@Test
 	void testVolatilityDifference_withThreeVariations() {
 		baseValue = BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME);
 		lookbackWindow = 2;
@@ -346,6 +370,22 @@ class VolatilityDifferenceTest {
 				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
 						localDateTime2020Jan04220000, lookbackWindowOne, BASE_SCALE),
 				"Lookback window <= 1 is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link VolatilityDifference#validateVolatilityIndices(ValueDateTupel[])}.
+	 */
+	@Test
+	void testValidateVolatilityIndices_volatilityIndicesArrayNull() {
+		String expectedMessage = "Volatility indices must not be null.";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, null),
+				"Empty array of volatlilty indices is not correctly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
