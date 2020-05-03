@@ -43,6 +43,35 @@ public class BaseValueFactory {
 		return new BaseValue(name, values);
 	}
 
+	public static final BaseValue jan1Jan7lowValscalcShort(String name) {
+		LocalDateTime localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan06220000 = LocalDateTime.of(LocalDate.of(2020, 1, 6), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan07220000 = LocalDateTime.of(LocalDate.of(2020, 1, 7), LocalTime.of(22, 0));
+
+		ValueDateTupel valuedatetupel1 = new ValueDateTupel(localDateTimeJan01220000, 1d);
+		ValueDateTupel valuedatetupel2 = new ValueDateTupel(localDateTimeJan02220000, 1.1d);
+		ValueDateTupel valuedatetupel3 = new ValueDateTupel(localDateTimeJan03220000, 1.2d);
+		ValueDateTupel valuedatetupel4 = new ValueDateTupel(localDateTimeJan04220000, 1.3d);
+		ValueDateTupel valuedatetupel5 = new ValueDateTupel(localDateTimeJan05220000, 0.01d);
+		ValueDateTupel valuedatetupel6 = new ValueDateTupel(localDateTimeJan06220000, 0.0001d);
+		ValueDateTupel valuedatetupel7 = new ValueDateTupel(localDateTimeJan07220000, 0.000001d);
+
+		ValueDateTupel[] values = ValueDateTupel.createEmptyArray();
+		values = ArrayUtils.add(values, valuedatetupel1);
+		values = ArrayUtils.add(values, valuedatetupel2);
+		values = ArrayUtils.add(values, valuedatetupel3);
+		values = ArrayUtils.add(values, valuedatetupel4);
+		values = ArrayUtils.add(values, valuedatetupel5);
+		values = ArrayUtils.add(values, valuedatetupel6);
+		values = ArrayUtils.add(values, valuedatetupel7);
+
+		return new BaseValue(name, values);
+	}
+
 	public static final BaseValue jan1Jan5calcShort(String name) {
 		LocalDateTime localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
 		LocalDateTime localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));

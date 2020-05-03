@@ -432,7 +432,13 @@ public abstract class Rule {
 
 			/* Find the correlations for the given variations. */
 			double[] correlations;
-			correlations = Util.calculateCorrelationsOfThreeRows(variationsForecastValues);
+			try {
+				correlations = Util.calculateCorrelationsOfThreeRows(variationsForecastValues);
+			} catch (Exception e) {
+				throw new IllegalArgumentException(
+						"Given reference window cannot be used as it contains all identical forecast values for at least one variation.",
+						e);
+			}
 
 			double[] weights = {};
 			/*

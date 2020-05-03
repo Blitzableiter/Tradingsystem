@@ -52,6 +52,10 @@ class RuleTest {
 	static final String BASE_VALUE_NAME = "Base value name";
 	static final int BASE_SCALE = 10;
 
+	static LocalDateTime localDateTimeJan02220000;
+	static LocalDateTime localDateTimeJan04220000;
+	static LocalDateTime localDateTimeJan05220000;
+	static LocalDateTime localDateTimeJan07220000;
 	static LocalDateTime localDateTimeJan10220000;
 	static LocalDateTime localDateTimeJan12220000;
 	static LocalDateTime localDateTimeFeb05220000;
@@ -60,6 +64,10 @@ class RuleTest {
 	static void setUpBeforeClass() {
 		baseValue = BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME);
 
+		localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
+		localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
+		localDateTimeJan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5), LocalTime.of(22, 0));
+		localDateTimeJan07220000 = LocalDateTime.of(LocalDate.of(2020, 1, 7), LocalTime.of(22, 0));
 		localDateTimeJan10220000 = LocalDateTime.of(LocalDate.of(2020, 1, 10), LocalTime.of(22, 0));
 		localDateTimeJan12220000 = LocalDateTime.of(LocalDate.of(2020, 1, 12), LocalTime.of(22, 0));
 		localDateTimeFeb05220000 = LocalDateTime.of(LocalDate.of(2020, 2, 5), LocalTime.of(22, 0));
@@ -301,4 +309,33 @@ class RuleTest {
 				"Weights for variations with negative correlations are not correctly calculated");
 	}
 
+	/**
+	 * Test method for {@link Rule#calculateWeights(double[])}.
+	 */
+	@Test
+	void testCalculateWeights_allEqualForecastValuesInReferenceWindow() {
+		String expectedMessage = "Given reference window cannot be used as it contains all identical forecast values for at least one variation.";
+		String expectedCause = "Correlations cannot be calculated caused by all identical values in row at position 0.";
+
+		BaseValue baseValue = BaseValueFactory.jan1Jan7lowValscalcShort(BASE_VALUE_NAME);
+		double variator1 = -1;
+		double variator2 = 0.5;
+		double variator3 = 1;
+
+		RealRule var1 = new RealRule(baseValue, null, localDateTimeJan02220000, localDateTimeJan04220000, BASE_SCALE,
+				variator1);
+		RealRule var2 = new RealRule(baseValue, null, localDateTimeJan02220000, localDateTimeJan04220000, BASE_SCALE,
+				variator2);
+		RealRule var3 = new RealRule(baseValue, null, localDateTimeJan02220000, localDateTimeJan04220000, BASE_SCALE,
+				variator3);
+		RealRule[] variations = { var1, var2, var3 };
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), variations,
+						localDateTimeJan05220000, localDateTimeJan07220000, BASE_SCALE, variator),
+				"All equal values in variations forecasts is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
 }
