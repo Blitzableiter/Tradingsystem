@@ -190,8 +190,6 @@ public class BaseValue {
 		if (values.length == 0)
 			throw new IllegalArgumentException("Values must not be an empty array");
 
-		validateDates(values);
-
 		for (ValueDateTupel value : values) {
 			/* Validate if there are null values in the given values array. */
 			if (value == null)
@@ -201,6 +199,8 @@ public class BaseValue {
 			if (Double.isNaN(value.getValue()))
 				throw new IllegalArgumentException("Given values must not contain NaN.");
 		}
+
+		validateDates(values);
 	}
 
 	/**
