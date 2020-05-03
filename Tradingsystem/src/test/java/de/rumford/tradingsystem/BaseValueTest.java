@@ -282,6 +282,22 @@ class BaseValueTest {
 	}
 
 	/**
+	 * Test method for {@link BaseValue#validateInput(ValueDateTupel[])}.
+	 */
+	@Test
+	void testBaseValue_name_values_nullInShortIndexValues() {
+		String expectedMessage = "Given short index values do not meet the specifications.";
+		String expectedCauseMessage = "Given values must not contain null.";
+		shortValues = ArrayUtils.add(shortValues, null);
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values, shortValues),
+				"nulls in short index values are not properly handled");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCauseMessage, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
 	 * Test method for
 	 * {@link BaseValue#calculateShortIndexValues(ValueDateTupel[])}.
 	 */
