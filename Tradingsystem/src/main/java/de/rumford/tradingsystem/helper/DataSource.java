@@ -224,12 +224,10 @@ public class DataSource {
 			dayPosition = 1;
 			monthPosition = 0;
 			yearPosition = 2;
-		} else if (format.getMonthDayOrder() == MonthDayOrder.YEAR_MONTH_DAY) {
+		} else {
 			dayPosition = 2;
 			monthPosition = 1;
 			yearPosition = 0;
-		} else {
-			throw new IllegalArgumentException("Date pattern not recognzied");
 		}
 
 		int[] returnArray = { dayPosition, monthPosition, yearPosition };
