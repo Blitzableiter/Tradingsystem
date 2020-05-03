@@ -295,4 +295,22 @@ class UtilTest {
 
 		assertEquals(expectedmessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
+
+	/**
+	 * Test method for {@link Util#calculateCorrelationsOfThreeRows(double[][])}.
+	 */
+	@Test
+	void testCalculateCorrelationsOfThreeRows_allEqaulValues() {
+		double[] row1 = { 1, 1, 1 };
+		double[] row2 = { 2, 3, 4 };
+		double[] row3 = { 3, 3, 5 };
+		double[][] values = { row1, row2, row3 };
+		String expectedmessage = "Correlations cannot be calculated caused by all identical values in row at position 0.";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> Util.calculateCorrelationsOfThreeRows(values),
+				"Arrays containing all equal values are not properly handled.");
+
+		assertEquals(expectedmessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
 }
