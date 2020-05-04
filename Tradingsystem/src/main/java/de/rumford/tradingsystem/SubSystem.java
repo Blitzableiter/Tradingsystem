@@ -99,6 +99,8 @@ public class SubSystem {
 	}
 
 	private RuleContainer subdivideRules(Rule[] rules) {
+		// TODO Baum von den Blättern her zu Containern à 3 zusammenfassen, dann Array
+		// der Container rekursiv eingeben.
 		RuleContainer returnRules = null;
 		if (rules.length <= 3)
 			return new RuleContainer(rules, null);
