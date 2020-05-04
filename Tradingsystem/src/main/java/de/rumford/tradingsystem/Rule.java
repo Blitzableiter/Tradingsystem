@@ -365,19 +365,8 @@ public abstract class Rule {
 				throw new IllegalArgumentException(
 						"Correlations cannot be calculated due to illegal values in given variations.");
 
-			double[] weights = {};
-			/*
-			 * Catch three correlations of 1 as they will break calculateWeights(double[])
-			 */
-			if (correlations[0] == 1 && correlations[0] == correlations[1] && correlations[0] == correlations[2]) {
-				double correlationOfOneThird = 1d / 3d;
-				weights = ArrayUtils.add(weights, correlationOfOneThird);
-				weights = ArrayUtils.add(weights, correlationOfOneThird);
-				weights = ArrayUtils.add(weights, correlationOfOneThird);
-			} else {
-				/* Find the weights corresponding to the calculated correlations. */
-				weights = Rule.calculateWeights(correlations);
-			}
+			/* Find the weights corresponding to the calculated correlations. */
+			double[] weights = Rule.calculateWeightsForThreeCorrelations(correlations);
 
 			/* Set the weights of the underlying variations */
 			for (int i = 0; i < weights.length; i++) {
@@ -390,25 +379,54 @@ public abstract class Rule {
 	/**
 	 * Calculate the weights that should be given to the rows of values making up
 	 * the given correlations. Expects an array of length 3, where position 0 holds
-	 * the correlation of rows A and B, position 1 holds the correlation for rows B
-	 * and C, and position 2 holds the correlation for rows C and A.
+	 * the correlation of rows A and B, position 1 holds the correlation for rows A
+	 * and C, and position 2 holds the correlation for rows B and C.
 	 * 
 	 * @param correlations {@code double[]} Three values representing the
 	 *                     correlations between the rows A, B and C. The expected
 	 *                     array is constructed as follows: { corr_AB, corr_AC,
-	 *                     corr_BC }.
+	 *                     corr_BC }. Must not be null. Must have a length of 3.
+	 *                     Must contain values {@code !Double.NaN} and
+	 *                     {@code -1 <= value <= 1}.
 	 * @return {@code double[]} The calculated weights { w_A, w_B, w_C }.
-	 * @throws IllegalArgumentException if a correlation value is < -1 or > 1.
+	 * @throws IllegalArgumentException if any of the specs above is not met.
 	 */
-	private static double[] calculateWeights(double[] correlations) {
-		/*
-		 * Correlation values are within the bounds of -1 and +1. Other values cannot be
-		 * real correlation values.
-		 */
+	public static double[] calculateWeightsForThreeCorrelations(double[] correlations) {
+		/* Check if the given array is null */
+		if (correlations == null)
+			throw new IllegalArgumentException("Correlations array must not be null");
+		/* Check if the given array contains exactly three elements. */
+		if (correlations.length != 3)
+			throw new IllegalArgumentException("There must be exactly three correlation values in the given array");
+
+		/* Check all given values inside the array */
+		for (int i = 0; i < correlations.length; i++) {
+			if (Double.isNaN(correlations[i]))
+				throw new IllegalArgumentException(
+						"NaN-values are not allowed. Correlation at position " + i + " is NaN.");
+			if (correlations[i] > 1)
+				throw new IllegalArgumentException("Correlation at position " + i + " is greater than 1");
+			if (correlations[i] < -1)
+				throw new IllegalArgumentException("Correlation at position " + i + " is less than -1");
+		}
+
 		for (int i = 0; i < correlations.length; i++) {
 			/* Floor negative correlations at 0 (See Carver: "Systematic Trading", p. 79) */
 			if (correlations[i] < 0)
 				correlations[i] = 0;
+		}
+
+		double[] weights = {};
+		/*
+		 * Catch three equal correlations. Three correlations of 1 each would break
+		 * further calculation.
+		 */
+		if (correlations[0] == correlations[1] && correlations[0] == correlations[2]) {
+			double correlationOfOneThird = 1d / 3d;
+			weights = ArrayUtils.add(weights, correlationOfOneThird);
+			weights = ArrayUtils.add(weights, correlationOfOneThird);
+			weights = ArrayUtils.add(weights, correlationOfOneThird);
+			return weights;
 		}
 
 		/* Get the average correlation each row of values has */
@@ -428,13 +446,12 @@ public abstract class Rule {
 		/* Calculate the sum of average calculations. */
 		double sumOfAverageCorrelations = DoubleStream.of(averageCorrelations).sum();
 
-		double[] weights = new double[averageCorrelations.length];
 		/*
 		 * Normalize the average correlations so they sum up to 1. These normalized
 		 * values are the weights.
 		 */
 		for (int i = 0; i < averageCorrelations.length; i++)
-			weights[i] = averageCorrelations[i] / sumOfAverageCorrelations;
+			weights = ArrayUtils.add(weights, averageCorrelations[i] / sumOfAverageCorrelations);
 
 		return weights;
 	}

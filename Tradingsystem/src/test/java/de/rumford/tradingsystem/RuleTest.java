@@ -240,6 +240,121 @@ class RuleTest {
 	}
 
 	/**
+	 * Test method for {@link Rule#calculateWeightsForThreeCorrelations(double[])}.
+	 */
+	@Test
+	void testCalculateWeightsForThreeCorrelations() {
+		// Excel: 0.3, 0.366666666666667, 0.333333333333333
+		double[] expectedValue = { .3, 0.3666666666666667, 1d / 3d };
+		double[] correlations = { .5, .6, .4 };
+
+		double[] actualValue = Rule.calculateWeightsForThreeCorrelations(correlations);
+
+		assertArrayEquals(expectedValue, actualValue, "Weights for 3 correlations are not correctly calculated");
+	}
+
+	/**
+	 * Test method for {@link Rule#calculateWeightsForThreeCorrelations(double[])}.
+	 */
+	@Test
+	void testCalculateWeightsForThreeCorrelations_negativeCorrelations() {
+		double[] correlations1 = { .5, .6, -.4 };
+		double[] correlations2 = { .5, .6, 0 };
+
+		double[] actualValue1 = Rule.calculateWeightsForThreeCorrelations(correlations1);
+		double[] actualValue2 = Rule.calculateWeightsForThreeCorrelations(correlations2);
+
+		assertArrayEquals(actualValue1, actualValue2, "Weights for negative correlations are not correctly calculated");
+	}
+
+	/**
+	 * Test method for {@link Rule#calculateWeightsForThreeCorrelations(double[])}.
+	 */
+	@Test
+	void testCalculateWeightsForThreeCorrelations_threeEqualWeights() {
+		double[] expectedValue = { 1d / 3d, 1d / 3d, 1d / 3d };
+		double[] correlations = { 1, 1, 1 };
+
+		double[] actualValue = Rule.calculateWeightsForThreeCorrelations(correlations);
+
+		assertArrayEquals(expectedValue, actualValue, "Weights for 3 equal correlations are not correctly calculated");
+	}
+
+	/**
+	 * Test method for {@link Rule#calculateWeightsForThreeCorrelations(double[])}.
+	 */
+	@Test
+	void testCalculateWeightsForThreeCorrelations_arrayNull() {
+		String expectedMessage = "Correlations array must not be null";
+		double[] correlations = null;
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> Rule.calculateWeightsForThreeCorrelations(correlations), "Array of null is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#calculateWeightsForThreeCorrelations(double[])}.
+	 */
+	@Test
+	void testCalculateWeightsForThreeCorrelations_arrayOfLengthNotThree() {
+		String expectedMessage = "There must be exactly three correlation values in the given array";
+		double[] correlations = { 0, 0 };
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> Rule.calculateWeightsForThreeCorrelations(correlations),
+				"Array of length != 3 is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#calculateWeightsForThreeCorrelations(double[])}.
+	 */
+	@Test
+	void testCalculateWeightsForThreeCorrelations_arrayContainsNan() {
+		String expectedMessage = "NaN-values are not allowed. Correlation at position 1 is NaN.";
+		double[] correlations = { 0, Double.NaN, 0 };
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> Rule.calculateWeightsForThreeCorrelations(correlations),
+				"Array containing Double.NaN is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#calculateWeightsForThreeCorrelations(double[])}.
+	 */
+	@Test
+	void testCalculateWeightsForThreeCorrelations_arrayContainsValueGreaterThan1() {
+		String expectedMessage = "Correlation at position 1 is greater than 1";
+		double[] correlations = { 0, 2, 0 };
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> Rule.calculateWeightsForThreeCorrelations(correlations),
+				"Array containing values greater than 1 is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#calculateWeightsForThreeCorrelations(double[])}.
+	 */
+	@Test
+	void testCalculateWeightsForThreeCorrelations_arrayContainsValueLessThanNegative1() {
+		String expectedMessage = "Correlation at position 1 is less than -1";
+		double[] correlations = { 0, -2, 0 };
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> Rule.calculateWeightsForThreeCorrelations(correlations),
+				"Array containing values less than -1 is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
 	 * Test method for {@link Rule#weighVariations()}.
 	 */
 	@Test
