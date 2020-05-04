@@ -11,25 +11,62 @@ package de.rumford.tradingsystem;
  */
 public class SubSystem {
 
-	private Rule[] rules;
 	private BaseValue baseValue;
+	private RuleContainer ruleContainers;
+	private DiversificationMultiplier diversificationMultiplier;
 	private double capital;
 	private double weight;
-	private DiversificationMultiplier diversificationMultiplier;
 
 	/**
 	 * 
 	 */
-	public SubSystem(BaseValue baseValue, Rule[] rules, double capital) throws IllegalArgumentException {
-		this.evaluateAndSetRules(rules);
+	public SubSystem(BaseValue baseValue, Rule[] rules, double capital) {
+		this.evaluateRules(rules);
 
 		this.setBaseValue(baseValue);
 		this.setCapital(capital);
-
-		/* Calculates and recursively sets weights for all rules and their variations */
-		this.calculateRuleWeights();
 	}
 
+	private class RuleContainer {
+		public RuleContainer(Rule[] rules, RuleContainer[] ruleContainers) {
+			this.setRules(rules);
+			this.setRuleContainers(ruleContainers);
+		}
+
+		private Rule[] rules;
+		private RuleContainer[] ruleContainers;
+
+		public boolean hasRules() {
+			return this.getRules() != null;
+		}
+
+		public boolean hasSubRules() {
+			return this.getRulesContainers() != null;
+		}
+
+		public Rule[] getRules() {
+			return rules;
+		}
+
+		private void setRules(Rule[] rules) {
+			this.rules = rules;
+		}
+
+		public RuleContainer[] getRulesContainers() {
+			return ruleContainers;
+		}
+
+		private void setRuleContainers(RuleContainer[] ruleContainers) {
+			this.ruleContainers = ruleContainers;
+		}
+	}
+
+	/**
+	 * Check if the given rules are unique by utilizing {@link Rule#equals(Object)}
+	 * 
+	 * @param rules {@code Rule} An array of rules to be check for uniqueness.
+	 * @return {@code boolean} True, if the rules are unique. False otherwise.
+	 */
 	public boolean areRulesUnique(Rule[] rules) {
 		for (int i = 0; i < rules.length - 1; i++) {
 			if (rules[i].equals(rules[i + 1])) {
@@ -45,19 +82,31 @@ public class SubSystem {
 	 * @param rules
 	 * @return
 	 */
-	private boolean evaluateAndSetRules(Rule[] rules) {
+	private boolean evaluateRules(Rule[] rules) {
+		if (rules == null)
+			throw new IllegalArgumentException("Given rules must not be null");
 		if (!areRulesUnique(rules))
 			throw new IllegalArgumentException("The given rules are not unique. Only unique rules can be used.");
 
+		// TODO Verpacken jeder einzelnen Rule in einen RuleContainer
+		// TODO Übergeben des Arrays von RuleContainer nach subdivideRules
+		RuleContainer instanceRules = subdivideRules(rules);
+
 		/* If rules are unique set them. */
-		this.setRules(rules);
+		this.setRules(instanceRules);
 
 		return false;
 	}
 
-	private void calculateRuleWeights() {
-		Rule[] rules = this.getRules();
+	private RuleContainer subdivideRules(Rule[] rules) {
+		RuleContainer returnRules = null;
+		if (rules.length <= 3)
+			return new RuleContainer(rules, null);
 
+		/* number of layers is at this point 2 or higher */
+		int numberOfLayersToGo = rules.length / 3 + 1;
+
+		return returnRules;
 	}
 
 	/**
@@ -65,20 +114,6 @@ public class SubSystem {
 	 * GETTERS AND SETTERS
 	 * ======================================================================
 	 */
-
-	/**
-	 * @return rules SubSystem
-	 */
-	private Rule[] getRules() {
-		return rules;
-	}
-
-	/**
-	 * @param rules the rules to set
-	 */
-	private void setRules(Rule[] rules) {
-		this.rules = rules;
-	}
 
 	/**
 	 * @return baseValue SubSystem
@@ -92,6 +127,34 @@ public class SubSystem {
 	 */
 	private void setBaseValue(BaseValue baseValue) {
 		this.baseValue = baseValue;
+	}
+
+	/**
+	 * @return rules SubSystem
+	 */
+	private RuleContainer getRules() {
+		return ruleContainers;
+	}
+
+	/**
+	 * @param rules the rules to set
+	 */
+	private void setRules(RuleContainer ruleContainers) {
+		this.ruleContainers = ruleContainers;
+	}
+
+	/**
+	 * @return diversificationMultiplier SubSystem
+	 */
+	public DiversificationMultiplier getDiversificationMultiplier() {
+		return diversificationMultiplier;
+	}
+
+	/**
+	 * @param diversificationMultiplier the diversificationMultiplier to set
+	 */
+	private void setDiversificationMultiplier(DiversificationMultiplier diversificationMultiplier) {
+		this.diversificationMultiplier = diversificationMultiplier;
 	}
 
 	/**
@@ -120,20 +183,6 @@ public class SubSystem {
 	 */
 	private void setWeight(double weight) {
 		this.weight = weight;
-	}
-
-	/**
-	 * @return diversificationMultiplier SubSystem
-	 */
-	public DiversificationMultiplier getDiversificationMultiplier() {
-		return diversificationMultiplier;
-	}
-
-	/**
-	 * @param diversificationMultiplier the diversificationMultiplier to set
-	 */
-	private void setDiversificationMultiplier(DiversificationMultiplier diversificationMultiplier) {
-		this.diversificationMultiplier = diversificationMultiplier;
 	}
 
 }
