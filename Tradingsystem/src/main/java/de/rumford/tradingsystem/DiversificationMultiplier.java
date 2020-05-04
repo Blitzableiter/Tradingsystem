@@ -19,6 +19,21 @@ public class DiversificationMultiplier {
 	private double[][] relevantForecasts;
 	private double[][] correlations;
 
+	/**
+	 * Constructor for the class DiversificationMultiplier (DM). A DM is always only
+	 * valid for a given set of rules (which should be, but don't have to be,
+	 * unique). There rules must be known upon instantiation of a new DM. Based on
+	 * the given rules the DM value is calculated, using the relative weights of all
+	 * given rules (relative based on their placing inside the rules tree).
+	 * <p>
+	 * There can be as many rules in the given array as desired, though the desired
+	 * ratio between rules (and their respective weights, which shrink with each new
+	 * layer) and their significance to the whole system should be accounted for and
+	 * is at the user's discretion.
+	 * 
+	 * @param rules {@code Rule[]} An array of {@link Rule}s to be accounted for in
+	 *              this DM.
+	 */
 	public DiversificationMultiplier(Rule[] rules) {
 		this.setWeights(getWeightsFromRules(rules));
 		this.setRelevantForecasts(getRelevantForecastsFromRules(rules));
@@ -29,7 +44,9 @@ public class DiversificationMultiplier {
 	}
 
 	/**
-	 * Recursively get the weights from the given array of Rules.
+	 * Recursively get the weights from the given array of Rules. Uses the same
+	 * algorithm for determination as
+	 * {@link #getRelevantForecastsFromRules(Rule[])}.
 	 * 
 	 * @param rules {@code Rule[]} The array of rules to be searched.
 	 * @return {@code double[]} The extracted from the given array of Rules.
@@ -51,7 +68,8 @@ public class DiversificationMultiplier {
 	}
 
 	/**
-	 * Recursively get the weights from the given array of Rules.
+	 * Recursively get the relevant forecasts from the given array of Rules. Uses
+	 * the same algorithm for determination as {@link #getWeightsFromRules(Rule[])}
 	 * 
 	 * @param rules {@code Rule[]} The array of rules to be searched.
 	 * @return {@code double[]} The extracted from the given array of Rules.
@@ -72,6 +90,13 @@ public class DiversificationMultiplier {
 		return relevantForecasts;
 	}
 
+	/**
+	 * Calculate the correlations from the given array of forecast arrays.
+	 * 
+	 * @param forecasts {@code double[][]} The forecasts to be used for calculation.
+	 * @return {@code double[][]} A matrix of correlations, as by
+	 *         {@link PearsonsCorrelation#getCorrelationMatrix()}.
+	 */
 	private static double[][] getCorrelationsFromForecasts(double[][] forecasts) {
 		/* Load the given values into rows of a matrix */
 		BlockRealMatrix matrix = new BlockRealMatrix(forecasts);
@@ -97,7 +122,7 @@ public class DiversificationMultiplier {
 	 *                                  correlations: same amount of rows and
 	 *                                  columns
 	 */
-	public double calculateDiversificiationMultiplierValue() {
+	private double calculateDiversificiationMultiplierValue() {
 		double[][] instanceCorrelations = this.getCorrelations();
 		double[] instanceWeights = this.getWeights();
 

@@ -96,20 +96,6 @@ class RuleTest {
 	}
 
 	/**
-	 * Test method for {@link Rule#calculateForecastScalar()}.
-	 */
-	@Test
-	void testCalculateForecastScalar_FC0() {
-		double expectedValue = 0;
-
-		realRule = new RealRule(BaseValueFactory.jan1Jan31allVal0calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
-		double actualValue = realRule.getForecastScalar();
-
-		assertEquals(expectedValue, actualValue, "Forecast scalar of zero is not correctly calculated");
-	}
-
-	/**
 	 * Test method for {@link Rule#calculateScaledForecasts()}.
 	 */
 	@Test
@@ -287,7 +273,7 @@ class RuleTest {
 	 */
 	@Test
 	void testCalculateForecastScalar_referenceWindowContainsIllegalValues() {
-		String expectedMessage = "Illegal values in calulated forecast values. Given reference window might be off.";
+		String expectedMessage = "Illegal values in calulated forecast values. Adjust reference window.";
 		double variator3 = 1;
 		RealRule var3 = new RealRule(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
 				localDateTimeJan01220000, localDateTimeJan03220000, BASE_SCALE, variator3);

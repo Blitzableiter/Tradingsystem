@@ -65,7 +65,7 @@ public final class Util {
 	 *                                  values is zero
 	 * @throws IllegalArgumentException if the given baseScale is zero
 	 */
-	public static double calculateForecastScalar(double[] values, double baseScale) throws IllegalArgumentException {
+	public static double calculateForecastScalar(double[] values, double baseScale) {
 		if (values.length == 0)
 			throw new IllegalArgumentException("Given array of values must not be empty");
 
@@ -129,7 +129,7 @@ public final class Util {
 	 *                                  the same length.
 	 * 
 	 */
-	public static double[] calculateCorrelationsOfRows(double[][] valuesMatrix) {
+	public static double[] calculateCorrelationOfRows(double[][] valuesMatrix) {
 		/*
 		 * If one of the rows contains all identical values no correlation can be
 		 * calculated, as a division by zero will occur in correlations calculation.
@@ -159,8 +159,6 @@ public final class Util {
 					correlations = ArrayUtils.add(correlations, correlationMatrix.getEntry(rowIndex, columnIndex));
 			}
 		}
-
 		return correlations;
 	}
-
 }

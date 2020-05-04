@@ -19,6 +19,7 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
  */
 public class BaseValue {
 
+	private static final int LOOKBACK_WINDOW = 25;
 	private static final double SHORT_INDEX_INITIAL_VALUE = 1000d;
 
 	private String name;
@@ -133,7 +134,7 @@ public class BaseValue {
 		}
 
 		/* Instantiate the EWMA used for the standard deviation. */
-		EWMA ewmaOfStandardDeviation = new EWMA(squaredReturns, 25);
+		EWMA ewmaOfStandardDeviation = new EWMA(squaredReturns, LOOKBACK_WINDOW);
 
 		/*
 		 * The first value is always Double.NaN, as the first value cannot have standard
@@ -163,7 +164,7 @@ public class BaseValue {
 	 * @param values {@code ValueDateTupel[]} The given array of values.
 	 * @throws IllegalArgumentException if the specifications above are not met.
 	 */
-	static void validateDates(ValueDateTupel[] values) throws IllegalArgumentException {
+	public static void validateDates(ValueDateTupel[] values) {
 		/*
 		 * The values cannot be used if they are not in ascending order.
 		 */
@@ -185,7 +186,7 @@ public class BaseValue {
 	 * @throws IllegalArgumentException if the given array does not meet the above
 	 *                                  specifications.
 	 */
-	static void validateValues(ValueDateTupel[] values) {
+	public static void validateValues(ValueDateTupel[] values) {
 		/* Check if passed values array contains elements */
 		if (values.length == 0)
 			throw new IllegalArgumentException("Values must not be an empty array");

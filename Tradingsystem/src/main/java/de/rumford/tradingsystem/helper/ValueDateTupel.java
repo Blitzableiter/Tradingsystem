@@ -112,7 +112,7 @@ public class ValueDateTupel {
 	 * @throws IllegalArgumentException If the given array is null.
 	 * @throws IllegalArgumentException If the given array contains null values.
 	 */
-	public static boolean isSortedDescending(ValueDateTupel[] valueDateTupels) throws IllegalArgumentException {
+	public static boolean isSortedDescending(ValueDateTupel[] valueDateTupels) {
 		if (valueDateTupels == null)
 			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
 		if (ValueDateTupel.contains(valueDateTupels, null))
@@ -156,7 +156,7 @@ public class ValueDateTupel {
 	 * @throws IllegalArgumentException If the one of the given arrays contains only
 	 *                                  {@link Double#NaN}.
 	 */
-	public static ValueDateTupel[][] alignDates(ValueDateTupel[][] valueDateTupels) throws IllegalArgumentException {
+	public static ValueDateTupel[][] alignDates(ValueDateTupel[][] valueDateTupels) {
 		if (valueDateTupels == null)
 			throw new IllegalArgumentException("Given array of arrays must not be null");
 
@@ -347,12 +347,9 @@ public class ValueDateTupel {
 					valueDateTupels[rowIndex][fieldIndex].setValue(valueToBeSet);
 					fieldIndex++;
 				}
-
 			}
 		}
-
 		return valueDateTupels;
-
 	}
 
 	/**
@@ -475,45 +472,6 @@ public class ValueDateTupel {
 	}
 
 	/**
-	 * Get all values from an array of {@link ValueDateTupel[]}.
-	 * 
-	 * @param valueDateTupels {@link ValueDateTupel[]} An array of
-	 *                        {@link ValueDateTupel}}.
-	 * @return {@code double[]} An array of values of the given
-	 *         {@link ValueDateTupel[]}. Returns an empty array if the given array
-	 *         is empty.
-	 * @throws IllegalArgumentException if the given array is null.
-	 */
-	public static double[] getValues(ValueDateTupel[] valueDateTupels) throws IllegalArgumentException {
-		if (valueDateTupels == null)
-			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
-		double[] values = {};
-		for (ValueDateTupel tupel : valueDateTupels)
-			values = ArrayUtils.add(values, tupel.getValue());
-		return values;
-	}
-
-	/**
-	 * Get all {@link LocalDateTime} from an array of {@link ValueDateTupel[]}.
-	 * 
-	 * @param valueDateTupels {@link ValueDateTupel[]} An array of
-	 *                        {@link ValueDateTupel}}.
-	 * @return {@code LocalDateTime[]} An array of {@link LocalDateTime} of the
-	 *         given {@link ValueDateTupel[]}. Returns an empty array if the given
-	 *         array is empty.
-	 * @throws IllegalArgumentException if the given array is null.
-	 */
-	public static LocalDateTime[] getDates(ValueDateTupel[] valueDateTupels) throws IllegalArgumentException {
-		if (valueDateTupels == null)
-			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
-		LocalDateTime[] values = {};
-		for (ValueDateTupel tupel : valueDateTupels) {
-			values = ArrayUtils.add(values, tupel.getDate());
-		}
-		return values;
-	}
-
-	/**
 	 * Get all elements between two given DateTimes (inclusive) from the given
 	 * array. If null is passed for either LocalDateTime, the representing border
 	 * will be set to the boundaries of the given array.
@@ -561,6 +519,45 @@ public class ValueDateTupel {
 		}
 		/* ... and return them. */
 		return elements;
+	}
+
+	/**
+	 * Get all values from an array of {@link ValueDateTupel[]}.
+	 * 
+	 * @param valueDateTupels {@link ValueDateTupel[]} An array of
+	 *                        {@link ValueDateTupel}}.
+	 * @return {@code double[]} An array of values of the given
+	 *         {@link ValueDateTupel[]}. Returns an empty array if the given array
+	 *         is empty.
+	 * @throws IllegalArgumentException if the given array is null.
+	 */
+	public static double[] getValues(ValueDateTupel[] valueDateTupels) {
+		if (valueDateTupels == null)
+			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
+		double[] values = {};
+		for (ValueDateTupel tupel : valueDateTupels)
+			values = ArrayUtils.add(values, tupel.getValue());
+		return values;
+	}
+
+	/**
+	 * Get all {@link LocalDateTime} from an array of {@link ValueDateTupel[]}.
+	 * 
+	 * @param valueDateTupels {@link ValueDateTupel[]} An array of
+	 *                        {@link ValueDateTupel}}.
+	 * @return {@code LocalDateTime[]} An array of {@link LocalDateTime} of the
+	 *         given {@link ValueDateTupel[]}. Returns an empty array if the given
+	 *         array is empty.
+	 * @throws IllegalArgumentException if the given array is null.
+	 */
+	public static LocalDateTime[] getDates(ValueDateTupel[] valueDateTupels) {
+		if (valueDateTupels == null)
+			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
+		LocalDateTime[] values = {};
+		for (ValueDateTupel tupel : valueDateTupels) {
+			values = ArrayUtils.add(values, tupel.getDate());
+		}
+		return values;
 	}
 
 	/**

@@ -57,6 +57,20 @@ public class EWMAC extends Rule {
 	}
 
 	/**
+	 * Calculates the raw forecast for a given LocalDateTime by subtracting the long
+	 * horizon EWMA value from the short horizon EWMA value for this LocalDateTime.
+	 */
+	@Override
+	double calculateRawForecast(LocalDateTime forecastDateTime) {
+		double longHorizonEwmaValue = ValueDateTupel
+				.getElement(this.getLongHorizonEwma().getEwmaValues(), forecastDateTime).getValue();
+		double shortHorizonEwmaValue = ValueDateTupel
+				.getElement(this.getShortHorizonEwma().getEwmaValues(), forecastDateTime).getValue();
+
+		return shortHorizonEwmaValue - longHorizonEwmaValue;
+	}
+
+	/**
 	 * Validate the given longHorizon and shortHorizon values.
 	 * 
 	 * @param longHorizon  {@code int} The given long horizon.
@@ -74,18 +88,10 @@ public class EWMAC extends Rule {
 	}
 
 	/**
-	 * Calculates the raw forecast for a given LocalDateTime by subtracting the long
-	 * horizon EWMA value from the short horizon EWMA value for this LocalDateTime.
+	 * ======================================================================
+	 * OVERRIDES
+	 * ======================================================================
 	 */
-	@Override
-	double calculateRawForecast(LocalDateTime forecastDateTime) {
-		double longHorizonEwmaValue = ValueDateTupel
-				.getElement(this.getLongHorizonEwma().getEwmaValues(), forecastDateTime).getValue();
-		double shortHorizonEwmaValue = ValueDateTupel
-				.getElement(this.getShortHorizonEwma().getEwmaValues(), forecastDateTime).getValue();
-
-		return shortHorizonEwmaValue - longHorizonEwmaValue;
-	}
 
 	@GeneratedCode
 	@Override

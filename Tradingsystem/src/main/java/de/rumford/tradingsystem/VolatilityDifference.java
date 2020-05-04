@@ -118,6 +118,108 @@ public class VolatilityDifference extends Rule {
 		this.setVolatilityIndices(volatilityIndices);
 	}
 
+	@Override
+	double calculateRawForecast(LocalDateTime forecastDateTime) {
+		double currentVolatilty = ValueDateTupel.getElement(this.getVolatilityIndices(), forecastDateTime).getValue();
+		return calculateAverageVolatility(forecastDateTime) - currentVolatilty;
+	}
+
+	/**
+	 * Calculate the volatility index values for this {@link VolatilityDifference}.
+	 * If the lookback window is longer than there are base values, an empty
+	 * {@link ValueDateTupel[]} is returned.
+	 * 
+	 * @return {@link ValueDateTupel[]} calculated volatility indices. If the number
+	 *         of values in the instance base value is smaller than the lookback
+	 *         window the returned array only contains {@code Double.NaN}. Else, all
+	 *         values until the lookback window is reached contain
+	 *         {@code Double.NaN}, the rest contains real volatility index values.
+	 */
+	private static ValueDateTupel[] calculateVolatilityIndices(BaseValue baseValue, int lookbackWindow) {
+		ValueDateTupel[] baseValues = baseValue.getValues();
+
+		ValueDateTupel[] volatilityIndices = null;
+
+		/**
+		 * If there are less base values than the lookback window is long no volatility
+		 * values can be calculated. The volatility values only have any true meaning,
+		 * when the lookback window is used in its entirety.
+		 */
+		if (baseValues.length < lookbackWindow)
+			throw new IllegalArgumentException(
+					"The amount of base values must not be smaller than the lookback window. Number of base values: "
+							+ baseValues.length + ", lookback window: " + lookbackWindow + ".");
+
+		/**
+		 * Fill the spaces before reaching lookbackWindow with NaN
+		 */
+		for (int i = 0; i < lookbackWindow; i++) {
+			ValueDateTupel volatilityIndexNaN = new ValueDateTupel(baseValues[i].getDate(), Double.NaN);
+			volatilityIndices = ArrayUtils.add(volatilityIndices, volatilityIndexNaN);
+		}
+
+		/**
+		 * Start calculation with first adequate time value (after lookback window is
+		 * reached), e.g. lookbackWindow = 4, start with index 2 (4th element), as the
+		 * returns of each day will be needed.
+		 */
+		for (int i = lookbackWindow; i < baseValues.length; i++) {
+			/* Copy the relevant values into a temporary array */
+			ValueDateTupel[] tempBaseValues = ValueDateTupel.createEmptyArray(lookbackWindow + 1);
+			System.arraycopy(baseValues, /* source array */
+					i - (lookbackWindow), /* source array position (starting position for copy) */
+					tempBaseValues, /* destination array */
+					0, /* destination position (starting position for paste) */
+					lookbackWindow + 1/* length (number of values to copy */
+			);
+
+			/* Calculate relevant returns and store them into an array. */
+			double[] tempDoubleValues = {};
+			for (int j = 1; j < tempBaseValues.length; j++) {
+				double returnForDayI = Util.calculateReturn(tempBaseValues[j - 1].getValue(),
+						tempBaseValues[j].getValue());
+				tempDoubleValues = ArrayUtils.add(tempDoubleValues, returnForDayI);
+			}
+
+			/* Calculate standard deviation and save into local variable */
+			StandardDeviation sd = new StandardDeviation();
+			double volatilityIndexValue = sd.evaluate(tempDoubleValues);
+
+			ValueDateTupel volatilityIndexValueDateTupel = new ValueDateTupel(baseValues[i].getDate(),
+					volatilityIndexValue);
+
+			/* Add calculated standard deviation to volatility indices */
+			volatilityIndices = ArrayUtils.add(volatilityIndices, volatilityIndexValueDateTupel);
+		}
+
+		return volatilityIndices;
+	}
+
+	/**
+	 * Calculate the average volatility for a given {@link LocalDateTime}.
+	 * 
+	 * @param dateToBeCalculatedFor {@link LocalDateTime} The LocalDateTime the
+	 *                              average volatility is to be calculated for.
+	 * @return {@code double} The average volatility up until the given
+	 *         LocalDateTime.
+	 */
+	private double calculateAverageVolatility(LocalDateTime dateToBeCalculatedFor) {
+		/* Starting point is the first DateTime that exceeds the lookback window. */
+		LocalDateTime startingDateTime = this.getVolatilityIndices()[this.getLookbackWindow()].getDate();
+
+		/* Get all relevant volatility index values */
+		ValueDateTupel[] relevantVolatilityIndices = ValueDateTupel.getElements(this.getVolatilityIndices(),
+				startingDateTime, dateToBeCalculatedFor);
+
+		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();
+		/* Extract all relevant values into statistics object */
+		for (ValueDateTupel volatilityIndex : relevantVolatilityIndices)
+			stats.accept(volatilityIndex.getValue());
+
+		/* Put average value of relevant values into class variable */
+		return stats.getAverage();
+	}
+
 	/**
 	 * Validates the given base value to the purposes of volatility index
 	 * calculation.
@@ -221,107 +323,11 @@ public class VolatilityDifference extends Rule {
 					+ " Utilize ValueDateTupel.alignDates(ValueDateTupel[][]) before creating a new VolatilityDifference.");
 	}
 
-	@Override
-	double calculateRawForecast(LocalDateTime forecastDateTime) {
-		double currentVolatilty = ValueDateTupel.getElement(this.getVolatilityIndices(), forecastDateTime).getValue();
-		return calculateAverageVolatility(forecastDateTime) - currentVolatilty;
-	}
-
 	/**
-	 * Calculate the volatility index values for this {@link VolatilityDifference}.
-	 * If the lookback window is longer than there are base values, an empty
-	 * {@link ValueDateTupel[]} is returned.
-	 * 
-	 * @return {@link ValueDateTupel[]} calculated volatility indices. If the number
-	 *         of values in the instance base value is smaller than the lookback
-	 *         window the returned array only contains {@code Double.NaN}. Else, all
-	 *         values until the lookback window is reached contain
-	 *         {@code Double.NaN}, the rest contains real volatility index values.
+	 * ======================================================================
+	 * OVERRIDES
+	 * ======================================================================
 	 */
-	private static ValueDateTupel[] calculateVolatilityIndices(BaseValue baseValue, int lookbackWindow) {
-		ValueDateTupel[] baseValues = baseValue.getValues();
-
-		ValueDateTupel[] volatilityIndices = null;
-
-		/**
-		 * If there are less base values than the lookback window is long no volatility
-		 * values can be calculated. The volatility values only have any true meaning,
-		 * when the lookback window is used in its entirety.
-		 */
-		if (baseValues.length < lookbackWindow)
-			throw new IllegalArgumentException(
-					"The amount of base values must not be smaller than the lookback window. Number of base values: "
-							+ baseValues.length + ", lookback window: " + lookbackWindow + ".");
-
-		/**
-		 * Fill the spaces before reaching lookbackWindow with NaN
-		 */
-		for (int i = 0; i < lookbackWindow; i++) {
-			ValueDateTupel volatilityIndexNaN = new ValueDateTupel(baseValues[i].getDate(), Double.NaN);
-			volatilityIndices = ArrayUtils.add(volatilityIndices, volatilityIndexNaN);
-		}
-
-		/**
-		 * Start calculation with first adequate time value (after lookback window is
-		 * reached), e.g. lookbackWindow = 4, start with index 2 (4th element), as the
-		 * returns of each day will be needed.
-		 */
-		for (int i = lookbackWindow; i < baseValues.length; i++) {
-			/* Copy the relevant values into a temporary array */
-			ValueDateTupel[] tempBaseValues = ValueDateTupel.createEmptyArray(lookbackWindow + 1);
-			System.arraycopy(baseValues, /* source array */
-					i - (lookbackWindow), /* source array position (starting position for copy) */
-					tempBaseValues, /* destination array */
-					0, /* destination position (starting position for paste) */
-					lookbackWindow + 1/* length (number of values to copy */
-			);
-
-			/* Calculate relevant returns and store them into an array. */
-			double[] tempDoubleValues = {};
-			for (int j = 1; j < tempBaseValues.length; j++) {
-				double returnForDayI = Util.calculateReturn(tempBaseValues[j - 1].getValue(),
-						tempBaseValues[j].getValue());
-				tempDoubleValues = ArrayUtils.add(tempDoubleValues, returnForDayI);
-			}
-
-			/* Calculate standard deviation and save into local variable */
-			StandardDeviation sd = new StandardDeviation();
-			double volatilityIndexValue = sd.evaluate(tempDoubleValues);
-
-			ValueDateTupel volatilityIndexValueDateTupel = new ValueDateTupel(baseValues[i].getDate(),
-					volatilityIndexValue);
-
-			/* Add calculated standard deviation to volatility indices */
-			volatilityIndices = ArrayUtils.add(volatilityIndices, volatilityIndexValueDateTupel);
-		}
-
-		return volatilityIndices;
-	}
-
-	/**
-	 * Calculate the average volatility for a given {@link LocalDateTime}.
-	 * 
-	 * @param dateToBeCalculatedFor {@link LocalDateTime} The LocalDateTime the
-	 *                              average volatility is to be calculated for.
-	 * @return {@code double} The average volatility up until the given
-	 *         LocalDateTime.
-	 */
-	private double calculateAverageVolatility(LocalDateTime dateToBeCalculatedFor) {
-		/* Starting point is the first DateTime that exceeds the lookback window. */
-		LocalDateTime startingDateTime = this.getVolatilityIndices()[this.getLookbackWindow()].getDate();
-
-		/* Get all relevant volatility index values */
-		ValueDateTupel[] relevantVolatilityIndices = ValueDateTupel.getElements(this.getVolatilityIndices(),
-				startingDateTime, dateToBeCalculatedFor);
-
-		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();
-		/* Extract all relevant values into statistics object */
-		for (ValueDateTupel volatilityIndex : relevantVolatilityIndices)
-			stats.accept(volatilityIndex.getValue());
-
-		/* Put average value of relevant values into class variable */
-		return stats.getAverage();
-	}
 
 	@GeneratedCode
 	@Override
@@ -362,6 +368,7 @@ public class VolatilityDifference extends Rule {
 	 * GETTERS AND SETTERS
 	 * ======================================================================
 	 */
+
 	/**
 	 * Get the volatility indices for this {@link VolatilityDifference}.
 	 * 

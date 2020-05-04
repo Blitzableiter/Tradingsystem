@@ -61,62 +61,6 @@ public abstract class Rule {
 	}
 
 	/**
-	 * Method to be called by extending classes to calculate derived values. This
-	 * takes into consideration that not all relevant values might be known upon
-	 * call of Rule constructor.
-	 */
-	private void calculateAndSetDerivedValues() {
-		this.setSdAdjustedForecasts(this.calculateSdAdjustedForecasts());
-		this.setForecastScalar(this.calculateForecastScalar());
-		this.setForecasts(this.calculateScaledForecasts());
-	}
-
-	/**
-	 * Validates if the given instance variables meet specifications.
-	 * 
-	 * @param baseValue              {@link BaseValue} The base value to be used in
-	 *                               this rule's calculations.
-	 * @param startOfReferenceWindow {@link LocalDateTime} The first LocalDateTime
-	 *                               to be considered in calculations such as
-	 *                               forecast scalar.
-	 * @param endOfReferenceWindow   {@link LocalDateTime} The last LocalDateTime to
-	 *                               be considered in calculations such as forecast
-	 *                               scalar.
-	 * @param baseScale              {@code double} How the forecasts shall be
-	 *                               scaled.
-	 */
-	private void validateInputs(BaseValue baseValue, LocalDateTime startOfReferenceWindow,
-			LocalDateTime endOfReferenceWindow, double baseScale) {
-		/* Check if base value fulfills requirements. */
-		if (baseValue == null)
-			throw new IllegalArgumentException("Base value must not be null");
-		/* Check if LocalDates are null */
-		if (startOfReferenceWindow == null)
-			throw new IllegalArgumentException("Start of reference window value must not be null");
-		if (endOfReferenceWindow == null)
-			throw new IllegalArgumentException("End of reference window value must not be null");
-		/* Check if reference window is properly defined: end must be after start */
-		if (!endOfReferenceWindow.isAfter(startOfReferenceWindow))
-			throw new IllegalArgumentException(
-					"End of reference window value must be after start of reference window value");
-
-		/*
-		 * The given startOfReferenceWindow must be included in the given base values.
-		 */
-		if (!ValueDateTupel.containsDate(baseValue.getValues(), startOfReferenceWindow))
-			throw new IllegalArgumentException("Base values do not include given start value for reference window");
-		/*
-		 * The given startOfReferenceWindow must be included in the given base values.
-		 */
-		if (!ValueDateTupel.containsDate(baseValue.getValues(), endOfReferenceWindow))
-			throw new IllegalArgumentException("Base values do not include given end value for reference window");
-
-		/* Check for a meaningful scale. */
-		if (baseScale <= 0)
-			throw new IllegalArgumentException("The given baseScale must a positiv non-zero decimal.");
-	}
-
-	/**
 	 * Calculates the raw forecast of this rule for a given LocalDateTime. The
 	 * calculation of this value will heavily depend on the type of rule extending
 	 * this abstract class.
@@ -126,6 +70,17 @@ public abstract class Rule {
 	 * @return {@code double} The raw forecast value for the given LocalDateTime.
 	 */
 	abstract double calculateRawForecast(LocalDateTime forecastDateTime);
+
+	/**
+	 * Calculates all values derived from raw forecasts. This takes into
+	 * consideration that not all relevant values might be known upon call of Rule
+	 * constructor.
+	 */
+	private void calculateAndSetDerivedValues() {
+		this.setSdAdjustedForecasts(this.calculateSdAdjustedForecasts());
+		this.setForecastScalar(this.calculateForecastScalar());
+		this.setForecasts(this.calculateScaledForecasts());
+	}
 
 	/**
 	 * Calculates the standard deviation adjusted forecasts for this rule, beginning
@@ -149,6 +104,28 @@ public abstract class Rule {
 					new ValueDateTupel(dt, this.calculateSdAdjustedForecast(dt)));
 		}
 		return calculatedSdAdjustedForecasts;
+	}
+
+	/**
+	 * Calculates the standard deviation adjusted Forecast for a given
+	 * LocalDateTime.
+	 * 
+	 * @param forecastDateTime {@link LocalDateTime} The LocalDateTime the forecast
+	 *                         is to be calculated of.
+	 * @return {@code double} The standard deviation adjusted value. Double.NaN if
+	 *         the standard deviation at the given LocalDateTime is zero.
+	 */
+	private double calculateSdAdjustedForecast(LocalDateTime forecastDateTime) {
+		if (this.hasVariations()) {
+			return Double.NaN;
+		}
+
+		double rawForecast = this.calculateRawForecast(forecastDateTime);
+
+		double sdValue = ValueDateTupel.getElement(this.getBaseValue().getStandardDeviationValues(), forecastDateTime)
+				.getValue();
+
+		return Util.adjustForStandardDeviation(rawForecast, sdValue);
 	}
 
 	/**
@@ -217,7 +194,6 @@ public abstract class Rule {
 					}
 				}
 			}
-			System.out.println(Arrays.toString(calculatedScaledForecasts));
 			return calculatedScaledForecasts;
 		}
 		/*
@@ -235,28 +211,6 @@ public abstract class Rule {
 					new ValueDateTupel(dt, this.calculateScaledForecast(instanceSdAdjustedForecasts[i].getValue())));
 		}
 		return calculatedScaledForecasts;
-	}
-
-	/**
-	 * Calculates the standard deviation adjusted Forecast for a given
-	 * LocalDateTime.
-	 * 
-	 * @param forecastDateTime {@link LocalDateTime} The LocalDateTime the forecast
-	 *                         is to be calculated of.
-	 * @return {@code double} The standard deviation adjusted value. Double.NaN if
-	 *         the standard deviation at the given LocalDateTime is zero.
-	 */
-	private double calculateSdAdjustedForecast(LocalDateTime forecastDateTime) {
-		if (this.hasVariations()) {
-			return Double.NaN;
-		}
-
-		double rawForecast = this.calculateRawForecast(forecastDateTime);
-
-		double sdValue = ValueDateTupel.getElement(this.getBaseValue().getStandardDeviationValues(), forecastDateTime)
-				.getValue();
-
-		return Util.adjustForStandardDeviation(rawForecast, sdValue);
 	}
 
 	/**
@@ -350,42 +304,9 @@ public abstract class Rule {
 		double calculatedForecastScalar = Util.calculateForecastScalar(ValueDateTupel.getValues(relevantForecastValues),
 				instanceBaseScale);
 		if (Double.isNaN(calculatedForecastScalar))
-			throw new IllegalArgumentException(
-					"Illegal values in calulated forecast values. Given reference window might be off.");
+			throw new IllegalArgumentException("Illegal values in calulated forecast values. Adjust reference window.");
 
 		return calculatedForecastScalar;
-	}
-
-	/**
-	 * Checks the given variations. If the given variations is null, null will be
-	 * set. If there are more than 3 variations given an Exception will be thrown.
-	 * 
-	 * If there are null values in the given variations array an Exception will be
-	 * thrown.
-	 * 
-	 * If there are 3 or less variations, they will be weighed utilizing
-	 * {@link #weighVariations()}.
-	 * 
-	 * @param variations {@code Rule[]} The Variations to be checked, set and
-	 *                   weighed.
-	 * @throws IllegalArgumentException if the given array is not null and contains
-	 *                                  more than 3 elements.
-	 * @throws IllegalArgumentException if the given array contains null.
-	 */
-	private void validateSetAndWeighVariations(Rule[] variations) throws IllegalArgumentException {
-		if (variations != null && variations.length > 3)
-			throw new IllegalArgumentException("Each layer must not contain more than 3 rules/variations");
-		this.setVariations(variations);
-		if (variations != null) {
-			for (int i = 0; i < variations.length; i++) {
-				if (variations[i] == null)
-					throw new IllegalArgumentException(
-							"The variation at position " + i + " in the given variations array is null.");
-			}
-
-			/* Only if there are no null variations they can be weighed. */
-			this.weighVariations();
-		}
 	}
 
 	/**
@@ -435,7 +356,7 @@ public abstract class Rule {
 			/* Find the correlations for the given variations. */
 			double[] correlations;
 			try {
-				correlations = Util.calculateCorrelationsOfRows(variationsForecastValues);
+				correlations = Util.calculateCorrelationOfRows(variationsForecastValues);
 			} catch (Exception e) {
 				throw new IllegalArgumentException("Given variations cannot be weighed", e);
 			}
@@ -479,7 +400,7 @@ public abstract class Rule {
 	 * @return {@code double[]} The calculated weights { w_A, w_B, w_C }.
 	 * @throws IllegalArgumentException if a correlation value is < -1 or > 1.
 	 */
-	private static double[] calculateWeights(double[] correlations) throws IllegalArgumentException {
+	private static double[] calculateWeights(double[] correlations) {
 		/*
 		 * Correlation values are within the bounds of -1 and +1. Other values cannot be
 		 * real correlation values.
@@ -530,9 +451,97 @@ public abstract class Rule {
 		return ValueDateTupel.getValues(relevantForecasts);
 	}
 
+	/**
+	 * Evaluates if the current rule has variations.
+	 * 
+	 * @return {@code boolean} True, if the rule has variations. False otherwise.
+	 */
 	public boolean hasVariations() {
 		return this.getVariations() != null;
 	}
+
+	/**
+	 * Validates if the given instance variables meet specifications.
+	 * 
+	 * @param baseValue              {@link BaseValue} The base value to be used in
+	 *                               this rule's calculations.
+	 * @param startOfReferenceWindow {@link LocalDateTime} The first LocalDateTime
+	 *                               to be considered in calculations such as
+	 *                               forecast scalar.
+	 * @param endOfReferenceWindow   {@link LocalDateTime} The last LocalDateTime to
+	 *                               be considered in calculations such as forecast
+	 *                               scalar.
+	 * @param baseScale              {@code double} How the forecasts shall be
+	 *                               scaled.
+	 */
+	private void validateInputs(BaseValue baseValue, LocalDateTime startOfReferenceWindow,
+			LocalDateTime endOfReferenceWindow, double baseScale) {
+		/* Check if base value fulfills requirements. */
+		if (baseValue == null)
+			throw new IllegalArgumentException("Base value must not be null");
+		/* Check if LocalDates are null */
+		if (startOfReferenceWindow == null)
+			throw new IllegalArgumentException("Start of reference window value must not be null");
+		if (endOfReferenceWindow == null)
+			throw new IllegalArgumentException("End of reference window value must not be null");
+		/* Check if reference window is properly defined: end must be after start */
+		if (!endOfReferenceWindow.isAfter(startOfReferenceWindow))
+			throw new IllegalArgumentException(
+					"End of reference window value must be after start of reference window value");
+
+		/*
+		 * The given startOfReferenceWindow must be included in the given base values.
+		 */
+		if (!ValueDateTupel.containsDate(baseValue.getValues(), startOfReferenceWindow))
+			throw new IllegalArgumentException("Base values do not include given start value for reference window");
+		/*
+		 * The given startOfReferenceWindow must be included in the given base values.
+		 */
+		if (!ValueDateTupel.containsDate(baseValue.getValues(), endOfReferenceWindow))
+			throw new IllegalArgumentException("Base values do not include given end value for reference window");
+
+		/* Check for a meaningful scale. */
+		if (baseScale <= 0)
+			throw new IllegalArgumentException("The given baseScale must a positiv non-zero decimal.");
+	}
+
+	/**
+	 * Checks the given variations. If the given variations is null, null will be
+	 * set. If there are more than 3 variations given an Exception will be thrown.
+	 * 
+	 * If there are null values in the given variations array an Exception will be
+	 * thrown.
+	 * 
+	 * If there are 3 or less variations, they will be weighed utilizing
+	 * {@link #weighVariations()}.
+	 * 
+	 * @param variations {@code Rule[]} The Variations to be checked, set and
+	 *                   weighed.
+	 * @throws IllegalArgumentException if the given array is not null and contains
+	 *                                  more than 3 elements.
+	 * @throws IllegalArgumentException if the given array contains null.
+	 */
+	private void validateSetAndWeighVariations(Rule[] variations) {
+		if (variations != null && variations.length > 3)
+			throw new IllegalArgumentException("Each layer must not contain more than 3 rules/variations");
+		this.setVariations(variations);
+		if (variations != null) {
+			for (int i = 0; i < variations.length; i++) {
+				if (variations[i] == null)
+					throw new IllegalArgumentException(
+							"The variation at position " + i + " in the given variations array is null.");
+			}
+
+			/* Only if there are no null variations they can be weighed. */
+			this.weighVariations();
+		}
+	}
+
+	/**
+	 * ======================================================================
+	 * OVERRIDES
+	 * ======================================================================
+	 */
 
 	@GeneratedCode
 	@Override
@@ -631,7 +640,9 @@ public abstract class Rule {
 	}
 
 	/**
-	 * Get the forecast scalar of this rule
+	 * Get the forecast scalar of this rule. Invokes
+	 * {@link #calculateAndSetDerivedValues()} if
+	 * {@code (this.sdAdjustedForecasts == null)} evaluates to {@code true}.
 	 * 
 	 * @return {@code double} forecast scalar of this rule
 	 */

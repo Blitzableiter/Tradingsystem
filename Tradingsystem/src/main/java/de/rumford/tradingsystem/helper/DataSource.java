@@ -212,7 +212,7 @@ public class DataSource {
 	 * @throws IllegalArgumentException if the date given date pattern is not
 	 *                                  recognized.
 	 */
-	public static int[] evaluateDatePattern(CsvFormat format) throws IllegalArgumentException {
+	public static int[] evaluateDatePattern(CsvFormat format) {
 		int monthPosition;
 		int dayPosition;
 		int yearPosition;
@@ -245,7 +245,7 @@ public class DataSource {
 	 * @throws IllegalArgumentException if the passed String cannot be properly
 	 *                                  parsed
 	 */
-	private static double parseCourseValue(String[] columns, CsvFormat format) throws IllegalArgumentException {
+	private static double parseCourseValue(String[] columns, CsvFormat format) {
 		String valueString = columns[0];
 		/* Eliminate thousands separator from String */
 		if (valueString.contains(format.getThousandsSeparator())) {

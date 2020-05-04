@@ -154,7 +154,7 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for {@link Util#calculateCorrelationsOfRows(double[][])}.
+	 * Test method for {@link Util#calculateCorrelationOfRows(double[][])}.
 	 */
 	@Test
 	void testCalculateCorrelationsOfThreeRows() {
@@ -165,27 +165,27 @@ class UtilTest {
 		// Excel: 0.857736784518697, 0.688500766307298, 0.656405176216209
 		double[] expectedValue = { 0.8577367845186973, 0.6885007663072988, 0.6564051762162094 };
 
-		double[] actualValue = Util.calculateCorrelationsOfRows(values);
+		double[] actualValue = Util.calculateCorrelationOfRows(values);
 
 		assertArrayEquals(expectedValue, actualValue, "Correlations between three rows are not correctly calculated");
 	}
 
 	/**
-	 * Test method for {@link Util#calculateCorrelationsOfRows(double[][])}.
+	 * Test method for {@link Util#calculateCorrelationOfRows(double[][])}.
 	 */
 	@Test
 	void testCalculateCorrelationsOfThreeRows_valuesContainsArrayContainingNan() {
 		double[][] values = { { 0, 4 }, { 2, Double.NaN }, { 1, 0.2 } };
 		double[] expectedCorrelations = { Double.NaN, -1, Double.NaN };
 
-		double[] actualCorrelations = Util.calculateCorrelationsOfRows(values);
+		double[] actualCorrelations = Util.calculateCorrelationOfRows(values);
 
 		assertArrayEquals(expectedCorrelations, actualCorrelations,
 				"Correlations containing NaN are not correctly calculated");
 	}
 
 	/**
-	 * Test method for {@link Util#calculateCorrelationsOfRows(double[][])}.
+	 * Test method for {@link Util#calculateCorrelationOfRows(double[][])}.
 	 */
 	@Test
 	void testCalculateCorrelationsOfThreeRows_allEqaulValues() {
@@ -195,7 +195,7 @@ class UtilTest {
 		double[][] values = { row1, row2, row3 };
 		String expectedmessage = "Correlations cannot be calculated caused by all identical values in row at position 0.";
 
-		Exception thrown = assertThrows(IllegalArgumentException.class, () -> Util.calculateCorrelationsOfRows(values),
+		Exception thrown = assertThrows(IllegalArgumentException.class, () -> Util.calculateCorrelationOfRows(values),
 				"Arrays containing all equal values are not properly handled.");
 
 		assertEquals(expectedmessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
