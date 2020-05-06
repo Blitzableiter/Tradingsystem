@@ -57,6 +57,7 @@ class RuleTest {
 	static final String BASE_VALUE_NAME = "Base value name";
 	static final int BASE_SCALE = 10;
 
+	static LocalDateTime localDateTime2019Dec31220000;
 	static LocalDateTime localDateTimeJan01220000;
 	static LocalDateTime localDateTimeJan02220000;
 	static LocalDateTime localDateTimeJan03220000;
@@ -66,11 +67,13 @@ class RuleTest {
 	static LocalDateTime localDateTimeJan10220000;
 	static LocalDateTime localDateTimeJan12220000;
 	static LocalDateTime localDateTimeFeb05220000;
+	static LocalDateTime localDateTime2020Dec31220000;
 
 	@BeforeAll
 	static void setUpBeforeClass() {
 		baseValue = BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME);
 
+		localDateTime2019Dec31220000 = LocalDateTime.of(LocalDate.of(2019, 12, 31), LocalTime.of(22, 0));
 		localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
 		localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
 		localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
@@ -80,6 +83,7 @@ class RuleTest {
 		localDateTimeJan10220000 = LocalDateTime.of(LocalDate.of(2020, 1, 10), LocalTime.of(22, 0));
 		localDateTimeJan12220000 = LocalDateTime.of(LocalDate.of(2020, 1, 12), LocalTime.of(22, 0));
 		localDateTimeFeb05220000 = LocalDateTime.of(LocalDate.of(2020, 2, 5), LocalTime.of(22, 0));
+		localDateTime2020Dec31220000 = LocalDateTime.of(LocalDate.of(2020, 12, 31), LocalTime.of(22, 0));
 	}
 
 	@BeforeEach
@@ -140,6 +144,134 @@ class RuleTest {
 		double actualValue = ValueDateTupel.getElement(realRule.getForecasts(), localDateTimeFeb05220000).getValue();
 
 		assertEquals(expectedValue, actualValue, "Forecasts < -20 are not correctly calculated");
+	}
+
+	/**
+	 * Test method for
+	 * {@link Rule#validateInputs(BaseValue, LocalDateTime, LocalDateTime, double)}.
+	 */
+	@Test
+	void testCalculateVolatilityIndices_baseValue_null() {
+		BaseValue nullBaseValue = null;
+		String expectedMessage = "Base value must not be null";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class, () -> RealRule.from(nullBaseValue, null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator),
+				"Base value of null is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
+	 * LocalDateTime, double}.
+	 */
+	@Test
+	void testValidateInputs_startOfReferenceWindow_null() {
+		String expectedMessage = "Start of reference window value must not be null";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> RealRule.from(baseValue, null, null, localDateTimeJan12220000, BASE_SCALE, variator),
+				"startOfReferenceWindow of null is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
+	 * LocalDateTime, double}.
+	 */
+	@Test
+	void testValidateInputs_endOfReferenceWindow_null() {
+		String expectedMessage = "End of reference window value must not be null";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> RealRule.from(baseValue, null, localDateTimeJan10220000, null, BASE_SCALE, variator),
+				"endOfReferenceWindow of null is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
+	 * LocalDateTime, double}.
+	 */
+	@Test
+	void testValidateInputs_baseScale_0() {
+		String expectedMessage = "The given baseScale must a positiv non-zero decimal.";
+		double zeroBaseScale = 0;
+
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> RealRule.from(baseValue, null, localDateTimeJan10220000,
+						localDateTimeJan12220000, zeroBaseScale, variator),
+				"baseScale of zero is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
+	 * LocalDateTime, double}.
+	 */
+	@Test
+	void testValidateInputs_baseScale_sub0() {
+		String expectedMessage = "The given baseScale must a positiv non-zero decimal.";
+		double subZeroBaseScale = -1;
+
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> RealRule.from(baseValue, null, localDateTimeJan10220000,
+						localDateTimeJan12220000, subZeroBaseScale, variator),
+				"baseScale of less than zero is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
+	 * LocalDateTime, double}.
+	 */
+	@Test
+	void testValidateInputs_endOfReferenceWindow_before_startOfReferenceWindow() {
+		String expectedMessage = "End of reference window value must be after start of reference window value";
+
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> RealRule.from(baseValue, null, localDateTimeJan12220000,
+						localDateTimeJan10220000, BASE_SCALE, variator),
+				"endOfReferenceWindow before startOfReferenceWindow is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
+	 * LocalDateTime, double}.
+	 */
+	@Test
+	void testValidateInputs_illegalStartOfReferenceWindow() {
+		String expectedMessage = "Base values do not include given start value for reference window";
+
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> RealRule.from(baseValue, null, localDateTime2019Dec31220000,
+						localDateTimeJan12220000, BASE_SCALE, variator),
+				"Not included startOfReferenceWindow is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
+	 * LocalDateTime, double}.
+	 */
+	@Test
+	void testValidateInputs_illegalEndOfReferenceWindow() {
+		String expectedMessage = "Base values do not include given end value for reference window";
+
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> RealRule.from(baseValue, null, localDateTimeJan10220000,
+						localDateTime2020Dec31220000, BASE_SCALE, variator),
+				"Not included endOfReferenceWindow is not correctly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
