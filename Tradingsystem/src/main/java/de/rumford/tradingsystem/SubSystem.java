@@ -26,13 +26,13 @@ public class SubSystem {
 
 		evaluateRules(rules);
 
-		RuleContainer[] ruleContainers = putRulesIntoRuleContainers(rules);
+		RuleContainer[] tempRuleContainers = putRulesIntoRuleContainers(rules);
 
 		RuleContainer instanceRules;
-		if (ruleContainers.length > 3) {
-			instanceRules = subdivideRules(ruleContainers);
+		if (tempRuleContainers.length > 3) {
+			instanceRules = subdivideRules(tempRuleContainers);
 		} else {
-			instanceRules = RuleContainer.fromRuleContainers(ruleContainers);
+			instanceRules = RuleContainer.fromRuleContainers(tempRuleContainers);
 		}
 
 		this.setRuleContainers(instanceRules);
@@ -42,14 +42,28 @@ public class SubSystem {
 		this.setDiversificationMultiplier(new DiversificationMultiplier(rules));
 	}
 
+	/**
+	 * Return an array of {@link RuleContainer}, each containing one of the given
+	 * {@link Rule} from the array of rules. Keeps order.
+	 * 
+	 * @param rules {@code Rule[]} An array of {@link Rule}.
+	 * @return {@code RuleContainer[]} An array of {@link RuleContainer}, each
+	 *         wrapping one of the given {@link Rule} from the passed array of
+	 *         rules.
+	 */
 	private RuleContainer[] putRulesIntoRuleContainers(Rule[] rules) {
-		RuleContainer[] ruleContainers = {};
+		RuleContainer[] tempRuleContainers = {};
+		/* Wrap each rule into a RuleContainer. */
 		for (Rule rule : rules) {
-			ruleContainers = ArrayUtils.add(ruleContainers, RuleContainer.fromRule(rule));
+			tempRuleContainers = ArrayUtils.add(tempRuleContainers, RuleContainer.fromRule(rule));
 		}
-		return ruleContainers;
+		return tempRuleContainers;
 	}
 
+	/**
+	 * Local class for wrapping of rules so they can be boxed into each other
+	 * without altering the rules themselves. Keeps the Rules clean.
+	 */
 	private static class RuleContainer {
 		private Rule[] rules;
 		private RuleContainer[] ruleContainers;
