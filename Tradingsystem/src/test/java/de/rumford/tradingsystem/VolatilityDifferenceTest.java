@@ -122,53 +122,6 @@ class VolatilityDifferenceTest {
 
 	/**
 	 * Test method for
-	 * {@link VolatilityDifference#VolatilityDifference(BaseValue, VolatilityDifference[], LocalDateTime, LocalDateTime, int, double)}.
-	 */
-	@Test
-	void testVolatilityDifference_withThreeVariations() {
-		baseValue = BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME);
-		lookbackWindow = 2;
-		int lookbackWindow4 = 4;
-		int lookbackWindow8 = 8;
-
-		VolatilityDifference variation1 = new VolatilityDifference(baseValue, null, localDateTime2020Jan10220000,
-				localDateTime2020Jan12220000, lookbackWindow, BASE_SCALE);
-		VolatilityDifference variation2 = new VolatilityDifference(baseValue, null, localDateTime2020Jan10220000,
-				localDateTime2020Jan12220000, lookbackWindow4, BASE_SCALE);
-		VolatilityDifference variation3 = new VolatilityDifference(baseValue, null, localDateTime2020Jan10220000,
-				localDateTime2020Jan12220000, lookbackWindow8, BASE_SCALE);
-
-		VolatilityDifference[] variations = { variation1, variation2, variation3 };
-
-		VolatilityDifference volDifMain = new VolatilityDifference(baseValue, variations, localDateTime2020Jan10220000,
-				localDateTime2020Jan12220000, lookbackWindow, BASE_SCALE);
-
-		double expectedWeight1 = 0.23172841303547406; // Excel: 0.231728413035474
-		double expectedWeight2 = 0.2698029771482523; // Excel: 0.269802977148252
-		double expectedWeight3 = 0.4984686098162736; // Excel: 0.498468609816274
-
-		double expectedForecastValue31 = 16.949535171171593; // Excel: 16.9495351711716
-
-		ValueDateTupel[] expectedCombinedForecasts = ValueDateTupel.createEmptyArray();
-		expectedCombinedForecasts = ArrayUtils.add(expectedCombinedForecasts,
-				new ValueDateTupel(localDateTime2020Jan10220000, 1));
-
-		ValueDateTupel[] actualForecasts = volDifMain.getForecasts();
-
-		assertEquals(expectedWeight1, volDifMain.getVariations()[0].getWeight(),
-				"Forecast scalar for variation 1 is not correclty calculated.");
-		assertEquals(expectedWeight2, volDifMain.getVariations()[1].getWeight(),
-				"Forecast scalar for variation 2 is not correclty calculated.");
-		assertEquals(expectedWeight3, volDifMain.getVariations()[2].getWeight(),
-				"Forecast scalar for variation 3 is not correclty calculated.");
-
-		assertEquals(expectedForecastValue31,
-				ValueDateTupel.getElement(actualForecasts, localDateTime2020Jan31220000).getValue(),
-				"Combined forecasts are not properly calculated.");
-	}
-
-	/**
-	 * Test method for
 	 * {@link VolatilityDifference#calculateVolatilityIndices(BaseValue, int)}.
 	 */
 	@Test
@@ -197,23 +150,6 @@ class VolatilityDifferenceTest {
 	 * {@link VolatilityDifference#calculateVolatilityIndices(BaseValue, int)}.
 	 */
 	@Test
-	void testCalculateVolatilityIndices_baseValue_null() {
-		BaseValue nullBaseValue = null;
-		String expectedMessage = "Base value must not be null";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(nullBaseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE),
-				"Base value of null is not correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for
-	 * {@link VolatilityDifference#calculateVolatilityIndices(BaseValue, int)}.
-	 */
-	@Test
 	void testCalculateVolatilityIndices_lessBaseValuesThanLookbackWindow() {
 		int lookbackWindowTooGreat = 10;
 		String expectedMessage = "The amount of base values must not be smaller than the lookback window. Number of base values: 4, lookback window: 10.";
@@ -224,138 +160,6 @@ class VolatilityDifferenceTest {
 				"Too great of a lookback window is not correctly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), "Too great of a lookback window is not correctly handled.");
-	}
-
-	/**
-	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
-	 * LocalDateTime, double}.
-	 */
-	@Test
-	void testValidateInputs_baseValue_null_volIndGiven() {
-		BaseValue nullBaseValue = null;
-		ValueDateTupel[] volatilityIndices = {};
-		String expectedMessage = "Base value must not be null";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(nullBaseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndices),
-				"Base value of null is not correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
-	 * LocalDateTime, double}.
-	 */
-	@Test
-	void testValidateInputs_startOfReferenceWindow_null() {
-		String expectedMessage = "Start of reference window value must not be null";
-
-		Exception thrown = assertThrows(
-				IllegalArgumentException.class, () -> new VolatilityDifference(baseValue, null, null,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE),
-				"startOfReferenceWindow of null is not correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
-	 * LocalDateTime, double}.
-	 */
-	@Test
-	void testValidateInputs_endOfReferenceWindow_null() {
-		String expectedMessage = "End of reference window value must not be null";
-
-		Exception thrown = assertThrows(
-				IllegalArgumentException.class, () -> new VolatilityDifference(baseValue, null,
-						localDateTime2020Jan02220000, null, lookbackWindow, BASE_SCALE),
-				"endOfReferenceWindow of null is not correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
-	 * LocalDateTime, double}.
-	 */
-	@Test
-	void testValidateInputs_baseScale_0() {
-		String expectedMessage = "The given baseScale must a positiv non-zero decimal.";
-		double zeroBaseScale = 0;
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, zeroBaseScale),
-				"baseScale of zero is not correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
-	 * LocalDateTime, double}.
-	 */
-	@Test
-	void testValidateInputs_baseScale_sub0() {
-		String expectedMessage = "The given baseScale must a positiv non-zero decimal.";
-		double subZeroBaseScale = -1;
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, subZeroBaseScale),
-				"baseScale of less than zero is not correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
-	 * LocalDateTime, double}.
-	 */
-	@Test
-	void testValidateInputs_endOfReferenceWindow_before_startOfReferenceWindow() {
-		String expectedMessage = "End of reference window value must be after start of reference window value";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan04220000,
-						localDateTime2020Jan02220000, lookbackWindow, BASE_SCALE),
-				"endOfReferenceWindow before startOfReferenceWindow is not correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
-	 * LocalDateTime, double}.
-	 */
-	@Test
-	void testValidateInputs_illegalStartOfReferenceWindow() {
-		String expectedMessage = "Base values do not include given start value for reference window";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2019Dec31220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE),
-				"Not included startOfReferenceWindow is not correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for {@link Rule#validateInputs(BaseValue, LocalDateTime,
-	 * LocalDateTime, double}.
-	 */
-	@Test
-	void testValidateInputs_illegalEndOfReferenceWindow() {
-		String expectedMessage = "Base values do not include given end value for reference window";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan05220000, lookbackWindow, BASE_SCALE),
-				"Not included endOfReferenceWindow is not correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -581,10 +385,10 @@ class VolatilityDifferenceTest {
 	}
 
 	/**
-	 * Test method for {@link VolatilityDifference#calculateRawForecast(double)}.
+	 * Test method for {@link VolatilityDifference#validateBaseValue(BaseValue)}.
 	 */
 	@Test
-	void testCalculateSdAdjustedForecasts_sd0() {
+	void testValidateBaseValue() {
 		baseValue = BaseValueFactory.jan1Jan31allVal0calcShort(BASE_VALUE_NAME);
 		String expectedMessage = "Base values contain zeroes in given reference window which is not allowed for volatility index calculation.";
 
@@ -595,5 +399,4 @@ class VolatilityDifferenceTest {
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
-
 }
