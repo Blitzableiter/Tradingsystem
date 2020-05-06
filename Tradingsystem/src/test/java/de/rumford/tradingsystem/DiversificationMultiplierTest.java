@@ -14,8 +14,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import de.rumford.tradingsystem.RuleTest.RealRule;
 import de.rumford.tradingsystem.helper.BaseValueFactory;
-import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
  * @author Max Rumford
@@ -57,22 +57,6 @@ class DiversificationMultiplierTest {
 	static LocalDateTime localDateTimeJan16220000;
 	static LocalDateTime localDateTimeJan18220000;
 
-	private class RealRule extends Rule {
-		private double variator;
-
-		public RealRule(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
-				LocalDateTime endOfReferenceWindow, double baseScale, double variator) {
-			super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
-			this.variator = variator;
-		}
-
-		@Override
-		double calculateRawForecast(LocalDateTime forecastDateTime) {
-			return ValueDateTupel.getElement(this.getBaseValue().getValues(), forecastDateTime).getValue()
-					+ this.variator * 100;
-		}
-	}
-
 	@BeforeAll
 	static void setUpBeforeClass() {
 		baseValue = BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME);
@@ -92,23 +76,24 @@ class DiversificationMultiplierTest {
 	@BeforeEach
 	void setUp() {
 		variator = 1;
-		ss1 = new RealRule(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 1);
-		ss2 = new RealRule(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, .5);
-		ss3 = new RealRule(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, -1.07);
+		ss1 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 1);
+		ss2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, .5);
+		ss3 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, -1.07);
 		Rule[] s1variations = { ss1, ss2, ss3 };
-		s1 = new RealRule(baseValue, s1variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, -1);
-		s2 = new RealRule(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, -2.32);
-		s3 = new RealRule(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, -14);
+		s1 = RealRule.from(baseValue, s1variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, -1);
+		s2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, -2.32);
+		s3 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, -14);
 		Rule[] t1variations = { s1, s2, s3 };
-		t1 = new RealRule(baseValue, t1variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, .5);
+		t1 = RealRule.from(baseValue, t1variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, .5);
 
-		s4 = new RealRule(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 0.8);
-		s5 = new RealRule(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, -4.67);
+		s4 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 0.8);
+		s5 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, -4.67);
 		Rule[] t2variations = { s4, s5 };
-		t2 = new RealRule(baseValue, t2variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, -10);
+		t2 = RealRule.from(baseValue, t2variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				-10);
 		Rule[] realRuleVariations = { t1, t2 };
 
-		realRule = new RealRule(baseValue, realRuleVariations, localDateTimeJan10220000, localDateTimeJan12220000,
+		realRule = RealRule.from(baseValue, realRuleVariations, localDateTimeJan10220000, localDateTimeJan12220000,
 				BASE_SCALE, variator);
 		variations = realRule.getVariations();
 

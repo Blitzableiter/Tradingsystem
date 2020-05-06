@@ -26,13 +26,19 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
  */
 class RuleTest {
 
-	private class RealRule extends Rule {
+	static class RealRule extends Rule {
 		private double variator;
 
 		public RealRule(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
 				LocalDateTime endOfReferenceWindow, double baseScale, double variator) {
 			super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
 			this.variator = variator;
+		}
+
+		public static RealRule from(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
+				LocalDateTime endOfReferenceWindow, double baseScale, double variator) {
+			return new RealRule(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale,
+					variator);
 		}
 
 		@Override
