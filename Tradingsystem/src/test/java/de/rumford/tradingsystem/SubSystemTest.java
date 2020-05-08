@@ -11,6 +11,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.*;
 
 import de.rumford.tradingsystem.RuleTest.RealRule;
+import de.rumford.tradingsystem.SubSystem.RuleContainer;
 import de.rumford.tradingsystem.helper.BaseValueFactory;
 
 class SubSystemTest {
@@ -51,9 +52,9 @@ class SubSystemTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		r1 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
-		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
-		r3 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
-		r4 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
+		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 2);
+		r3 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 3);
+		r4 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 4);
 
 		rules = ArrayUtils.add(rules, r1);
 		rules = ArrayUtils.add(rules, r2);
@@ -70,6 +71,29 @@ class SubSystemTest {
 	 */
 	@Test
 	void testSubSystem() {
+		SubSystem subsys = new SubSystem(baseValue, rules, CAPITAL);
+		SubSystem subsys2 = new SubSystem(baseValue, rules, CAPITAL);
+		assertEquals(subsys, subsys2, "Equal Objects are not considered equal");
+	}
+
+	/**
+	 * Test method for {@link SubSystem#subdivideRules(RuleContainer[])}
+	 */
+	@Test
+	void testSubdivideRules() {
+		int expectedLength = 2;
+		int expectedSubLength1 = 3;
+		int expectedSubLength2 = 1;
+		SubSystem subsys = new SubSystem(baseValue, rules, CAPITAL);
+
+		int actualLength = subsys.getRuleContainer().getRuleContainers().length;
+		int actualSubLength1 = subsys.getRuleContainer().getRuleContainers()[0].getRuleContainers().length;
+		int actualSubLength2 = subsys.getRuleContainer().getRuleContainers()[1].getRuleContainers().length;
+
+		// TODO FIX COMMENTS
+		assertEquals(expectedLength, actualLength, "Equal Objects are not considered equal");
+		assertEquals(expectedSubLength1, actualSubLength1, "Equal Objects are not considered equal");
+		assertEquals(expectedSubLength2, actualSubLength2, "Equal Objects are not considered equal");
 	}
 
 	/**
@@ -77,6 +101,7 @@ class SubSystemTest {
 	 */
 	@Test
 	void testAreRulesUnique_identicalRules() {
+		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
 		Rule[] rules = { r1, r2 };
 
 		assertFalse(SubSystem.areRulesUnique(rules), "Identical rules are not identified.");
