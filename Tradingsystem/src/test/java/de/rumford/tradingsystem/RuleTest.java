@@ -46,6 +46,31 @@ class RuleTest {
 			return ValueDateTupel.getElement(this.getBaseValue().getValues(), forecastDateTime).getValue()
 					+ this.variator * 100;
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = super.hashCode();
+			long temp;
+			temp = Double.doubleToLongBits(variator);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (!super.equals(obj))
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			RealRule other = (RealRule) obj;
+			if (Double.doubleToLongBits(variator) != Double.doubleToLongBits(other.variator))
+				return false;
+			return true;
+		}
+
 	}
 
 	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";
