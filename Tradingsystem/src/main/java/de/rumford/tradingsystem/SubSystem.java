@@ -20,15 +20,26 @@ public class SubSystem {
 	private double weight;
 
 	/**
+	 * Constructor for the SubSystem class.
 	 * 
+	 * @param baseValue {@link BaseValue} The base value to be used for all the
+	 *                  given rules' calculations.
+	 * @param rules     {@code Rule[]} Array of {@link Rule} to be used for forecast
+	 *                  calculations in this SubSystem.
+	 * @param capital   {@code double} The capital to be managed by this SubSystem.
 	 */
 	public SubSystem(BaseValue baseValue, Rule[] rules, double capital) {
+
+		validateInput(baseValue, rules, capital);
 
 		evaluateRules(rules);
 
 		RuleContainer[] tempRuleContainers = putRulesIntoRuleContainers(rules);
 
 		RuleContainer instanceRules;
+		/*
+		 * If there are more than 3 rules subdivide them to build up a tree structure.
+		 */
 		if (tempRuleContainers.length > 3) {
 			instanceRules = subdivideRules(tempRuleContainers);
 		} else {
@@ -40,6 +51,35 @@ public class SubSystem {
 		this.setBaseValue(baseValue);
 		this.setCapital(capital);
 		this.setDiversificationMultiplier(new DiversificationMultiplier(rules));
+	}
+
+	/**
+	 * Validate the given input parameters.
+	 * 
+	 * @param baseValue {@link BaseValue} Must not be null.
+	 * @param rules     {@code Rule[]} Must not be null. Must not be an empty array.
+	 * @param capital   {@code double} Must not be Double.NaN. Must not be 0. Must
+	 *                  not be negative.
+	 * @throws IllegalArgumentException if any of the above criteria is not met.
+	 */
+	private static void validateInput(BaseValue baseValue, Rule[] rules, double capital) {
+		if (baseValue == null)
+			throw new IllegalArgumentException("Base value must not be null");
+
+		if (rules == null)
+			throw new IllegalArgumentException("Rules must not be null");
+
+		if (rules.length == 0)
+			throw new IllegalArgumentException("Rules must not be an empty array");
+
+		if (Double.isNaN(capital))
+			throw new IllegalArgumentException("Capital must not be Double.NaN");
+
+		if (capital == 0)
+			throw new IllegalArgumentException("Capital must not be zero");
+
+		if (capital < 0)
+			throw new IllegalArgumentException("Capital must be a positive value.");
 	}
 
 	/**
@@ -107,14 +147,12 @@ public class SubSystem {
 	}
 
 	/**
-	 * Evaluate if the rules are unique.
+	 * Evaluate if the rules are unique by {@link SubSystem#areRulesUnique(Rule[])}.
 	 * 
-	 * @param rules
-	 * @return
+	 * @param rules {@code Rule[]} Rules that are to be checked.
+	 * @throws IllegalArgumentException if the given rules are not unique.
 	 */
 	private static void evaluateRules(Rule[] rules) {
-		if (rules == null)
-			throw new IllegalArgumentException("Given rules must not be null");
 		if (!areRulesUnique(rules))
 			throw new IllegalArgumentException("The given rules are not unique. Only unique rules can be used.");
 	}
@@ -187,13 +225,6 @@ public class SubSystem {
 	 */
 	private void setBaseValue(BaseValue baseValue) {
 		this.baseValue = baseValue;
-	}
-
-	/**
-	 * @return rules SubSystem
-	 */
-	private RuleContainer getRuleContainers() {
-		return ruleContainers;
 	}
 
 	/**
