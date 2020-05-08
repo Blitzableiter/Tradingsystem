@@ -71,6 +71,11 @@ class RuleTest {
 			return true;
 		}
 
+		@Override
+		public String toString() {
+			return "RealRule [variator=" + variator + "]";
+		}
+
 	}
 
 	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";

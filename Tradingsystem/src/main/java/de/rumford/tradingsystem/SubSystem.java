@@ -3,7 +3,11 @@
  */
 package de.rumford.tradingsystem;
 
+import java.util.Arrays;
+
 import org.apache.commons.lang3.ArrayUtils;
+
+import de.rumford.tradingsystem.helper.GeneratedCode;
 
 /**
  * de.rumford.tradingsystem
@@ -14,7 +18,7 @@ import org.apache.commons.lang3.ArrayUtils;
 public class SubSystem {
 
 	private BaseValue baseValue;
-	private RuleContainer ruleContainers;
+	private RuleContainer ruleContainer;
 	private DiversificationMultiplier diversificationMultiplier;
 	private double capital;
 	private double weight;
@@ -46,7 +50,7 @@ public class SubSystem {
 			instanceRules = RuleContainer.fromRuleContainers(tempRuleContainers);
 		}
 
-		this.setRuleContainers(instanceRules);
+		this.setRuleContainer(instanceRules);
 
 		this.setBaseValue(baseValue);
 		this.setCapital(capital);
@@ -104,7 +108,7 @@ public class SubSystem {
 	 * Local class for wrapping of rules so they can be boxed into each other
 	 * without altering the rules themselves. Keeps the Rules clean.
 	 */
-	private static class RuleContainer {
+	static class RuleContainer {
 		private Rule[] rules;
 		private RuleContainer[] ruleContainers;
 
@@ -122,12 +126,54 @@ public class SubSystem {
 			return new RuleContainer(null, ruleContainers);
 		}
 
+		@GeneratedCode
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + Arrays.hashCode(ruleContainers);
+			result = prime * result + Arrays.hashCode(rules);
+			return result;
+		}
+
+		@GeneratedCode
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			RuleContainer other = (RuleContainer) obj;
+			if (!Arrays.equals(ruleContainers, other.ruleContainers))
+				return false;
+			if (!Arrays.equals(rules, other.rules))
+				return false;
+			return true;
+		}
+
+		@GeneratedCode
+		@Override
+		public String toString() {
+			return "RuleContainer [rules=" + Arrays.toString(rules) + ", ruleContainers="
+					+ Arrays.toString(ruleContainers) + "]";
+		}
+
 		private void setRules(Rule[] rules) {
 			this.rules = rules;
 		}
 
+		public Rule[] getRules() {
+			return this.rules;
+		}
+
 		private void setRuleContainers(RuleContainer[] ruleContainers) {
 			this.ruleContainers = ruleContainers;
+		}
+
+		public RuleContainer[] getRuleContainers() {
+			return this.ruleContainers;
 		}
 	}
 
@@ -178,15 +224,26 @@ public class SubSystem {
 
 		RuleContainer[] ruleContainers = {};
 		for (int i = 1; i <= loopsize; i++) {
-			RuleContainer[] relevantRules = {};
+			RuleContainer[] relevantRules;
 			/*
 			 * If the number of remaining RuleContainer is > 3 there will be another loop,
 			 * therefore the rules array must be cleaned of the RuleContainers taken out.
 			 */
 			if (rules.length > 3) {
+				/* Extract the relevant rules */
+				relevantRules = new RuleContainer[3];
 				System.arraycopy(rules, 0, relevantRules, 0, 3);
-				System.arraycopy(rules, 3, rules, 0, rules.length - 3);
+
+				/*
+				 * Make a temporary array to hold all values with the relevant rules taken out.
+				 */
+				RuleContainer[] newRules = new RuleContainer[rules.length - 3];
+				System.arraycopy(rules, 3, newRules, 0, rules.length - 3);
+
+				/* Keep those rules for the next loop iteration. */
+				rules = newRules.clone();
 			} else {
+				relevantRules = new RuleContainer[rules.length];
 				System.arraycopy(rules, 0, relevantRules, 0, rules.length);
 			}
 			/*
@@ -207,12 +264,67 @@ public class SubSystem {
 		return RuleContainer.fromRuleContainers(ruleContainers);
 	}
 
+	@GeneratedCode
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((baseValue == null) ? 0 : baseValue.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(capital);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((diversificationMultiplier == null) ? 0 : diversificationMultiplier.hashCode());
+		result = prime * result + ((ruleContainer == null) ? 0 : ruleContainer.hashCode());
+		temp = Double.doubleToLongBits(weight);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@GeneratedCode
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SubSystem other = (SubSystem) obj;
+		if (baseValue == null) {
+			if (other.baseValue != null)
+				return false;
+		} else if (!baseValue.equals(other.baseValue))
+			return false;
+		if (Double.doubleToLongBits(capital) != Double.doubleToLongBits(other.capital))
+			return false;
+		if (diversificationMultiplier == null) {
+			if (other.diversificationMultiplier != null)
+				return false;
+		} else if (!diversificationMultiplier.equals(other.diversificationMultiplier))
+			return false;
+		if (ruleContainer == null) {
+			if (other.ruleContainer != null)
+				return false;
+		} else if (!ruleContainer.equals(other.ruleContainer))
+			return false;
+		if (Double.doubleToLongBits(weight) != Double.doubleToLongBits(other.weight))
+			return false;
+		return true;
+	}
+
+	@GeneratedCode
+	@Override
+	public String toString() {
+		return "SubSystem [baseValue=" + baseValue + ", ruleContainers=" + ruleContainer
+				+ ", diversificationMultiplier=" + diversificationMultiplier + ", capital=" + capital + ", weight="
+				+ weight + "]";
+	}
+
 	/**
 	 * ======================================================================
 	 * GETTERS AND SETTERS
 	 * ======================================================================
 	 */
-
 	/**
 	 * @return baseValue SubSystem
 	 */
@@ -230,8 +342,15 @@ public class SubSystem {
 	/**
 	 * @param rules the rules to set
 	 */
-	private void setRuleContainers(RuleContainer ruleContainers) {
-		this.ruleContainers = ruleContainers;
+	private void setRuleContainer(RuleContainer ruleContainer) {
+		this.ruleContainer = ruleContainer;
+	}
+
+	/**
+	 * @return
+	 */
+	public RuleContainer getRuleContainer() {
+		return this.ruleContainer;
 	}
 
 	/**
