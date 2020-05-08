@@ -148,7 +148,7 @@ class RuleTest {
 
 	/**
 	 * Test method for
-	 * {@link Rule#validateInputs(BaseValue, LocalDateTime, LocalDateTime, double)}.
+	 * {@link Rule#validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 */
 	@Test
 	void testCalculateVolatilityIndices_baseValue_null() {
@@ -275,11 +275,12 @@ class RuleTest {
 	}
 
 	/**
-	 * Test method for {@link Rule#validateSetAndWeighVariations(Rule[])}.
+	 * Test method for
+	 * {@link Rule#validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 */
 	@Test
-	void testValidateSetAndWeighVariations_moreThan3Variations() {
-		String expectedMessage = "Each layer must not contain more than 3 rules/variations";
+	void testValidateInputs_moreThan3Variations() {
+		String expectedMessage = "A rule must not contain more than 3 variations.";
 		RealRule var1 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
 				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
 		RealRule var2 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
@@ -294,6 +295,23 @@ class RuleTest {
 				() -> RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), variations,
 						localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator),
 				"> 3 variations is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link Rule#validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 */
+	@Test
+	void testValidateInputs_emptyVariationsArray() {
+		String expectedMessage = "The given variations array must not be empty.";
+		RealRule[] variations = {};
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), variations,
+						localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator),
+				"Empty variations array is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -315,6 +333,50 @@ class RuleTest {
 				() -> RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), variations,
 						localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator),
 				"Variation = null is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#validateSetAndWeighVariations(Rule[])}.
+	 */
+	@Test
+	void testValidateSetAndWeighVariations_variationsStartOfReferenceWindowDoesNotMatchRules() {
+		String expectedMessage = "The given reference window does not match the variation's at position 1. The given start of reference window is different.";
+		RealRule var1 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var2 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan07220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var3 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule[] variations = { var1, var2, var3 };
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), variations,
+						localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator),
+				"Unmatched start of reference window is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Rule#validateSetAndWeighVariations(Rule[])}.
+	 */
+	@Test
+	void testValidateSetAndWeighVariations_variationsEndOfReferenceWindowDoesNotMatchRules() {
+		String expectedMessage = "The given reference window does not match the variation's at position 1. The given end of reference window is different.";
+		RealRule var1 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var2 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeFeb05220000, BASE_SCALE, variator);
+		RealRule var3 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule[] variations = { var1, var2, var3 };
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), variations,
+						localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator),
+				"Unmatched end of reference window is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -565,36 +627,6 @@ class RuleTest {
 
 		assertArrayEquals(expectedValue, actualValue,
 				"Weights for variations with negative correlations are not correctly calculated");
-	}
-
-	/**
-	 * Test method for {@link Rule#calculateWeights(double[])}.
-	 */
-	@Test
-	void testCalculateWeights_allEqualForecastValuesInReferenceWindow() {
-		String expectedMessage = "Given variations cannot be weighed";
-		String expectedCause = "Correlations cannot be calculated caused by all identical values in row at position 0.";
-
-		BaseValue baseValue = BaseValueFactory.jan1Jan7lowValscalcShort(BASE_VALUE_NAME);
-		double variator1 = -1;
-		double variator2 = 0.5;
-		double variator3 = 1;
-
-		RealRule var1 = RealRule.from(baseValue, null, localDateTimeJan02220000, localDateTimeJan04220000, BASE_SCALE,
-				variator1);
-		RealRule var2 = RealRule.from(baseValue, null, localDateTimeJan02220000, localDateTimeJan04220000, BASE_SCALE,
-				variator2);
-		RealRule var3 = RealRule.from(baseValue, null, localDateTimeJan02220000, localDateTimeJan04220000, BASE_SCALE,
-				variator3);
-		RealRule[] variations = { var1, var2, var3 };
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), variations,
-						localDateTimeJan05220000, localDateTimeJan07220000, BASE_SCALE, variator),
-				"All equal values in variations forecasts is not properly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**

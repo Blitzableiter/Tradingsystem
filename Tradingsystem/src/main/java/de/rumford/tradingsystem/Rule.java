@@ -51,12 +51,13 @@ public abstract class Rule {
 	public Rule(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
 			LocalDateTime endOfReferenceWindow, double baseScale) {
 
-		this.validateInputs(baseValue, startOfReferenceWindow, endOfReferenceWindow, baseScale);
+		this.validateInputs(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
 
 		this.setBaseValue(baseValue);
 		this.setStartOfReferenceWindow(startOfReferenceWindow);
 		this.setEndOfReferenceWindow(endOfReferenceWindow);
-		this.validateSetAndWeighVariations(variations);
+		this.setVariations(variations);
+		this.weighVariations();
 		this.setBaseScale(baseScale);
 	}
 
@@ -317,6 +318,8 @@ public abstract class Rule {
 	 */
 	private void weighVariations() {
 		Rule[] instanceVariations = this.getVariations();
+		if (instanceVariations == null)
+			return;
 
 		/* If there is only 1 variation then its weight is 100% */
 		switch (instanceVariations.length) {
@@ -355,11 +358,7 @@ public abstract class Rule {
 
 			/* Find the correlations for the given variations. */
 			double[] correlations;
-			try {
-				correlations = Util.calculateCorrelationOfRows(variationsForecastValues);
-			} catch (Exception e) {
-				throw new IllegalArgumentException("Given variations cannot be weighed", e);
-			}
+			correlations = Util.calculateCorrelationOfRows(variationsForecastValues);
 
 			if (ArrayUtils.contains(correlations, Double.NaN))
 				throw new IllegalArgumentException(
@@ -491,7 +490,7 @@ public abstract class Rule {
 	 * @param baseScale              {@code double} How the forecasts shall be
 	 *                               scaled.
 	 */
-	private void validateInputs(BaseValue baseValue, LocalDateTime startOfReferenceWindow,
+	private void validateInputs(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
 			LocalDateTime endOfReferenceWindow, double baseScale) {
 		/* Check if base value fulfills requirements. */
 		if (baseValue == null)
@@ -520,37 +519,35 @@ public abstract class Rule {
 		/* Check for a meaningful scale. */
 		if (baseScale <= 0)
 			throw new IllegalArgumentException("The given baseScale must a positiv non-zero decimal.");
-	}
 
-	/**
-	 * Checks the given variations. If the given variations is null, null will be
-	 * set. If there are more than 3 variations given an Exception will be thrown.
-	 * 
-	 * If there are null values in the given variations array an Exception will be
-	 * thrown.
-	 * 
-	 * If there are 3 or less variations, they will be weighed utilizing
-	 * {@link #weighVariations()}.
-	 * 
-	 * @param variations {@code Rule[]} The Variations to be checked, set and
-	 *                   weighed.
-	 * @throws IllegalArgumentException if the given array is not null and contains
-	 *                                  more than 3 elements.
-	 * @throws IllegalArgumentException if the given array contains null.
-	 */
-	private void validateSetAndWeighVariations(Rule[] variations) {
-		if (variations != null && variations.length > 3)
-			throw new IllegalArgumentException("Each layer must not contain more than 3 rules/variations");
-		this.setVariations(variations);
+		/* A rule can have no variations, so variations == null is acceptable. */
 		if (variations != null) {
+			/* Check if there are too many variations for this rule */
+			if (variations.length > 3)
+				throw new IllegalArgumentException("A rule must not contain more than 3 variations.");
+
+			/* Check if the given variations array is empty. */
+			if (variations.length == 0)
+				throw new IllegalArgumentException("The given variations array must not be empty.");
+
 			for (int i = 0; i < variations.length; i++) {
+				/* Check if the given variations array contains nulls. */
 				if (variations[i] == null)
 					throw new IllegalArgumentException(
 							"The variation at position " + i + " in the given variations array is null.");
-			}
 
-			/* Only if there are no null variations they can be weighed. */
-			this.weighVariations();
+				/* Check if main rule and variations share reference window. */
+				if (!variations[i].getStartOfReferenceWindow().equals(startOfReferenceWindow)) {
+					throw new IllegalArgumentException(
+							"The given reference window does not match the variation's at position " + i
+									+ ". The given start of reference window is different.");
+				}
+				if (!variations[i].getEndOfReferenceWindow().equals(endOfReferenceWindow)) {
+					throw new IllegalArgumentException(
+							"The given reference window does not match the variation's at position " + i
+									+ ". The given end of reference window is different.");
+				}
+			}
 		}
 	}
 
