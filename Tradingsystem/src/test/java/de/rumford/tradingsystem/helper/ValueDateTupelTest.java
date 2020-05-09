@@ -284,6 +284,40 @@ class ValueDateTupelTest {
 	 * Test method for {@link ValueDateTupel#alignDates(ValueDateTupel[][])}.
 	 */
 	@Test
+	void testalignDates_middleMissing() {
+		date_20200101 = LocalDateTime.of(2020, 1, 1, 0, 0);
+		date_20200102 = LocalDateTime.of(2020, 1, 2, 0, 0);
+		date_20200103 = LocalDateTime.of(2020, 1, 3, 0, 0);
+		valueDateTupel1 = new ValueDateTupel(date_20200101, value1);
+		valueDateTupel2 = new ValueDateTupel(date_20200102, value2);
+		valueDateTupel3 = new ValueDateTupel(date_20200103, value3);
+
+		ValueDateTupel[] expectedVdtArray1 = { //
+				valueDateTupel1, //
+				valueDateTupel2, //
+				valueDateTupel3 };
+		ValueDateTupel[] expectedVdtArray2 = { //
+				new ValueDateTupel(LocalDateTime.of(2020, 1, 1, 0, 0), 999), //
+				new ValueDateTupel(LocalDateTime.of(2020, 1, 2, 0, 0), 1099.6), //
+				new ValueDateTupel(LocalDateTime.of(2020, 1, 3, 0, 0), 1200.2) };
+		ValueDateTupel[][] expectedValue = { //
+				expectedVdtArray1, //
+				expectedVdtArray2 };
+
+		ValueDateTupel[] vdtArray1 = { valueDateTupel1, valueDateTupel2, valueDateTupel3 };
+		ValueDateTupel[] vdtArray2 = { new ValueDateTupel(LocalDateTime.of(2020, 1, 1, 0, 0), 999),
+				new ValueDateTupel(LocalDateTime.of(2020, 1, 3, 0, 0), 1200.2) };
+		ValueDateTupel[][] vdtArraysArray = { vdtArray1, vdtArray2 };
+		ValueDateTupel[][] actualValue = ValueDateTupel.alignDates(vdtArraysArray);
+
+		assertArrayEquals(expectedValue[0], actualValue[0], "Dates aren't correct after aligning ValueDateTuples");
+		assertArrayEquals(expectedValue[1], actualValue[1], "Dates aren't correct after aligning ValueDateTuples");
+	}
+
+	/**
+	 * Test method for {@link ValueDateTupel#alignDates(ValueDateTupel[][])}.
+	 */
+	@Test
 	void testalignDates_arrayOfArraysNull() {
 		String expectedMessage = "Given array of arrays must not be null";
 

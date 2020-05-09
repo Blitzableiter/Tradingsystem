@@ -218,7 +218,7 @@ public class ValueDateTupel {
 				 * If the currentDateTime out of the list of unique values is already in the
 				 * given row nothing has to be done.
 				 */
-				if (uniqueSortedDatesList.get(fieldIndex) == valueDateTupels[rowIndex][fieldIndex].getDate())
+				if (uniqueSortedDatesList.get(fieldIndex).isEqual(valueDateTupels[rowIndex][fieldIndex].getDate()))
 					continue;
 				valueDateTupelToBeAdded = new ValueDateTupel(uniqueSortedDatesList.get(fieldIndex), Double.NaN);
 				valueDateTupels[rowIndex] = ValueDateTupel.addOneAt(valueDateTupels[rowIndex], valueDateTupelToBeAdded,
