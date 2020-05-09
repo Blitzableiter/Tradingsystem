@@ -75,7 +75,12 @@ public class BaseValue {
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Given short index values do not meet the specifications.", e);
 		}
-		this.setShortIndexValues(shortIndexValues);
+
+		ValueDateTupel[][] valuesAndShortIndexValues = { values, shortIndexValues };
+
+		ValueDateTupel[][] alignedValuesAndShortIndexValues = ValueDateTupel.alignDates(valuesAndShortIndexValues);
+		this.setValues(alignedValuesAndShortIndexValues[0]);
+		this.setShortIndexValues(alignedValuesAndShortIndexValues[1]);
 	}
 
 	/**
