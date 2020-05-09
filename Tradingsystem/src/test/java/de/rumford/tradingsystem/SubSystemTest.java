@@ -91,9 +91,6 @@ class SubSystemTest {
 		int actualSubLength1 = subsys.getRuleContainer().getRuleContainers()[0].getRuleContainers().length;
 		int actualSubLength2 = subsys.getRuleContainer().getRuleContainers()[1].getRuleContainers().length;
 
-		System.out.println(subsys.getRuleContainer());
-
-		// TODO FIX COMMENTS
 		assertEquals(expectedLength, actualLength, "Top level structure not correct");
 		assertEquals(expectedSubLength1, actualSubLength1, "Full second level structure not correct");
 		assertEquals(expectedSubLength2, actualSubLength2, "Partial second level structure not correct");
