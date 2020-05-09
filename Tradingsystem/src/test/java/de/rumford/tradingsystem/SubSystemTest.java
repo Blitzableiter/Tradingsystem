@@ -56,6 +56,7 @@ class SubSystemTest {
 		r3 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 3);
 		r4 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 4);
 
+		rules = null;
 		rules = ArrayUtils.add(rules, r1);
 		rules = ArrayUtils.add(rules, r2);
 		rules = ArrayUtils.add(rules, r3);
@@ -90,10 +91,12 @@ class SubSystemTest {
 		int actualSubLength1 = subsys.getRuleContainer().getRuleContainers()[0].getRuleContainers().length;
 		int actualSubLength2 = subsys.getRuleContainer().getRuleContainers()[1].getRuleContainers().length;
 
+		System.out.println(subsys.getRuleContainer());
+
 		// TODO FIX COMMENTS
-		assertEquals(expectedLength, actualLength, "Equal Objects are not considered equal");
-		assertEquals(expectedSubLength1, actualSubLength1, "Equal Objects are not considered equal");
-		assertEquals(expectedSubLength2, actualSubLength2, "Equal Objects are not considered equal");
+		assertEquals(expectedLength, actualLength, "Top level structure not correct");
+		assertEquals(expectedSubLength1, actualSubLength1, "Full second level structure not correct");
+		assertEquals(expectedSubLength2, actualSubLength2, "Partial second level structure not correct");
 	}
 
 	/**
