@@ -6,6 +6,7 @@ package de.rumford.tradingsystem;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -166,16 +167,33 @@ class VolatilityDifferenceTest {
 	 * Test method for {@link VolatilityDifference#validateLookbackWindow(int)}.
 	 */
 	@Test
-	void testValidateLookbackWindow_lookbackWindow_1() {
+	void testValidateLookbackWindow_lookbackWindow_1_noVariations() {
 		int lookbackWindowOne = 1;
 		String expectedMessage = "Lookback window must be at least 2";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan03220000,
 						localDateTime2020Jan04220000, lookbackWindowOne, BASE_SCALE),
 				"Lookback window <= 1 is not correctly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link VolatilityDifference#validateLookbackWindow(int)}.
+	 */
+	@Test
+	void testValidateLookbackWindow_lookbackWindow_1_withVariations() {
+		VolatilityDifference[] variations = { new VolatilityDifference(baseValue, null, localDateTime2020Jan03220000,
+				localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE) };
+		int lookbackWindowOne = 1;
+
+		VolatilityDifference volDifWithVariations = new VolatilityDifference(baseValue, variations,
+				localDateTime2020Jan03220000, localDateTime2020Jan04220000, lookbackWindowOne, BASE_SCALE);
+
+		assertTrue(volDifWithVariations instanceof VolatilityDifference,
+				"Lookback window of < 2 is not properly ignored when rule has variations.");
+
 	}
 
 	/**

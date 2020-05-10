@@ -239,14 +239,15 @@ public class VolatilityDifference extends Rule {
 	}
 
 	/**
-	 * Validates the given lookback window. The lookback window must be >= 1.
+	 * Validates the given lookback window. The lookback window must be >= 1 if this
+	 * VolatilityDifference does not have variations.
 	 * 
 	 * @param lookbackWindow {@code int} The lookback window to be validated.
 	 * @throws IllegalArgumentException if the given lookbackWindow does not meet
 	 *                                  specifications
 	 */
 	public void validateLookbackWindow(int lookbackWindow) {
-		if (lookbackWindow <= 1)
+		if (this.getVariations() == null && lookbackWindow <= 1)
 			throw new IllegalArgumentException("Lookback window must be at least 2");
 	}
 
