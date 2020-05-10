@@ -298,13 +298,9 @@ public class VolatilityDifference extends Rule {
 		int endOfReferencePosition = ValueDateTupel.getPosition(volatilityIndices, this.getEndOfReferenceWindow());
 
 		for (int i = startOfReferencePosition; i <= endOfReferencePosition; i++) {
-			if (Double.isNaN(volatilityIndices[i].getValue())) {
-				System.out.println(Arrays.toString(volatilityIndices));
-
+			if (Double.isNaN(volatilityIndices[i].getValue()))
 				throw new IllegalArgumentException(
 						"There must not be NaN-Values in the given volatility indices values in the area delimited by startOfReferenceWindow and endOfReferenceWindow");
-
-			}
 		}
 
 		/* Extract dates out of the base value's values array and add it to a HashSet */
