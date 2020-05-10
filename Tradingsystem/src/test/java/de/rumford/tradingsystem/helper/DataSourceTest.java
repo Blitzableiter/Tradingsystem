@@ -11,36 +11,66 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.*;
 
 /**
- * de.rumford.tradingsystem.helper
+ * Test class for {@link DataSource}.
  * 
+ * @apiNote Tests might fail every 17 in 36^20 cases due to the random
+ *          generating of file names.
  * @author Max Rumford
  *
  */
 class DataSourceTest {
 
-	final static String FILE_NAME_CORRECT_FILE_EUR = RandomStringUtils.randomAlphanumeric(12);
-	final static String FILE_NAME_CORRECT_FILE_US = RandomStringUtils.randomAlphanumeric(12);
-	final static String FILE_NAME_CORRECT_FILE_EUR_YMD = RandomStringUtils.randomAlphanumeric(12);
-	final static String FILE_NAME_CORRECT_FILE_EU_THOUSANDS_SEPARATOR = RandomStringUtils.randomAlphanumeric(12);
+	final static int FILE_NAME_LENGTH = 20;
+	final static int FOLDER_NAME_LENGTH = FILE_NAME_LENGTH;
+
+	/* Have all temporary created files inside a folder inside src/test/resources */
+	private static String workingDir = Path
+			.of("src", "test", "resources", RandomStringUtils.randomAlphanumeric(FOLDER_NAME_LENGTH)).toString();
+
+	/*
+	 * Generate random file names as not to accidentally overwrite any existing
+	 * files
+	 */
+	final static String FILE_NAME_CORRECT_FILE_EUR = Path
+			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+	final static String FILE_NAME_CORRECT_FILE_US = Path
+			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+	final static String FILE_NAME_CORRECT_FILE_EUR_YMD = Path
+			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+	final static String FILE_NAME_CORRECT_FILE_EU_THOUSANDS_SEPARATOR = workingDir
+			+ RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH);
 	final static String FILE_NAME_NULL = null;
-	final static String FILE_NAME_UNKOWN = RandomStringUtils.randomAlphanumeric(12);
-	final static String FILE_NAME_DIRECTORY = RandomStringUtils.randomAlphanumeric(12);
-	final static String FILE_NAME_FILE_HAS_HEADINGS = RandomStringUtils.randomAlphanumeric(12);
-	final static String FILE_NAME_FOUR_COLUMNS = RandomStringUtils.randomAlphanumeric(12);
-	final static String FILE_NAME_DAY_NON_INTEGER = RandomStringUtils.randomAlphanumeric(12);
-	final static String FILE_NAME_MONTH_NON_INTEGER = RandomStringUtils.randomAlphanumeric(12);
-	final static String FILE_NAME_YEAR_NON_INTEGER = RandomStringUtils.randomAlphanumeric(12);
-	final static String FILE_NAME_HOUR_NON_INTEGER = RandomStringUtils.randomAlphanumeric(12);
-	final static String FILE_NAME_MINUTE_NON_INTEGER = RandomStringUtils.randomAlphanumeric(12);
-	final static String FILE_NAME_SECOND_NON_INTEGER = RandomStringUtils.randomAlphanumeric(12);
-	final static String FILE_NAME_DATE_VALUE_OUT_OF_RANGE = RandomStringUtils.randomAlphanumeric(12);
-	final static String FILE_NAME_COURSE_VALUE_INVALID = RandomStringUtils.randomAlphanumeric(12);
+	final static String FILE_NAME_UNKOWN = Path.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH))
+			.toString();
+	final static String FILE_NAME_DIRECTORY = Path
+			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+	final static String FILE_NAME_FILE_HAS_HEADINGS = Path
+			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+	final static String FILE_NAME_FOUR_COLUMNS = Path
+			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+	final static String FILE_NAME_DAY_NON_INTEGER = Path
+			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+	final static String FILE_NAME_MONTH_NON_INTEGER = Path
+			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+	final static String FILE_NAME_YEAR_NON_INTEGER = Path
+			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+	final static String FILE_NAME_HOUR_NON_INTEGER = Path
+			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+	final static String FILE_NAME_MINUTE_NON_INTEGER = Path
+			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+	final static String FILE_NAME_SECOND_NON_INTEGER = Path
+			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+	final static String FILE_NAME_DATE_VALUE_OUT_OF_RANGE = Path
+			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+	final static String FILE_NAME_COURSE_VALUE_INVALID = Path
+			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
 	static String[] FILE_NAMES = { //
 			FILE_NAME_CORRECT_FILE_EUR, //
 			FILE_NAME_CORRECT_FILE_US, //
@@ -81,6 +111,7 @@ class DataSourceTest {
 	 */
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
+		new File(workingDir).mkdirs();
 		bw_eu_ok = new BufferedWriter(new FileWriter(new File(FILE_NAME_CORRECT_FILE_EUR)));
 		bw_us_ok = new BufferedWriter(new FileWriter(new File(FILE_NAME_CORRECT_FILE_US)));
 		bw_eu_ymd = new BufferedWriter(new FileWriter(new File(FILE_NAME_CORRECT_FILE_EUR_YMD)));
@@ -132,6 +163,8 @@ class DataSourceTest {
 				e.printStackTrace();
 			}
 		}
+		File dir = new File(workingDir);
+		dir.delete();
 	}
 
 	/**
