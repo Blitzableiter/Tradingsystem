@@ -239,15 +239,14 @@ public class VolatilityDifference extends Rule {
 	}
 
 	/**
-	 * Validates the given lookback window. The lookback window must be >= 1 if this
-	 * VolatilityDifference does not have variations.
+	 * Validates the given lookback window. The lookback window must be >= 1.
 	 * 
 	 * @param lookbackWindow {@code int} The lookback window to be validated.
 	 * @throws IllegalArgumentException if the given lookbackWindow does not meet
 	 *                                  specifications
 	 */
 	public void validateLookbackWindow(int lookbackWindow) {
-		if (this.getVariations() == null && lookbackWindow <= 1)
+		if (lookbackWindow <= 1)
 			throw new IllegalArgumentException("Lookback window must be at least 2");
 	}
 
@@ -299,9 +298,13 @@ public class VolatilityDifference extends Rule {
 		int endOfReferencePosition = ValueDateTupel.getPosition(volatilityIndices, this.getEndOfReferenceWindow());
 
 		for (int i = startOfReferencePosition; i <= endOfReferencePosition; i++) {
-			if (Double.isNaN(volatilityIndices[i].getValue()))
+			if (Double.isNaN(volatilityIndices[i].getValue())) {
+				System.out.println(Arrays.toString(volatilityIndices));
+
 				throw new IllegalArgumentException(
 						"There must not be NaN-Values in the given volatility indices values in the area delimited by startOfReferenceWindow and endOfReferenceWindow");
+
+			}
 		}
 
 		/* Extract dates out of the base value's values array and add it to a HashSet */
