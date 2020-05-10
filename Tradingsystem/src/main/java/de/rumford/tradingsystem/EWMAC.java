@@ -50,10 +50,12 @@ public class EWMAC extends Rule {
 
 		this.validateHorizonValues(longHorizon, shortHorizon);
 
-		EWMA localLongHorizonEwma = new EWMA(this.getBaseValue().getValues(), longHorizon);
-		EWMA localShortHorizonEwma = new EWMA(this.getBaseValue().getValues(), shortHorizon);
-		this.setLongHorizonEwma(localLongHorizonEwma);
-		this.setShortHorizonEwma(localShortHorizonEwma);
+		if (variations == null) {
+			EWMA localLongHorizonEwma = new EWMA(this.getBaseValue().getValues(), longHorizon);
+			EWMA localShortHorizonEwma = new EWMA(this.getBaseValue().getValues(), shortHorizon);
+			this.setLongHorizonEwma(localLongHorizonEwma);
+			this.setShortHorizonEwma(localShortHorizonEwma);
+		}
 	}
 
 	/**
@@ -80,11 +82,15 @@ public class EWMAC extends Rule {
 	 * @throws IllegalArgumentException if the short horizon is smaller than 0.
 	 */
 	private void validateHorizonValues(int longHorizon, int shortHorizon) {
-		if (longHorizon <= shortHorizon)
-			throw new IllegalArgumentException("The long horizon must be greater than the short horizon");
 
-		if (shortHorizon < 2)
-			throw new IllegalArgumentException("The short horizon must not be < 2");
+		/* The horizons are not used when this rule has variations. */
+		if (this.getVariations() == null) {
+			if (longHorizon <= shortHorizon)
+				throw new IllegalArgumentException("The long horizon must be greater than the short horizon");
+
+			if (shortHorizon < 2)
+				throw new IllegalArgumentException("The short horizon must not be < 2");
+		}
 	}
 
 	/**

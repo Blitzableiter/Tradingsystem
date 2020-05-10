@@ -2,6 +2,7 @@ package de.rumford.tradingsystem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -118,7 +119,7 @@ class EWMACTest {
 	 * Test method for {@link EWMAC#validateHorizonValues(LocalDateTime)}.
 	 */
 	@Test
-	void testValidateHorizonValues_longSmallerThanShort() {
+	void testValidateHorizonValues_longSmallerThanShort_noVariations() {
 		int shortHorizonValue = 8;
 		int longHorizonValue = 4;
 		String expectedMessage = "The long horizon must be greater than the short horizon";
@@ -129,6 +130,22 @@ class EWMACTest {
 				"Short horizon greater than long horizon is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link EWMAC#validateHorizonValues(LocalDateTime)}.
+	 */
+	@Test
+	void testValidateHorizonValues_longSmallerThanShort_withVariations() {
+		EWMAC[] variations = {
+				new EWMAC(baseValue, null, localDateTimeJan08220000, localDateTimeJan10220000, 8, 4, BASE_SCALE) };
+		int shortHorizonValue = 8;
+		int longHorizonValue = 4;
+
+		assertTrue(
+				new EWMAC(baseValue, variations, localDateTimeJan08220000, localDateTimeJan10220000, longHorizonValue,
+						shortHorizonValue, BASE_SCALE) instanceof EWMAC,
+				"horizon values are not properly ignored when rule has variations");
 	}
 
 	/**
@@ -152,7 +169,7 @@ class EWMACTest {
 	 * Test method for {@link EWMAC#validateHorizonValues(LocalDateTime)}.
 	 */
 	@Test
-	void testValidateHorizonValues_shortLessThan2() {
+	void testValidateHorizonValues_shortLessThan2_noVariations() {
 		int shortHorizonValue = 1;
 		int longHorizonValue = 4;
 		String expectedMessage = "The short horizon must not be < 2";
@@ -163,6 +180,22 @@ class EWMACTest {
 				"Short horizon < 2 is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link EWMAC#validateHorizonValues(LocalDateTime)}.
+	 */
+	@Test
+	void testValidateHorizonValues_shortLessThan2_withVariations() {
+		EWMAC[] variations = {
+				new EWMAC(baseValue, null, localDateTimeJan08220000, localDateTimeJan10220000, 8, 4, BASE_SCALE) };
+		int shortHorizonValue = 1;
+		int longHorizonValue = 4;
+
+		assertTrue(
+				new EWMAC(baseValue, variations, localDateTimeJan08220000, localDateTimeJan10220000, longHorizonValue,
+						shortHorizonValue, BASE_SCALE) instanceof EWMAC,
+				"horizon values are not properly ignored when rule has variations");
 	}
 
 	/**
