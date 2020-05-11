@@ -3,11 +3,15 @@
  */
 package de.rumford.tradingsystem;
 
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.ArrayUtils;
 
 import de.rumford.tradingsystem.helper.GeneratedCode;
+import de.rumford.tradingsystem.helper.Util;
+import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
  * de.rumford.tradingsystem
@@ -16,6 +20,8 @@ import de.rumford.tradingsystem.helper.GeneratedCode;
  *
  */
 public class SubSystem {
+
+	private static final double PRICE_FACTOR_BASE_SCALE = 1;
 
 	private BaseValue baseValue;
 	private RuleContainer ruleContainer;
@@ -193,7 +199,13 @@ public class SubSystem {
 	}
 
 	/**
-	 * Evaluate if the rules are unique by {@link SubSystem#areRulesUnique(Rule[])}.
+	 * Evaluate if the given rules can be used in this SubSystem. <br>
+	 * Rules have to fulfill the following criteria:
+	 * <ul>
+	 * <li>Be unique by {@link SubSystem#areRulesUnique(Rule[])}</li>
+	 * <li>Equal in startOfReferenceWindow and endOfReferenceWinow by
+	 * {@link LocalDateTime#isEqual(ChronoLocalDateTime)}</li>
+	 * </ul>
 	 * 
 	 * @param rules {@code Rule[]} Rules that are to be checked.
 	 * @throws IllegalArgumentException if the given rules are not unique.
@@ -201,6 +213,17 @@ public class SubSystem {
 	private static void evaluateRules(Rule[] rules) {
 		if (!areRulesUnique(rules))
 			throw new IllegalArgumentException("The given rules are not unique. Only unique rules can be used.");
+
+		/* All rules need to have the same reference window */
+		for (int i = 1; i < rules.length; i++) {
+			if (!rules[i].getStartOfReferenceWindow().isEqual(rules[i - 1].getStartOfReferenceWindow())
+					|| !rules[i].getEndOfReferenceWindow().isEqual(rules[i - 1].getEndOfReferenceWindow())) {
+				throw new IllegalArgumentException(
+						"All rules need to have the same reference window but rules at position " + (i - 1) + " and "
+								+ i + " differ.");
+			}
+		}
+
 	}
 
 	/**
@@ -264,6 +287,87 @@ public class SubSystem {
 		return RuleContainer.fromRuleContainers(ruleContainers);
 	}
 
+	public double backtest(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow) {
+		double capitalAfterBacktest = 0d;
+		double currentCapital = this.getCapital();
+
+		ValueDateTupel[] baseValues = this.getBaseValue().getValues();
+		double productPriceFactor = calculateProductPriceFactor(ValueDateTupel.getValues(baseValues));
+
+		/*
+		 * Calculate the product prices based on the base value for each day and the
+		 * calculated productPriceFactor
+		 */
+		ValueDateTupel[] productPrices = calculateProductPrices(baseValues, productPriceFactor);
+
+		/*
+		 * Calculate the short product prices based on the base value for each day and
+		 * the calculated productPriceFactor
+		 */
+		ValueDateTupel[] shortIndexValues = this.getBaseValue().getShortIndexValues();
+		ValueDateTupel[] shortProductPrices = calculateProductPrices(shortIndexValues, productPriceFactor);
+
+		return capitalAfterBacktest;
+	}
+
+	/**
+	 * Calculate product prices based on the given array of values and a given
+	 * product price factor.
+	 * 
+	 * @param baseValues         {@code ValueDateTupel[]} The values the prices are
+	 *                           to be based on.
+	 * @param productPriceFactor {@code double} The factor used to calculate the
+	 *                           product prices.
+	 * @return {@code ValueDateTupel[]} An array of prices using the dates of the
+	 *         given baseValues.
+	 */
+	private static ValueDateTupel[] calculateProductPrices(ValueDateTupel[] baseValues, double productPriceFactor) {
+		ValueDateTupel[] productPrices = {};
+		for (ValueDateTupel baseValue : baseValues)
+			ValueDateTupel.addOneAt(baseValues,
+					new ValueDateTupel(baseValue.getDate(), baseValue.getValue() * productPriceFactor),
+					productPrices.length);
+
+		return productPrices;
+	}
+
+	/**
+	 * Call {@link SubSystem#calculateProductPriceFactor(double[], double)} passing
+	 * PRICE_FACTOR_BASE_SCALE as param.
+	 * 
+	 * @see SubSystem#calculateProductPriceFactor(double[], double)
+	 * @param values {@code double[]} An Array of values the factor is to be
+	 *               calculated for
+	 * @return {@code double} The calculated factor.
+	 */
+	// TODO TEST ME
+	private static double calculateProductPriceFactor(double[] values) {
+		return SubSystem.calculateProductPriceFactor(values, PRICE_FACTOR_BASE_SCALE);
+	}
+
+	/**
+	 * Calculate the factor by which all of the given values must be multiplied so
+	 * their products have an average of priceFactorBaseScale. <br>
+	 * The factor is calculated by inverting the average of the given values divided
+	 * by the given priceFactorBaseScale.
+	 * 
+	 * @param values               {@code double[]} An Array of values the factor is
+	 *                             to be calculated for
+	 * @param priceFactorBaseScale {@code double} The base scale to use.
+	 * @return {@code double} The calculated factor.
+	 */
+	// TODO TEST ME
+	private static double calculateProductPriceFactor(double[] values, double priceFactorBaseScale) {
+		double averageCourseValue = Util.calculateAverage(values);
+
+		return 1 / (averageCourseValue / priceFactorBaseScale);
+	}
+
+	/**
+	 * ======================================================================
+	 * OVERRIDES
+	 * ======================================================================
+	 */
 	@GeneratedCode
 	@Override
 	public int hashCode() {

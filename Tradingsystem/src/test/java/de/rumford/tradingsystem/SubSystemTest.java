@@ -35,6 +35,8 @@ class SubSystemTest {
 	static Rule r4;
 	static Rule[] rules;
 
+	static SubSystem subsystem;
+
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
 		baseValue = BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME);
@@ -126,6 +128,7 @@ class SubSystemTest {
 		Rule[] rules3 = { r1, r2 };
 		assertTrue(SubSystem.areRulesUnique(rules3), "Unique rules are not identified.");
 
+		@SuppressWarnings("unused")
 		double diffBaseScale = (BASE_SCALE - 1 <= 0 ? BASE_SCALE + 1 : BASE_SCALE - 1);
 		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, diffBaseScale,
 				VARIATOR);
@@ -137,6 +140,38 @@ class SubSystemTest {
 				diffVariator);
 		Rule[] rules5 = { r1, r2 };
 		assertTrue(SubSystem.areRulesUnique(rules5), "Unique rules are not identified.");
+	}
+
+	/**
+	 * Test method for {@link SubSystem#evaluateRules(Rule[])}.
+	 */
+	@Test
+	void testEvaluateRules_differentStartOfReferenceWindow() {
+		r2 = RealRule.from(baseValue, null, localDateTimeJan09220000, localDateTimeJan12220000, BASE_SCALE, 2);
+		Rule[] rules = { r1, r2 };
+		String expectedMessage = "All rules need to have the same reference window but rules at position 0 and 1 differ.";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> subsystem = new SubSystem(baseValue, rules, CAPITAL),
+				"Differing start of reference windows are not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link SubSystem#evaluateRules(Rule[])}.
+	 */
+	@Test
+	void testEvaluateRules_differentEndOfReferenceWindow() {
+		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan11220000, BASE_SCALE, 2);
+		Rule[] rules = { r1, r2 };
+		String expectedMessage = "All rules need to have the same reference window but rules at position 0 and 1 differ.";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> subsystem = new SubSystem(baseValue, rules, CAPITAL),
+				"Differing end of reference windows are not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
