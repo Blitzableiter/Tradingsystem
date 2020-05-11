@@ -53,6 +53,47 @@ class UtilTest {
 	}
 
 	/**
+	 * Test method for {@link Util#calculateAverage(double[])}.
+	 */
+	@Test
+	void testCalculateAverage() {
+		double[] values = { 1, 2, 3 };
+		double expectedValue = 2;
+
+		double actualValue = Util.calculateAverage(values);
+
+		assertEquals(expectedValue, actualValue, "Average value is not properly calculated");
+	}
+
+	/**
+	 * Test method for {@link Util#calculateAverage(double[])}.
+	 */
+	@Test
+	void testCalculateAverage_withNegatives() {
+		double[] values = { 1, 2, -3, 4 };
+		double expectedValue = 1;
+
+		double actualValue = Util.calculateAverage(values);
+
+		assertEquals(expectedValue, actualValue,
+				"Average value of values containing negatives is not properly calculated");
+	}
+
+	/**
+	 * Test method for {@link Util#calculateAverage(double[])}.
+	 */
+	@Test
+	void testCalculateAverage_arrayNull() {
+		double[] values = null;
+		String expectedMessage = "Given array must not be null";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class, () -> Util.calculateAverage(values),
+				"Array of null is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
 	 * Test method for {@link Util#calculateForecastScalar(double[], double)}.
 	 */
 	@Test

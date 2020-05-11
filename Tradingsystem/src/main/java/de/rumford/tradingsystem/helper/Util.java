@@ -79,18 +79,33 @@ public final class Util {
 		for (int i = 0; i < values.length; i++)
 			absoluteValues[i] = Math.abs(values[i]);
 
-		/* Calculate the average of absolute values */
-		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();
-		/* Load absolute values into stats */
-		for (double value : absoluteValues)
-			stats.accept(value);
 		/* Get average of all values */
-		double averageOfAbsolutes = stats.getAverage();
+		double averageOfAbsolutes = Util.calculateAverage(absoluteValues);
 
 		if (averageOfAbsolutes == 0)
 			return Double.NaN;
 
 		return baseScale / averageOfAbsolutes;
+	}
+
+	/**
+	 * Calculates the average value of the given array of values.
+	 * 
+	 * @param values {@code double[]} An array of values.
+	 * @return {@code double} The average value of the given values.
+	 * @throws IllegalArgumentException if the given array is null.
+	 */
+	public static double calculateAverage(double[] values) {
+		if (values == null)
+			throw new IllegalArgumentException("Given array must not be null");
+
+		/* Calculate the average of absolute values */
+		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();
+		/* Load absolute values into stats */
+		for (double value : values)
+			stats.accept(value);
+		/* Get average of all values */
+		return stats.getAverage();
 	}
 
 	/**
