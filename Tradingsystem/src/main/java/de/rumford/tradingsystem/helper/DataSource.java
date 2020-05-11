@@ -62,67 +62,39 @@ public class DataSource {
 		if (!file.canRead())
 			throw new IOException("Given file path cannot be read");
 
-		BufferedReader br = new BufferedReader(new FileReader(file));
+		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+			String line;
 
-		String line;
+			ValueDateTupel[] returnValues = ValueDateTupel.createEmptyArray();
+			while ((line = br.readLine()) != null) {
+				/* Extract the fields into separate Strings */
+				String[] columns = line.split(Pattern.quote(format.getFieldSeparator()));
 
-		ValueDateTupel[] returnValues = ValueDateTupel.createEmptyArray();
-		while ((line = br.readLine()) != null) {
-			/* Extract the fields into separate Strings */
-			String[] columns = line.split(Pattern.quote(format.getFieldSeparator()));
+				if (columns.length != 3) {
+					throw new IllegalArgumentException("The passed CSV does not have an appropriate number of columns");
+				}
 
-			if (columns.length != 3) {
-				br.close();
-				throw new IllegalArgumentException("The passed CSV does not have an appropriate number of columns");
-			}
-
-			/*
-			 * Parse the first and second field (date, time) into a LocalDateTime instance
-			 */
-			String[] dateAndTimeStrings = new String[2];
-			System.arraycopy(columns, 0, dateAndTimeStrings, 0, 2);
-			LocalDateTime localDateTime;
-			try {
+				/*
+				 * Parse the first and second field (date, time) into a LocalDateTime instance
+				 */
+				String[] dateAndTimeStrings = new String[2];
+				System.arraycopy(columns, 0, dateAndTimeStrings, 0, 2);
+				LocalDateTime localDateTime;
+				double value;
 				localDateTime = parseLocalDateTime(dateAndTimeStrings, format);
-			} catch (IllegalArgumentException e) {
-				br.close();
-				throw e;
-			}
-			/*
-			 * Catch Exception so BufferedReader can be closed on unknown Exceptions to
-			 * memory avoid leakage.
-			 */
-			catch (Exception e) {
-				br.close();
-				throw e;
-			}
 
-			/* Pass the third field (course value) into a double */
-			String[] valueStrings = new String[1];
-			System.arraycopy(columns, 2, valueStrings, 0, 1);
-			double value;
-			try {
+				/* Pass the third field (course value) into a double */
+				String[] valueStrings = new String[1];
+				System.arraycopy(columns, 2, valueStrings, 0, 1);
 				value = parseCourseValue(valueStrings, format);
-			} catch (IllegalArgumentException e) {
-				br.close();
-				throw e;
-			}
-			/*
-			 * Catch Exception so BufferedReader can be closed on unknown Exceptions to
-			 * memory avoid leakage.
-			 */
-			catch (Exception e) {
-				br.close();
-				throw e;
+
+				ValueDateTupel newElement = new ValueDateTupel(localDateTime, value);
+
+				returnValues = ArrayUtils.add(returnValues, newElement);
 			}
 
-			ValueDateTupel newElement = new ValueDateTupel(localDateTime, value);
-
-			returnValues = ArrayUtils.add(returnValues, newElement);
+			return returnValues;
 		}
-
-		br.close();
-		return returnValues;
 	}
 
 	/**
@@ -147,8 +119,7 @@ public class DataSource {
 	 * @throws IllegalArgumentException If the given date and time values cannot be
 	 *                                  parsed to {@link LocalDateTime}}.
 	 */
-	private static LocalDateTime parseLocalDateTime(String[] columns, CsvFormat format)
-			throws IllegalArgumentException {
+	private static LocalDateTime parseLocalDateTime(String[] columns, CsvFormat format) {
 		/* Extract the relevant date values */
 		String[] date = columns[0].split(Pattern.quote(format.getDateSeparator()));
 
