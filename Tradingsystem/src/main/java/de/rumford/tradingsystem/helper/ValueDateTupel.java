@@ -379,8 +379,7 @@ public class ValueDateTupel {
 	 * @throws IllegalArgumentException If the given {@link LocalDateTime} is null.
 	 * 
 	 */
-	public static boolean containsDate(ValueDateTupel[] valueDateTupels, LocalDateTime dtToBeFound)
-			throws IllegalArgumentException {
+	public static boolean containsDate(ValueDateTupel[] valueDateTupels, LocalDateTime dtToBeFound) {
 		if (valueDateTupels == null)
 			throw new IllegalArgumentException("Given array cannot be null");
 		if (dtToBeFound == null)
