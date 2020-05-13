@@ -28,6 +28,7 @@ public class SubSystem {
 	private DiversificationMultiplier diversificationMultiplier;
 	private double capital;
 	private double weight;
+	private ValueDateTupel[] combinedForecasts;
 
 	/**
 	 * Constructor for the SubSystem class.
@@ -47,20 +48,30 @@ public class SubSystem {
 		RuleContainer[] tempRuleContainers = putRulesIntoRuleContainers(rules);
 
 		RuleContainer instanceRules;
-		/*
-		 * If there are more than 3 rules subdivide them to build up a tree structure.
-		 */
-		if (tempRuleContainers.length > 3) {
-			instanceRules = subdivideRules(tempRuleContainers);
-		} else {
-			instanceRules = RuleContainer.fromRuleContainers(tempRuleContainers);
-		}
+
+		instanceRules = subdivideRules(tempRuleContainers);
 
 		this.setRuleContainer(instanceRules);
 
 		this.setBaseValue(baseValue);
 		this.setCapital(capital);
 		this.setDiversificationMultiplier(new DiversificationMultiplier(rules));
+		this.setCombinedForecasts(calculateCombinedForecasts(this.getRuleContainer()));
+	}
+
+	private static ValueDateTupel[] calculateCombinedForecasts(RuleContainer ruleContainer) {
+		/* Step through the tree until ruleContainers==null. */
+
+		/*
+		 * Take the forecasts of the rule inside the "current" ruleContainer multiply
+		 * them by the weight of the "current" ruleContainer
+		 */
+
+		/* Add up the weighted forecasts for all rules -> combined forecasts */
+
+		/* Apply Diversification Multiplier */
+
+		return null;
 	}
 
 	/**
@@ -94,7 +105,9 @@ public class SubSystem {
 
 	/**
 	 * Return an array of {@link RuleContainer}, each containing one of the given
-	 * {@link Rule} from the array of rules. Keeps order.
+	 * {@link Rule} from the array of rules. Keeps order. <br>
+	 * All rules passed into this method will be assigned an even weight of
+	 * 1/rules.length.
 	 * 
 	 * @param rules {@code Rule[]} An array of {@link Rule}.
 	 * @return {@code RuleContainer[]} An array of {@link RuleContainer}, each
@@ -105,7 +118,10 @@ public class SubSystem {
 		RuleContainer[] tempRuleContainers = {};
 		/* Wrap each rule into a RuleContainer. */
 		for (Rule rule : rules) {
-			tempRuleContainers = ArrayUtils.add(tempRuleContainers, RuleContainer.fromRule(rule));
+			RuleContainer rcToAdd = RuleContainer.fromRule(rule);
+			/* All rules get the same weight */
+			rcToAdd.setWeight(1d / rules.length);
+			tempRuleContainers = ArrayUtils.add(tempRuleContainers, rcToAdd);
 		}
 		return tempRuleContainers;
 	}
@@ -117,8 +133,9 @@ public class SubSystem {
 	static class RuleContainer {
 		private Rule[] rules;
 		private RuleContainer[] ruleContainers;
+		private double weight = 1d;
 
-		RuleContainer(Rule[] rules, RuleContainer[] ruleContainers) {
+		private RuleContainer(Rule[] rules, RuleContainer[] ruleContainers) {
 			this.setRules(rules);
 			this.setRuleContainers(ruleContainers);
 		}
@@ -162,7 +179,7 @@ public class SubSystem {
 		@GeneratedCode
 		@Override
 		public String toString() {
-			return "RuleContainer [rules=" + Arrays.toString(rules) + ", ruleContainers="
+			return "RuleContainer [weight=" + weight + ", rules=" + Arrays.toString(rules) + ", ruleContainers="
 					+ Arrays.toString(ruleContainers) + "]";
 		}
 
@@ -181,6 +198,21 @@ public class SubSystem {
 		public RuleContainer[] getRuleContainers() {
 			return this.ruleContainers;
 		}
+
+		/**
+		 * @return weight RuleContainer
+		 */
+		public double getWeight() {
+			return weight;
+		}
+
+		/**
+		 * @param weight the weight to set
+		 */
+		public void setWeight(double weight) {
+			this.weight = weight;
+		}
+
 	}
 
 	/**
@@ -240,6 +272,11 @@ public class SubSystem {
 	 *         array of RuleContainers.
 	 */
 	private static RuleContainer subdivideRules(RuleContainer[] rules) {
+
+		/* If there are 3 rules or less no subdivision has to be done. */
+		if (rules.length <= 3)
+			return RuleContainer.fromRuleContainers(rules);
+
 		/* Evaluate in multiples of three how many RuleContainer are passed */
 		int loopsize = rules.length / 3;
 		if (rules.length % 3 != 0)
@@ -288,24 +325,70 @@ public class SubSystem {
 	}
 
 	public double backtest(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow) {
-		double capitalAfterBacktest = 0d;
-		double currentCapital = this.getCapital();
+		if (startOfTestWindow == null)
+			throw new IllegalArgumentException("The given start of test window must not be null");
+		if (endOfTestWindow == null)
+			throw new IllegalArgumentException("The given end of test window must not be null");
+		if (!endOfTestWindow.isAfter(startOfTestWindow))
+			throw new IllegalArgumentException("The end of test window must be after the start of the test window");
 
 		ValueDateTupel[] baseValues = this.getBaseValue().getValues();
-		double productPriceFactor = calculateProductPriceFactor(ValueDateTupel.getValues(baseValues));
+
+		if (!ValueDateTupel.containsDate(baseValues, startOfTestWindow))
+			throw new IllegalArgumentException(
+					"The given start of test window is not contained in the base value for this subsystem.");
+		if (!ValueDateTupel.containsDate(baseValues, endOfTestWindow))
+			throw new IllegalArgumentException(
+					"The given end of test window is not contained in the base value for this subsystem.");
+
+		double capitalAfterBacktest = this.getCapital();
+
+		//
+		//
+		//
+		//
+		//
+		/*
+		 * Maybe bring all of this into a subfunction returning an Array of
+		 * ValueDateTupel containing the performance values for each trading timespan
+		 */
+		//
+		/* Fetch all base values inside the test window */
+		ValueDateTupel[] relevantBaseValues = ValueDateTupel.getElements(baseValues, startOfTestWindow,
+				endOfTestWindow);
+		double productPriceFactor = calculateProductPriceFactor(ValueDateTupel.getValues(relevantBaseValues));
 
 		/*
 		 * Calculate the product prices based on the base value for each day and the
 		 * calculated productPriceFactor
 		 */
-		ValueDateTupel[] productPrices = calculateProductPrices(baseValues, productPriceFactor);
+		ValueDateTupel[] productPrices = calculateProductPrices(relevantBaseValues, productPriceFactor);
 
 		/*
 		 * Calculate the short product prices based on the base value for each day and
 		 * the calculated productPriceFactor
 		 */
-		ValueDateTupel[] shortIndexValues = this.getBaseValue().getShortIndexValues();
-		ValueDateTupel[] shortProductPrices = calculateProductPrices(shortIndexValues, productPriceFactor);
+		ValueDateTupel[] relevantShortIndexValues = ValueDateTupel
+				.getElements(this.getBaseValue().getShortIndexValues(), startOfTestWindow, endOfTestWindow);
+		ValueDateTupel[] shortProductPrices = calculateProductPrices(relevantShortIndexValues, productPriceFactor);
+
+		ValueDateTupel[] combinedForecasts = ValueDateTupel.getElements(
+				// TODO
+				this.getCombinedForecasts(), //
+				startOfTestWindow, endOfTestWindow);
+
+		int longProductsCount = 0;
+		int shortProductsCount = 0;
+		for (ValueDateTupel forecast : combinedForecasts) {
+			// TODO Position sizing
+			//// add value of last held position to capitalAfterBacktest
+			//// subtract value of current position from capitalAfterBacktest
+		}
+		//
+		//
+		//
+		//
+		//
 
 		return capitalAfterBacktest;
 	}
@@ -497,6 +580,20 @@ public class SubSystem {
 	 */
 	private void setWeight(double weight) {
 		this.weight = weight;
+	}
+
+	/**
+	 * @return combinedForecasts SubSystem
+	 */
+	public ValueDateTupel[] getCombinedForecasts() {
+		return combinedForecasts;
+	}
+
+	/**
+	 * @param combinedForecasts the combinedForecasts to set
+	 */
+	public void setCombinedForecasts(ValueDateTupel[] combinedForecasts) {
+		this.combinedForecasts = combinedForecasts;
 	}
 
 }
