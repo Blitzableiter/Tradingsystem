@@ -84,7 +84,7 @@ public class ProgrammersClient {
 
 		Rule[] rules = { volDifTop, ewmacTop };
 
-		subSystem = new SubSystem(baseValue, rules, CAPITAL);
+		subSystem = new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE);
 
 	}
 

@@ -5,7 +5,6 @@ package de.rumford.tradingsystem;
 
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDateTime;
-import java.util.Arrays;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -24,11 +23,12 @@ public class SubSystem {
 	private static final double PRICE_FACTOR_BASE_SCALE = 1;
 
 	private BaseValue baseValue;
-	private RuleContainer ruleContainer;
 	private DiversificationMultiplier diversificationMultiplier;
 	private double capital;
 	private double weight;
 	private ValueDateTupel[] combinedForecasts;
+	private double baseScale;
+	private Rule[] rules;
 
 	/**
 	 * Constructor for the SubSystem class.
@@ -39,39 +39,80 @@ public class SubSystem {
 	 *                  calculations in this SubSystem.
 	 * @param capital   {@code double} The capital to be managed by this SubSystem.
 	 */
-	public SubSystem(BaseValue baseValue, Rule[] rules, double capital) {
+	public SubSystem(BaseValue baseValue, Rule[] rules, double capital, double baseScale) {
 
-		validateInput(baseValue, rules, capital);
+		validateInput(baseValue, rules, capital, baseScale);
 
 		evaluateRules(rules);
-
-		RuleContainer[] tempRuleContainers = putRulesIntoRuleContainers(rules);
-
-		RuleContainer instanceRules;
-
-		instanceRules = subdivideRules(tempRuleContainers);
-
-		this.setRuleContainer(instanceRules);
+		this.setRules(rules);
 
 		this.setBaseValue(baseValue);
 		this.setCapital(capital);
+		this.setBaseScale(baseScale);
 		this.setDiversificationMultiplier(new DiversificationMultiplier(rules));
-		this.setCombinedForecasts(calculateCombinedForecasts(this.getRuleContainer()));
+		this.setCombinedForecasts(this.calculateCombinedForecasts());
 	}
 
-	private static ValueDateTupel[] calculateCombinedForecasts(RuleContainer ruleContainer) {
-		/* Step through the tree until ruleContainers==null. */
+	/**
+	 * Calculates the combined forecasts for all rules of this Sub System.
+	 * 
+	 * @return {@code ValueDateTupel[]} The combined forecasts for all rules,
+	 *         multiplied by {@link DiversificationMultiplier#getValue()} of this
+	 *         Sub System.
+	 */
+	// TODO TEST ME
+	private ValueDateTupel[] calculateCombinedForecasts() {
+		Rule[] instanceRules = this.getRules();
+		/* Calculate the weight by which all rules' forecasts shall be multiplied by */
+		double rulesWeight = instanceRules.length / 4d;
+
+		ValueDateTupel[] calculatedCombinedForecasts = {};
+
+		/* Step through the given rules */
+		for (int rulesIndex = 0; rulesIndex < instanceRules.length; rulesIndex++) {
+
+			/* For each rule: Step through the forecasts */
+			ValueDateTupel[] forecasts = instanceRules[rulesIndex].getForecasts();
+			for (int fcIndex = 0; fcIndex < forecasts.length; fcIndex++) {
+
+				if (rulesIndex == 0) {
+					/* Combined forecasts must be filled with values on first go-through */
+					ValueDateTupel vdtToAdd = new ValueDateTupel(forecasts[fcIndex].getDate(),
+							forecasts[fcIndex].getValue() * rulesWeight);
+					calculatedCombinedForecasts = ArrayUtils.add(calculatedCombinedForecasts, vdtToAdd);
+				} else {
+					/*
+					 * If this is not the first go-through add the weighted forecasts of the current
+					 * rule
+					 */
+					ValueDateTupel vdtToAdd = new ValueDateTupel(calculatedCombinedForecasts[fcIndex].getDate(),
+							calculatedCombinedForecasts[fcIndex].getValue()
+									+ forecasts[fcIndex].getValue() * rulesWeight);
+					calculatedCombinedForecasts[fcIndex] = vdtToAdd;
+				}
+			}
+		}
 
 		/*
-		 * Take the forecasts of the rule inside the "current" ruleContainer multiply
-		 * them by the weight of the "current" ruleContainer
+		 * Apply Diversification Multiplier to all forecast values. Cut off Forecast
+		 * values at 2 x base scale or -2 x base scale respectively
 		 */
+		final double instanceBaseScale = this.getBaseScale();
+		final double diversificationMultiplierValue = this.getDiversificationMultiplier().getValue();
+		final double MAX_VALUE = instanceBaseScale * 2;
+		final double MIN_VALUE = 0 - MAX_VALUE;
 
-		/* Add up the weighted forecasts for all rules -> combined forecasts */
+		for (int fcIndex = 0; fcIndex < calculatedCombinedForecasts.length; fcIndex++) {
+			double fcWithDM = calculatedCombinedForecasts[fcIndex].getValue() * diversificationMultiplierValue;
+			if (fcWithDM > MAX_VALUE)
+				fcWithDM = MAX_VALUE;
+			if (fcWithDM < MIN_VALUE)
+				fcWithDM = MIN_VALUE;
 
-		/* Apply Diversification Multiplier */
+			calculatedCombinedForecasts[fcIndex].setValue(fcWithDM);
+		}
 
-		return null;
+		return calculatedCombinedForecasts;
 	}
 
 	/**
@@ -83,7 +124,7 @@ public class SubSystem {
 	 *                  not be negative.
 	 * @throws IllegalArgumentException if any of the above criteria is not met.
 	 */
-	private static void validateInput(BaseValue baseValue, Rule[] rules, double capital) {
+	private static void validateInput(BaseValue baseValue, Rule[] rules, double capital, double baseScale) {
 		if (baseValue == null)
 			throw new IllegalArgumentException("Base value must not be null");
 
@@ -101,118 +142,12 @@ public class SubSystem {
 
 		if (capital < 0)
 			throw new IllegalArgumentException("Capital must be a positive value.");
-	}
 
-	/**
-	 * Return an array of {@link RuleContainer}, each containing one of the given
-	 * {@link Rule} from the array of rules. Keeps order. <br>
-	 * All rules passed into this method will be assigned an even weight of
-	 * 1/rules.length.
-	 * 
-	 * @param rules {@code Rule[]} An array of {@link Rule}.
-	 * @return {@code RuleContainer[]} An array of {@link RuleContainer}, each
-	 *         wrapping one of the given {@link Rule} from the passed array of
-	 *         rules.
-	 */
-	private RuleContainer[] putRulesIntoRuleContainers(Rule[] rules) {
-		RuleContainer[] tempRuleContainers = {};
-		/* Wrap each rule into a RuleContainer. */
-		for (Rule rule : rules) {
-			RuleContainer rcToAdd = RuleContainer.fromRule(rule);
-			/* All rules get the same weight */
-			rcToAdd.setWeight(1d / rules.length);
-			tempRuleContainers = ArrayUtils.add(tempRuleContainers, rcToAdd);
-		}
-		return tempRuleContainers;
-	}
+		if (Double.isNaN(baseScale))
+			throw new IllegalArgumentException("Base scale must not be NaN");
 
-	/**
-	 * Local class for wrapping of rules so they can be boxed into each other
-	 * without altering the rules themselves. Keeps the Rules clean.
-	 */
-	static class RuleContainer {
-		private Rule[] rules;
-		private RuleContainer[] ruleContainers;
-		private double weight = 1d;
-
-		private RuleContainer(Rule[] rules, RuleContainer[] ruleContainers) {
-			this.setRules(rules);
-			this.setRuleContainers(ruleContainers);
-		}
-
-		public static RuleContainer fromRule(Rule rule) {
-			Rule[] ruleAsArray = { rule };
-			return new RuleContainer(ruleAsArray, null);
-		}
-
-		public static RuleContainer fromRuleContainers(RuleContainer[] ruleContainers) {
-			return new RuleContainer(null, ruleContainers);
-		}
-
-		@GeneratedCode
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + Arrays.hashCode(ruleContainers);
-			result = prime * result + Arrays.hashCode(rules);
-			return result;
-		}
-
-		@GeneratedCode
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			RuleContainer other = (RuleContainer) obj;
-			if (!Arrays.equals(ruleContainers, other.ruleContainers))
-				return false;
-			if (!Arrays.equals(rules, other.rules))
-				return false;
-			return true;
-		}
-
-		@GeneratedCode
-		@Override
-		public String toString() {
-			return "RuleContainer [weight=" + weight + ", rules=" + Arrays.toString(rules) + ", ruleContainers="
-					+ Arrays.toString(ruleContainers) + "]";
-		}
-
-		private void setRules(Rule[] rules) {
-			this.rules = rules;
-		}
-
-		public Rule[] getRules() {
-			return this.rules;
-		}
-
-		private void setRuleContainers(RuleContainer[] ruleContainers) {
-			this.ruleContainers = ruleContainers;
-		}
-
-		public RuleContainer[] getRuleContainers() {
-			return this.ruleContainers;
-		}
-
-		/**
-		 * @return weight RuleContainer
-		 */
-		public double getWeight() {
-			return weight;
-		}
-
-		/**
-		 * @param weight the weight to set
-		 */
-		public void setWeight(double weight) {
-			this.weight = weight;
-		}
-
+		if (baseScale <= 0)
+			throw new IllegalArgumentException("Base scale must be a positive decimal");
 	}
 
 	/**
@@ -256,72 +191,6 @@ public class SubSystem {
 			}
 		}
 
-	}
-
-	/**
-	 * Subdivides the given array of given RuleContainer by 3 into RuleContainers.
-	 * If the resulting array of RuleContainers is longer than 3
-	 * {@link #subdivideRules(RuleContainer[])} will be called recursively. If not,
-	 * these 3 or less RuleContainers are put into another RuleContainer which is
-	 * then returned to the caller.
-	 * 
-	 * @param rules {@code RuleContainer[]} The array of {@link RuleContainer} to be
-	 *              subdivided.
-	 * @return {@link RuleContainer} A RuleContainer containing the an array of
-	 *         RuleContainers, each containing three RuleContainer out of the given
-	 *         array of RuleContainers.
-	 */
-	private static RuleContainer subdivideRules(RuleContainer[] rules) {
-
-		/* If there are 3 rules or less no subdivision has to be done. */
-		if (rules.length <= 3)
-			return RuleContainer.fromRuleContainers(rules);
-
-		/* Evaluate in multiples of three how many RuleContainer are passed */
-		int loopsize = rules.length / 3;
-		if (rules.length % 3 != 0)
-			loopsize += 1;
-
-		RuleContainer[] ruleContainers = {};
-		for (int i = 1; i <= loopsize; i++) {
-			RuleContainer[] relevantRules;
-			/*
-			 * If the number of remaining RuleContainer is > 3 there will be another loop,
-			 * therefore the rules array must be cleaned of the RuleContainers taken out.
-			 */
-			if (rules.length > 3) {
-				/* Extract the relevant rules */
-				relevantRules = new RuleContainer[3];
-				System.arraycopy(rules, 0, relevantRules, 0, 3);
-
-				/*
-				 * Make a temporary array to hold all values with the relevant rules taken out.
-				 */
-				RuleContainer[] newRules = new RuleContainer[rules.length - 3];
-				System.arraycopy(rules, 3, newRules, 0, rules.length - 3);
-
-				/* Keep those rules for the next loop iteration. */
-				rules = newRules.clone();
-			} else {
-				relevantRules = new RuleContainer[rules.length];
-				System.arraycopy(rules, 0, relevantRules, 0, rules.length);
-			}
-			/*
-			 * Create a new RuleContainer to store the newly retrieved rules and add it to
-			 * the array of RuleContainer.
-			 */
-			RuleContainer tempRuleContainer = RuleContainer.fromRuleContainers(relevantRules);
-			ruleContainers = ArrayUtils.add(ruleContainers, tempRuleContainer);
-		}
-
-		/*
-		 * If the array still consists of more than 3 elements another layer must be
-		 * added. Therefore subdivideRules() is called recursively.
-		 */
-		if (ruleContainers.length > 3)
-			return subdivideRules(ruleContainers);
-
-		return RuleContainer.fromRuleContainers(ruleContainers);
 	}
 
 	public double backtest(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow) {
@@ -372,10 +241,8 @@ public class SubSystem {
 				.getElements(this.getBaseValue().getShortIndexValues(), startOfTestWindow, endOfTestWindow);
 		ValueDateTupel[] shortProductPrices = calculateProductPrices(relevantShortIndexValues, productPriceFactor);
 
-		ValueDateTupel[] combinedForecasts = ValueDateTupel.getElements(
-				// TODO
-				this.getCombinedForecasts(), //
-				startOfTestWindow, endOfTestWindow);
+		ValueDateTupel[] combinedForecasts = ValueDateTupel.getElements(this.getCombinedForecasts(), startOfTestWindow,
+				endOfTestWindow);
 
 		int longProductsCount = 0;
 		int shortProductsCount = 0;
@@ -461,7 +328,6 @@ public class SubSystem {
 		temp = Double.doubleToLongBits(capital);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + ((diversificationMultiplier == null) ? 0 : diversificationMultiplier.hashCode());
-		result = prime * result + ((ruleContainer == null) ? 0 : ruleContainer.hashCode());
 		temp = Double.doubleToLongBits(weight);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
@@ -489,11 +355,6 @@ public class SubSystem {
 				return false;
 		} else if (!diversificationMultiplier.equals(other.diversificationMultiplier))
 			return false;
-		if (ruleContainer == null) {
-			if (other.ruleContainer != null)
-				return false;
-		} else if (!ruleContainer.equals(other.ruleContainer))
-			return false;
 		if (Double.doubleToLongBits(weight) != Double.doubleToLongBits(other.weight))
 			return false;
 		return true;
@@ -502,9 +363,8 @@ public class SubSystem {
 	@GeneratedCode
 	@Override
 	public String toString() {
-		return "SubSystem [baseValue=" + baseValue + ", ruleContainers=" + ruleContainer
-				+ ", diversificationMultiplier=" + diversificationMultiplier + ", capital=" + capital + ", weight="
-				+ weight + "]";
+		return "SubSystem [baseValue=" + baseValue + ", diversificationMultiplier=" + diversificationMultiplier
+				+ ", capital=" + capital + ", weight=" + weight + "]";
 	}
 
 	/**
@@ -524,20 +384,6 @@ public class SubSystem {
 	 */
 	private void setBaseValue(BaseValue baseValue) {
 		this.baseValue = baseValue;
-	}
-
-	/**
-	 * @param rules the rules to set
-	 */
-	private void setRuleContainer(RuleContainer ruleContainer) {
-		this.ruleContainer = ruleContainer;
-	}
-
-	/**
-	 * @return
-	 */
-	public RuleContainer getRuleContainer() {
-		return this.ruleContainer;
 	}
 
 	/**
@@ -578,7 +424,7 @@ public class SubSystem {
 	/**
 	 * @param weight the weight to set
 	 */
-	private void setWeight(double weight) {
+	public void setWeight(double weight) {
 		this.weight = weight;
 	}
 
@@ -594,6 +440,34 @@ public class SubSystem {
 	 */
 	public void setCombinedForecasts(ValueDateTupel[] combinedForecasts) {
 		this.combinedForecasts = combinedForecasts;
+	}
+
+	/**
+	 * @return baseScale SubSystem
+	 */
+	public double getBaseScale() {
+		return baseScale;
+	}
+
+	/**
+	 * @param baseScale the baseScale to set
+	 */
+	public void setBaseScale(double baseScale) {
+		this.baseScale = baseScale;
+	}
+
+	/**
+	 * @return rules SubSystem
+	 */
+	public Rule[] getRules() {
+		return rules;
+	}
+
+	/**
+	 * @param rules the rules to set
+	 */
+	public void setRules(Rule[] rules) {
+		this.rules = rules;
 	}
 
 }

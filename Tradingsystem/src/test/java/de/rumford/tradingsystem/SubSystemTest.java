@@ -11,7 +11,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.*;
 
 import de.rumford.tradingsystem.RuleTest.RealRule;
-import de.rumford.tradingsystem.SubSystem.RuleContainer;
 import de.rumford.tradingsystem.helper.BaseValueFactory;
 
 class SubSystemTest {
@@ -74,28 +73,9 @@ class SubSystemTest {
 	 */
 	@Test
 	void testSubSystem() {
-		SubSystem subsys = new SubSystem(baseValue, rules, CAPITAL);
-		SubSystem subsys2 = new SubSystem(baseValue, rules, CAPITAL);
+		SubSystem subsys = new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE);
+		SubSystem subsys2 = new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE);
 		assertEquals(subsys, subsys2, "Equal Objects are not considered equal");
-	}
-
-	/**
-	 * Test method for {@link SubSystem#subdivideRules(RuleContainer[])}
-	 */
-	@Test
-	void testSubdivideRules() {
-		int expectedLength = 2;
-		int expectedSubLength1 = 3;
-		int expectedSubLength2 = 1;
-		SubSystem subsys = new SubSystem(baseValue, rules, CAPITAL);
-
-		int actualLength = subsys.getRuleContainer().getRuleContainers().length;
-		int actualSubLength1 = subsys.getRuleContainer().getRuleContainers()[0].getRuleContainers().length;
-		int actualSubLength2 = subsys.getRuleContainer().getRuleContainers()[1].getRuleContainers().length;
-
-		assertEquals(expectedLength, actualLength, "Top level structure not correct");
-		assertEquals(expectedSubLength1, actualSubLength1, "Full second level structure not correct");
-		assertEquals(expectedSubLength2, actualSubLength2, "Partial second level structure not correct");
 	}
 
 	/**
@@ -152,7 +132,7 @@ class SubSystemTest {
 		String expectedMessage = "All rules need to have the same reference window but rules at position 0 and 1 differ.";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> subsystem = new SubSystem(baseValue, rules, CAPITAL),
+				() -> subsystem = new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE),
 				"Differing start of reference windows are not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
@@ -168,7 +148,7 @@ class SubSystemTest {
 		String expectedMessage = "All rules need to have the same reference window but rules at position 0 and 1 differ.";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> subsystem = new SubSystem(baseValue, rules, CAPITAL),
+				() -> subsystem = new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE),
 				"Differing end of reference windows are not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
@@ -183,7 +163,8 @@ class SubSystemTest {
 		String expectedMessage = "Base value must not be null";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new SubSystem(nullBaseValue, rules, CAPITAL), "Null base value is not properly handled");
+				() -> new SubSystem(nullBaseValue, rules, CAPITAL, BASE_SCALE),
+				"Null base value is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -197,7 +178,7 @@ class SubSystemTest {
 		String expectedMessage = "Rules must not be null";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new SubSystem(baseValue, nullRules, CAPITAL), "Null rules are not properly handled");
+				() -> new SubSystem(baseValue, nullRules, CAPITAL, BASE_SCALE), "Null rules are not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -211,7 +192,8 @@ class SubSystemTest {
 		String expectedMessage = "Rules must not be an empty array";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new SubSystem(baseValue, emptyRulesArray, CAPITAL), "Empty rules array is not properly handled");
+				() -> new SubSystem(baseValue, emptyRulesArray, CAPITAL, BASE_SCALE),
+				"Empty rules array is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -225,7 +207,8 @@ class SubSystemTest {
 		String expectedMessage = "Capital must not be Double.NaN";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new SubSystem(baseValue, rules, nanCapital), "Capital of Double.NaN is not properly handled");
+				() -> new SubSystem(baseValue, rules, nanCapital, BASE_SCALE),
+				"Capital of Double.NaN is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -239,7 +222,7 @@ class SubSystemTest {
 		String expectedMessage = "Capital must not be zero";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new SubSystem(baseValue, rules, zeroCapital), "Capital of 0 is not properly handled");
+				() -> new SubSystem(baseValue, rules, zeroCapital, BASE_SCALE), "Capital of 0 is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -253,7 +236,7 @@ class SubSystemTest {
 		String expectedMessage = "Capital must be a positive value.";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new SubSystem(baseValue, rules, negativeCapital),
+				() -> new SubSystem(baseValue, rules, negativeCapital, BASE_SCALE),
 				"Negative capital value is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
