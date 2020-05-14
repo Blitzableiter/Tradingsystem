@@ -60,6 +60,7 @@ public class SubSystem {
 	 *         multiplied by {@link DiversificationMultiplier#getValue()} of this
 	 *         Sub System.
 	 */
+	// TODO TEST ME
 	private ValueDateTupel[] calculateCombinedForecasts() {
 		Rule[] instanceRules = this.getRules();
 		/* Calculate the weight by which all rules' forecasts shall be multiplied by */
@@ -245,9 +246,15 @@ public class SubSystem {
 
 		int longProductsCount = 0;
 		int shortProductsCount = 0;
-		for (ValueDateTupel forecast : combinedForecasts) {
+		for (int i = 0; i < combinedForecasts.length; i++) {
 			// TODO Position sizing
-			//// add value of last held position to capitalAfterBacktest
+
+			/* Calculate the capital available for this time interval */
+			capitalAfterBacktest += longProductsCount * productPrices[i].getValue();
+			capitalAfterBacktest += shortProductsCount * shortProductPrices[i].getValue();
+
+			//// Calculate current position
+
 			//// subtract value of current position from capitalAfterBacktest
 		}
 		//
