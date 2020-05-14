@@ -242,4 +242,14 @@ class SubSystemTest {
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
+	/**
+	 * Test method for {@link SubSystem#calculateCombinedForecasts()}.
+	 */
+	@Test
+	void testCalculateProductPriceFactor() {
+		//
+		// TODO
+
+	}
+
 }

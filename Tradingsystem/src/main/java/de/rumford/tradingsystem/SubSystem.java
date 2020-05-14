@@ -60,7 +60,6 @@ public class SubSystem {
 	 *         multiplied by {@link DiversificationMultiplier#getValue()} of this
 	 *         Sub System.
 	 */
-	// TODO TEST ME
 	private ValueDateTupel[] calculateCombinedForecasts() {
 		Rule[] instanceRules = this.getRules();
 		/* Calculate the weight by which all rules' forecasts shall be multiplied by */
@@ -290,7 +289,6 @@ public class SubSystem {
 	 *               calculated for
 	 * @return {@code double} The calculated factor.
 	 */
-	// TODO TEST ME
 	private static double calculateProductPriceFactor(double[] values) {
 		return SubSystem.calculateProductPriceFactor(values, PRICE_FACTOR_BASE_SCALE);
 	}
@@ -306,7 +304,6 @@ public class SubSystem {
 	 * @param priceFactorBaseScale {@code double} The base scale to use.
 	 * @return {@code double} The calculated factor.
 	 */
-	// TODO TEST ME
 	private static double calculateProductPriceFactor(double[] values, double priceFactorBaseScale) {
 		double averageCourseValue = Util.calculateAverage(values);
 
@@ -470,4 +467,10 @@ public class SubSystem {
 		this.rules = rules;
 	}
 
+	/**
+	 * @return priceFactorBaseScale SubSystem
+	 */
+	public static double getPriceFactorBaseScale() {
+		return PRICE_FACTOR_BASE_SCALE;
+	}
 }
