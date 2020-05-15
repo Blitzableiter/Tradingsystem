@@ -246,10 +246,13 @@ class SubSystemTest {
 	 * Test method for {@link SubSystem#calculateCombinedForecasts()}.
 	 */
 	@Test
-	void testCalculateProductPriceFactor() {
-		//
-		// TODO
+	void testCalculateCombinedForecasts() {
+		double expectedValue = 13.398963140010043; // Excel: 13.3988598882083
 
+		SubSystem susy = new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE);
+
+		assertEquals(expectedValue, susy.getCombinedForecasts()[0].getValue(),
+				"Combined forecasts are not correctly calculated");
 	}
 
 }

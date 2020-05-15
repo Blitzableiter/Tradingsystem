@@ -5,6 +5,7 @@ package de.rumford.tradingsystem;
 
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDateTime;
+import java.util.Arrays;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -64,7 +65,7 @@ public class SubSystem {
 	private ValueDateTupel[] calculateCombinedForecasts() {
 		Rule[] instanceRules = this.getRules();
 		/* Calculate the weight by which all rules' forecasts shall be multiplied by */
-		double rulesWeight = instanceRules.length / 4d;
+		double rulesWeight = 1d / instanceRules.length;
 
 		ValueDateTupel[] calculatedCombinedForecasts = {};
 
@@ -368,7 +369,9 @@ public class SubSystem {
 	@Override
 	public String toString() {
 		return "SubSystem [baseValue=" + baseValue + ", diversificationMultiplier=" + diversificationMultiplier
-				+ ", capital=" + capital + ", weight=" + weight + "]";
+				+ ", capital=" + capital + ", weight=" + weight + ", combinedForecasts="
+				+ Arrays.toString(combinedForecasts) + ", baseScale=" + baseScale + ", rules=" + Arrays.toString(rules)
+				+ "]";
 	}
 
 	/**
