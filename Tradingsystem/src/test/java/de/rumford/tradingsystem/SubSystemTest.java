@@ -247,11 +247,14 @@ class SubSystemTest {
 	 */
 	@Test
 	void testCalculateCombinedForecasts() {
-		double expectedValue = 13.398963140010043; // Excel: 13.3988598882083
+		double expectedValue1 = 13.398963140010043; // Excel: 13.3988598882083
+		double expectedValue2 = 20; // Excel: 20
 
 		SubSystem susy = new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE);
 
-		assertEquals(expectedValue, susy.getCombinedForecasts()[0].getValue(),
+		assertEquals(expectedValue1, susy.getCombinedForecasts()[0].getValue(),
+				"Combined forecasts are not correctly calculated");
+		assertEquals(expectedValue2, susy.getCombinedForecasts()[susy.getCombinedForecasts().length - 1].getValue(),
 				"Combined forecasts are not correctly calculated");
 	}
 

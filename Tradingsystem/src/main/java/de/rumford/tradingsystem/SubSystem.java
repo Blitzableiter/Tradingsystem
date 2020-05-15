@@ -61,7 +61,6 @@ public class SubSystem {
 	 *         multiplied by {@link DiversificationMultiplier#getValue()} of this
 	 *         Sub System.
 	 */
-	// TODO TEST ME
 	private ValueDateTupel[] calculateCombinedForecasts() {
 		Rule[] instanceRules = this.getRules();
 		/* Calculate the weight by which all rules' forecasts shall be multiplied by */
@@ -194,6 +193,8 @@ public class SubSystem {
 
 	}
 
+	/* Test me */
+	// TODO TEST
 	public double backtest(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow) {
 		if (startOfTestWindow == null)
 			throw new IllegalArgumentException("The given start of test window must not be null");
@@ -248,15 +249,38 @@ public class SubSystem {
 		int longProductsCount = 0;
 		int shortProductsCount = 0;
 		for (int i = 0; i < combinedForecasts.length; i++) {
-			// TODO Position sizing
-
-			/* Calculate the capital available for this time interval */
+			/*
+			 * Calculate the capital available for this time interval by "selling" off all
+			 * currently held positions
+			 */
 			capitalAfterBacktest += longProductsCount * productPrices[i].getValue();
 			capitalAfterBacktest += shortProductsCount * shortProductPrices[i].getValue();
 
-			//// Calculate current position
+			/* Reset the products count as they were sold off */
+			shortProductsCount = 0;
+			longProductsCount = 0;
 
-			//// subtract value of current position from capitalAfterBacktest
+			if (combinedForecasts[i].getValue() > 0) {
+				/* Long position */
+				longProductsCount = calculateProductsCount(capitalAfterBacktest, productPrices[i].getValue(),
+						combinedForecasts[i].getValue(), this.getBaseScale());
+
+				/* "Buy" the calculated count of products and thus reduce the cash capital */
+				capitalAfterBacktest -= longProductsCount * productPrices[i].getValue();
+
+			} else if (combinedForecasts[i].getValue() < 0) {
+				/* short position */
+				shortProductsCount = calculateProductsCount(capitalAfterBacktest, shortProductPrices[i].getValue(),
+						combinedForecasts[i].getValue(), this.getBaseScale());
+
+				/* "Buy" the calculated count of products and thus reduce the cash capital */
+				capitalAfterBacktest -= shortProductsCount * shortProductPrices[i].getValue();
+			}
+			/*
+			 * If forecast was 0 nothing would be bought so no default-else branch is
+			 * needed.
+			 */
+
 		}
 		//
 		//
@@ -264,7 +288,37 @@ public class SubSystem {
 		//
 		//
 
+		/* "sell" on last time interval */
+		capitalAfterBacktest += longProductsCount * productPrices[productPrices.length - 1].getValue();
+		capitalAfterBacktest += shortProductsCount * shortProductPrices[shortProductPrices.length - 1].getValue();
+
 		return capitalAfterBacktest;
+	}
+
+	/**
+	 * Calculates the products to buy during a trading period according to the given
+	 * price and given forecast.
+	 * 
+	 * @param capitalBeforeTradingPeriod {@code double} The capital available for
+	 *                                   trading.
+	 * @param currentPrice               {@code double} The price at which a product
+	 *                                   can be bought.
+	 * @param currentForecast            {@code double} The forecast for the current
+	 *                                   trading period.
+	 * @param baseScale                  {@code double} The base scale by which the
+	 *                                   given forecast is scaled.
+	 * @return {@code int} The number of products to buy.
+	 */
+	private int calculateProductsCount(double capitalBeforeTradingPeriod, double currentPrice, double currentForecast,
+			double baseScale) {
+		/* Number of products if forecast had MAX_VALUE */
+		double maxProductsCount = capitalBeforeTradingPeriod / currentPrice;
+
+		/* Number of products if forecast was 1 */
+		double fcOneProductsCounts = maxProductsCount / (baseScale * 2);
+
+		/* Number of products for actual forecast. Accept rounding inaccuracies. */
+		return (int) (fcOneProductsCounts * currentForecast);
 	}
 
 	/**
