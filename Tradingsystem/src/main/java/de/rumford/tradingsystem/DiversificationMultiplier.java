@@ -61,7 +61,14 @@ public class DiversificationMultiplier {
 				for (double weight : weightsToAdd)
 					weights = ArrayUtils.add(weights, weight * rule.getWeight());
 			} else {
-				weights = ArrayUtils.add(weights, rule.getWeight());
+				double weight = rule.getWeight();
+				/*
+				 * If a top level rule has no variations its weight has not been set. Manually
+				 * set its weight to be 1/numberOfTopeLevelRules
+				 */
+				if (weight == 0)
+					weight = 1d / rules.length;
+				weights = ArrayUtils.add(weights, weight);
 			}
 		}
 		return weights;

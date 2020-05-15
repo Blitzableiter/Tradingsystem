@@ -123,4 +123,28 @@ class DiversificationMultiplierTest {
 				"Diversification multiplier value is not correctly calculated");
 	}
 
+	/**
+	 * Test method for
+	 * {@link DiversificationMultiplier#calculateDiversificiationMultiplierValue()}.
+	 */
+	@Test
+	void testCalculateDiversificiationMultiplierValue_rulesHaveNoVariations() {
+		double expectedValue = 1.000109838860305; // Excel: 1.00010213205928
+		ss1 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 1);
+		ss2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 2);
+		ss3 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 3);
+		RealRule ss4 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				4);
+		Rule[] rules = { ss1, ss2, ss3, ss4 };
+
+		dm = new DiversificationMultiplier(rules);
+
+//		System.out.println(Arrays.toString(ss1.getRelevantForecastValues()));
+//		System.out.println(Arrays.toString(ss2.getRelevantForecastValues()));
+//		System.out.println(Arrays.toString(ss3.getRelevantForecastValues()));
+//		System.out.println(Arrays.toString(ss4.getRelevantForecastValues()));
+
+		assertEquals(expectedValue, dm.getValue(),
+				"Diversification Multiplier is not correctly calculated when rules have no variations");
+	}
 }
