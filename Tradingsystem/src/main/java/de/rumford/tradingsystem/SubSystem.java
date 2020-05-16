@@ -287,8 +287,8 @@ public class SubSystem {
 
 		ValueDateTupel[] performanceValues = {};
 
-		int longProductsCount = 0;
-		int shortProductsCount = 0;
+		long longProductsCount = 0;
+		long shortProductsCount = 0;
 		for (int i = 0; i < relevantCombinedForecasts.length; i++) {
 
 			/*
@@ -330,6 +330,7 @@ public class SubSystem {
 				 * needed.
 				 */
 			}
+
 		}
 		return performanceValues;
 	}
@@ -348,7 +349,7 @@ public class SubSystem {
 	 *                                   given forecast is scaled.
 	 * @return {@code int} The number of products to buy.
 	 */
-	private static int calculateProductsCount(double capitalBeforeTradingPeriod, double currentPrice,
+	private static long calculateProductsCount(double capitalBeforeTradingPeriod, double currentPrice,
 			double currentForecast, double baseScale) {
 		/* Number of products if forecast had MAX_VALUE */
 		double maxProductsCount = capitalBeforeTradingPeriod / currentPrice;
@@ -356,8 +357,15 @@ public class SubSystem {
 		/* Number of products if forecast was 1 */
 		double fcOneProductsCounts = maxProductsCount / (baseScale * 2);
 
+		/*
+		 * Invert current forecast if it's negative to always generate a positive number
+		 * of products
+		 */
+		if (currentForecast < 0)
+			currentForecast *= -1;
+
 		/* Number of products for actual forecast. Accept rounding inaccuracies. */
-		return (int) (fcOneProductsCounts * currentForecast);
+		return (long) (fcOneProductsCounts * currentForecast);
 	}
 
 	/**

@@ -8,7 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.LocalDateTime;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import de.rumford.tradingsystem.RuleTest.RealRule;
 import de.rumford.tradingsystem.helper.BaseValueFactory;
@@ -30,6 +32,7 @@ class SubSystemTest {
 	static LocalDateTime localDateTimeJan10220000;
 	static LocalDateTime localDateTimeJan11220000;
 	static LocalDateTime localDateTimeJan12220000;
+	static LocalDateTime localDateTimeFeb04220000;
 	static LocalDateTime localDateTimeFeb05220000;
 	static LocalDateTime localDateTimeDec31220000;
 
@@ -50,12 +53,9 @@ class SubSystemTest {
 		localDateTimeJan10220000 = LocalDateTime.of(2020, 01, 10, 22, 0);
 		localDateTimeJan11220000 = LocalDateTime.of(2020, 01, 11, 22, 0);
 		localDateTimeJan12220000 = LocalDateTime.of(2020, 01, 12, 22, 0);
+		localDateTimeFeb04220000 = LocalDateTime.of(2020, 02, 4, 22, 0);
 		localDateTimeFeb05220000 = LocalDateTime.of(2020, 02, 5, 22, 0);
 		localDateTimeDec31220000 = LocalDateTime.of(2020, 12, 31, 22, 0);
-	}
-
-	@AfterAll
-	static void tearDownAfterClass() throws Exception {
 	}
 
 	@BeforeEach
@@ -72,10 +72,6 @@ class SubSystemTest {
 		rules = ArrayUtils.add(rules, r4);
 
 		subSystem = new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE);
-	}
-
-	@AfterEach
-	void tearDown() throws Exception {
 	}
 
 	/**
@@ -282,6 +278,23 @@ class SubSystemTest {
 
 	/**
 	 * Test method for
+	 * {@link SubSystem#backtest(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow)}.
+	 */
+	@Test
+	void testBacktest_positiveAndNegativeForecasts() {
+		VolatilityDifference volDif = new VolatilityDifference(baseValue, null, localDateTimeJan10220000,
+				localDateTimeJan12220000, 4, BASE_SCALE);
+		Rule[] rules = { volDif };
+		subSystem = new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE);
+
+		double expectedValue = 16815027.90331543; // Excel: 16815027.1988897
+
+		assertEquals(expectedValue, subSystem.backtest(localDateTimeJan10220000, localDateTimeFeb04220000),
+				"Backtest performance is not correctly calculated");
+	}
+
+	/**
+	 * Test method for
 	 * {@link SubSystem#calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, de.rumford.tradingsystem.helper.ValueDateTupel[], double, double)}.
 	 */
 	@Test
@@ -292,6 +305,26 @@ class SubSystemTest {
 				localDateTimeJan10220000, localDateTimeFeb05220000, subSystem.getCombinedForecasts(),
 				subSystem.getBaseScale(), subSystem.getCapital());
 		assertEquals(expectedValue, performanceValues[performanceValues.length - 2].getValue(),
+				"Performance values are not properly calculated");
+	}
+
+	/**
+	 * Test method for
+	 * {@link SubSystem#calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, de.rumford.tradingsystem.helper.ValueDateTupel[], double, double)}.
+	 */
+	@Test
+	void testCalculatePerformanceValues_positiveAndNegativeForecasts() {
+		VolatilityDifference volDif = new VolatilityDifference(baseValue, null, localDateTimeJan10220000,
+				localDateTimeJan12220000, 4, BASE_SCALE);
+		Rule[] rules = { volDif };
+		subSystem = new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE);
+
+		double expectedValue = 88500.39985733961; // Excel: 88500.3998573322
+
+		ValueDateTupel[] performanceValues = SubSystem.calculatePerformanceValues(subSystem.getBaseValue(),
+				localDateTimeJan10220000, localDateTimeFeb05220000, subSystem.getCombinedForecasts(),
+				subSystem.getBaseScale(), subSystem.getCapital());
+		assertEquals(expectedValue, performanceValues[performanceValues.length - 1].getValue(),
 				"Performance values are not properly calculated");
 	}
 
