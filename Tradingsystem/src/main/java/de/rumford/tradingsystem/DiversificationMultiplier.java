@@ -105,6 +105,12 @@ public class DiversificationMultiplier {
 	 *         {@link PearsonsCorrelation#getCorrelationMatrix()}.
 	 */
 	private static double[][] getCorrelationsFromForecasts(double[][] forecasts) {
+		/* If there is only one row of data return a 1x1 self correlation matrix */
+		if (forecasts.length == 1) {
+			double[][] returnValue = { { 1 } };
+			return returnValue;
+		}
+
 		/* Load the given values into rows of a matrix */
 		BlockRealMatrix matrix = new BlockRealMatrix(forecasts);
 		/* Transpose the values into columns to get the correct correlations */
