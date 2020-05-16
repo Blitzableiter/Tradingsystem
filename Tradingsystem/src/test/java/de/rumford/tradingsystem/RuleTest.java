@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.rumford.tradingsystem.helper.BaseValueFactory;
+import de.rumford.tradingsystem.helper.GeneratedCode;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
@@ -47,6 +48,7 @@ class RuleTest {
 					+ this.variator * 100;
 		}
 
+		@GeneratedCode
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -57,12 +59,16 @@ class RuleTest {
 			return result;
 		}
 
+		@GeneratedCode
 		@Override
 		public boolean equals(Object obj) {
+
 			if (this == obj)
 				return true;
+
 			if (!super.equals(obj))
 				return false;
+
 			if (getClass() != obj.getClass())
 				return false;
 			RealRule other = (RealRule) obj;
@@ -71,6 +77,7 @@ class RuleTest {
 			return true;
 		}
 
+		@GeneratedCode
 		@Override
 		public String toString() {
 			return "RealRule [variator=" + variator + "]";

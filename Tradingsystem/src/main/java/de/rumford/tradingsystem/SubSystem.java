@@ -193,9 +193,55 @@ public class SubSystem {
 
 	}
 
-	/* Test me */
-	// TODO TEST
+	/**
+	 * Performs a backtest for this SubSystem in the given time period. Utilizes
+	 * {@link #calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], double, double)}
+	 * for actual performance calculation and returns performance value for the last
+	 * day.
+	 * 
+	 * @see SubSystem#calculatePerformanceValues(BaseValue, LocalDateTime,
+	 *      LocalDateTime, ValueDateTupel[], double, double)
+	 * 
+	 * @param startOfTestWindow {@link LocalDateTime} First time interval of test
+	 *                          window.
+	 * @param endOfTestWindow   {@link LocalDateTime} Last time interval of test
+	 *                          window.
+	 * @return {@code double} The performance value on the last day of the given
+	 *         test window.
+	 */
 	public double backtest(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow) {
+		BaseValue instanceBaseValue = this.getBaseValue();
+		double capitalAfterBacktest = this.getCapital();
+
+		ValueDateTupel[] performanceValues = calculatePerformanceValues(instanceBaseValue, startOfTestWindow,
+				endOfTestWindow, this.getCombinedForecasts(), this.getBaseScale(), capitalAfterBacktest);
+
+		return performanceValues[performanceValues.length - 1].getValue();
+	}
+
+	/**
+	 * Calculates the performance values for the given time frame, based on the
+	 * given baseValue, forecasts, baseScale and capital.
+	 * 
+	 * @param baseValue         {@link BaseValue} The base value upon which the
+	 *                          products' prices are to be based.
+	 * @param startOfTestWindow {@link LocalDateTime} First time interval for
+	 *                          testing.
+	 * @param endOfTestWindow   {@link LocalDateTime} Last time interval for
+	 *                          testing.
+	 * @param combinedForecasts {@code ValueDateTupel[]} Array of
+	 *                          {@link ValueDateTupel} containing the forecasts for
+	 *                          this performance calculation.
+	 * @param baseScale         {@code double} The scale the given forecasts are
+	 *                          based upon.
+	 * @param capital           {@code double} The starting capital.
+	 * @return {@code ValueDateTupel} An array of {@link ValueDateTupel} containing
+	 *         the value of all held assets + cash for each time interval between
+	 *         the given startOfTestWindow and endOfTestWindow.
+	 */
+	public static ValueDateTupel[] calculatePerformanceValues(BaseValue baseValue, LocalDateTime startOfTestWindow,
+			LocalDateTime endOfTestWindow, ValueDateTupel[] combinedForecasts, double baseScale, double capital) {
+
 		if (startOfTestWindow == null)
 			throw new IllegalArgumentException("The given start of test window must not be null");
 		if (endOfTestWindow == null)
@@ -203,96 +249,89 @@ public class SubSystem {
 		if (!endOfTestWindow.isAfter(startOfTestWindow))
 			throw new IllegalArgumentException("The end of test window must be after the start of the test window");
 
-		ValueDateTupel[] baseValues = this.getBaseValue().getValues();
-
-		if (!ValueDateTupel.containsDate(baseValues, startOfTestWindow))
+		if (!ValueDateTupel.containsDate(baseValue.getValues(), startOfTestWindow))
 			throw new IllegalArgumentException(
 					"The given start of test window is not contained in the base value for this subsystem.");
-		if (!ValueDateTupel.containsDate(baseValues, endOfTestWindow))
+		if (!ValueDateTupel.containsDate(baseValue.getValues(), endOfTestWindow))
 			throw new IllegalArgumentException(
 					"The given end of test window is not contained in the base value for this subsystem.");
 
-		double capitalAfterBacktest = this.getCapital();
+		if (!ValueDateTupel.containsDate(combinedForecasts, startOfTestWindow))
+			throw new IllegalArgumentException(
+					"No forecast for given start of test window. Start of test window is probably before start of reference window");
 
-		//
-		//
-		//
-		//
-		//
-		/*
-		 * Maybe bring all of this into a subfunction returning an Array of
-		 * ValueDateTupel containing the performance values for each trading timespan
-		 */
-		//
 		/* Fetch all base values inside the test window */
-		ValueDateTupel[] relevantBaseValues = ValueDateTupel.getElements(baseValues, startOfTestWindow,
+		ValueDateTupel[] relevantBaseValues = ValueDateTupel.getElements(baseValue.getValues(), startOfTestWindow,
 				endOfTestWindow);
+
+		/* Get the product price factor to calculate long and short product prices */
 		double productPriceFactor = calculateProductPriceFactor(ValueDateTupel.getValues(relevantBaseValues));
 
 		/*
-		 * Calculate the product prices based on the base value for each day and the
-		 * calculated productPriceFactor
+		 * Calculate the product prices based on the base value for each interval inside
+		 * the testing timespan and the calculated productPriceFactor
 		 */
 		ValueDateTupel[] productPrices = calculateProductPrices(relevantBaseValues, productPriceFactor);
 
 		/*
-		 * Calculate the short product prices based on the base value for each day and
-		 * the calculated productPriceFactor
+		 * Calculate the short product prices based on the base value for each interval
+		 * inside the testing timespan and the calculated productPriceFactor
 		 */
-		ValueDateTupel[] relevantShortIndexValues = ValueDateTupel
-				.getElements(this.getBaseValue().getShortIndexValues(), startOfTestWindow, endOfTestWindow);
+		ValueDateTupel[] relevantShortIndexValues = ValueDateTupel.getElements(baseValue.getShortIndexValues(),
+				startOfTestWindow, endOfTestWindow);
 		ValueDateTupel[] shortProductPrices = calculateProductPrices(relevantShortIndexValues, productPriceFactor);
 
-		ValueDateTupel[] combinedForecasts = ValueDateTupel.getElements(this.getCombinedForecasts(), startOfTestWindow,
+		/* Fetch all forecasts relevant for this backtest. */
+		ValueDateTupel[] relevantCombinedForecasts = ValueDateTupel.getElements(combinedForecasts, startOfTestWindow,
 				endOfTestWindow);
+
+		ValueDateTupel[] performanceValues = {};
 
 		int longProductsCount = 0;
 		int shortProductsCount = 0;
-		for (int i = 0; i < combinedForecasts.length; i++) {
+		for (int i = 0; i < relevantCombinedForecasts.length; i++) {
+
 			/*
 			 * Calculate the capital available for this time interval by "selling" off all
-			 * currently held positions
+			 * currently held positions at the this time interval's prices.
 			 */
-			capitalAfterBacktest += longProductsCount * productPrices[i].getValue();
-			capitalAfterBacktest += shortProductsCount * shortProductPrices[i].getValue();
+			capital += longProductsCount * productPrices[i].getValue();
+			capital += shortProductsCount * shortProductPrices[i].getValue();
 
 			/* Reset the products count as they were sold off */
 			shortProductsCount = 0;
 			longProductsCount = 0;
 
-			if (combinedForecasts[i].getValue() > 0) {
-				/* Long position */
-				longProductsCount = calculateProductsCount(capitalAfterBacktest, productPrices[i].getValue(),
-						combinedForecasts[i].getValue(), this.getBaseScale());
-
-				/* "Buy" the calculated count of products and thus reduce the cash capital */
-				capitalAfterBacktest -= longProductsCount * productPrices[i].getValue();
-
-			} else if (combinedForecasts[i].getValue() < 0) {
-				/* short position */
-				shortProductsCount = calculateProductsCount(capitalAfterBacktest, shortProductPrices[i].getValue(),
-						combinedForecasts[i].getValue(), this.getBaseScale());
-
-				/* "Buy" the calculated count of products and thus reduce the cash capital */
-				capitalAfterBacktest -= shortProductsCount * shortProductPrices[i].getValue();
-			}
 			/*
-			 * If forecast was 0 nothing would be bought so no default-else branch is
-			 * needed.
+			 * Add this capital as performance value, as the overall value of cash + assets
+			 * held will not change during buying.
 			 */
+			ValueDateTupel performanceValue = new ValueDateTupel(relevantCombinedForecasts[i].getDate(), capital);
+			performanceValues = ArrayUtils.add(performanceValues, performanceValue);
 
+			if (relevantCombinedForecasts[i].getValue() > 0) {
+				/* Long position */
+				longProductsCount = calculateProductsCount(capital, productPrices[i].getValue(),
+						relevantCombinedForecasts[i].getValue(), baseScale);
+
+				/* "Buy" the calculated count of products and thus reduce the cash capital */
+				capital -= longProductsCount * productPrices[i].getValue();
+
+			} else if (relevantCombinedForecasts[i].getValue() < 0) {
+				/* short position */
+				shortProductsCount = calculateProductsCount(capital, shortProductPrices[i].getValue(),
+						relevantCombinedForecasts[i].getValue(), baseScale);
+
+				/* "Buy" the calculated count of products and thus reduce the cash capital */
+				capital -= shortProductsCount * shortProductPrices[i].getValue();
+			} else {
+				/*
+				 * If forecast was 0 nothing would be bought so no default-else branch is
+				 * needed.
+				 */
+			}
 		}
-		//
-		//
-		//
-		//
-		//
-
-		/* "sell" on last time interval */
-		capitalAfterBacktest += longProductsCount * productPrices[productPrices.length - 1].getValue();
-		capitalAfterBacktest += shortProductsCount * shortProductPrices[shortProductPrices.length - 1].getValue();
-
-		return capitalAfterBacktest;
+		return performanceValues;
 	}
 
 	/**
@@ -309,8 +348,8 @@ public class SubSystem {
 	 *                                   given forecast is scaled.
 	 * @return {@code int} The number of products to buy.
 	 */
-	private int calculateProductsCount(double capitalBeforeTradingPeriod, double currentPrice, double currentForecast,
-			double baseScale) {
+	private static int calculateProductsCount(double capitalBeforeTradingPeriod, double currentPrice,
+			double currentForecast, double baseScale) {
 		/* Number of products if forecast had MAX_VALUE */
 		double maxProductsCount = capitalBeforeTradingPeriod / currentPrice;
 
@@ -335,7 +374,7 @@ public class SubSystem {
 	private static ValueDateTupel[] calculateProductPrices(ValueDateTupel[] baseValues, double productPriceFactor) {
 		ValueDateTupel[] productPrices = {};
 		for (ValueDateTupel baseValue : baseValues)
-			ValueDateTupel.addOneAt(baseValues,
+			productPrices = ValueDateTupel.addOneAt(productPrices,
 					new ValueDateTupel(baseValue.getDate(), baseValue.getValue() * productPriceFactor),
 					productPrices.length);
 
@@ -531,10 +570,4 @@ public class SubSystem {
 		this.rules = rules;
 	}
 
-	/**
-	 * @return priceFactorBaseScale SubSystem
-	 */
-	public static double getPriceFactorBaseScale() {
-		return PRICE_FACTOR_BASE_SCALE;
-	}
 }
