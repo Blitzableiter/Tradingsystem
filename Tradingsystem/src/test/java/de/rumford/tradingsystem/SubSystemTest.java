@@ -130,6 +130,48 @@ class SubSystemTest {
 	}
 
 	/**
+	 * Test method for {@link SubSystem#areRulesUnique(Rule[])}.
+	 */
+	@Test
+	void testAreRulesUnique_rules_null() {
+		String expectedMessage = "The given rules must not be null";
+		Rule[] rules = null;
+
+		Exception thrown = assertThrows(IllegalArgumentException.class, () -> SubSystem.areRulesUnique(rules),
+				"Rules array of null is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link SubSystem#areRulesUnique(Rule[])}.
+	 */
+	@Test
+	void testAreRulesUnique_rulesContains_null() {
+		String expectedMessage = "The given array must not contain nulls";
+		Rule[] rules = { null };
+
+		Exception thrown = assertThrows(IllegalArgumentException.class, () -> SubSystem.areRulesUnique(rules),
+				"Rules array containing null is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link SubSystem#areRulesUnique(Rule[])}.
+	 */
+	@Test
+	void testAreRulesUnique_rules_empty() {
+		String expectedMessage = "The given array of rules must not be empty.";
+		Rule[] rules = {};
+
+		Exception thrown = assertThrows(IllegalArgumentException.class, () -> SubSystem.areRulesUnique(rules),
+				"Empty rules array is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
 	 * Test method for {@link SubSystem#evaluateRules(Rule[])}.
 	 */
 	@Test
@@ -345,6 +387,51 @@ class SubSystemTest {
 
 		assertEquals(expectedValue, subSystem.backtest(localDateTimeJan10220000, localDateTimeFeb04220000),
 				"Backtest performance is not correctly calculated");
+	}
+
+	/**
+	 * Test method for
+	 * {@link SubSystem#backtest(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow)}.
+	 */
+	@Test
+	void testBacktest_startOfTestWindow_null() {
+		String expectedMessage = "Start of test window must not be null";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> subSystem.backtest(null, localDateTimeFeb05220000),
+				"Start of test window of null is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link SubSystem#backtest(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow)}.
+	 */
+	@Test
+	void testBacktest_endOfTestWindow_null() {
+		String expectedMessage = "End of test window must not be null";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> subSystem.backtest(localDateTimeJan10220000, null),
+				"End of test window of null is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link SubSystem#backtest(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow)}.
+	 */
+	@Test
+	void testBacktest_endOfTestWindow_not_after_startOfTestWindow() {
+		String expectedMessage = "End of test window must be after start of test window.";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> subSystem.backtest(localDateTimeJan10220000, localDateTimeJan10220000),
+				"End of test window not after start of test window is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**

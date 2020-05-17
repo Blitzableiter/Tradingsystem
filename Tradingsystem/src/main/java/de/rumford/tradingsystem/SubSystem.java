@@ -131,6 +131,13 @@ public class SubSystem {
 	 *         test window.
 	 */
 	public double backtest(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow) {
+		if (startOfTestWindow == null)
+			throw new IllegalArgumentException("Start of test window must not be null");
+		if (endOfTestWindow == null)
+			throw new IllegalArgumentException("End of test window must not be null");
+		if (!endOfTestWindow.isAfter(startOfTestWindow))
+			throw new IllegalArgumentException("End of test window must be after start of test window.");
+
 		BaseValue instanceBaseValue = this.getBaseValue();
 		double capitalAfterBacktest = this.getCapital();
 
@@ -410,6 +417,13 @@ public class SubSystem {
 	 * @return {@code boolean} True, if the rules are unique. False otherwise.
 	 */
 	static boolean areRulesUnique(Rule[] rules) {
+		if (rules == null)
+			throw new IllegalArgumentException("The given rules must not be null");
+		if (ArrayUtils.contains(rules, null))
+			throw new IllegalArgumentException("The given array must not contain nulls");
+		if (rules.length == 0)
+			throw new IllegalArgumentException("The given array of rules must not be empty.");
+
 		for (int i = 0; i < rules.length - 1; i++) {
 			if (rules[i].equals(rules[i + 1])) {
 				return false;
