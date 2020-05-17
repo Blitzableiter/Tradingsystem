@@ -390,6 +390,29 @@ class SubSystemTest {
 	 * {@link SubSystem#calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, de.rumford.tradingsystem.helper.ValueDateTupel[], double, double)}.
 	 */
 	@Test
+	void testCalculatePerformanceValues_positiveNegativeAndZeroForecasts() {
+		VolatilityDifference volDif4 = new VolatilityDifference(baseValue, null, localDateTimeJan10220000,
+				localDateTimeJan12220000, 4, BASE_SCALE);
+		RealRule rr = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				VARIATOR);
+
+		Rule[] rules = { volDif4, rr };
+		subSystem = new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE);
+
+		double expectedValue = 1271620.1875697833; // Excel: 1271620.18756978
+
+		ValueDateTupel[] performanceValues = SubSystem.calculatePerformanceValues(subSystem.getBaseValue(),
+				localDateTimeJan10220000, localDateTimeFeb05220000, subSystem.getCombinedForecasts(),
+				subSystem.getBaseScale(), subSystem.getCapital());
+		assertEquals(expectedValue, performanceValues[performanceValues.length - 1].getValue(),
+				"Performance values are not properly calculated");
+	}
+
+	/**
+	 * Test method for
+	 * {@link SubSystem#calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, de.rumford.tradingsystem.helper.ValueDateTupel[], double, double)}.
+	 */
+	@Test
 	void testCalculatePerformanceValues_startOfTestWindowNull() {
 		String expectedMessage = "The given start of test window must not be null";
 
