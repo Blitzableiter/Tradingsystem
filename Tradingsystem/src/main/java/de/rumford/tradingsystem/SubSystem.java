@@ -267,20 +267,20 @@ public class SubSystem {
 	 * Calculates the products to buy during a trading period according to the given
 	 * price and given forecast.
 	 * 
-	 * @param capitalBeforeTradingPeriod {@code double} The capital available for
+	 * @param capital {@code double} The capital available for
 	 *                                   trading.
-	 * @param currentPrice               {@code double} The price at which a product
+	 * @param price               {@code double} The price at which a product
 	 *                                   can be bought.
-	 * @param currentForecast            {@code double} The forecast for the current
+	 * @param forecast            {@code double} The forecast for the current
 	 *                                   trading period.
 	 * @param baseScale                  {@code double} The base scale by which the
 	 *                                   given forecast is scaled.
 	 * @return {@code int} The number of products to buy.
 	 */
-	private static long calculateProductsCount(double capitalBeforeTradingPeriod, double currentPrice,
-			double currentForecast, double baseScale) {
+	private static long calculateProductsCount(double capital, double price,
+			double forecast, double baseScale) {
 		/* Number of products if forecast had MAX_VALUE */
-		double maxProductsCount = capitalBeforeTradingPeriod / currentPrice;
+		double maxProductsCount = capital / price;
 
 		/* Number of products if forecast was 1 */
 		double fcOneProductsCounts = maxProductsCount / (baseScale * 2);
@@ -289,11 +289,11 @@ public class SubSystem {
 		 * Invert current forecast if it's negative to always generate a positive number
 		 * of products
 		 */
-		if (currentForecast < 0)
-			currentForecast *= -1;
+		if (forecast < 0)
+			forecast *= -1;
 
 		/* Number of products for actual forecast. Accept rounding inaccuracies. */
-		return (long) (fcOneProductsCounts * currentForecast);
+		return (long) (fcOneProductsCounts * forecast);
 	}
 
 	/**
