@@ -11,12 +11,23 @@ import de.rumford.tradingsystem.helper.Util;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
+ * Rules are the centerpiece of a trading system. Based on these rules a system
+ * tries to forecast future developments of a given asset and thus advises its
+ * user.
+ * <p>
+ * Although every investor should develop their own, these rules need to share
+ * some functionality so they can actually be used in this trading system. As
+ * soon as the forecast determining calculation is done (done inside the
+ * implementation of {@link #calculateRawForecast(LocalDateTime)}) all rules are
+ * treated equally. This ensures compatibility and comparability between rules
+ * an between trading systems.
  * 
  * Abstract class to be extend on developing new rules for the trading system.
  * 
  * @author Max Rumford
  * @apiNote {@link #calculateAndSetDerivedValues()} is called on first
- *          invocation of {@link #getSdAdjustedForecasts()}.
+ *          invocation of {@link #getSdAdjustedForecasts()} and
+ *          {@link #getForecastScalar()} respectively.
  *
  */
 public abstract class Rule {
@@ -36,17 +47,27 @@ public abstract class Rule {
 	 * the way of working of the extending class.
 	 * 
 	 * @param baseValue              {@link BaseValue} The base value to be used in
-	 *                               this rule's calculations.
+	 *                               this rule's calculations. See
+	 *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}
+	 *                               for limitations.
 	 * @param variations             {@code Rule[]} An array of up to 3 rules (or
-	 *                               null).
+	 *                               null). See
+	 *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}
+	 *                               for limitations.
 	 * @param startOfReferenceWindow {@link LocalDateTime} The first LocalDateTime
 	 *                               to be considered in calculations such as
-	 *                               forecast scalar.
+	 *                               forecast scalar. See
+	 *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}
+	 *                               for limitations.
 	 * @param endOfReferenceWindow   {@link LocalDateTime} The last LocalDateTime to
 	 *                               be considered in calculations such as forecast
-	 *                               scalar.
+	 *                               scalar. See
+	 *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}
+	 *                               for limitations.
 	 * @param baseScale              {@code double} How the forecasts shall be
-	 *                               scaled.
+	 *                               scaled. See
+	 *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}
+	 *                               for limitations.
 	 */
 	public Rule(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
 			LocalDateTime endOfReferenceWindow, double baseScale) {
@@ -384,30 +405,13 @@ public abstract class Rule {
 	 * @param correlations {@code double[]} Three values representing the
 	 *                     correlations between the rows A, B and C. The expected
 	 *                     array is constructed as follows: { corr_AB, corr_AC,
-	 *                     corr_BC }. Must not be null. Must have a length of 3.
-	 *                     Must contain values {@code !Double.NaN} and
-	 *                     {@code -1 <= value <= 1}.
+	 *                     corr_BC }. See {@link #validateCorrelations(double[])}
+	 *                     for limitations.
 	 * @return {@code double[]} The calculated weights { w_A, w_B, w_C }.
-	 * @throws IllegalArgumentException if any of the specs above is not met.
 	 */
 	public static double[] calculateWeightsForThreeCorrelations(double[] correlations) {
-		/* Check if the given array is null */
-		if (correlations == null)
-			throw new IllegalArgumentException("Correlations array must not be null");
-		/* Check if the given array contains exactly three elements. */
-		if (correlations.length != 3)
-			throw new IllegalArgumentException("There must be exactly three correlation values in the given array");
 
-		/* Check all given values inside the array */
-		for (int i = 0; i < correlations.length; i++) {
-			if (Double.isNaN(correlations[i]))
-				throw new IllegalArgumentException(
-						"NaN-values are not allowed. Correlation at position " + i + " is NaN.");
-			if (correlations[i] > 1)
-				throw new IllegalArgumentException("Correlation at position " + i + " is greater than 1");
-			if (correlations[i] < -1)
-				throw new IllegalArgumentException("Correlation at position " + i + " is less than -1");
-		}
+		validateCorrelations(correlations);
 
 		for (int i = 0; i < correlations.length; i++) {
 			/* Floor negative correlations at 0 (See Carver: "Systematic Trading", p. 79) */
@@ -456,6 +460,34 @@ public abstract class Rule {
 	}
 
 	/**
+	 * Validates the given correlations.
+	 * 
+	 * @param correlations {@code double[]} Correlations to be validated. Must not
+	 *                     be null. Must have a length of 3. Must only contain
+	 *                     values {@code !Double.NaN} and {@code -1 <= value <= 1}.
+	 * @throws IllegalArgumentException if the above specifications are not met.
+	 */
+	private static void validateCorrelations(double[] correlations) {
+		/* Check if the given array is null */
+		if (correlations == null)
+			throw new IllegalArgumentException("Correlations array must not be null");
+		/* Check if the given array contains exactly three elements. */
+		if (correlations.length != 3)
+			throw new IllegalArgumentException("There must be exactly three correlation values in the given array");
+
+		/* Check all given values inside the array */
+		for (int i = 0; i < correlations.length; i++) {
+			if (Double.isNaN(correlations[i]))
+				throw new IllegalArgumentException(
+						"NaN-values are not allowed. Correlation at position " + i + " is NaN.");
+			if (correlations[i] > 1)
+				throw new IllegalArgumentException("Correlation at position " + i + " is greater than 1");
+			if (correlations[i] < -1)
+				throw new IllegalArgumentException("Correlation at position " + i + " is less than -1");
+		}
+	}
+
+	/**
 	 * Extract the relevant forecast values for this rule.
 	 * 
 	 * @return {@code double[]} An array of the relevant forecast values for this
@@ -484,15 +516,31 @@ public abstract class Rule {
 	 * Validates if the given instance variables meet specifications.
 	 * 
 	 * @param baseValue              {@link BaseValue} The base value to be used in
-	 *                               this rule's calculations.
+	 *                               this rule's calculations. Must not be null.
+	 *                               Must contain the given startOfReferenceWindow.
+	 *                               Must contain the given endOfReferenceWindow.
+	 * @param variations             {@code Rule[]} Can be null. If not
+	 *                               <ul>
+	 *                               <li>Must not contain more than 3 elements.</li>
+	 *                               <li>Must not contain 0 elements.</li>
+	 *                               <li>Must not contain null.</li>
+	 *                               <li>All elements must have matching
+	 *                               startOfReferenceWindow and endOfReferenceWindow
+	 *                               and must be the same as given
+	 *                               startOfReferenceWindow and
+	 *                               endOfReferenceWindow.</li>
+	 *                               </ul>
 	 * @param startOfReferenceWindow {@link LocalDateTime} The first LocalDateTime
 	 *                               to be considered in calculations such as
-	 *                               forecast scalar.
+	 *                               forecast scalar. Must not be null. Must be
+	 *                               before the given endOfReferenceWindow.
 	 * @param endOfReferenceWindow   {@link LocalDateTime} The last LocalDateTime to
 	 *                               be considered in calculations such as forecast
-	 *                               scalar.
+	 *                               scalar. Must not be null. Must be after the
+	 *                               given startOfReferenceWindow.
 	 * @param baseScale              {@code double} How the forecasts shall be
-	 *                               scaled.
+	 *                               scaled. Must be > 0.
+	 * @throws IllegalArgumentException if the above specifications are not met.
 	 */
 	private void validateInputs(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
 			LocalDateTime endOfReferenceWindow, double baseScale) {
