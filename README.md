@@ -32,14 +32,19 @@ Robert Carber, Systematic Trading (2015), HARRIMAN HOUSE LTD.
 ## Libraries
 
 - org.junit.jupiter:junit-jupiter-api:5.6.2
+
   https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+
   Scope: test
 
 - org.apache.commons:commons-lang3:3.10
+
   https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
 
 - org.apache.commons:commons-math3:3.6.1
+
   https://mvnrepository.com/artifact/org.apache.commons/commons-math3
 
 - log4j:log4j:1.2.17
+
   https://mvnrepository.com/artifact/log4j/log4j
