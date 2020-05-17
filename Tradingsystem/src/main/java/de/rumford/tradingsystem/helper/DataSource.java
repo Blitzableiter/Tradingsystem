@@ -24,8 +24,8 @@ public class DataSource {
 	/**
 	 * Reads the data from a given CSV path. Assumes the following "columns": Date,
 	 * Time, value. Depending on the formatting of the CSV file the corresponding
-	 * {@link CsvFormat} has to be passed. The underlying enum is not final and can
-	 * be altered to suit the user's needs.
+	 * {@link CsvFormat} has to be passed. The underlying enumeration is not final
+	 * and can be altered to suit the user's needs.
 	 * <p>
 	 * The CSV file to be parsed is expected not to have column headings. If so, the
 	 * values of the first row might not be parsed and an IllegalArgumentException
@@ -90,7 +90,6 @@ public class DataSource {
 
 				returnValues = ArrayUtils.add(returnValues, newElement);
 			}
-
 			return returnValues;
 		}
 	}
