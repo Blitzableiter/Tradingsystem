@@ -133,6 +133,24 @@ class SubSystemTest {
 	 * Test method for {@link SubSystem#evaluateRules(Rule[])}.
 	 */
 	@Test
+	void testEvaluateRules_identicalRules() {
+		r1 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
+		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
+		Rule[] rules = { r1, r2 };
+
+		String expectedMessage = "The given rules are not unique. Only unique rules can be used.";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE),
+				"Non-unique rules are not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link SubSystem#evaluateRules(Rule[])}.
+	 */
+	@Test
 	void testEvaluateRules_differentStartOfReferenceWindow() {
 		r2 = RealRule.from(baseValue, null, localDateTimeJan09220000, localDateTimeJan12220000, BASE_SCALE, 2);
 		Rule[] rules = { r1, r2 };
@@ -250,6 +268,42 @@ class SubSystemTest {
 	}
 
 	/**
+	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 */
+	@Test
+	void testValidateInput_baseScaleNaN() {
+		double baseScaleNaN = Double.NaN;
+		String expectedMessage = "Base scale must not be NaN";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new SubSystem(baseValue, rules, CAPITAL, baseScaleNaN),
+				"Base scale of NaN is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 */
+	@Test
+	void testValidateInput_baseScaleZeroOrLess() {
+		double baseScaleZero = 0;
+		double baseScaleSubZero = -1;
+		String expectedMessage = "Base scale must be a positive decimal";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new SubSystem(baseValue, rules, CAPITAL, baseScaleZero),
+				"Base scale of zero is not properly handled");
+		Exception thrown2 = assertThrows(IllegalArgumentException.class,
+				() -> new SubSystem(baseValue, rules, CAPITAL, baseScaleSubZero),
+				"Base scale sub zero is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown2.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+
+	}
+
+	/**
 	 * Test method for {@link SubSystem#calculateCombinedForecasts()}.
 	 */
 	@Test
@@ -314,12 +368,15 @@ class SubSystemTest {
 	 */
 	@Test
 	void testCalculatePerformanceValues_positiveAndNegativeForecasts() {
-		VolatilityDifference volDif = new VolatilityDifference(baseValue, null, localDateTimeJan10220000,
+		VolatilityDifference volDif4 = new VolatilityDifference(baseValue, null, localDateTimeJan10220000,
 				localDateTimeJan12220000, 4, BASE_SCALE);
-		Rule[] rules = { volDif };
+		VolatilityDifference volDif8 = new VolatilityDifference(baseValue, null, localDateTimeJan10220000,
+				localDateTimeJan12220000, 8, BASE_SCALE);
+
+		Rule[] rules = { volDif4, volDif8 };
 		subSystem = new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE);
 
-		double expectedValue = 88500.39985733961; // Excel: 88500.3998573322
+		double expectedValue = 96201.5377744669; // Excel: 96201.5377744669
 
 		ValueDateTupel[] performanceValues = SubSystem.calculatePerformanceValues(subSystem.getBaseValue(),
 				localDateTimeJan10220000, localDateTimeFeb05220000, subSystem.getCombinedForecasts(),
