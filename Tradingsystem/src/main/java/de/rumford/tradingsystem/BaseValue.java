@@ -14,6 +14,30 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
 /**
  * de.rumford.tradingsystem
  * 
+ * The BaseValue is a substantial part for every trading system. It encapsulates
+ * the underlying value, e.g. a stocks tracker, and represents its values as an
+ * array of {@link ValueDateTupel}. This are guaranteed to be in ascending order
+ * and free of duplicates.
+ * <p>
+ * Each BaseValue has two final static values that cannot be changed and are
+ * deemed to preserve comparability of base values. The first such value is the
+ * lookback window. It indicates the amount of values relevant (enough) for
+ * standard deviation calculation. A lookback window of 25, as implemented,
+ * deems all values "older" than 25 time intervals (as stated by the given
+ * ValueDateTupels) irrelevant for standard deviation calculation. As a matter
+ * of fact, these older values are still considered in standard deviation
+ * calculation, but the factor they are being multiplied with (due to the
+ * recursive calculation of the standard deviation value) is being considered as
+ * too small to actually make a noticable difference.
+ * <p>
+ * The second predefined value is the short index initial value. If no array
+ * representing an adequate short index is given into the constructor, an array
+ * of such values is calculated by subtracting the returns (percentage wise)
+ * between two time intervals from the previous short index value. The short
+ * index initial value simply marks the value to be set for the first time
+ * interval. Its value does not play any role in further calculations, as
+ * proportions will remain unaltered, no matter the actual initial value.
+ * 
  * @author Max Rumford
  *
  */
@@ -37,7 +61,9 @@ public class BaseValue {
 	 *               value. Is not used for calculation of any kind. Must be of
 	 *               length > {@code 0}.
 	 * @param values {@link ValueDateTupel[]} Values of the represented base value.
-	 *               Must be of length > {@code 0}.
+	 *               Must not be null. Must be of length > {@code 0}. Must be in an
+	 *               ascending order. Must not contain nulls. Must not contain
+	 *               values of Double.NaN.
 	 * @throws IllegalArgumentException if the input values are not within
 	 *                                  specification
 	 */
@@ -61,9 +87,14 @@ public class BaseValue {
 	 *                         calculation of any kind. Must be of length >
 	 *                         {@code 0}.
 	 * @param values           {@link ValueDateTupel[]} Values of the represented
-	 *                         base value
+	 *                         base value. Must not be null. Must be of length >
+	 *                         {@code 0}. Must be in an ascending order. Must not
+	 *                         contain nulls. Must not contain values of Double.NaN.
 	 * @param shortIndexValues {@link ValueDateTupel[]} Short index values of the
-	 *                         represented base value
+	 *                         represented base value. Must not be null. Must be of
+	 *                         length > {@code 0}. Must be in an ascending order.
+	 *                         Must not contain nulls. Must not contain values of
+	 *                         Double.NaN.
 	 * @throws IllegalArgumentException if the input values are not within
 	 *                                  specification
 	 */

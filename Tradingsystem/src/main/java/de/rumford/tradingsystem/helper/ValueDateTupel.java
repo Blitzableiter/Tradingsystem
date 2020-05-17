@@ -15,11 +15,18 @@ import org.apache.commons.lang3.ArrayUtils;
 import de.rumford.tradingsystem.BaseValue;
 
 /**
- * @author Max Rumford
- *
- */
-/**
  * de.rumford.tradingsystem.helper
+ * 
+ * The ValueDateTuple is the most used helper class in this library. It consists
+ * of a LocalDateTime value representing a point in time, and of a double,
+ * representing any kind of decimal value associated with the aforementioned
+ * point in time. By using LocalDateTime (an not just a class representing Date
+ * values) intraday usage is possible.
+ * <p>
+ * The ValueDateTupel brings a lot of static method used throughout the entire
+ * library. Most of these methods deal with arrays or larger structures of
+ * ValueDateTupel, as the instance of ValueDateTupel by itself does not have
+ * many limitations.
  * 
  * @author Max Rumford
  *
