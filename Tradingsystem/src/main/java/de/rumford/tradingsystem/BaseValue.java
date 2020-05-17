@@ -120,7 +120,7 @@ public class BaseValue {
 	 * Calculate the standard deviation values for the given base values. The first
 	 * value is always Double.NaN.
 	 * <p>
-	 * {@code sd = baseValue * sqrt[ EWMA( return² ) ]}
+	 * {@code sd = baseValue * sqrt[ EWMA( return^2 ) ]}
 	 * 
 	 * @param baseValues {@code ValueDateTupel[]} the given base values.
 	 * @return {@code ValueDateTupel[]} the calculated standard deviation values.
