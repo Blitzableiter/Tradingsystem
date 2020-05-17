@@ -24,11 +24,11 @@ public class SubSystem {
 	private static final double PRICE_FACTOR_BASE_SCALE = 1;
 
 	private BaseValue baseValue;
+	private Rule[] rules;
 	private DiversificationMultiplier diversificationMultiplier;
 	private double capital;
 	private ValueDateTupel[] combinedForecasts;
 	private double baseScale;
-	private Rule[] rules;
 
 	/**
 	 * Constructor for the SubSystem class.
@@ -112,84 +112,6 @@ public class SubSystem {
 		}
 
 		return calculatedCombinedForecasts;
-	}
-
-	/**
-	 * Validate the given input parameters.
-	 * 
-	 * @param baseValue {@link BaseValue} Must not be null.
-	 * @param rules     {@code Rule[]} Must not be null. Must not be an empty array.
-	 * @param capital   {@code double} Must not be Double.NaN. Must not be 0. Must
-	 *                  not be negative.
-	 * @throws IllegalArgumentException if any of the above criteria is not met.
-	 */
-	private static void validateInput(BaseValue baseValue, Rule[] rules, double capital, double baseScale) {
-		if (baseValue == null)
-			throw new IllegalArgumentException("Base value must not be null");
-
-		if (rules == null)
-			throw new IllegalArgumentException("Rules must not be null");
-
-		if (rules.length == 0)
-			throw new IllegalArgumentException("Rules must not be an empty array");
-
-		if (Double.isNaN(capital))
-			throw new IllegalArgumentException("Capital must not be Double.NaN");
-
-		if (capital == 0)
-			throw new IllegalArgumentException("Capital must not be zero");
-
-		if (capital < 0)
-			throw new IllegalArgumentException("Capital must be a positive value.");
-
-		if (Double.isNaN(baseScale))
-			throw new IllegalArgumentException("Base scale must not be NaN");
-
-		if (baseScale <= 0)
-			throw new IllegalArgumentException("Base scale must be a positive decimal");
-	}
-
-	/**
-	 * Check if the given rules are unique by utilizing {@link Rule#equals(Object)}
-	 * 
-	 * @param rules {@code Rule} An array of rules to be check for uniqueness.
-	 * @return {@code boolean} True, if the rules are unique. False otherwise.
-	 */
-	public static boolean areRulesUnique(Rule[] rules) {
-		for (int i = 0; i < rules.length - 1; i++) {
-			if (rules[i].equals(rules[i + 1])) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Evaluate if the given rules can be used in this SubSystem. <br>
-	 * Rules have to fulfill the following criteria:
-	 * <ul>
-	 * <li>Be unique by {@link SubSystem#areRulesUnique(Rule[])}</li>
-	 * <li>Equal in startOfReferenceWindow and endOfReferenceWinow by
-	 * {@link LocalDateTime#isEqual(ChronoLocalDateTime)}</li>
-	 * </ul>
-	 * 
-	 * @param rules {@code Rule[]} Rules that are to be checked.
-	 * @throws IllegalArgumentException if the given rules are not unique.
-	 */
-	private static void evaluateRules(Rule[] rules) {
-		if (!areRulesUnique(rules))
-			throw new IllegalArgumentException("The given rules are not unique. Only unique rules can be used.");
-
-		/* All rules need to have the same reference window */
-		for (int i = 1; i < rules.length; i++) {
-			if (!rules[i].getStartOfReferenceWindow().isEqual(rules[i - 1].getStartOfReferenceWindow())
-					|| !rules[i].getEndOfReferenceWindow().isEqual(rules[i - 1].getEndOfReferenceWindow())) {
-				throw new IllegalArgumentException(
-						"All rules need to have the same reference window but rules at position " + (i - 1) + " and "
-								+ i + " differ.");
-			}
-		}
-
 	}
 
 	/**
@@ -419,6 +341,84 @@ public class SubSystem {
 	}
 
 	/**
+	 * Validate the given input parameters.
+	 * 
+	 * @param baseValue {@link BaseValue} Must not be null.
+	 * @param rules     {@code Rule[]} Must not be null. Must not be an empty array.
+	 * @param capital   {@code double} Must not be Double.NaN. Must not be 0. Must
+	 *                  not be negative.
+	 * @throws IllegalArgumentException if any of the above criteria is not met.
+	 */
+	private static void validateInput(BaseValue baseValue, Rule[] rules, double capital, double baseScale) {
+		if (baseValue == null)
+			throw new IllegalArgumentException("Base value must not be null");
+
+		if (rules == null)
+			throw new IllegalArgumentException("Rules must not be null");
+
+		if (rules.length == 0)
+			throw new IllegalArgumentException("Rules must not be an empty array");
+
+		if (Double.isNaN(capital))
+			throw new IllegalArgumentException("Capital must not be Double.NaN");
+
+		if (capital == 0)
+			throw new IllegalArgumentException("Capital must not be zero");
+
+		if (capital < 0)
+			throw new IllegalArgumentException("Capital must be a positive value.");
+
+		if (Double.isNaN(baseScale))
+			throw new IllegalArgumentException("Base scale must not be NaN");
+
+		if (baseScale <= 0)
+			throw new IllegalArgumentException("Base scale must be a positive decimal");
+	}
+
+	/**
+	 * Evaluate if the given rules can be used in this SubSystem. <br>
+	 * Rules have to fulfill the following criteria:
+	 * <ul>
+	 * <li>Be unique by {@link SubSystem#areRulesUnique(Rule[])}</li>
+	 * <li>Equal in startOfReferenceWindow and endOfReferenceWinow by
+	 * {@link LocalDateTime#isEqual(ChronoLocalDateTime)}</li>
+	 * </ul>
+	 * 
+	 * @param rules {@code Rule[]} Rules that are to be checked.
+	 * @throws IllegalArgumentException if the given rules are not unique.
+	 */
+	private static void evaluateRules(Rule[] rules) {
+		if (!areRulesUnique(rules))
+			throw new IllegalArgumentException("The given rules are not unique. Only unique rules can be used.");
+
+		/* All rules need to have the same reference window */
+		for (int i = 1; i < rules.length; i++) {
+			if (!rules[i].getStartOfReferenceWindow().isEqual(rules[i - 1].getStartOfReferenceWindow())
+					|| !rules[i].getEndOfReferenceWindow().isEqual(rules[i - 1].getEndOfReferenceWindow())) {
+				throw new IllegalArgumentException(
+						"All rules need to have the same reference window but rules at position " + (i - 1) + " and "
+								+ i + " differ.");
+			}
+		}
+
+	}
+
+	/**
+	 * Check if the given rules are unique by utilizing {@link Rule#equals(Object)}
+	 * 
+	 * @param rules {@code Rule} An array of rules to be check for uniqueness.
+	 * @return {@code boolean} True, if the rules are unique. False otherwise.
+	 */
+	static boolean areRulesUnique(Rule[] rules) {
+		for (int i = 0; i < rules.length - 1; i++) {
+			if (rules[i].equals(rules[i + 1])) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * ======================================================================
 	 * OVERRIDES
 	 * ======================================================================
@@ -499,6 +499,20 @@ public class SubSystem {
 	}
 
 	/**
+	 * @return rules SubSystem
+	 */
+	public Rule[] getRules() {
+		return rules;
+	}
+
+	/**
+	 * @param rules the rules to set
+	 */
+	public void setRules(Rule[] rules) {
+		this.rules = rules;
+	}
+
+	/**
 	 * @return diversificationMultiplier SubSystem
 	 */
 	public DiversificationMultiplier getDiversificationMultiplier() {
@@ -552,20 +566,6 @@ public class SubSystem {
 	 */
 	public void setBaseScale(double baseScale) {
 		this.baseScale = baseScale;
-	}
-
-	/**
-	 * @return rules SubSystem
-	 */
-	public Rule[] getRules() {
-		return rules;
-	}
-
-	/**
-	 * @param rules the rules to set
-	 */
-	public void setRules(Rule[] rules) {
-		this.rules = rules;
 	}
 
 }
