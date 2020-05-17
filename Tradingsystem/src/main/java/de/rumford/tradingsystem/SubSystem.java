@@ -26,7 +26,6 @@ public class SubSystem {
 	private BaseValue baseValue;
 	private DiversificationMultiplier diversificationMultiplier;
 	private double capital;
-	private double weight;
 	private ValueDateTupel[] combinedForecasts;
 	private double baseScale;
 	private Rule[] rules;
@@ -429,13 +428,15 @@ public class SubSystem {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((baseValue == null) ? 0 : baseValue.hashCode());
 		long temp;
+		temp = Double.doubleToLongBits(baseScale);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((baseValue == null) ? 0 : baseValue.hashCode());
 		temp = Double.doubleToLongBits(capital);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + Arrays.hashCode(combinedForecasts);
 		result = prime * result + ((diversificationMultiplier == null) ? 0 : diversificationMultiplier.hashCode());
-		temp = Double.doubleToLongBits(weight);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + Arrays.hashCode(rules);
 		return result;
 	}
 
@@ -449,6 +450,8 @@ public class SubSystem {
 		if (getClass() != obj.getClass())
 			return false;
 		SubSystem other = (SubSystem) obj;
+		if (Double.doubleToLongBits(baseScale) != Double.doubleToLongBits(other.baseScale))
+			return false;
 		if (baseValue == null) {
 			if (other.baseValue != null)
 				return false;
@@ -456,12 +459,14 @@ public class SubSystem {
 			return false;
 		if (Double.doubleToLongBits(capital) != Double.doubleToLongBits(other.capital))
 			return false;
+		if (!Arrays.equals(combinedForecasts, other.combinedForecasts))
+			return false;
 		if (diversificationMultiplier == null) {
 			if (other.diversificationMultiplier != null)
 				return false;
 		} else if (!diversificationMultiplier.equals(other.diversificationMultiplier))
 			return false;
-		if (Double.doubleToLongBits(weight) != Double.doubleToLongBits(other.weight))
+		if (!Arrays.equals(rules, other.rules))
 			return false;
 		return true;
 	}
@@ -470,9 +475,8 @@ public class SubSystem {
 	@Override
 	public String toString() {
 		return "SubSystem [baseValue=" + baseValue + ", diversificationMultiplier=" + diversificationMultiplier
-				+ ", capital=" + capital + ", weight=" + weight + ", combinedForecasts="
-				+ Arrays.toString(combinedForecasts) + ", baseScale=" + baseScale + ", rules=" + Arrays.toString(rules)
-				+ "]";
+				+ ", capital=" + capital + ", combinedForecasts=" + Arrays.toString(combinedForecasts) + ", baseScale="
+				+ baseScale + ", rules=" + Arrays.toString(rules) + "]";
 	}
 
 	/**
@@ -520,20 +524,6 @@ public class SubSystem {
 	 */
 	private void setCapital(double capital) {
 		this.capital = capital;
-	}
-
-	/**
-	 * @return weight SubSystem
-	 */
-	public double getWeight() {
-		return weight;
-	}
-
-	/**
-	 * @param weight the weight to set
-	 */
-	public void setWeight(double weight) {
-		this.weight = weight;
 	}
 
 	/**
