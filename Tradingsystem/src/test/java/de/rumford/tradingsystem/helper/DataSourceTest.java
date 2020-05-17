@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.rumford.tradingsystem.helper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

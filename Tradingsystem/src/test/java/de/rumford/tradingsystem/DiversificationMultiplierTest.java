@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.rumford.tradingsystem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,6 +15,8 @@ import de.rumford.tradingsystem.RuleTest.RealRule;
 import de.rumford.tradingsystem.helper.BaseValueFactory;
 
 /**
+ * Test class for {@link DiversificationMultiplier}.
+ * 
  * @author Max Rumford
  *
  */

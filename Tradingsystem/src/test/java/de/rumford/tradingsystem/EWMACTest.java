@@ -14,6 +14,12 @@ import org.junit.jupiter.api.Test;
 
 import de.rumford.tradingsystem.helper.BaseValueFactory;
 
+/**
+ * Test class for {@link EWMAC}.
+ * 
+ * @author Max Rumford
+ *
+ */
 class EWMACTest {
 
 	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";

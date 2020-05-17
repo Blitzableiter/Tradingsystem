@@ -6,6 +6,11 @@ import de.rumford.tradingsystem.helper.GeneratedCode;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
+ * The EWMA class represents the mathematical concept of an exponentially
+ * weighted moving average. In an EWMA, the "older" a given base value is (in
+ * proportion to the "current" base value) the less it influences the current
+ * EWMA value. This influence deteriorates exponentially by the given horizon to
+ * the power of 2, thus the name.
  * 
  * @author Max Rumford
  *

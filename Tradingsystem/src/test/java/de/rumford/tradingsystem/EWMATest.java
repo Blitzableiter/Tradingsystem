@@ -10,6 +10,12 @@ import org.junit.jupiter.api.Test;
 import de.rumford.tradingsystem.helper.BaseValueFactory;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
+/**
+ * Test class for {@link EWMA}.
+ * 
+ * @author Max Rumford
+ *
+ */
 class EWMATest {
 
 	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";

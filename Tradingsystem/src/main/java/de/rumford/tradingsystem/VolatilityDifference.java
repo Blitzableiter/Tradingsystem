@@ -17,6 +17,10 @@ import de.rumford.tradingsystem.helper.Util;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
+ * Historically, times of higher volatility in a asset tended to be accompanied
+ * by falls in course value. This rule exploits this behavior by comparing the
+ * current volatility of an asset with its historic counterpart.
+ * 
  * @author Max Rumford
  *
  */
@@ -30,28 +34,24 @@ public class VolatilityDifference extends Rule {
 	 * {@link BaseValue} to calculate the volatility indices and the average
 	 * volatility.
 	 * 
-	 * @param baseValue              {@link BaseValue} The base value to be used for
-	 *                               this {@link VolatilityDifference}. Must not be
-	 *                               null.
+	 * @param baseValue              Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 *                               See {@link #validateBaseValue(BaseValue)} for
+	 *                               additional limitations.
 	 * @param variations             {@code VolatilityDifference[]} An array of
 	 *                               three or less rules. Represents the variations
-	 *                               of this rule.
-	 * @param startOfReferenceWindow {@link LocalDateTime} First DateTime value to
-	 *                               be considered in forecast scalar calculation.
-	 *                               Must be < {@code endOfReferenceWindow}. Must
-	 *                               not be null.
-	 * @param endOfReferenceWindow   {@link LocalDateTime} Last DateTime value to be
-	 *                               considered in forecast scalar calculation. Must
-	 *                               be > {@code startOfReferenceWindow}. Must not
-	 *                               be null.
+	 *                               of this rule. Same limitations as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 * @param startOfReferenceWindow Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 * @param endOfReferenceWindow   Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 * @param lookbackWindow         {@code int} The lookback window to be used for
-	 *                               this {@link VolatilityDifference}. Must be >
-	 *                               {@code 1}.
-	 * @param baseScale              {@code double} The base scale used for the
-	 *                               calculation of the forecast scalar and thus in
-	 *                               scaled forecast calculations as well.
-	 * @throws IllegalArgumentException If the given arguments to not satisfy
-	 *                                  specifications.
+	 *                               this {@link VolatilityDifference}. See
+	 *                               {@link #validateLookbackWindow(int)} for
+	 *                               limitations.
+	 * @param baseScale              Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 */
 	public VolatilityDifference(BaseValue baseValue, VolatilityDifference[] variations,
 			LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow, int lookbackWindow,
@@ -65,7 +65,7 @@ public class VolatilityDifference extends Rule {
 		this.validateBaseValue(baseValue);
 
 		/* Check if lookback window fulfills requirements. */
-		this.validateLookbackWindow(lookbackWindow);
+		validateLookbackWindow(lookbackWindow);
 		this.setLookbackWindow(lookbackWindow);
 
 		/* Calculate volatility index values based on the base value and set it */
@@ -79,30 +79,26 @@ public class VolatilityDifference extends Rule {
 	 * {@link BaseValue} to calculate the volatility indices and the average
 	 * volatility.
 	 * 
-	 * @param baseValue              {@link BaseValue} The base value to be used for
-	 *                               this {@link VolatilityDifference}. Must not be
-	 *                               null.
+	 * @param baseValue              Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 * @param variations             {@code VolatilityDifference[]} An array of
 	 *                               three or less rules. Represents the variations
-	 *                               of this rule.
-	 * @param startOfReferenceWindow {@link LocalDateTime} First DateTime value to
-	 *                               be considered in forecast scalar calculation.
-	 *                               Must be < {@code endOfReferenceWindow}. Must
-	 *                               not be null.
-	 * @param endOfReferenceWindow   {@link LocalDateTime} Last DateTime value to be
-	 *                               considered in forecast scalar calculation. Must
-	 *                               be > {@code startOfReferenceWindow}. Must not
-	 *                               be null.
+	 *                               of this rule. Same limitations as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 * @param startOfReferenceWindow Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 * @param endOfReferenceWindow   Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 * @param lookbackWindow         {@code int} The lookback window to be used for
-	 *                               this {@link VolatilityDifference}. Must be >
-	 *                               {@code 1}.
-	 * @param baseScale              {@code double} The base scale used for the
-	 *                               calculation of the forecast scalar and thus in
-	 *                               scaled forecast calculations as well.
+	 *                               this {@link VolatilityDifference}. See
+	 *                               {@link #validateLookbackWindow(int)} for
+	 *                               limitations.
+	 * @param baseScale              Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 * @param volatilityIndices      {@code ValueDateTupel[]} The volatility indices
-	 *                               used for forecast calculations.
-	 * @throws IllegalArgumentException If the given arguments to not satisfy
-	 *                                  specifications.
+	 *                               used for forecast calculations. See
+	 *                               {@link VolatilityDifference#validateVolatilityIndices(ValueDateTupel[])}
+	 *                               for limitations.
 	 */
 	public VolatilityDifference(BaseValue baseValue, VolatilityDifference[] variations,
 			LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow, int lookbackWindow,
@@ -110,7 +106,7 @@ public class VolatilityDifference extends Rule {
 		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
 
 		/* Check if lookback window fulfills requirements. */
-		this.validateLookbackWindow(lookbackWindow);
+		validateLookbackWindow(lookbackWindow);
 		this.setLookbackWindow(lookbackWindow);
 
 		/* Calculate volatility index values based on the base value and set it */
@@ -118,6 +114,11 @@ public class VolatilityDifference extends Rule {
 		this.setVolatilityIndices(volatilityIndices);
 	}
 
+	/**
+	 * Calculates the raw forecast by subtracting the forecast for the given
+	 * LocalDateTIme from the average volatility at that same given point in time.
+	 * Positive results result in a positive forecast.
+	 */
 	@Override
 	double calculateRawForecast(LocalDateTime forecastDateTime) {
 		double currentVolatilty = ValueDateTupel.getElement(this.getVolatilityIndices(), forecastDateTime).getValue();
@@ -134,6 +135,8 @@ public class VolatilityDifference extends Rule {
 	 *         window the returned array only contains {@code Double.NaN}. Else, all
 	 *         values until the lookback window is reached contain
 	 *         {@code Double.NaN}, the rest contains real volatility index values.
+	 * @throws IllegalArgumentException if the number of base values is smaller than
+	 *                                  the given lookback window.
 	 */
 	private static ValueDateTupel[] calculateVolatilityIndices(BaseValue baseValue, int lookbackWindow) {
 		ValueDateTupel[] baseValues = baseValue.getValues();
@@ -245,7 +248,7 @@ public class VolatilityDifference extends Rule {
 	 * @throws IllegalArgumentException if the given lookbackWindow does not meet
 	 *                                  specifications
 	 */
-	public void validateLookbackWindow(int lookbackWindow) {
+	public static void validateLookbackWindow(int lookbackWindow) {
 		if (lookbackWindow <= 1)
 			throw new IllegalArgumentException("Lookback window must be at least 2");
 	}
@@ -254,7 +257,19 @@ public class VolatilityDifference extends Rule {
 	 * Validates the given volatility indices.
 	 * 
 	 * @param volatilityIndices {@code ValueDateTupel[]} the array of volatility
-	 *                          indices to be validated.
+	 *                          indices to be validated. Must comply as follows:
+	 *                          <ul>
+	 *                          <li>Must not be null.</li>
+	 *                          <li>Must not be an empty array.</li>
+	 *                          <li>Must be sorted in ascending order.</li>
+	 *                          <li>Must contain this instances
+	 *                          startOfReferenceWindow and
+	 *                          endOfReferenceWindow.</li>
+	 *                          <li>Must not contain Double.NaN values</li>
+	 *                          <li>Must be aligned with this instance's base
+	 *                          value's values. See
+	 *                          {@link ValueDateTupel#alignDates(ValueDateTupel[][])}.</li>
+	 *                          </ul>
 	 * @throws IllegalArgumentException if the given volatility indices do not meet
 	 *                                  specifications.
 	 */

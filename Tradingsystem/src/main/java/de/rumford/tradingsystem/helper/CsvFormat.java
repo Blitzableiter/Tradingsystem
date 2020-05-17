@@ -1,10 +1,9 @@
-/**
- * 
- */
 package de.rumford.tradingsystem.helper;
 
 /**
- * de.rumford.tradingsystem.helper
+ * Comma separated files can have different formats. This enumeration represents
+ * four combinations of EU and US CSVs, each combined with a different order in
+ * date values.
  * 
  * @author Max Rumford
  *

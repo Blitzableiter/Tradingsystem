@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.rumford.tradingsystem.helper;
 
 import java.time.LocalDate;
@@ -12,7 +9,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import de.rumford.tradingsystem.BaseValue;
 
 /**
- * de.rumford.tradingsystem.helper
+ * A factory for {@link BaseValue} used in testing classes.
  * 
  * @author Max Rumford
  *

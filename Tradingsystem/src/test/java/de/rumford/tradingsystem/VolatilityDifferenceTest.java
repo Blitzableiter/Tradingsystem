@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.rumford.tradingsystem;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -20,7 +17,7 @@ import de.rumford.tradingsystem.helper.BaseValueFactory;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
- * de.rumford.tradingsystem
+ * Test class for {@link VolatilityDifference}.
  * 
  * @author Max Rumford
  * 

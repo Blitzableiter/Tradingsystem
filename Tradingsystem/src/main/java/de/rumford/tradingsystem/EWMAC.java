@@ -6,6 +6,10 @@ import de.rumford.tradingsystem.helper.GeneratedCode;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
+ * The EWMAC is a non-binary rule utilizing the different horizons of its 2
+ * underlying {@link EWMA}. When the shorter horizon EWMA raises above the
+ * longer horizon EWMA in value the underlying asset has been rising in the
+ * not-so-distant past and is thus expected to rise further, and vice-versa.
  * 
  * @author Max Rumford
  *
@@ -26,23 +30,23 @@ public class EWMAC extends Rule {
 	 * forecast calculation. The greater the difference between the two EWMAs the
 	 * greater in extent the forecast will be.
 	 * 
-	 * @param baseValue              {@link BaseValue} The base value used for the
-	 *                               calculation.
+	 * @param baseValue              Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 * @param variations             {@code EWMAC[]} An array of three or less
 	 *                               rules. Represents the variations of this rule.
-	 * @param startOfReferenceWindow {@code LocalDateTime} The first LocalDateTime
-	 *                               to be used in the forecast scalar and forecast
-	 *                               values calculations.
-	 * @param endOfReferenceWindow   {@code LocalDateTime} The last LocalDateTime to
-	 *                               be used in the forecast scalar.
+	 *                               Same limitations as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 * @param startOfReferenceWindow Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 * @param endOfReferenceWindow   Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 * @param longHorizon            {@code int} The horizon of the long horizon
 	 *                               EWMA. Should be 4* shortHorizon, but can be
 	 *                               anything > shortHorizon.
 	 * @param shortHorizon           {@code int} The horizon of the short horizon
 	 *                               EWMA. Must be >= 2;
-	 * @param baseScale              {@code double} The base scale used for the
-	 *                               calculation of the forecast scalar and thus in
-	 *                               scaled forecast calculations as well.
+	 * @param baseScale              Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 */
 	public EWMAC(BaseValue baseValue, EWMAC[] variations, LocalDateTime startOfReferenceWindow,
 			LocalDateTime endOfReferenceWindow, int longHorizon, int shortHorizon, double baseScale) {
@@ -75,11 +79,10 @@ public class EWMAC extends Rule {
 	/**
 	 * Validate the given longHorizon and shortHorizon values.
 	 * 
-	 * @param longHorizon  {@code int} The given long horizon.
-	 * @param shortHorizon {@code int} The given short horizon.
-	 * @throws IllegalArgumentException if the long horizon is smaller than the
-	 *                                  short horizon.
-	 * @throws IllegalArgumentException if the short horizon is smaller than 0.
+	 * @param longHorizon  {@code int} The given long horizon. Must be >
+	 *                     shortHorizon.
+	 * @param shortHorizon {@code int} The given short horizon. Must be >= 2.
+	 * @throws IllegalArgumentException if the above specifications are not met.
 	 */
 	private void validateHorizonValues(int longHorizon, int shortHorizon) {
 

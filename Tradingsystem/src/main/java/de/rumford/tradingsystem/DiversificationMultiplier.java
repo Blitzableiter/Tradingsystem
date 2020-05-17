@@ -9,6 +9,20 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import de.rumford.tradingsystem.helper.GeneratedCode;
 
 /**
+ * "The only free real estate in capital investment is diversification". By
+ * diversifying between assets the risk of an investment shall be reduced.
+ * <p>
+ * By diversifying forecast calculation (e.g. taking more rules into account
+ * when predicting a base value's future development) a similar effect takes
+ * place: Their respective predictions tend to reduce the risk taken when
+ * combined, so their combined forecasts are less volatile than each rule's
+ * forecasts is (Robert Carver, Systematic Trading (2015), pp. 129 f.).
+ * <p>
+ * Therefore a factor is needed to ensure the desired volatility target is met
+ * and to also ensure that the combined forecasts move around the desired base
+ * scale (as defined in the {@link SubSystem} owning this
+ * DiversificationMultiplier).
+ * 
  * @author Max Rumford
  *
  */

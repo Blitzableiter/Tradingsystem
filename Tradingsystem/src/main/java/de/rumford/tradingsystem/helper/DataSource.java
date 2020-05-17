@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.rumford.tradingsystem.helper;
 
 import java.io.*;
@@ -10,7 +7,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.ArrayUtils;
 
 /**
- * de.rumford.tradingsystem.helper
+ * The trading system needs sources of course value data. This class provides
+ * this interface.
  * 
  * @author Max Rumford
  *

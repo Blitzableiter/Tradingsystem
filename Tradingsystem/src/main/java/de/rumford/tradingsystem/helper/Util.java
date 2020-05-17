@@ -9,6 +9,8 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 /**
+ * Utility class as used throughout the library. Contains solely of static
+ * methods representing mainly mathematical calculations.
  * 
  * @author Max Rumford
  *

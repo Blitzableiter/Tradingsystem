@@ -8,6 +8,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test class for {@link ValueDateTupel}.
+ * 
+ * @author Max Rumford
+ *
+ */
 class ValueDateTupelTest {
 
 	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";

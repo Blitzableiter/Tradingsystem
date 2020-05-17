@@ -12,8 +12,6 @@ import de.rumford.tradingsystem.helper.Util;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
- * de.rumford.tradingsystem
- * 
  * The BaseValue is a substantial part for every trading system. It encapsulates
  * the underlying value, e.g. a stocks tracker, and represents its values as an
  * array of {@link ValueDateTupel}. This are guaranteed to be in ascending order

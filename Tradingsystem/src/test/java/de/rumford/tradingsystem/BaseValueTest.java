@@ -16,6 +16,12 @@ import org.junit.jupiter.api.Test;
 
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
+/**
+ * Test class for {@link BaseValue}.
+ * 
+ * @author Max Rumford
+ *
+ */
 class BaseValueTest {
 
 	static final String NAME_OF_TEST_BASE_VALUES = "Test Base Value";

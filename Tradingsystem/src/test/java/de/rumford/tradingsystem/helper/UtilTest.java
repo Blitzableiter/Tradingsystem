@@ -7,6 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test class for {@link Util}.
+ * 
+ * @author Max Rumford
+ *
+ */
 class UtilTest {
 
 	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";
