@@ -4,7 +4,7 @@ This reposity is the project accompanying my Master's thesis in IT-Management. T
 
 # Project structure
 
-![project structure](https://github.com/Blitzableiter/Tradingsystem/misc/Klassendiagramm-Structure.svg)
+![project structure](https://github.com/Blitzableiter/Tradingsystem/tree/master/misc/Klassendiagramm-Structure.svg)
 
 # Requirements
 
