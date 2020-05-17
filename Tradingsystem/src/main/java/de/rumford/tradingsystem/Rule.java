@@ -499,10 +499,6 @@ public abstract class Rule {
 		return ValueDateTupel.getValues(relevantForecasts);
 	}
 
-	public ValueDateTupel getForecast(LocalDateTime dtToBeFound) {
-		return ValueDateTupel.getElements(this.getForecasts(), dtToBeFound, dtToBeFound)[0];
-	}
-
 	/**
 	 * Evaluates if the current rule has variations.
 	 * 

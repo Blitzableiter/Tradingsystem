@@ -79,8 +79,6 @@ public class ProgrammersClient {
 				BASE_SCALE);
 
 		System.out.println(ValueDateTupel.getElement(baseValue.getValues(), END_OF_REFERENCE_WINDOW));
-		System.out.println(ewmacTop.getForecast(END_OF_REFERENCE_WINDOW));
-		System.out.println(volDifTop.getForecast(END_OF_REFERENCE_WINDOW));
 
 		Rule[] rules = { volDifTop, ewmacTop };
 
