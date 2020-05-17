@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.rumford.tradingsystem;
 
 import java.time.LocalDateTime;
@@ -14,7 +11,12 @@ import de.rumford.tradingsystem.helper.Util;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
- * de.rumford.tradingsystem
+ * The SubSystem is the most parental Structure in this library and contains
+ * (directly or indirectly) all other (non-static) classes. It combines rules
+ * and base values and is thus the only point to calculate positions and perform
+ * backtesting of performance. By containing a {@link DiversificationMultiplier}
+ * it copes with the diversity between its rules and thus meets volatility
+ * target and scale.
  * 
  * @author Max Rumford
  *
@@ -34,10 +36,21 @@ public class SubSystem {
 	 * Constructor for the SubSystem class.
 	 * 
 	 * @param baseValue {@link BaseValue} The base value to be used for all the
-	 *                  given rules' calculations.
+	 *                  given rules' calculations. See
+	 *                  {@link #validateInput(BaseValue, Rule[], double, double)}
+	 *                  for limitations.
 	 * @param rules     {@code Rule[]} Array of {@link Rule} to be used for forecast
-	 *                  calculations in this SubSystem.
+	 *                  calculations in this SubSystem. See
+	 *                  {@link #validateInput(BaseValue, Rule[], double, double)}
+	 *                  for limitations.
 	 * @param capital   {@code double} The capital to be managed by this SubSystem.
+	 *                  See
+	 *                  {@link #validateInput(BaseValue, Rule[], double, double)}
+	 *                  for limitations.
+	 * @param baseScale {@code double} The base scale for this SubSystem's
+	 *                  forecasts. See
+	 *                  {@link #validateInput(BaseValue, Rule[], double, double)}
+	 *                  for limitations.
 	 */
 	public SubSystem(BaseValue baseValue, Rule[] rules, double capital, double baseScale) {
 
@@ -267,18 +280,14 @@ public class SubSystem {
 	 * Calculates the products to buy during a trading period according to the given
 	 * price and given forecast.
 	 * 
-	 * @param capital {@code double} The capital available for
-	 *                                   trading.
-	 * @param price               {@code double} The price at which a product
-	 *                                   can be bought.
-	 * @param forecast            {@code double} The forecast for the current
-	 *                                   trading period.
-	 * @param baseScale                  {@code double} The base scale by which the
-	 *                                   given forecast is scaled.
+	 * @param capital   {@code double} The capital available for trading.
+	 * @param price     {@code double} The price at which a product can be bought.
+	 * @param forecast  {@code double} The forecast for the current trading period.
+	 * @param baseScale {@code double} The base scale by which the given forecast is
+	 *                  scaled.
 	 * @return {@code int} The number of products to buy.
 	 */
-	private static long calculateProductsCount(double capital, double price,
-			double forecast, double baseScale) {
+	private static long calculateProductsCount(double capital, double price, double forecast, double baseScale) {
 		/* Number of products if forecast had MAX_VALUE */
 		double maxProductsCount = capital / price;
 
@@ -350,10 +359,25 @@ public class SubSystem {
 	/**
 	 * Validate the given input parameters.
 	 * 
-	 * @param baseValue {@link BaseValue} Must not be null.
-	 * @param rules     {@code Rule[]} Must not be null. Must not be an empty array.
-	 * @param capital   {@code double} Must not be Double.NaN. Must not be 0. Must
-	 *                  not be negative.
+	 * @param baseValue {@link BaseValue} The baseValue to validate. Must not be
+	 *                  null.
+	 * @param rules     {@code Rule[]} The rules to validate.
+	 *                  <ul>
+	 *                  <li>Must not be null.</li>
+	 *                  <li>Must not be an empty array.</li>
+	 *                  <li>Each rule's base value must be same as the given base
+	 *                  value.</li>
+	 *                  </ul>
+	 * @param capital   {@code double} The capital to validate.
+	 *                  <ul>
+	 *                  <li>Must not be Double.NaN.</li>
+	 *                  <li>Must be > 0.</li>
+	 *                  </ul>
+	 * @param baseScale {@code double} The base scale to validate.
+	 *                  <ul>
+	 *                  <li>Must not be Double.NaN.</li>
+	 *                  <li>Must be > 0</li>
+	 *                  </ul>
 	 * @throws IllegalArgumentException if any of the above criteria is not met.
 	 */
 	private static void validateInput(BaseValue baseValue, Rule[] rules, double capital, double baseScale) {
@@ -366,14 +390,17 @@ public class SubSystem {
 		if (rules.length == 0)
 			throw new IllegalArgumentException("Rules must not be an empty array");
 
+		for (int i = 0; i < rules.length; i++)
+			if (!rules[i].getBaseValue().equals(baseValue))
+				throw new IllegalArgumentException(
+						"The base value of all rules must be equal to given base value but the rule at position " + i
+								+ " does not comply.");
+
 		if (Double.isNaN(capital))
 			throw new IllegalArgumentException("Capital must not be Double.NaN");
 
-		if (capital == 0)
-			throw new IllegalArgumentException("Capital must not be zero");
-
-		if (capital < 0)
-			throw new IllegalArgumentException("Capital must be a positive value.");
+		if (capital <= 0)
+			throw new IllegalArgumentException("Capital must be a positive decimal");
 
 		if (Double.isNaN(baseScale))
 			throw new IllegalArgumentException("Base scale must not be NaN");

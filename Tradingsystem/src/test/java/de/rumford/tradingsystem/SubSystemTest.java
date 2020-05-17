@@ -16,6 +16,12 @@ import de.rumford.tradingsystem.RuleTest.RealRule;
 import de.rumford.tradingsystem.helper.BaseValueFactory;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
+/**
+ * Test class for {@link SubSystem}.
+ * 
+ * @author Max Rumford
+ *
+ */
 class SubSystemTest {
 	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";
 
@@ -269,6 +275,23 @@ class SubSystemTest {
 	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
+	void testValidateInput_rules_baseValueDoesntMatch_givenBaseValue() {
+		BaseValue newBaseValue = BaseValueFactory.jan1Jan31allVal0calcShort(BASE_VALUE_NAME);
+		Rule[] rules = { new RealRule(newBaseValue, null, localDateTimeJan10220000, localDateTimeJan12220000,
+				BASE_SCALE, VARIATOR) };
+		String expectedMessage = "The base value of all rules must be equal to given base value but the rule at position 0 does not comply.";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE),
+				"Empty rules array is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 */
+	@Test
 	void testValidateInput_capitalNaN() {
 		double nanCapital = Double.NaN;
 		String expectedMessage = "Capital must not be Double.NaN";
@@ -286,7 +309,7 @@ class SubSystemTest {
 	@Test
 	void testValidateInput_capital0() {
 		double zeroCapital = 0;
-		String expectedMessage = "Capital must not be zero";
+		String expectedMessage = "Capital must be a positive decimal";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new SubSystem(baseValue, rules, zeroCapital, BASE_SCALE), "Capital of 0 is not properly handled");
@@ -300,7 +323,7 @@ class SubSystemTest {
 	@Test
 	void testValidateInput_capitalSub0() {
 		double negativeCapital = -1;
-		String expectedMessage = "Capital must be a positive value.";
+		String expectedMessage = "Capital must be a positive decimal";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new SubSystem(baseValue, rules, negativeCapital, BASE_SCALE),
