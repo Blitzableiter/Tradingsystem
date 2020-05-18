@@ -24,7 +24,7 @@ class DiversificationMultiplierTest {
 
 	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";
 
-	static DiversificationMultiplier dm;
+	static DiversificationMultiplier divMulti;
 
 	static RealRule ss1;
 	static RealRule ss2;
@@ -96,7 +96,7 @@ class DiversificationMultiplierTest {
 				BASE_SCALE, variator);
 		variations = realRule.getVariations();
 
-		dm = new DiversificationMultiplier(variations);
+		divMulti = new DiversificationMultiplier(variations);
 	}
 
 	/**
@@ -105,7 +105,7 @@ class DiversificationMultiplierTest {
 	 */
 	@Test
 	void testDiversificationMultiplier() {
-		assertTrue(dm instanceof DiversificationMultiplier, "Instance of DiversificationMultiplier not recognized");
+		assertTrue(divMulti instanceof DiversificationMultiplier, "Instance of DiversificationMultiplier not recognized");
 	}
 
 	/**
@@ -116,7 +116,7 @@ class DiversificationMultiplierTest {
 	void testCalculateDiversificiationMultiplierValue() {
 		double expectedDiversificationMultiplier = 3.862140866820605; // Excel: 3.8621408668206
 
-		double actualDiversificationMultiplier = dm.getValue();
+		double actualDiversificationMultiplier = divMulti.getValue();
 
 		assertEquals(expectedDiversificationMultiplier, actualDiversificationMultiplier,
 				"Diversification multiplier value is not correctly calculated");
@@ -136,14 +136,14 @@ class DiversificationMultiplierTest {
 				4);
 		Rule[] rules = { ss1, ss2, ss3, ss4 };
 
-		dm = new DiversificationMultiplier(rules);
+		divMulti = new DiversificationMultiplier(rules);
 
 //		System.out.println(Arrays.toString(ss1.getRelevantForecastValues()));
 //		System.out.println(Arrays.toString(ss2.getRelevantForecastValues()));
 //		System.out.println(Arrays.toString(ss3.getRelevantForecastValues()));
 //		System.out.println(Arrays.toString(ss4.getRelevantForecastValues()));
 
-		assertEquals(expectedValue, dm.getValue(),
+		assertEquals(expectedValue, divMulti.getValue(),
 				"Diversification Multiplier is not correctly calculated when rules have no variations");
 	}
 }

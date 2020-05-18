@@ -63,13 +63,16 @@ class EWMATest {
 	 */
 	@Test
 	void testValidateBaseValues_emptyBaseValuesArray() {
+		String expectedMessage = "The given values do not meet the specifications.";
+		String expectedCause = "Values must not be an empty array";
+
 		ValueDateTupel[] emptyValuesArray = ValueDateTupel.createEmptyArray();
-		String expectedMessage = "Base values must not be an empty array";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class, () -> new EWMA(emptyValuesArray, 2),
 				"Empty base values array is not properly handled.");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**

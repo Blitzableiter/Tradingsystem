@@ -14,6 +14,7 @@ import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
 import de.rumford.tradingsystem.helper.GeneratedCode;
 import de.rumford.tradingsystem.helper.Util;
+import de.rumford.tradingsystem.helper.Validator;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
@@ -36,8 +37,6 @@ public class VolatilityDifference extends Rule {
 	 * 
 	 * @param baseValue              Same as in
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
-	 *                               See {@link #validateBaseValue(BaseValue)} for
-	 *                               additional limitations.
 	 * @param variations             {@code VolatilityDifference[]} An array of
 	 *                               three or less rules. Represents the variations
 	 *                               of this rule. Same limitations as in
@@ -57,12 +56,6 @@ public class VolatilityDifference extends Rule {
 			LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow, int lookbackWindow,
 			double baseScale) {
 		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
-
-		/*
-		 * Validate if the given base value can be used to calculate volatility index
-		 * values
-		 */
-		this.validateBaseValue(baseValue);
 
 		/* Check if lookback window fulfills requirements. */
 		validateLookbackWindow(lookbackWindow);
@@ -224,24 +217,6 @@ public class VolatilityDifference extends Rule {
 	}
 
 	/**
-	 * Validates the given base value to the purposes of volatility index
-	 * calculation.
-	 * 
-	 * @param baseValue {@link BaseValue} The given base value.
-	 * @throws IllegalArgumentException if the given base value contains Double.NaN
-	 *                                  in the given reference window.
-	 */
-	private void validateBaseValue(BaseValue baseValue) {
-		ValueDateTupel[] referenceValues = ValueDateTupel.getElements(baseValue.getValues(),
-				this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
-
-		for (ValueDateTupel referenceValue : referenceValues)
-			if (referenceValue.getValue() == 0)
-				throw new IllegalArgumentException(
-						"Base values contain zeroes in given reference window which is not allowed for volatility index calculation.");
-	}
-
-	/**
 	 * Validates the given lookback window. The lookback window must be >= 1.
 	 * 
 	 * @param lookbackWindow {@code int} The lookback window to be validated.
@@ -289,6 +264,13 @@ public class VolatilityDifference extends Rule {
 		if (!ValueDateTupel.isSortedAscending(volatilityIndices))
 			throw new IllegalArgumentException(
 					"Given volatility indices are not properly sorted or there are duplicate LocalDateTime values");
+
+		try {
+			Validator.validateTimeWindow(this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow(),
+					volatilityIndices);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("Giving volatility indices do not meet specificiation.", e);
+		}
 
 		/*
 		 * The given startOfReferenceWindow must be included in the given

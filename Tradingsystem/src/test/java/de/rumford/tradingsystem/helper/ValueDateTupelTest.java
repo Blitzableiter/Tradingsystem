@@ -18,6 +18,7 @@ class ValueDateTupelTest {
 
 	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";
 	static final String MESSAGE_ARRAY_MUST_NOT_BE_NULL = "Given array must not be null";
+	static final String MESSAGE_VALUE_MUST_NOT_BE_NULL = "Given value must not be null";
 
 	static double value1;
 	static double value2;
@@ -218,7 +219,7 @@ class ValueDateTupelTest {
 	 * Test method for {@link ValueDateTupel#alignDates(ValueDateTupel[][])}.
 	 */
 	@Test
-	void testalignDates() {
+	void testAlignDates() {
 		ValueDateTupel vdtCalculated20200102_200 = new ValueDateTupel(date_20200102, 200d);
 		ValueDateTupel vdtCalculated20200104_400 = new ValueDateTupel(date_20200104, 400d);
 		ValueDateTupel vdtCalculated20200101_200 = new ValueDateTupel(date_20200101, 200d);
@@ -290,7 +291,7 @@ class ValueDateTupelTest {
 	 * Test method for {@link ValueDateTupel#alignDates(ValueDateTupel[][])}.
 	 */
 	@Test
-	void testalignDates_middleMissing() {
+	void testAlignDates_middleMissing() {
 		date_20200101 = LocalDateTime.of(2020, 1, 1, 0, 0);
 		date_20200102 = LocalDateTime.of(2020, 1, 2, 0, 0);
 		date_20200103 = LocalDateTime.of(2020, 1, 3, 0, 0);
@@ -324,7 +325,7 @@ class ValueDateTupelTest {
 	 * Test method for {@link ValueDateTupel#alignDates(ValueDateTupel[][])}.
 	 */
 	@Test
-	void testalignDates_arrayOfArraysNull() {
+	void testAlignDates_arrayOfArraysNull() {
 		String expectedMessage = "Given array of arrays must not be null";
 
 		ValueDateTupel[][] vdtArraysArray = null;
@@ -340,8 +341,9 @@ class ValueDateTupelTest {
 	 * Test method for {@link ValueDateTupel#alignDates(ValueDateTupel[][])}.
 	 */
 	@Test
-	void testalignDates_arrayNull() {
-		String expectedMessage = "The array at position 0 is null.";
+	void testAlignDates_arrayNull() {
+		String expectedMessage = "The array at position 0 does not meet specifications.";
+		String expectedCause = "The given values array must not be null";
 
 		ValueDateTupel[] vdtArray1 = null;
 		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3, valueDateTupel4 };
@@ -352,14 +354,16 @@ class ValueDateTupelTest {
 				"null in array of arrays is not correctly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_ARRAY_MUST_NOT_BE_NULL);
 	}
 
 	/**
 	 * Test method for {@link ValueDateTupel#alignDates(ValueDateTupel[][])}.
 	 */
 	@Test
-	void testalignDates_arrayContainsNull() {
-		String expectedMessage = "The array at position 0 contains at least one null.";
+	void testAlignDates_arrayContainsNull() {
+		String expectedMessage = "The array at position 0 does not meet specifications.";
+		String expectedCause = "Given values must not contain null.";
 
 		ValueDateTupel[] vdtArray1 = { valueDateTupel1, null, valueDateTupel5 };
 		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3, valueDateTupel4 };
@@ -370,14 +374,16 @@ class ValueDateTupelTest {
 				"null in array is not correctly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
 	 * Test method for {@link ValueDateTupel#alignDates(ValueDateTupel[][])}.
 	 */
 	@Test
-	void testalignDates_arrayNotSortedAscending() {
-		String expectedMessage = "The array at position 0 is not sorted in ascending order.";
+	void testAlignDates_arrayNotSortedAscending() {
+		String expectedMessage = "The array at position 0 does not meet specifications.";
+		String expectedCause = "Given values are not properly sorted or there are non-unique values.";
 
 		ValueDateTupel[] vdtArray1 = { valueDateTupel1, valueDateTupel5, valueDateTupel3 };
 		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3, valueDateTupel4 };
@@ -388,15 +394,16 @@ class ValueDateTupelTest {
 				"Unsorted array is not correctly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
 	 * Test method for {@link ValueDateTupel#alignDates(ValueDateTupel[][])}.
 	 */
 	@Test
-	void testalignDates_onlyNaN() {
-
-		String expectedMessage = "Row at position 0 contains only Double.NaN. Rows must contain at least one value != Double.NaN";
+	void testAlignDates_onlyNaN() {
+		String expectedMessage = "The array at position 0 does not meet specifications.";
+		String expectedCause = "Given values must not contain NaN.";
 
 		ValueDateTupel vdt1NaN = new ValueDateTupel(date_20200101, Double.NaN);
 		ValueDateTupel vdt3NaN = new ValueDateTupel(date_20200103, Double.NaN);
@@ -411,6 +418,7 @@ class ValueDateTupelTest {
 				"Only NaN values in ValueDateTupel is not correctly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -467,9 +475,9 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testContainsDate_arrayNull() {
-		ValueDateTupel[] valueDateTupelArray = null;
-		String expectedMessage = "Given array cannot be null";
+		String expectedMessage = "Given array must not be null";
 
+		ValueDateTupel[] valueDateTupelArray = null;
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.containsDate(valueDateTupelArray, date_20200101),
 				"Null array is not properly handled");
@@ -483,9 +491,9 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testContainsDate_dateTimeNull() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3 };
-		String expectedMessage = "Given LocalDateTime cannot be null";
+		String expectedMessage = MESSAGE_VALUE_MUST_NOT_BE_NULL;
 
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3 };
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.containsDate(valueDateTupelArray, null),
 				"LocalDateTime of null is not properly handled");
@@ -541,9 +549,9 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testAddOneAt_arrayNull() {
-		ValueDateTupel[] valueDateTupelArray = null;
-		String expectedMessage = "Given array of ValueDateTupel must not be null";
+		String expectedMessage = "Given array must not be null";
 
+		ValueDateTupel[] valueDateTupelArray = null;
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.addOneAt(valueDateTupelArray, valueDateTupel1, 0),
 				"Array of null is not properly handled");
@@ -557,11 +565,12 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testAddOneAt_valueNull() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3, valueDateTupel4 };
-		String expectedMessage = "Given valueDateTupelToBeAdded must not be null";
+		String expectedMessage = MESSAGE_VALUE_MUST_NOT_BE_NULL;
 
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3, valueDateTupel4 };
+		ValueDateTupel vdtNull = null;
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> ValueDateTupel.addOneAt(valueDateTupelArray, null, 0),
+				() -> ValueDateTupel.addOneAt(valueDateTupelArray, vdtNull, 0),
 				"New value of null is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
@@ -573,10 +582,10 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testAddOneAt_position_negative() {
+		String expectedMessage = "Cannot not add a value at position < 0. Given position is -1";
+
 		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3, valueDateTupel4 };
 		int negativePosition = -1;
-		String expectedMessage = "Cannot not add a value at position < 0. Given position is " + negativePosition;
-
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.addOneAt(valueDateTupelArray, valueDateTupel1, negativePosition),
 				"Position < 0 is not properly handled");
@@ -590,11 +599,10 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testAddOneAt_position_greater_arrayLength() {
+		String expectedMessage = "Cannot add a value at position > 3. Given position is 4.";
+
 		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3, valueDateTupel4 };
 		int tooLargeAPosition = 4;
-		String expectedMessage = "Cannot add a value at position > " + valueDateTupelArray.length
-				+ ". Given position is " + tooLargeAPosition + ".";
-
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.addOneAt(valueDateTupelArray, valueDateTupel1, tooLargeAPosition),
 				"Position > array.length is not properly handled");
@@ -635,9 +643,9 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testContainsLocalDateTime_arrayNull() {
-		ValueDateTupel[] valueDateTupelArray = null;
 		String expectedMessage = MESSAGE_ARRAY_MUST_NOT_BE_NULL;
 
+		ValueDateTupel[] valueDateTupelArray = null;
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.getElement(valueDateTupelArray, date_20200101),
 				"Array of null is not properly handled");
@@ -651,10 +659,10 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testContainsLocalDateTime_dateToBeFoundNull() {
+		String expectedMessage = MESSAGE_VALUE_MUST_NOT_BE_NULL;
+
 		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3, valueDateTupel4 };
 		LocalDateTime dateNull = null;
-		String expectedMessage = "The given date to be found must not be null";
-
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.getElement(valueDateTupelArray, dateNull),
 				"Date to be found of null is not properly handled");
@@ -684,9 +692,9 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testGetValues_arrayNull() {
-		ValueDateTupel[] valueDateTupelArray = null;
 		String expectedMessage = MESSAGE_ARRAY_MUST_NOT_BE_NULL;
 
+		ValueDateTupel[] valueDateTupelArray = null;
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.getValues(valueDateTupelArray), "Null array is not correctly handled");
 
@@ -715,9 +723,9 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testGetDates_arrayNull() {
-		ValueDateTupel[] valueDateTupelArray = null;
 		String expectedMessage = MESSAGE_ARRAY_MUST_NOT_BE_NULL;
 
+		ValueDateTupel[] valueDateTupelArray = null;
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.getDates(valueDateTupelArray), "Null array is not correctly handled");
 
@@ -745,10 +753,10 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testGetElements_dtFromNull() {
-		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4,
-				valueDateTupel5 };
 		ValueDateTupel[] expectedValue = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4 };
 
+		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4,
+				valueDateTupel5 };
 		ValueDateTupel[] actualValue = ValueDateTupel.getElements(vdtArray, null, date_20200104);
 
 		assertArrayEquals(expectedValue, actualValue, "Elements cannot be correctly retrieved when dtFrom is null.");
@@ -760,10 +768,10 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testGetElements_dtToNull() {
-		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4,
-				valueDateTupel5 };
 		ValueDateTupel[] expectedValue = { valueDateTupel2, valueDateTupel3, valueDateTupel4, valueDateTupel5 };
 
+		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4,
+				valueDateTupel5 };
 		ValueDateTupel[] actualValue = ValueDateTupel.getElements(vdtArray, date_20200102, null);
 
 		assertArrayEquals(expectedValue, actualValue, "Elements cannot be correctly retrieved when dtTo is null.");
@@ -775,10 +783,10 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testGetElements_dtFromEqualsDtTo() {
-		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4,
-				valueDateTupel5 };
 		ValueDateTupel[] expectedValue = { valueDateTupel2 };
 
+		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4,
+				valueDateTupel5 };
 		ValueDateTupel[] actualValue = ValueDateTupel.getElements(vdtArray, date_20200102, date_20200102);
 
 		assertArrayEquals(expectedValue, actualValue,
@@ -815,11 +823,11 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testGetPosition() {
-		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4,
-				valueDateTupel5 };
 		int expectedValueFirstPosition = 0;
 		int expectedValueLastPosition = 4;
 
+		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4,
+				valueDateTupel5 };
 		int actualValueFirstPosition = ValueDateTupel.getPosition(vdtArray, date_20200101);
 		int actualValueLastPosition = ValueDateTupel.getPosition(vdtArray, date_20200105);
 
@@ -833,9 +841,9 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testGetPosition_arrayNull() {
-		ValueDateTupel[] vdtArray = null;
-		String expectedMessage = "The given array of ValueDateTupel must not be null";
+		String expectedMessage = MESSAGE_ARRAY_MUST_NOT_BE_NULL;
 
+		ValueDateTupel[] vdtArray = null;
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.getPosition(vdtArray, date_20200102), "Array of null is not properly handled");
 
@@ -848,9 +856,9 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testGetPosition_arrayEmpty() {
-		ValueDateTupel[] vdtArray = {};
 		int expectedValue = Integer.MIN_VALUE;
 
+		ValueDateTupel[] vdtArray = {};
 		assertEquals(expectedValue, ValueDateTupel.getPosition(vdtArray, date_20200102),
 				"Empty array is not properly handled");
 	}
@@ -861,10 +869,10 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testGetPosition_dtToBeFoundNull() {
+		String expectedMessage = MESSAGE_VALUE_MUST_NOT_BE_NULL;
+
 		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3, valueDateTupel4,
 				valueDateTupel5 };
-		String expectedMessage = "The given date to be found must not be null";
-
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.getPosition(vdtArray, null), "Date to be found of null is not properly handled");
 

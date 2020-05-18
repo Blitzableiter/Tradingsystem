@@ -148,14 +148,16 @@ class UtilTest {
 	 */
 	@Test
 	void testCalculateForecastScalar_baseScale0() {
+		String expectedMessage = "Given base scale does not meet specifications.";
+		String expectedCause = "Value must be a positive decimal";
 		double[] values = { 10d, 4d, -1d, 6d, -4d };
 		double baseScale = 0;
-		String expectedMessage = "Base scale must not be 0.";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> Util.calculateForecastScalar(values, baseScale), "Base scale of 0 is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**

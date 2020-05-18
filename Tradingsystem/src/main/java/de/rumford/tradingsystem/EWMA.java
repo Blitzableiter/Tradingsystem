@@ -3,6 +3,7 @@ package de.rumford.tradingsystem;
 import org.apache.commons.lang3.ArrayUtils;
 
 import de.rumford.tradingsystem.helper.GeneratedCode;
+import de.rumford.tradingsystem.helper.Validator;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
@@ -28,8 +29,8 @@ public class EWMA {
 	 * @param horizon {@code int} horizon this EWMA is to be over
 	 */
 	public EWMA(ValueDateTupel[] baseValues, int horizon) {
-		this.validateBaseValues(baseValues);
-		this.validateHorizon(horizon);
+		validateBaseValues(baseValues);
+		validateHorizon(horizon);
 
 		this.setBaseValues(baseValues);
 		this.setHorizon(horizon);
@@ -88,32 +89,32 @@ public class EWMA {
 	}
 
 	/**
+	 * Validates the given base values.
+	 * 
+	 * @param baseValues {@code ValueDateTupel[]} the base values the EWMA is to be
+	 *                   calculated on. Must pass
+	 *                   {@link Validator#validateValues(ValueDateTupel[])} and
+	 *                   {@link Validator#validateDates(ValueDateTupel[])}.
+	 * @throws IllegalArgumentException if the above specifications are not met.
+	 */
+	private static void validateBaseValues(ValueDateTupel[] baseValues) {
+		try {
+			Validator.validateValues(baseValues);
+			Validator.validateDates(baseValues);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("The given values do not meet the specifications.", e);
+		}
+	}
+
+	/**
 	 * Validates the given horizon.
 	 * 
 	 * @param horizon {@code int} the horizon to be validated.
 	 * @throws IllegalArgumentException if the given horizon is < 2.
 	 */
-	private void validateHorizon(int horizon) {
+	private static void validateHorizon(int horizon) {
 		if (horizon < 2)
 			throw new IllegalArgumentException("The horizon must not be < 2");
-	}
-
-	/**
-	 * Validates the given base values.
-	 * 
-	 * @param baseValues {@code ValueDateTupel[]} the base values the EWMA is to be
-	 *                   calculated on.
-	 * @throws IllegalArgumentException if the length of the base values array is 0.
-	 * @throws IllegalArgumentException if {@code validateDates(ValueDateTupel[])}
-	 *                                  in {@code BaseValue} throws an
-	 *                                  IllegalArgumentException.
-	 */
-	private void validateBaseValues(ValueDateTupel[] baseValues) {
-		/* Check if passed values array contains elements */
-		if (baseValues.length == 0)
-			throw new IllegalArgumentException("Base values must not be an empty array");
-
-		BaseValue.validateDates(baseValues);
 	}
 
 	/**

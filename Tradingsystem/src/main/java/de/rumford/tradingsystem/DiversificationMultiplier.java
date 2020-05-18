@@ -7,6 +7,7 @@ import org.apache.commons.math3.linear.BlockRealMatrix;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import de.rumford.tradingsystem.helper.GeneratedCode;
+import de.rumford.tradingsystem.helper.Validator;
 
 /**
  * "The only free real estate in capital investment is diversification". By
@@ -46,93 +47,17 @@ public class DiversificationMultiplier {
 	 * is at the user's discretion.
 	 * 
 	 * @param rules {@code Rule[]} An array of {@link Rule}s to be accounted for in
-	 *              this DM.
+	 *              this DM. Must pass {@link Validator#validateRules(Rule[])}.
 	 */
 	public DiversificationMultiplier(Rule[] rules) {
+		validateInput(rules);
+
 		this.setWeights(getWeightsFromRules(rules));
 		this.setRelevantForecasts(getRelevantForecastsFromRules(rules));
 
 		this.setCorrelations(getCorrelationsFromForecasts(this.getRelevantForecasts()));
 
 		this.setValue(this.calculateDiversificiationMultiplierValue());
-	}
-
-	/**
-	 * Recursively get the weights from the given array of Rules. Uses the same
-	 * algorithm for determination as
-	 * {@link #getRelevantForecastsFromRules(Rule[])}.
-	 * 
-	 * @param rules {@code Rule[]} The array of rules to be searched.
-	 * @return {@code double[]} The extracted from the given array of Rules.
-	 */
-	private static double[] getWeightsFromRules(Rule[] rules) {
-		double[] weights = {};
-		/* Iterate over the given rules */
-		for (Rule rule : rules) {
-			/* If a rule has variations get their weights */
-			if (rule.hasVariations()) {
-				double[] weightsToAdd = getWeightsFromRules(rule.getVariations());
-				for (double weight : weightsToAdd)
-					weights = ArrayUtils.add(weights, weight * rule.getWeight());
-			} else {
-				double weight = rule.getWeight();
-				/*
-				 * If a top level rule has no variations its weight has not been set. Manually
-				 * set its weight to be 1/numberOfTopeLevelRules
-				 */
-				if (weight == 0)
-					weight = 1d / rules.length;
-				weights = ArrayUtils.add(weights, weight);
-			}
-		}
-		return weights;
-	}
-
-	/**
-	 * Recursively get the relevant forecasts from the given array of Rules. Uses
-	 * the same algorithm for determination as {@link #getWeightsFromRules(Rule[])}
-	 * 
-	 * @param rules {@code Rule[]} The array of rules to be searched.
-	 * @return {@code double[]} The extracted from the given array of Rules.
-	 */
-	private static double[][] getRelevantForecastsFromRules(Rule[] rules) {
-		double[][] relevantForecasts = {};
-		/* Iterate over the given rules */
-		for (Rule rule : rules) {
-			/* If a rule has variations get their forecasts */
-			if (rule.hasVariations()) {
-				double[][] forecastsToAdd = getRelevantForecastsFromRules(rule.getVariations());
-				for (double[] forecasts : forecastsToAdd)
-					relevantForecasts = ArrayUtils.add(relevantForecasts, forecasts);
-			} else {
-				relevantForecasts = ArrayUtils.add(relevantForecasts, rule.getRelevantForecastValues());
-			}
-		}
-		return relevantForecasts;
-	}
-
-	/**
-	 * Calculate the correlations from the given array of forecast arrays.
-	 * 
-	 * @param forecasts {@code double[][]} The forecasts to be used for calculation.
-	 * @return {@code double[][]} A matrix of correlations, as by
-	 *         {@link PearsonsCorrelation#getCorrelationMatrix()}.
-	 */
-	private static double[][] getCorrelationsFromForecasts(double[][] forecasts) {
-		/* If there is only one row of data return a 1x1 self correlation matrix */
-		if (forecasts.length == 1) {
-			double[][] returnValue = { { 1 } };
-			return returnValue;
-		}
-
-		/* Load the given values into rows of a matrix */
-		BlockRealMatrix matrix = new BlockRealMatrix(forecasts);
-		/* Transpose the values into columns to get the correct correlations */
-		matrix = matrix.transpose();
-
-		/* Get the correlations of the passed value arrays */
-		PearsonsCorrelation pearsonsCorrelations = new PearsonsCorrelation(matrix);
-		return pearsonsCorrelations.getCorrelationMatrix().getData();
 	}
 
 	/**
@@ -172,6 +97,94 @@ public class DiversificationMultiplier {
 		 * > 0 and at least on correlation > 0 (self correlation)
 		 */
 		return 1 / Math.sqrt(sumOfCorrelationsWeights);
+	}
+
+	/**
+	 * Calculate the correlations from the given array of forecast arrays.
+	 * 
+	 * @param forecasts {@code double[][]} The forecasts to be used for calculation.
+	 * @return {@code double[][]} A matrix of correlations, as by
+	 *         {@link PearsonsCorrelation#getCorrelationMatrix()}.
+	 */
+	private static double[][] getCorrelationsFromForecasts(double[][] forecasts) {
+		/* If there is only one row of data return a 1x1 self correlation matrix */
+		if (forecasts.length == 1) {
+			double[][] returnValue = { { 1 } };
+			return returnValue;
+		}
+
+		/* Load the given values into rows of a matrix */
+		BlockRealMatrix matrix = new BlockRealMatrix(forecasts);
+		/* Transpose the values into columns to get the correct correlations */
+		matrix = matrix.transpose();
+
+		/* Get the correlations of the passed value arrays */
+		PearsonsCorrelation pearsonsCorrelations = new PearsonsCorrelation(matrix);
+		return pearsonsCorrelations.getCorrelationMatrix().getData();
+	}
+
+	/**
+	 * Recursively get the relevant forecasts from the given array of Rules. Uses
+	 * the same algorithm for determination as {@link #getWeightsFromRules(Rule[])}
+	 * 
+	 * @param rules {@code Rule[]} The array of rules to be searched.
+	 * @return {@code double[]} The extracted from the given array of Rules.
+	 */
+	private static double[][] getRelevantForecastsFromRules(Rule[] rules) {
+		double[][] relevantForecasts = {};
+		/* Iterate over the given rules */
+		for (Rule rule : rules) {
+			/* If a rule has variations get their forecasts */
+			if (rule.hasVariations()) {
+				double[][] forecastsToAdd = getRelevantForecastsFromRules(rule.getVariations());
+				for (double[] forecasts : forecastsToAdd)
+					relevantForecasts = ArrayUtils.add(relevantForecasts, forecasts);
+			} else {
+				relevantForecasts = ArrayUtils.add(relevantForecasts, rule.getRelevantForecastValues());
+			}
+		}
+		return relevantForecasts;
+	}
+
+	/**
+	 * Recursively get the weights from the given array of Rules. Uses the same
+	 * algorithm for determination as
+	 * {@link #getRelevantForecastsFromRules(Rule[])}.
+	 * 
+	 * @param rules {@code Rule[]} The array of rules to be searched.
+	 * @return {@code double[]} The extracted from the given array of Rules.
+	 */
+	private static double[] getWeightsFromRules(Rule[] rules) {
+		double[] weights = {};
+		/* Iterate over the given rules */
+		for (Rule rule : rules) {
+			/* If a rule has variations get their weights */
+			if (rule.hasVariations()) {
+				double[] weightsToAdd = getWeightsFromRules(rule.getVariations());
+				for (double weight : weightsToAdd)
+					weights = ArrayUtils.add(weights, weight * rule.getWeight());
+			} else {
+				double weight = rule.getWeight();
+				/*
+				 * If a top level rule has no variations its weight has not been set. Manually
+				 * set its weight to be 1/numberOfTopeLevelRules
+				 */
+				if (weight == 0)
+					weight = 1d / rules.length;
+				weights = ArrayUtils.add(weights, weight);
+			}
+		}
+		return weights;
+	}
+
+	/**
+	 * Validates the given input values.
+	 * 
+	 * @param rules {@code Rule[]} Must pass
+	 *              {@link Validator#validateRules(Rule[])}.
+	 */
+	private static void validateInput(Rule[] rules) {
+		Validator.validateRules(rules);
 	}
 
 	/**

@@ -8,6 +8,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import de.rumford.tradingsystem.helper.GeneratedCode;
 import de.rumford.tradingsystem.helper.Util;
+import de.rumford.tradingsystem.helper.Validator;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
@@ -72,7 +73,7 @@ public abstract class Rule {
 	public Rule(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
 			LocalDateTime endOfReferenceWindow, double baseScale) {
 
-		this.validateInputs(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
+		validateInputs(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
 
 		this.setBaseValue(baseValue);
 		this.setStartOfReferenceWindow(startOfReferenceWindow);
@@ -496,6 +497,7 @@ public abstract class Rule {
 	public double[] getRelevantForecastValues() {
 		ValueDateTupel[] relevantForecasts = ValueDateTupel.getElements(this.getForecasts(),
 				this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
+
 		return ValueDateTupel.getValues(relevantForecasts);
 	}
 
@@ -512,9 +514,10 @@ public abstract class Rule {
 	 * Validates if the given instance variables meet specifications.
 	 * 
 	 * @param baseValue              {@link BaseValue} The base value to be used in
-	 *                               this rule's calculations. Must not be null.
-	 *                               Must contain the given startOfReferenceWindow.
-	 *                               Must contain the given endOfReferenceWindow.
+	 *                               this rule's calculations. Must pass
+	 *                               {@link Validator#validateBaseValue(BaseValue)}.
+	 *                               Its values must pass
+	 *                               {@link Validator#validateTimeWindow(LocalDateTime, LocalDateTime, ValueDateTupel[])}
 	 * @param variations             {@code Rule[]} Can be null. If not
 	 *                               <ul>
 	 *                               <li>Must not contain more than 3 elements.</li>
@@ -528,45 +531,43 @@ public abstract class Rule {
 	 *                               </ul>
 	 * @param startOfReferenceWindow {@link LocalDateTime} The first LocalDateTime
 	 *                               to be considered in calculations such as
-	 *                               forecast scalar. Must not be null. Must be
-	 *                               before the given endOfReferenceWindow.
+	 *                               forecast scalar. Must pass
+	 *                               {@link Validator#validateTimeWindow(LocalDateTime, LocalDateTime, ValueDateTupel[])}
 	 * @param endOfReferenceWindow   {@link LocalDateTime} The last LocalDateTime to
 	 *                               be considered in calculations such as forecast
-	 *                               scalar. Must not be null. Must be after the
-	 *                               given startOfReferenceWindow.
+	 *                               scalar. Must pass
+	 *                               {@link Validator#validateTimeWindow(LocalDateTime, LocalDateTime, ValueDateTupel[])}
 	 * @param baseScale              {@code double} How the forecasts shall be
-	 *                               scaled. Must be > 0.
+	 *                               scaled. Must pass
+	 *                               {@link Validator#validatePositiveDouble(double)}.
 	 * @throws IllegalArgumentException if the above specifications are not met.
 	 */
-	private void validateInputs(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
+	private static void validateInputs(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
 			LocalDateTime endOfReferenceWindow, double baseScale) {
-		/* Check if base value fulfills requirements. */
-		if (baseValue == null)
-			throw new IllegalArgumentException("Base value must not be null");
-		/* Check if LocalDates are null */
-		if (startOfReferenceWindow == null)
-			throw new IllegalArgumentException("Start of reference window value must not be null");
-		if (endOfReferenceWindow == null)
-			throw new IllegalArgumentException("End of reference window value must not be null");
-		/* Check if reference window is properly defined: end must be after start */
-		if (!endOfReferenceWindow.isAfter(startOfReferenceWindow))
+
+		Validator.validateBaseValue(baseValue);
+
+		try {
+			Validator.validateTimeWindow(startOfReferenceWindow, endOfReferenceWindow, baseValue.getValues());
+		} catch (IllegalArgumentException e) {
+			/*
+			 * If the message contains "values" the message references an error in the given
+			 * base values in combination with the given reference window.
+			 */
+			if (e.getMessage().contains("values"))
+				throw new IllegalArgumentException("Given base value and reference window do not fit.", e);
+
+			throw new IllegalArgumentException("The given reference window does not meet specifications.", e);
+		}
+
+		/*
+		 * The first time interval of the base values cannot have all derived values
+		 * correctly calculated, as there will be no returns (due to lacking former
+		 * value).
+		 */
+		if (baseValue.getValues()[0].getDate().equals(startOfReferenceWindow))
 			throw new IllegalArgumentException(
-					"End of reference window value must be after start of reference window value");
-
-		/*
-		 * The given startOfReferenceWindow must be included in the given base values.
-		 */
-		if (!ValueDateTupel.containsDate(baseValue.getValues(), startOfReferenceWindow))
-			throw new IllegalArgumentException("Base values do not include given start value for reference window");
-		/*
-		 * The given startOfReferenceWindow must be included in the given base values.
-		 */
-		if (!ValueDateTupel.containsDate(baseValue.getValues(), endOfReferenceWindow))
-			throw new IllegalArgumentException("Base values do not include given end value for reference window");
-
-		/* Check for a meaningful scale. */
-		if (baseScale <= 0)
-			throw new IllegalArgumentException("The given baseScale must a positiv non-zero decimal.");
+					"Reference window must not start on first time interval of base value data.");
 
 		/* A rule can have no variations, so variations == null is acceptable. */
 		if (variations != null) {
@@ -596,6 +597,18 @@ public abstract class Rule {
 									+ ". The given end of reference window is different.");
 				}
 			}
+
+			try {
+				Validator.validateRulesVsBaseValue(variations, baseValue);
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException("The given variations do not meet specifications.", e);
+			}
+		}
+
+		try {
+			Validator.validatePositiveDouble(baseScale);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("The given base scale does not meet specifications.", e);
 		}
 	}
 

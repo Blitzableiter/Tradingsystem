@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.rumford.tradingsystem;
 
 import java.util.Arrays;
@@ -9,6 +6,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import de.rumford.tradingsystem.helper.GeneratedCode;
 import de.rumford.tradingsystem.helper.Util;
+import de.rumford.tradingsystem.helper.Validator;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
@@ -66,13 +64,13 @@ public class BaseValue {
 	 *                                  specification
 	 */
 	public BaseValue(String name, ValueDateTupel[] values) {
-		this.validateInput(name, values);
+		validateInput(name, values);
 
 		this.setName(name);
 		this.setValues(values);
 
-		this.setShortIndexValues(this.calculateShortIndexValues(values));
-		this.setStandardDeviationValues(this.calculateStandardDeviationValues(values));
+		this.setShortIndexValues(calculateShortIndexValues(values));
+		this.setStandardDeviationValues(calculateStandardDeviationValues(values));
 	}
 
 	/**
@@ -100,7 +98,8 @@ public class BaseValue {
 		this(name, values);
 
 		try {
-			validateValues(shortIndexValues);
+			Validator.validateValues(shortIndexValues);
+			Validator.validateDates(shortIndexValues);
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Given short index values do not meet the specifications.", e);
 		}
@@ -110,132 +109,6 @@ public class BaseValue {
 		ValueDateTupel[][] alignedValuesAndShortIndexValues = ValueDateTupel.alignDates(valuesAndShortIndexValues);
 		this.setValues(alignedValuesAndShortIndexValues[0]);
 		this.setShortIndexValues(alignedValuesAndShortIndexValues[1]);
-	}
-
-	/**
-	 * Validates the given parameters. Used by the Constructors to validate the
-	 * constructor parameters.
-	 * 
-	 * @param name   {@code String} Name to be set for a {@link BaseValue}. Must not
-	 *               have a length of {@code 0}.
-	 * @param values {@link ValueDateTupel[]} Values to be set for a
-	 *               {@link BaseValue}. Must contain at least {@code 1} element.
-	 * @throws IllegalArgumentException if one of the above specifications is not
-	 *                                  met.
-	 */
-	private void validateInput(String name, ValueDateTupel[] values) {
-		/* Check if name is null */
-		if (name == null)
-			throw new IllegalArgumentException("The given name must not be null");
-
-		/* Check if values is null */
-		if (values == null)
-			throw new IllegalArgumentException("The given values must not be null");
-
-		/* Check if name is not empty */
-		if (name.length() == 0)
-			throw new IllegalArgumentException("Name must not be an empty String");
-
-		/* Check if passed values array contains elements */
-		if (values.length == 0)
-			throw new IllegalArgumentException("Values must not be an empty array");
-
-		validateValues(values);
-
-		validateDates(values);
-	}
-
-	/**
-	 * Calculate the standard deviation values for the given base values. The first
-	 * value is always Double.NaN.
-	 * <p>
-	 * {@code sd = baseValue * sqrt[ EWMA( return^2 ) ]}
-	 * 
-	 * @param baseValues {@code ValueDateTupel[]} the given base values.
-	 * @return {@code ValueDateTupel[]} the calculated standard deviation values.
-	 */
-	private ValueDateTupel[] calculateStandardDeviationValues(ValueDateTupel[] baseValues) {
-
-		/* Initiate the squared returns. The first value is always Double.NaN */
-		ValueDateTupel[] squaredReturns = {};
-		squaredReturns = ArrayUtils.add(squaredReturns, new ValueDateTupel(baseValues[0].getDate(), Double.NaN));
-		/* Calculate the squared returns */
-		for (int i = 1; i < baseValues.length; i++) {
-			double returns;
-			returns = Util.calculateReturn(baseValues[i - 1].getValue(), baseValues[i].getValue());
-			squaredReturns = ArrayUtils.add(squaredReturns,
-					new ValueDateTupel(baseValues[i].getDate(), Math.pow(returns, 2)));
-		}
-
-		/* Instantiate the EWMA used for the standard deviation. */
-		EWMA ewmaOfStandardDeviation = new EWMA(squaredReturns, LOOKBACK_WINDOW);
-
-		/*
-		 * The first value is always Double.NaN, as the first value cannot have standard
-		 * deviation from itself.
-		 */
-		ValueDateTupel[] standardDeviationValues = {};
-		standardDeviationValues = ArrayUtils.add(standardDeviationValues,
-				new ValueDateTupel(baseValues[0].getDate(), Double.NaN));
-
-		/* Fill in the calculated values. */
-		for (int i = 1; i < squaredReturns.length; i++) {
-			double squaredEwmaOfVolatility = ewmaOfStandardDeviation.getEwmaValues()[i].getValue();
-			double ewmaOfVolatility = Math.sqrt(squaredEwmaOfVolatility);
-			double standardDeviation = ewmaOfVolatility * baseValues[i].getValue();
-			standardDeviationValues = ArrayUtils.add(standardDeviationValues,
-					new ValueDateTupel(baseValues[i].getDate(), standardDeviation));
-		}
-
-		/* Return the standard deviations. */
-		return standardDeviationValues;
-	}
-
-	/**
-	 * Validates if the given array of ValueDateTupel is sorted in an ascending
-	 * order.
-	 * 
-	 * @param values {@code ValueDateTupel[]} The given array of values.
-	 * @throws IllegalArgumentException if the specifications above are not met.
-	 */
-	public static void validateDates(ValueDateTupel[] values) {
-		/*
-		 * The values cannot be used if they are not in ascending order.
-		 */
-		if (!ValueDateTupel.isSortedAscending(values))
-			throw new IllegalArgumentException("Given values are not properly sorted or there are non-unique values.");
-	}
-
-	/**
-	 * Validates the given array of ValueDateTupel. The given array must fulfill the
-	 * following specifications:
-	 * <ul>
-	 * <li>Be of length > 0</li>
-	 * <li>Pass {@link #validateDates(ValueDateTupel[])}</li>
-	 * <li>Not contain null</li>
-	 * <li>Not contain NaNs as values</li>
-	 * </ul>
-	 * 
-	 * @param values {@code ValueDateTupel[]} The given values.
-	 * @throws IllegalArgumentException if the given array does not meet the above
-	 *                                  specifications.
-	 */
-	public static void validateValues(ValueDateTupel[] values) {
-		/* Check if passed values array contains elements */
-		if (values.length == 0)
-			throw new IllegalArgumentException("Values must not be an empty array");
-
-		for (ValueDateTupel value : values) {
-			/* Validate if there are null values in the given values array. */
-			if (value == null)
-				throw new IllegalArgumentException("Given values must not contain null.");
-
-			/* Validate if there are NaN values in the given values array. */
-			if (Double.isNaN(value.getValue()))
-				throw new IllegalArgumentException("Given values must not contain NaN.");
-		}
-
-		validateDates(values);
 	}
 
 	/**
@@ -266,7 +139,7 @@ public class BaseValue {
 	 * @throws IllegalArgumentException if the passed values array contains no
 	 *                                  elements
 	 */
-	private ValueDateTupel[] calculateShortIndexValues(ValueDateTupel[] values) {
+	private static ValueDateTupel[] calculateShortIndexValues(ValueDateTupel[] values) {
 		/**
 		 * Declare the return value. There are always as many short index values as
 		 * there are base values.
@@ -315,6 +188,84 @@ public class BaseValue {
 		}
 
 		return calculatedShortIndexValues;
+	}
+
+	/**
+	 * Calculate the standard deviation values for the given base values. The first
+	 * value is always Double.NaN.
+	 * <p>
+	 * {@code sd = baseValue * sqrt[ EWMA( return^2 ) ]}
+	 * 
+	 * @param baseValues {@code ValueDateTupel[]} the given base values.
+	 * @return {@code ValueDateTupel[]} the calculated standard deviation values.
+	 */
+	private static ValueDateTupel[] calculateStandardDeviationValues(ValueDateTupel[] baseValues) {
+
+		/* Initiate the squared returns. The first value is always Double.NaN */
+		ValueDateTupel[] squaredReturns = {};
+//		squaredReturns = ArrayUtils.add(squaredReturns, new ValueDateTupel(baseValues[0].getDate(), Double.NaN));
+		/* Calculate the squared returns */
+		for (int i = 0; i < baseValues.length - 1; i++) {
+			double returns;
+			returns = Util.calculateReturn(baseValues[i].getValue(), baseValues[i + 1].getValue());
+			squaredReturns = ArrayUtils.add(squaredReturns,
+					new ValueDateTupel(baseValues[i + 1].getDate(), Math.pow(returns, 2)));
+		}
+
+		/* Instantiate the EWMA used for the standard deviation. */
+		EWMA ewmaOfStandardDeviation = new EWMA(squaredReturns, LOOKBACK_WINDOW);
+
+		/*
+		 * The first value is always Double.NaN, as the first value cannot have standard
+		 * deviation from itself.
+		 */
+		ValueDateTupel[] standardDeviationValues = {};
+//		standardDeviationValues = ArrayUtils.add(standardDeviationValues,
+//				new ValueDateTupel(baseValues[0].getDate(), Double.NaN));
+
+		/* Fill in the calculated values. */
+		for (int i = 0; i < squaredReturns.length; i++) {
+			double squaredEwmaOfVolatility = ewmaOfStandardDeviation.getEwmaValues()[i].getValue();
+			double ewmaOfVolatility = Math.sqrt(squaredEwmaOfVolatility);
+			/*
+			 * The base values array has one more value than the standardDeviationValues
+			 * will have, as there cannot be a standard deviation value for the first time
+			 * interval. The first base value will not have a standard deviation value.
+			 * Therefore to e.g. calculate the _first_ sd value, the _second_ base value has
+			 * to be used.
+			 */
+			double standardDeviation = ewmaOfVolatility * baseValues[i + 1].getValue();
+			standardDeviationValues = ArrayUtils.add(standardDeviationValues,
+					new ValueDateTupel(baseValues[i + 1].getDate(), standardDeviation));
+		}
+
+		/* Return the standard deviations. */
+		return standardDeviationValues;
+	}
+
+	/**
+	 * Validates the given parameters. Used by the Constructors to validate the
+	 * constructor parameters.
+	 * 
+	 * @param name   {@code String} Name to be set for a {@link BaseValue}. Must not
+	 *               be null. Must not have a length of {@code 0}.
+	 * @param values {@link ValueDateTupel[]} Values to be set for a
+	 *               {@link BaseValue}. Must pass
+	 *               {@link Util#validateValues(ValueDateTupel[])}.
+	 * @throws IllegalArgumentException if one of the above specifications is not
+	 *                                  met.
+	 */
+	private static void validateInput(String name, ValueDateTupel[] values) {
+		/* Check if name is null */
+		if (name == null)
+			throw new IllegalArgumentException("The given name must not be null");
+
+		/* Check if name is not empty */
+		if (name.length() == 0)
+			throw new IllegalArgumentException("Name must not be an empty String");
+
+		Validator.validateValues(values);
+		Validator.validateDates(values);
 	}
 
 	/**

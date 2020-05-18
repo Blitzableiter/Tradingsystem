@@ -276,7 +276,7 @@ class SubSystemTest {
 	 */
 	@Test
 	void testValidateInput_rules_baseValueDoesntMatch_givenBaseValue() {
-		BaseValue newBaseValue = BaseValueFactory.jan1Jan31allVal0calcShort(BASE_VALUE_NAME);
+		BaseValue newBaseValue = BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME);
 		Rule[] rules = { new RealRule(newBaseValue, null, localDateTimeJan10220000, localDateTimeJan12220000,
 				BASE_SCALE, VARIATOR) };
 		String expectedMessage = "The base value of all rules must be equal to given base value but the rule at position 0 does not comply.";
@@ -294,42 +294,38 @@ class SubSystemTest {
 	@Test
 	void testValidateInput_capitalNaN() {
 		double nanCapital = Double.NaN;
-		String expectedMessage = "Capital must not be Double.NaN";
+		String expectedMessage = "Given capital does not meet specifications.";
+		String expectedCause = "Value must not be Double.NaN";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new SubSystem(baseValue, rules, nanCapital, BASE_SCALE),
 				"Capital of Double.NaN is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
 	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
-	void testValidateInput_capital0() {
+	void testValidateInput_capitalZeroOrLess() {
 		double zeroCapital = 0;
-		String expectedMessage = "Capital must be a positive decimal";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new SubSystem(baseValue, rules, zeroCapital, BASE_SCALE), "Capital of 0 is not properly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
-	 */
-	@Test
-	void testValidateInput_capitalSub0() {
 		double negativeCapital = -1;
-		String expectedMessage = "Capital must be a positive decimal";
+		String expectedMessage = "Given capital does not meet specifications.";
+		String expectedCause = "Value must be a positive decimal";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new SubSystem(baseValue, rules, negativeCapital, BASE_SCALE),
 				"Negative capital value is not properly handled");
 
+		Exception thrown2 = assertThrows(IllegalArgumentException.class,
+				() -> new SubSystem(baseValue, rules, zeroCapital, BASE_SCALE), "Capital of 0 is not properly handled");
+
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown2.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown2.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -338,13 +334,15 @@ class SubSystemTest {
 	@Test
 	void testValidateInput_baseScaleNaN() {
 		double baseScaleNaN = Double.NaN;
-		String expectedMessage = "Base scale must not be NaN";
+		String expectedMessage = "Given base scale does not meet specifications.";
+		String expectedCause = "Value must not be Double.NaN";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new SubSystem(baseValue, rules, CAPITAL, baseScaleNaN),
 				"Base scale of NaN is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -354,7 +352,8 @@ class SubSystemTest {
 	void testValidateInput_baseScaleZeroOrLess() {
 		double baseScaleZero = 0;
 		double baseScaleSubZero = -1;
-		String expectedMessage = "Base scale must be a positive decimal";
+		String expectedMessage = "Given base scale does not meet specifications.";
+		String expectedCause = "Value must be a positive decimal";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new SubSystem(baseValue, rules, CAPITAL, baseScaleZero),
@@ -364,8 +363,10 @@ class SubSystemTest {
 				"Base scale sub zero is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-		assertEquals(expectedMessage, thrown2.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 
+		assertEquals(expectedMessage, thrown2.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown2.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -418,13 +419,15 @@ class SubSystemTest {
 	 */
 	@Test
 	void testBacktest_startOfTestWindow_null() {
-		String expectedMessage = "Start of test window must not be null";
+		String expectedMessage = "The given test window does not meet specifications.";
+		String expectedCause = "Start of time window value must not be null";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> subSystem.backtest(null, localDateTimeFeb05220000),
 				"Start of test window of null is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -433,13 +436,15 @@ class SubSystemTest {
 	 */
 	@Test
 	void testBacktest_endOfTestWindow_null() {
-		String expectedMessage = "End of test window must not be null";
+		String expectedMessage = "The given test window does not meet specifications.";
+		String expectedCause = "End of time window value must not be null";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> subSystem.backtest(localDateTimeJan10220000, null),
 				"End of test window of null is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -448,13 +453,15 @@ class SubSystemTest {
 	 */
 	@Test
 	void testBacktest_endOfTestWindow_not_after_startOfTestWindow() {
-		String expectedMessage = "End of test window must be after start of test window.";
+		String expectedMessage = "The given test window does not meet specifications.";
+		String expectedCause = "End of time window value must be after start of time window value";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> subSystem.backtest(localDateTimeJan10220000, localDateTimeJan10220000),
 				"End of test window not after start of test window is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -524,7 +531,8 @@ class SubSystemTest {
 	 */
 	@Test
 	void testCalculatePerformanceValues_startOfTestWindowNull() {
-		String expectedMessage = "The given start of test window must not be null";
+		String expectedMessage = "The given test window does not meet specifications.";
+		String expectedCause = "Start of time window value must not be null";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> SubSystem.calculatePerformanceValues(subSystem.getBaseValue(), null, localDateTimeFeb05220000,
@@ -532,6 +540,7 @@ class SubSystemTest {
 				"Invalid start of test window is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -540,7 +549,8 @@ class SubSystemTest {
 	 */
 	@Test
 	void testCalculatePerformanceValues_endOfTestWindowNull() {
-		String expectedMessage = "The given end of test window must not be null";
+		String expectedMessage = "The given test window does not meet specifications.";
+		String expectedCause = "End of time window value must not be null";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> SubSystem.calculatePerformanceValues(subSystem.getBaseValue(), localDateTimeJan10220000, null,
@@ -548,6 +558,7 @@ class SubSystemTest {
 				"Invalid end of test window is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -556,7 +567,8 @@ class SubSystemTest {
 	 */
 	@Test
 	void testCalculatePerformanceValues_endOfTestWindow_not_after_startOfTestWindow() {
-		String expectedMessage = "The end of test window must be after the start of the test window";
+		String expectedMessage = "The given test window does not meet specifications.";
+		String expectedCause = "End of time window value must be after start of time window value";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> SubSystem.calculatePerformanceValues(subSystem.getBaseValue(), localDateTimeJan10220000,
@@ -565,6 +577,7 @@ class SubSystemTest {
 				"End of test window not after start of test window is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -573,7 +586,8 @@ class SubSystemTest {
 	 */
 	@Test
 	void testCalculatePerformanceValues_startOfTestWindow_not_in_baseValue() {
-		String expectedMessage = "The given start of test window is not contained in the base value for this subsystem.";
+		String expectedMessage = "Given base value and test window do not fit.";
+		String expectedCause = "Given values do not include given start value for time window";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> SubSystem.calculatePerformanceValues(subSystem.getBaseValue(), localDateTime2019Dec31220000,
@@ -582,6 +596,7 @@ class SubSystemTest {
 				"Start of test window not in base values is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -590,7 +605,8 @@ class SubSystemTest {
 	 */
 	@Test
 	void testCalculatePerformanceValues_endOfTestWindow_not_in_baseValue() {
-		String expectedMessage = "The given end of test window is not contained in the base value for this subsystem.";
+		String expectedMessage = "Given base value and test window do not fit.";
+		String expectedCause = "Given values do not include given end value for time window";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> SubSystem.calculatePerformanceValues(subSystem.getBaseValue(), localDateTimeJan10220000,
@@ -599,6 +615,7 @@ class SubSystemTest {
 				"End of test window not in base values is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -607,7 +624,8 @@ class SubSystemTest {
 	 */
 	@Test
 	void testCalculatePerformanceValues_startOfTestWindow_not_in_forecasts() {
-		String expectedMessage = "No forecast for given start of test window. Start of test window is probably before start of reference window";
+		String expectedMessage = "Given forecasts and test window do not fit.";
+		String expectedCause = "Given values do not include given start value for time window";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> SubSystem.calculatePerformanceValues(subSystem.getBaseValue(), localDateTimeJan09220000,
@@ -616,6 +634,7 @@ class SubSystemTest {
 				"Start of test window not in forecasts is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 }

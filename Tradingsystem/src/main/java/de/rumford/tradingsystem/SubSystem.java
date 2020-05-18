@@ -8,6 +8,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import de.rumford.tradingsystem.helper.GeneratedCode;
 import de.rumford.tradingsystem.helper.Util;
+import de.rumford.tradingsystem.helper.Validator;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
@@ -24,6 +25,8 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
 public class SubSystem {
 
 	private static final double PRICE_FACTOR_BASE_SCALE = 1;
+
+	private static final String MESSAGE_ILLEGAL_TEST_WINDOW = "The given test window does not meet specifications.";
 
 	private BaseValue baseValue;
 	private Rule[] rules;
@@ -56,7 +59,7 @@ public class SubSystem {
 
 		validateInput(baseValue, rules, capital, baseScale);
 
-		evaluateRules(rules);
+		validateRules(rules);
 		this.setRules(rules);
 
 		this.setBaseValue(baseValue);
@@ -64,67 +67,6 @@ public class SubSystem {
 		this.setBaseScale(baseScale);
 		this.setDiversificationMultiplier(new DiversificationMultiplier(rules));
 		this.setCombinedForecasts(this.calculateCombinedForecasts());
-	}
-
-	/**
-	 * Calculates the combined forecasts for all rules of this Sub System.
-	 * 
-	 * @return {@code ValueDateTupel[]} The combined forecasts for all rules,
-	 *         multiplied by {@link DiversificationMultiplier#getValue()} of this
-	 *         Sub System.
-	 */
-	private ValueDateTupel[] calculateCombinedForecasts() {
-		Rule[] instanceRules = this.getRules();
-		/* Calculate the weight by which all rules' forecasts shall be multiplied by */
-		double rulesWeight = 1d / instanceRules.length;
-
-		ValueDateTupel[] calculatedCombinedForecasts = {};
-
-		/* Step through the given rules */
-		for (int rulesIndex = 0; rulesIndex < instanceRules.length; rulesIndex++) {
-
-			/* For each rule: Step through the forecasts */
-			ValueDateTupel[] forecasts = instanceRules[rulesIndex].getForecasts();
-			for (int fcIndex = 0; fcIndex < forecasts.length; fcIndex++) {
-
-				if (rulesIndex == 0) {
-					/* Combined forecasts must be filled with values on first go-through */
-					ValueDateTupel vdtToAdd = new ValueDateTupel(forecasts[fcIndex].getDate(),
-							forecasts[fcIndex].getValue() * rulesWeight);
-					calculatedCombinedForecasts = ArrayUtils.add(calculatedCombinedForecasts, vdtToAdd);
-				} else {
-					/*
-					 * If this is not the first go-through add the weighted forecasts of the current
-					 * rule
-					 */
-					ValueDateTupel vdtToAdd = new ValueDateTupel(calculatedCombinedForecasts[fcIndex].getDate(),
-							calculatedCombinedForecasts[fcIndex].getValue()
-									+ forecasts[fcIndex].getValue() * rulesWeight);
-					calculatedCombinedForecasts[fcIndex] = vdtToAdd;
-				}
-			}
-		}
-
-		/*
-		 * Apply Diversification Multiplier to all forecast values. Cut off Forecast
-		 * values at 2 x base scale or -2 x base scale respectively
-		 */
-		final double instanceBaseScale = this.getBaseScale();
-		final double diversificationMultiplierValue = this.getDiversificationMultiplier().getValue();
-		final double MAX_VALUE = instanceBaseScale * 2;
-		final double MIN_VALUE = 0 - MAX_VALUE;
-
-		for (int fcIndex = 0; fcIndex < calculatedCombinedForecasts.length; fcIndex++) {
-			double fcWithDM = calculatedCombinedForecasts[fcIndex].getValue() * diversificationMultiplierValue;
-			if (fcWithDM > MAX_VALUE)
-				fcWithDM = MAX_VALUE;
-			if (fcWithDM < MIN_VALUE)
-				fcWithDM = MIN_VALUE;
-
-			calculatedCombinedForecasts[fcIndex].setValue(fcWithDM);
-		}
-
-		return calculatedCombinedForecasts;
 	}
 
 	/**
@@ -144,12 +86,6 @@ public class SubSystem {
 	 *         test window.
 	 */
 	public double backtest(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow) {
-		if (startOfTestWindow == null)
-			throw new IllegalArgumentException("Start of test window must not be null");
-		if (endOfTestWindow == null)
-			throw new IllegalArgumentException("End of test window must not be null");
-		if (!endOfTestWindow.isAfter(startOfTestWindow))
-			throw new IllegalArgumentException("End of test window must be after start of test window.");
 
 		BaseValue instanceBaseValue = this.getBaseValue();
 		double capitalAfterBacktest = this.getCapital();
@@ -183,23 +119,31 @@ public class SubSystem {
 	public static ValueDateTupel[] calculatePerformanceValues(BaseValue baseValue, LocalDateTime startOfTestWindow,
 			LocalDateTime endOfTestWindow, ValueDateTupel[] combinedForecasts, double baseScale, double capital) {
 
-		if (startOfTestWindow == null)
-			throw new IllegalArgumentException("The given start of test window must not be null");
-		if (endOfTestWindow == null)
-			throw new IllegalArgumentException("The given end of test window must not be null");
-		if (!endOfTestWindow.isAfter(startOfTestWindow))
-			throw new IllegalArgumentException("The end of test window must be after the start of the test window");
+		try {
+			Validator.validateTimeWindow(startOfTestWindow, endOfTestWindow, baseValue.getValues());
+		} catch (IllegalArgumentException e) {
+			/*
+			 * If the message contains "values" the message references an error in the given
+			 * base values in combination with the given test window.
+			 */
+			if (e.getMessage().contains("values"))
+				throw new IllegalArgumentException("Given base value and test window do not fit.", e);
 
-		if (!ValueDateTupel.containsDate(baseValue.getValues(), startOfTestWindow))
-			throw new IllegalArgumentException(
-					"The given start of test window is not contained in the base value for this subsystem.");
-		if (!ValueDateTupel.containsDate(baseValue.getValues(), endOfTestWindow))
-			throw new IllegalArgumentException(
-					"The given end of test window is not contained in the base value for this subsystem.");
+			throw new IllegalArgumentException(MESSAGE_ILLEGAL_TEST_WINDOW, e);
+		}
 
-		if (!ValueDateTupel.containsDate(combinedForecasts, startOfTestWindow))
-			throw new IllegalArgumentException(
-					"No forecast for given start of test window. Start of test window is probably before start of reference window");
+		try {
+			Validator.validateTimeWindow(startOfTestWindow, endOfTestWindow, combinedForecasts);
+		} catch (IllegalArgumentException e) {
+			/*
+			 * If the message contains "values" the message references an error in the given
+			 * forecasts in combination with the given test window.
+			 */
+			if (e.getMessage().contains("values"))
+				throw new IllegalArgumentException("Given forecasts and test window do not fit.", e);
+
+			throw new IllegalArgumentException(MESSAGE_ILLEGAL_TEST_WINDOW, e);
+		}
 
 		/* Fetch all base values inside the test window */
 		ValueDateTupel[] relevantBaseValues = ValueDateTupel.getElements(baseValue.getValues(), startOfTestWindow,
@@ -277,53 +221,86 @@ public class SubSystem {
 	}
 
 	/**
-	 * Calculates the products to buy during a trading period according to the given
-	 * price and given forecast.
+	 * Check if the given rules are unique by utilizing {@link Rule#equals(Object)}
 	 * 
-	 * @param capital   {@code double} The capital available for trading.
-	 * @param price     {@code double} The price at which a product can be bought.
-	 * @param forecast  {@code double} The forecast for the current trading period.
-	 * @param baseScale {@code double} The base scale by which the given forecast is
-	 *                  scaled.
-	 * @return {@code int} The number of products to buy.
+	 * @param rules {@code Rule} An array of rules to be check for uniqueness.
+	 * @return {@code boolean} True, if the rules are unique. False otherwise.
 	 */
-	private static long calculateProductsCount(double capital, double price, double forecast, double baseScale) {
-		/* Number of products if forecast had MAX_VALUE */
-		double maxProductsCount = capital / price;
+	static boolean areRulesUnique(Rule[] rules) {
+		if (rules == null)
+			throw new IllegalArgumentException("The given rules must not be null");
+		if (ArrayUtils.contains(rules, null))
+			throw new IllegalArgumentException("The given array must not contain nulls");
+		if (rules.length == 0)
+			throw new IllegalArgumentException("The given array of rules must not be empty.");
 
-		/* Number of products if forecast was 1 */
-		double fcOneProductsCounts = maxProductsCount / (baseScale * 2);
-
-		/*
-		 * Invert current forecast if it's negative to always generate a positive number
-		 * of products
-		 */
-		if (forecast < 0)
-			forecast *= -1;
-
-		/* Number of products for actual forecast. Accept rounding inaccuracies. */
-		return (long) (fcOneProductsCounts * forecast);
+		for (int i = 0; i < rules.length - 1; i++) {
+			if (rules[i].equals(rules[i + 1])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
-	 * Calculate product prices based on the given array of values and a given
-	 * product price factor.
+	 * Calculates the combined forecasts for all rules of this Sub System.
 	 * 
-	 * @param baseValues         {@code ValueDateTupel[]} The values the prices are
-	 *                           to be based on.
-	 * @param productPriceFactor {@code double} The factor used to calculate the
-	 *                           product prices.
-	 * @return {@code ValueDateTupel[]} An array of prices using the dates of the
-	 *         given baseValues.
+	 * @return {@code ValueDateTupel[]} The combined forecasts for all rules,
+	 *         multiplied by {@link DiversificationMultiplier#getValue()} of this
+	 *         Sub System.
 	 */
-	private static ValueDateTupel[] calculateProductPrices(ValueDateTupel[] baseValues, double productPriceFactor) {
-		ValueDateTupel[] productPrices = {};
-		for (ValueDateTupel baseValue : baseValues)
-			productPrices = ValueDateTupel.addOneAt(productPrices,
-					new ValueDateTupel(baseValue.getDate(), baseValue.getValue() * productPriceFactor),
-					productPrices.length);
+	private ValueDateTupel[] calculateCombinedForecasts() {
+		Rule[] instanceRules = this.getRules();
+		/* Calculate the weight by which all rules' forecasts shall be multiplied by */
+		double rulesWeight = 1d / instanceRules.length;
 
-		return productPrices;
+		ValueDateTupel[] calculatedCombinedForecasts = {};
+
+		/* Step through the given rules */
+		for (int rulesIndex = 0; rulesIndex < instanceRules.length; rulesIndex++) {
+
+			/* For each rule: Step through the forecasts */
+			ValueDateTupel[] forecasts = instanceRules[rulesIndex].getForecasts();
+			for (int fcIndex = 0; fcIndex < forecasts.length; fcIndex++) {
+
+				if (rulesIndex == 0) {
+					/* Combined forecasts must be filled with values on first go-through */
+					ValueDateTupel vdtToAdd = new ValueDateTupel(forecasts[fcIndex].getDate(),
+							forecasts[fcIndex].getValue() * rulesWeight);
+					calculatedCombinedForecasts = ArrayUtils.add(calculatedCombinedForecasts, vdtToAdd);
+				} else {
+					/*
+					 * If this is not the first go-through add the weighted forecasts of the current
+					 * rule
+					 */
+					ValueDateTupel vdtToAdd = new ValueDateTupel(calculatedCombinedForecasts[fcIndex].getDate(),
+							calculatedCombinedForecasts[fcIndex].getValue()
+									+ forecasts[fcIndex].getValue() * rulesWeight);
+					calculatedCombinedForecasts[fcIndex] = vdtToAdd;
+				}
+			}
+		}
+
+		/*
+		 * Apply Diversification Multiplier to all forecast values. Cut off Forecast
+		 * values at 2 x base scale or -2 x base scale respectively
+		 */
+		final double instanceBaseScale = this.getBaseScale();
+		final double diversificationMultiplierValue = this.getDiversificationMultiplier().getValue();
+		final double MAX_VALUE = instanceBaseScale * 2;
+		final double MIN_VALUE = 0 - MAX_VALUE;
+
+		for (int fcIndex = 0; fcIndex < calculatedCombinedForecasts.length; fcIndex++) {
+			double fcWithDM = calculatedCombinedForecasts[fcIndex].getValue() * diversificationMultiplierValue;
+			if (fcWithDM > MAX_VALUE)
+				fcWithDM = MAX_VALUE;
+			if (fcWithDM < MIN_VALUE)
+				fcWithDM = MIN_VALUE;
+
+			calculatedCombinedForecasts[fcIndex].setValue(fcWithDM);
+		}
+
+		return calculatedCombinedForecasts;
 	}
 
 	/**
@@ -357,60 +334,94 @@ public class SubSystem {
 	}
 
 	/**
-	 * Validate the given input parameters.
+	 * Calculate product prices based on the given array of values and a given
+	 * product price factor.
 	 * 
-	 * @param baseValue {@link BaseValue} The baseValue to validate. Must not be
-	 *                  null.
-	 * @param rules     {@code Rule[]} The rules to validate.
-	 *                  <ul>
-	 *                  <li>Must not be null.</li>
-	 *                  <li>Must not be an empty array.</li>
-	 *                  <li>Each rule's base value must be same as the given base
-	 *                  value.</li>
-	 *                  </ul>
-	 * @param capital   {@code double} The capital to validate.
-	 *                  <ul>
-	 *                  <li>Must not be Double.NaN.</li>
-	 *                  <li>Must be > 0.</li>
-	 *                  </ul>
-	 * @param baseScale {@code double} The base scale to validate.
-	 *                  <ul>
-	 *                  <li>Must not be Double.NaN.</li>
-	 *                  <li>Must be > 0</li>
-	 *                  </ul>
-	 * @throws IllegalArgumentException if any of the above criteria is not met.
+	 * @param baseValues         {@code ValueDateTupel[]} The values the prices are
+	 *                           to be based on.
+	 * @param productPriceFactor {@code double} The factor used to calculate the
+	 *                           product prices.
+	 * @return {@code ValueDateTupel[]} An array of prices using the dates of the
+	 *         given baseValues.
 	 */
-	private static void validateInput(BaseValue baseValue, Rule[] rules, double capital, double baseScale) {
-		if (baseValue == null)
-			throw new IllegalArgumentException("Base value must not be null");
+	private static ValueDateTupel[] calculateProductPrices(ValueDateTupel[] baseValues, double productPriceFactor) {
+		ValueDateTupel[] productPrices = {};
+		for (ValueDateTupel baseValue : baseValues)
+			productPrices = ValueDateTupel.addOneAt(productPrices,
+					new ValueDateTupel(baseValue.getDate(), baseValue.getValue() * productPriceFactor),
+					productPrices.length);
 
-		if (rules == null)
-			throw new IllegalArgumentException("Rules must not be null");
-
-		if (rules.length == 0)
-			throw new IllegalArgumentException("Rules must not be an empty array");
-
-		for (int i = 0; i < rules.length; i++)
-			if (!rules[i].getBaseValue().equals(baseValue))
-				throw new IllegalArgumentException(
-						"The base value of all rules must be equal to given base value but the rule at position " + i
-								+ " does not comply.");
-
-		if (Double.isNaN(capital))
-			throw new IllegalArgumentException("Capital must not be Double.NaN");
-
-		if (capital <= 0)
-			throw new IllegalArgumentException("Capital must be a positive decimal");
-
-		if (Double.isNaN(baseScale))
-			throw new IllegalArgumentException("Base scale must not be NaN");
-
-		if (baseScale <= 0)
-			throw new IllegalArgumentException("Base scale must be a positive decimal");
+		return productPrices;
 	}
 
 	/**
-	 * Evaluate if the given rules can be used in this SubSystem. <br>
+	 * Calculates the products to buy during a trading period according to the given
+	 * price and given forecast.
+	 * 
+	 * @param capital   {@code double} The capital available for trading.
+	 * @param price     {@code double} The price at which a product can be bought.
+	 * @param forecast  {@code double} The forecast for the current trading period.
+	 * @param baseScale {@code double} The base scale by which the given forecast is
+	 *                  scaled.
+	 * @return {@code int} The number of products to buy.
+	 */
+	private static long calculateProductsCount(double capital, double price, double forecast, double baseScale) {
+		/* Number of products if forecast had MAX_VALUE */
+		double maxProductsCount = capital / price;
+
+		/* Number of products if forecast was 1 */
+		double fcOneProductsCounts = maxProductsCount / (baseScale * 2);
+
+		/*
+		 * Invert current forecast if it's negative to always generate a positive number
+		 * of products
+		 */
+		if (forecast < 0)
+			forecast *= -1;
+
+		/* Number of products for actual forecast. Accept rounding inaccuracies. */
+		return (long) (fcOneProductsCounts * forecast);
+	}
+
+	/**
+	 * Validate the given input parameters.
+	 * 
+	 * @param baseValue {@link BaseValue} The baseValue to validate. Must pass
+	 *                  {@link Validator#validateBaseValue(BaseValue)}.
+	 * @param rules     {@code Rule[]} The rules to validate.
+	 *                  <ul>
+	 *                  <li>Must pass {@link Validator#validateRules(Rule[])}</li>
+	 *                  <li>Each rule's base value must be same as the given base
+	 *                  value.</li>
+	 *                  </ul>
+	 * @param capital   {@code double} The capital to validate. Must pass
+	 *                  {@link Validator#validatePositiveDouble(double)}.
+	 * @param baseScale {@code double} The base scale to validate. Must pass
+	 *                  {@link Validator#validatePositiveDouble(double)}.
+	 * @throws IllegalArgumentException if any of the above criteria is not met.
+	 */
+	private static void validateInput(BaseValue baseValue, Rule[] rules, double capital, double baseScale) {
+		Validator.validateBaseValue(baseValue);
+
+		Validator.validateRules(rules);
+
+		Validator.validateRulesVsBaseValue(rules, baseValue);
+
+		try {
+			Validator.validatePositiveDouble(capital);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("Given capital does not meet specifications.", e);
+		}
+
+		try {
+			Validator.validatePositiveDouble(baseScale);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("Given base scale does not meet specifications.", e);
+		}
+	}
+
+	/**
+	 * Validate the given rules. <br>
 	 * Rules have to fulfill the following criteria:
 	 * <ul>
 	 * <li>Be unique by {@link SubSystem#areRulesUnique(Rule[])}</li>
@@ -421,7 +432,7 @@ public class SubSystem {
 	 * @param rules {@code Rule[]} Rules that are to be checked.
 	 * @throws IllegalArgumentException if the given rules are not unique.
 	 */
-	private static void evaluateRules(Rule[] rules) {
+	private static void validateRules(Rule[] rules) {
 		if (!areRulesUnique(rules))
 			throw new IllegalArgumentException("The given rules are not unique. Only unique rules can be used.");
 
@@ -435,28 +446,6 @@ public class SubSystem {
 			}
 		}
 
-	}
-
-	/**
-	 * Check if the given rules are unique by utilizing {@link Rule#equals(Object)}
-	 * 
-	 * @param rules {@code Rule} An array of rules to be check for uniqueness.
-	 * @return {@code boolean} True, if the rules are unique. False otherwise.
-	 */
-	static boolean areRulesUnique(Rule[] rules) {
-		if (rules == null)
-			throw new IllegalArgumentException("The given rules must not be null");
-		if (ArrayUtils.contains(rules, null))
-			throw new IllegalArgumentException("The given array must not contain nulls");
-		if (rules.length == 0)
-			throw new IllegalArgumentException("The given array of rules must not be empty.");
-
-		for (int i = 0; i < rules.length - 1; i++) {
-			if (rules[i].equals(rules[i + 1])) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**

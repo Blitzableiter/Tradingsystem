@@ -40,57 +40,6 @@ public final class Util {
 	}
 
 	/**
-	 * Scales the forecast based on the given scalar
-	 * 
-	 * @param unscaledForecast {@code double} unscaled forecast to be scaled
-	 * @param scalar           {@code double} scalar to scale the unscaled forecast
-	 * @return {@code double} the scaled forecast
-	 */
-	public static double calculateForecast(double unscaledForecast, double scalar) {
-		return unscaledForecast * scalar;
-	}
-
-	/**
-	 * Calculates the forecast scalar for the given array of values in the scale of
-	 * the given base scale.
-	 * 
-	 * Formula: F = baseScale / [ sum( |fc| ) / n ]
-	 * 
-	 * Base scale divided by the average of absolutes.
-	 * 
-	 * @param values    {@code double[]} values to be scaled by the forecast scalar
-	 * @param baseScale {@code double} base scale for scaling of the forecast scalar
-	 * @return {@code double} forecast scalar to scale the given values to fit the
-	 *         given scalar base. Returns Double.NaN if the average of absolute
-	 *         values is 0
-	 * @throws IllegalArgumentException if the average of the absolutes of the given
-	 *                                  values is zero
-	 * @throws IllegalArgumentException if the given baseScale is zero
-	 */
-	public static double calculateForecastScalar(double[] values, double baseScale) {
-		if (values.length == 0)
-			throw new IllegalArgumentException("Given array of values must not be empty");
-
-		if (baseScale == 0)
-			throw new IllegalArgumentException("Base scale must not be 0.");
-
-		/* helper array */
-		double[] absoluteValues = new double[values.length];
-
-		/* Calculate the absolute values for all values in the given array */
-		for (int i = 0; i < values.length; i++)
-			absoluteValues[i] = Math.abs(values[i]);
-
-		/* Get average of all values */
-		double averageOfAbsolutes = Util.calculateAverage(absoluteValues);
-
-		if (averageOfAbsolutes == 0)
-			return Double.NaN;
-
-		return baseScale / averageOfAbsolutes;
-	}
-
-	/**
 	 * Calculates the average value of the given array of values.
 	 * 
 	 * @param values {@code double[]} An array of values.
@@ -98,8 +47,7 @@ public final class Util {
 	 * @throws IllegalArgumentException if the given array is null.
 	 */
 	public static double calculateAverage(double[] values) {
-		if (values == null)
-			throw new IllegalArgumentException("Given array must not be null");
+		Validator.validateArrayOfDoubles(values);
 
 		/* Calculate the average of absolute values */
 		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();
@@ -108,24 +56,6 @@ public final class Util {
 			stats.accept(value);
 		/* Get average of all values */
 		return stats.getAverage();
-	}
-
-	/**
-	 * Calculates the difference between two values in percentage points of change
-	 * as seen from the former value
-	 * 
-	 * @param formerValue {@code double} value the value of the difference is based
-	 *                    on
-	 * @param latterValue {@code double} "new" value which represents a changed
-	 *                    value in comparison to formerValue
-	 * @return {@code double} difference between formerValue and latterValue
-	 *         represented in percentage points. Double.NaN if the given formerValue
-	 *         is zero.
-	 */
-	public static double calculateReturn(double formerValue, double latterValue) {
-		if (formerValue == 0)
-			return Double.NaN;
-		return latterValue / formerValue - 1d;
 	}
 
 	/**
@@ -178,4 +108,79 @@ public final class Util {
 		}
 		return correlations;
 	}
+
+	/**
+	 * Scales the forecast based on the given scalar
+	 * 
+	 * @param unscaledForecast {@code double} unscaled forecast to be scaled
+	 * @param scalar           {@code double} scalar to scale the unscaled forecast
+	 * @return {@code double} the scaled forecast
+	 */
+	public static double calculateForecast(double unscaledForecast, double scalar) {
+		return unscaledForecast * scalar;
+	}
+
+	/**
+	 * Calculates the forecast scalar for the given array of values in the scale of
+	 * the given base scale.
+	 * 
+	 * Formula: F = baseScale / [ sum( |fc| ) / n ]
+	 * 
+	 * Base scale divided by the average of absolutes.
+	 * 
+	 * @param values    {@code double[]} values to be scaled by the forecast scalar
+	 * @param baseScale {@code double} base scale for scaling of the forecast scalar
+	 * @return {@code double} forecast scalar to scale the given values to fit the
+	 *         given scalar base. Returns Double.NaN if the average of absolute
+	 *         values is 0
+	 * @throws IllegalArgumentException if the average of the absolutes of the given
+	 *                                  values is zero
+	 * @throws IllegalArgumentException if the given baseScale is zero
+	 */
+	public static double calculateForecastScalar(double[] values, double baseScale) {
+
+		Validator.validateArrayOfDoubles(values);
+		if (values.length == 0)
+			throw new IllegalArgumentException("Given array of values must not be empty");
+
+		try {
+			Validator.validatePositiveDouble(baseScale);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("Given base scale does not meet specifications.", e);
+		}
+
+		/* helper array */
+		double[] absoluteValues = new double[values.length];
+
+		/* Calculate the absolute values for all values in the given array */
+		for (int i = 0; i < values.length; i++)
+			absoluteValues[i] = Math.abs(values[i]);
+
+		/* Get average of all values */
+		double averageOfAbsolutes = Util.calculateAverage(absoluteValues);
+
+		if (averageOfAbsolutes == 0)
+			return Double.NaN;
+
+		return baseScale / averageOfAbsolutes;
+	}
+
+	/**
+	 * Calculates the difference between two values in percentage points of change
+	 * as seen from the former value
+	 * 
+	 * @param formerValue {@code double} value the value of the difference is based
+	 *                    on
+	 * @param latterValue {@code double} "new" value which represents a changed
+	 *                    value in comparison to formerValue
+	 * @return {@code double} difference between formerValue and latterValue
+	 *         represented in percentage points. Double.NaN if the given formerValue
+	 *         is zero.
+	 */
+	public static double calculateReturn(double formerValue, double latterValue) {
+		if (formerValue == 0)
+			return Double.NaN;
+		return latterValue / formerValue - 1d;
+	}
+
 }

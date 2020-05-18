@@ -136,7 +136,7 @@ class BaseValueTest {
 	@Test
 	void testBaseValue_nullValues() {
 		ValueDateTupel[] nullValues = null;
-		String expectedMessage = "The given values must not be null";
+		String expectedMessage = "The given values array must not be null";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, nullValues), "Empty name not properly rejected");
@@ -243,6 +243,22 @@ class BaseValueTest {
 	 * {@link BaseValue#BaseValue(String, ValueDateTupel[], ValueDateTupel[])}.
 	 */
 	@Test
+	void testBaseValue_name_values_shortIndexValues_null() {
+		String expectedMessage = "Given short index values do not meet the specifications.";
+		String expectedCauseMessage = "The given values array must not be null";
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values, null),
+				"Empty short index values not properly rejected");
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCauseMessage, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link BaseValue#BaseValue(String, ValueDateTupel[], ValueDateTupel[])}.
+	 */
+	@Test
 	void testBaseValue_name_values_emptyShortIndexValues() {
 		String expectedMessage = "Given short index values do not meet the specifications.";
 		String expectedCauseMessage = "Values must not be an empty array";
@@ -321,16 +337,17 @@ class BaseValueTest {
 	 * {@link BaseValue#calculateShortIndexValues(ValueDateTupel[])}.
 	 */
 	@Test
-	void testCalculateShortIndexValues_1valueInBaseValue() {
+	void testCalculateShortIndexValues_2valuesInBaseValue() {
 		values = ValueDateTupel.createEmptyArray();
 		values = ArrayUtils.add(values, valuedatetupel1);
-		baseValue = new BaseValue(NAME_OF_TEST_BASE_VALUES, values);
+		values = ArrayUtils.add(values, valuedatetupel2);
 		shortValues = ValueDateTupel.createEmptyArray();
 		shortValues = ArrayUtils.add(shortValues, valuedatetupel5);
+		shortValues = ArrayUtils.add(shortValues, valuedatetupel6);
 
+		baseValue = new BaseValue(NAME_OF_TEST_BASE_VALUES, values);
 		ValueDateTupel[] actualValues = baseValue.getShortIndexValues();
 
 		assertArrayEquals(shortValues, actualValues, "The calculated short index values are not as expected");
 	}
-
 }

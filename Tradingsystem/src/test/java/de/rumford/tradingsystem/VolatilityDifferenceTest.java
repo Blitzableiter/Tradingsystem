@@ -267,24 +267,24 @@ class VolatilityDifferenceTest {
 	 */
 	@Test
 	void testValidateVolatilityIndices_startOfReferenceWindowNotInVolatilityIndicesArray() {
-		String expectedMessage = "The given startOfReferenceWindow is not included in the given volatilityIndices array.";
+		String expectedMessage = "Giving volatility indices do not meet specificiation.";
+		String expectedCause = "Given values do not include given start value for time window";
 
-		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan02220000, Double.NaN);
-		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan03220000, 100d);
+		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan03220000, Double.NaN);
 		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan04220000, 5d);
 		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan05220000, 10d);
 		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
-		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
 		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex2);
 		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
 		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex4);
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan01220000,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
 						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
 				"Invalid start of reference window value is not correctly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -293,7 +293,8 @@ class VolatilityDifferenceTest {
 	 */
 	@Test
 	void testValidateVolatilityIndices_endOfReferenceWindowNotInVolatilityIndicesArray() {
-		String expectedMessage = "The given endOfReferenceWindow is not included in the given volatilityIndices array.";
+		String expectedMessage = "Giving volatility indices do not meet specificiation.";
+		String expectedCause = "Given values do not include given end value for time window";
 
 		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
 		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
@@ -304,11 +305,12 @@ class VolatilityDifferenceTest {
 		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan01220000,
+				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
 						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
 				"Invalid end of reference window value is not correctly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -379,21 +381,5 @@ class VolatilityDifferenceTest {
 		double actualValue = volDif.calculateRawForecast(localDateTime2020Jan11220000);
 
 		assertEquals(expectedValue, actualValue, "Raw Forecast is not correctly calculated");
-	}
-
-	/**
-	 * Test method for {@link VolatilityDifference#validateBaseValue(BaseValue)}.
-	 */
-	@Test
-	void testValidateBaseValue() {
-		baseValue = BaseValueFactory.jan1Jan31allVal0calcShort(BASE_VALUE_NAME);
-		String expectedMessage = "Base values contain zeroes in given reference window which is not allowed for volatility index calculation.";
-
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan08220000,
-						localDateTime2020Jan10220000, lookbackWindow, BASE_SCALE),
-				"Base values of zero in reference window are not correctly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 }
