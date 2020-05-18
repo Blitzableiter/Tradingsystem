@@ -29,7 +29,7 @@ This reposity is the project accompanying my Master's thesis in IT-Management. T
 
 ## Functional
 
-Robert Carber, Systematic Trading (2015), HARRIMAN HOUSE LTD.
+Robert Carver, Systematic Trading (2015), HARRIMAN HOUSE LTD.
 
 ## Libraries
 
