@@ -147,14 +147,6 @@ public class BaseValue {
 		ValueDateTupel[] calculatedShortIndexValues = ValueDateTupel.createEmptyArray(values.length);
 		calculatedShortIndexValues[0] = new ValueDateTupel(values[0].getDate(), SHORT_INDEX_INITIAL_VALUE);
 
-		/**
-		 * If the values array only contains one element no calculation has to take
-		 * place and the array is preemptively returned.
-		 */
-		if (values.length == 1) {
-			return calculatedShortIndexValues;
-		}
-
 		ValueDateTupel formerValue;
 		ValueDateTupel latterValue;
 
@@ -175,14 +167,8 @@ public class BaseValue {
 			if (returnPercentagePoints > 0.5)
 				returnPercentagePoints = 0.5;
 
-			/* Handle returnPercentagePoints == Double.NaN */
-			double shortIndexValue;
-			if (Double.isNaN(returnPercentagePoints)) {
-				shortIndexValue = returnPercentagePoints;
-			} else {
-				shortIndexValue = calculatedShortIndexValues[i - 1].getValue()
-						- calculatedShortIndexValues[i - 1].getValue() * returnPercentagePoints;
-			}
+			double shortIndexValue = calculatedShortIndexValues[i - 1].getValue()
+					- calculatedShortIndexValues[i - 1].getValue() * returnPercentagePoints;
 
 			calculatedShortIndexValues[i] = new ValueDateTupel(latterValue.getDate(), shortIndexValue);
 		}

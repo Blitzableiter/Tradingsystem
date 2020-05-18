@@ -447,6 +447,22 @@ class ValueDateTupelTest {
 
 	/**
 	 * Test method for
+	 * {@link ValueDateTupel#contains(ValueDateTupel[], ValueDateTupel)}.
+	 */
+	@Test
+	void testContains_arrayNull() {
+		String expectedMessage = MESSAGE_ARRAY_MUST_NOT_BE_NULL;
+
+		ValueDateTupel[] valueDateTupelArray = null;
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> ValueDateTupel.contains(valueDateTupelArray, valueDateTupel4),
+				"Array of null is not properly handled.");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
 	 * {@link ValueDateTupel#containsDate(ValueDateTupel[], LocalDateTime)}.
 	 */
 	@Test

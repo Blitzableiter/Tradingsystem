@@ -136,13 +136,11 @@ public class SubSystem {
 			Validator.validateTimeWindow(startOfTestWindow, endOfTestWindow, combinedForecasts);
 		} catch (IllegalArgumentException e) {
 			/*
-			 * If the message contains "values" the message references an error in the given
-			 * forecasts in combination with the given test window.
+			 * The general checks of the test window would have thrown Exceptions in the
+			 * previous try-catch, so here we only have to deal with combinedForecasts
+			 * specific Exceptions.
 			 */
-			if (e.getMessage().contains("values"))
-				throw new IllegalArgumentException("Given forecasts and test window do not fit.", e);
-
-			throw new IllegalArgumentException(MESSAGE_ILLEGAL_TEST_WINDOW, e);
+			throw new IllegalArgumentException("Given forecasts and test window do not fit.", e);
 		}
 
 		/* Fetch all base values inside the test window */

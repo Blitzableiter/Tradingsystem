@@ -273,21 +273,6 @@ public class VolatilityDifference extends Rule {
 		}
 
 		/*
-		 * The given startOfReferenceWindow must be included in the given
-		 * volatilityIndices array.
-		 */
-		if (!ValueDateTupel.containsDate(volatilityIndices, this.getStartOfReferenceWindow()))
-			throw new IllegalArgumentException(
-					"The given startOfReferenceWindow is not included in the given volatilityIndices array.");
-		/*
-		 * The given startOfReferenceWindow must be included in the given
-		 * volatilityIndices array.
-		 */
-		if (!ValueDateTupel.containsDate(volatilityIndices, this.getEndOfReferenceWindow()))
-			throw new IllegalArgumentException(
-					"The given endOfReferenceWindow is not included in the given volatilityIndices array.");
-
-		/*
 		 * The given volatility indices value must not contain NaNs in the area
 		 * delimited by startOfReferenceWindow and endOfReferenceWindow.
 		 */
