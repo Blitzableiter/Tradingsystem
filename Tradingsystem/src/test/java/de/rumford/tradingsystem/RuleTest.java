@@ -140,6 +140,23 @@ class RuleTest {
 	}
 
 	/**
+	 * Test method for {@link Rule#calculateForecastScalar()}.
+	 */
+	@Test
+	void testCalculateForecastScalar_FcScalarDiv0() {
+		String expectedMessage = "Illegal values in calulated forecast values. Adjust reference window.";
+
+		double variator = -1d;
+		realRule = RealRule.from(BaseValueFactory.jan1Jan5calcShort_sameValuesOn2To5(BASE_VALUE_NAME), null,
+				localDateTimeJan02220000, localDateTimeJan05220000, BASE_SCALE, variator);
+
+		Exception thrown = assertThrows(IllegalArgumentException.class, () -> realRule.getForecastScalar(),
+				"Illegal values in reference window are not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
 	 * Test method for {@link Rule#calculateScaledForecasts()}.
 	 */
 	@Test
@@ -365,10 +382,11 @@ class RuleTest {
 	}
 
 	/**
-	 * Test method for {@link Rule#validateSetAndWeighVariations(Rule[])}.
+	 * Test method for
+	 * {@link Rule#validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 */
 	@Test
-	void testValidateSetAndWeighVariations_variationIsNull() {
+	void testValidateInputs_variationIsNull() {
 		String expectedMessage = "The variation at position 2 in the given variations array is null.";
 		RealRule var1 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
 				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
@@ -386,10 +404,11 @@ class RuleTest {
 	}
 
 	/**
-	 * Test method for {@link Rule#validateSetAndWeighVariations(Rule[])}.
+	 * Test method for
+	 * {@link Rule#validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 */
 	@Test
-	void testValidateSetAndWeighVariations_variationsStartOfReferenceWindowDoesNotMatchRules() {
+	void testValidateInputs_variationsStartOfReferenceWindowDoesNotMatchRules() {
 		String expectedMessage = "The given reference window does not match the variation's at position 1. The given start of reference window is different.";
 		RealRule var1 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
 				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
@@ -408,10 +427,11 @@ class RuleTest {
 	}
 
 	/**
-	 * Test method for {@link Rule#validateSetAndWeighVariations(Rule[])}.
+	 * Test method for
+	 * {@link Rule#validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 */
 	@Test
-	void testValidateSetAndWeighVariations_variationsEndOfReferenceWindowDoesNotMatchRules() {
+	void testValidateInputs_variationsEndOfReferenceWindowDoesNotMatchRules() {
 		String expectedMessage = "The given reference window does not match the variation's at position 1. The given end of reference window is different.";
 		RealRule var1 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
 				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
@@ -427,6 +447,27 @@ class RuleTest {
 				"Unmatched end of reference window is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for
+	 * {@link Rule#validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 */
+	@Test
+	void testValidateInputs_variationsDoNotHaveRulesBaseValues() {
+		String expectedMessage = "The given variations do not meet specifications.";
+		String expectedCause = "The base value of all rules must be equal to given base value but the rule at position 0 does not comply.";
+		RealRule var1 = RealRule.from(BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule[] variations = { var1 };
+
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), variations,
+						localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator),
+				"Incorrect BaseValue in variations is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -529,10 +570,10 @@ class RuleTest {
 	}
 
 	/**
-	 * Test method for {@link Rule#calculateWeightsForThreeCorrelations(double[])}.
+	 * Test method for {@link Rule#validateCorrelations(double[])}.
 	 */
 	@Test
-	void testCalculateWeightsForThreeCorrelations_arrayNull() {
+	void testValidateCorrelations_arrayNull() {
 		String expectedMessage = "Correlations array must not be null";
 		double[] correlations = null;
 
@@ -543,10 +584,10 @@ class RuleTest {
 	}
 
 	/**
-	 * Test method for {@link Rule#calculateWeightsForThreeCorrelations(double[])}.
+	 * Test method for {@link Rule#validateCorrelations(double[])}.
 	 */
 	@Test
-	void testCalculateWeightsForThreeCorrelations_arrayOfLengthNotThree() {
+	void testValidateCorrelations_arrayOfLengthNotThree() {
 		String expectedMessage = "There must be exactly three correlation values in the given array";
 		double[] correlations = { 0, 0 };
 
@@ -558,10 +599,10 @@ class RuleTest {
 	}
 
 	/**
-	 * Test method for {@link Rule#calculateWeightsForThreeCorrelations(double[])}.
+	 * Test method for {@link Rule#validateCorrelations(double[])}.
 	 */
 	@Test
-	void testCalculateWeightsForThreeCorrelations_arrayContainsNan() {
+	void testValidateCorrelations_arrayContainsNan() {
 		String expectedMessage = "NaN-values are not allowed. Correlation at position 1 is NaN.";
 		double[] correlations = { 0, Double.NaN, 0 };
 
@@ -573,10 +614,10 @@ class RuleTest {
 	}
 
 	/**
-	 * Test method for {@link Rule#calculateWeightsForThreeCorrelations(double[])}.
+	 * Test method for {@link Rule#validateCorrelations(double[])}.
 	 */
 	@Test
-	void testCalculateWeightsForThreeCorrelations_arrayContainsValueGreaterThan1() {
+	void testValidateCorrelations_arrayContainsValueGreaterThan1() {
 		String expectedMessage = "Correlation at position 1 is greater than 1";
 		double[] correlations = { 0, 2, 0 };
 
@@ -588,10 +629,10 @@ class RuleTest {
 	}
 
 	/**
-	 * Test method for {@link Rule#calculateWeightsForThreeCorrelations(double[])}.
+	 * Test method for {@link Rule#validateCorrelations(double[])}.
 	 */
 	@Test
-	void testCalculateWeightsForThreeCorrelations_arrayContainsValueLessThanNegative1() {
+	void testValidateCorrelations_arrayContainsValueLessThanNegative1() {
 		String expectedMessage = "Correlation at position 1 is less than -1";
 		double[] correlations = { 0, -2, 0 };
 
