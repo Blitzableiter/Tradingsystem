@@ -354,33 +354,25 @@ public abstract class Rule {
 			instanceVariations[1].setWeight(0.5d);
 			break;
 		case 3:
-			ValueDateTupel[] forecasts0 = ValueDateTupel.getElements(instanceVariations[0].getForecasts(),
+			ValueDateTupel[] forecastsA = ValueDateTupel.getElements(instanceVariations[0].getForecasts(),
 					this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
-			ValueDateTupel[] forecasts1 = ValueDateTupel.getElements(instanceVariations[1].getForecasts(),
+			ValueDateTupel[] forecastsB = ValueDateTupel.getElements(instanceVariations[1].getForecasts(),
 					this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
-			ValueDateTupel[] forecasts2 = ValueDateTupel.getElements(instanceVariations[2].getForecasts(),
+			ValueDateTupel[] forecastsC = ValueDateTupel.getElements(instanceVariations[2].getForecasts(),
 					this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
-
-			ValueDateTupel[][] variationsForecasts = {};
-			variationsForecasts = ArrayUtils.add(variationsForecasts, forecasts0);
-			variationsForecasts = ArrayUtils.add(variationsForecasts, forecasts1);
-			variationsForecasts = ArrayUtils.add(variationsForecasts, forecasts2);
 
 			/*
 			 * Extract the values from the forecasts array, as the Dates are not needed for
 			 * correlation calculation.
 			 */
-			double[][] variationsForecastValues = {};
-			variationsForecastValues = ArrayUtils.add(variationsForecastValues,
-					ValueDateTupel.getValues(variationsForecasts[0]));
-			variationsForecastValues = ArrayUtils.add(variationsForecastValues,
-					ValueDateTupel.getValues(variationsForecasts[1]));
-			variationsForecastValues = ArrayUtils.add(variationsForecastValues,
-					ValueDateTupel.getValues(variationsForecasts[2]));
+			double[][] variationsForecasts = {};
+			variationsForecasts = ArrayUtils.add(variationsForecasts, ValueDateTupel.getValues(forecastsA));
+			variationsForecasts = ArrayUtils.add(variationsForecasts, ValueDateTupel.getValues(forecastsB));
+			variationsForecasts = ArrayUtils.add(variationsForecasts, ValueDateTupel.getValues(forecastsC));
 
 			/* Find the correlations for the given variations. */
 			double[] correlations;
-			correlations = Util.calculateCorrelationOfRows(variationsForecastValues);
+			correlations = Util.calculateCorrelationOfRows(variationsForecasts);
 
 			if (ArrayUtils.contains(correlations, Double.NaN))
 				throw new IllegalArgumentException(
