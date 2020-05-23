@@ -24,6 +24,7 @@ This reposity is the project accompanying my Master's thesis in IT-Management. T
 | testing appliance | maven-surefire-plugin 2.21.0 |
 | testing API       | junit-jupiter 5.6.2          |
 | test coverage     | jacoco-maven-plugin 0.8.5    |
+| javadoc creation  | maven-javadoc-plugin 3.2.0   |
 
 # Resources
 

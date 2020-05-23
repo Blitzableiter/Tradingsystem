@@ -24,15 +24,26 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
  */
 public class SubSystem {
 
+	/*
+	 * The value to which the product prices shall be scaled to. Effect rises if
+	 * higher and capital goes lower.
+	 */
 	private static final double PRICE_FACTOR_BASE_SCALE = 1;
 
+	/* An Exception message. */
 	private static final String MESSAGE_ILLEGAL_TEST_WINDOW = "The given test window does not meet specifications.";
 
+	/* The base value to use for performance calculation. */
 	private BaseValue baseValue;
+	/* The rules to be governed in this subsystem. */
 	private Rule[] rules;
+	/* The diversification multiplier for this subsystem. */
 	private DiversificationMultiplier diversificationMultiplier;
+	/* The starting capital used for performance calculation. */
 	private double capital;
+	/* The combined forecasts of all rules. */
 	private ValueDateTupel[] combinedForecasts;
+	/* The value all forecasts shall be scaled to. */
 	private double baseScale;
 
 	/**
@@ -451,6 +462,10 @@ public class SubSystem {
 	 * OVERRIDES
 	 * ======================================================================
 	 */
+
+	/**
+	 * A hash code for this SubSystem.
+	 */
 	@GeneratedCode
 	@Override
 	public int hashCode() {
@@ -468,6 +483,9 @@ public class SubSystem {
 		return result;
 	}
 
+	/**
+	 * Checks if this SubSystem is equal to another SubSystem.
+	 */
 	@GeneratedCode
 	@Override
 	public boolean equals(Object obj) {
@@ -499,6 +517,9 @@ public class SubSystem {
 		return true;
 	}
 
+	/**
+	 * Outputs the fields of this SubSystem as a {@code String}.
+	 */
 	@GeneratedCode
 	@Override
 	public String toString() {
@@ -512,7 +533,10 @@ public class SubSystem {
 	 * GETTERS AND SETTERS
 	 * ======================================================================
 	 */
+
 	/**
+	 * Get the {@link BaseValue} for this subsystem.
+	 * 
 	 * @return baseValue SubSystem
 	 */
 	public BaseValue getBaseValue() {
@@ -520,6 +544,8 @@ public class SubSystem {
 	}
 
 	/**
+	 * Set the {@link BaseValue} for this subsystem.
+	 * 
 	 * @param baseValue the baseValue to set
 	 */
 	private void setBaseValue(BaseValue baseValue) {
@@ -527,6 +553,8 @@ public class SubSystem {
 	}
 
 	/**
+	 * Get the rules for this subsystem.
+	 * 
 	 * @return rules SubSystem
 	 */
 	public Rule[] getRules() {
@@ -534,6 +562,8 @@ public class SubSystem {
 	}
 
 	/**
+	 * Set the rules for this subsystem.
+	 * 
 	 * @param rules the rules to set
 	 */
 	public void setRules(Rule[] rules) {
@@ -541,6 +571,8 @@ public class SubSystem {
 	}
 
 	/**
+	 * Get the {@link DiversificationMultiplier} for this subsystem.
+	 * 
 	 * @return diversificationMultiplier SubSystem
 	 */
 	public DiversificationMultiplier getDiversificationMultiplier() {
@@ -548,6 +580,8 @@ public class SubSystem {
 	}
 
 	/**
+	 * Set the {@link DiversificationMultiplier} for this subsystem.
+	 * 
 	 * @param diversificationMultiplier the diversificationMultiplier to set
 	 */
 	private void setDiversificationMultiplier(DiversificationMultiplier diversificationMultiplier) {
@@ -555,6 +589,8 @@ public class SubSystem {
 	}
 
 	/**
+	 * Get the capital for this subsystem.
+	 * 
 	 * @return capital SubSystem
 	 */
 	public double getCapital() {
@@ -562,6 +598,8 @@ public class SubSystem {
 	}
 
 	/**
+	 * Set the capital for this subsystem.
+	 * 
 	 * @param capital the capital to set
 	 */
 	private void setCapital(double capital) {
@@ -569,6 +607,8 @@ public class SubSystem {
 	}
 
 	/**
+	 * Get the combined forecasts for this subsystem.
+	 * 
 	 * @return combinedForecasts SubSystem
 	 */
 	public ValueDateTupel[] getCombinedForecasts() {
@@ -576,6 +616,8 @@ public class SubSystem {
 	}
 
 	/**
+	 * Set the combined forecasts for this subsystem.
+	 * 
 	 * @param combinedForecasts the combinedForecasts to set
 	 */
 	public void setCombinedForecasts(ValueDateTupel[] combinedForecasts) {
@@ -583,6 +625,8 @@ public class SubSystem {
 	}
 
 	/**
+	 * Get the base scale for this subsystem.
+	 * 
 	 * @return baseScale SubSystem
 	 */
 	public double getBaseScale() {
@@ -590,6 +634,8 @@ public class SubSystem {
 	}
 
 	/**
+	 * Set the base scale for this subsystem.
+	 * 
 	 * @param baseScale the baseScale to set
 	 */
 	public void setBaseScale(double baseScale) {

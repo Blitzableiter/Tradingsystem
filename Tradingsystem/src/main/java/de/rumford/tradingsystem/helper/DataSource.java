@@ -7,8 +7,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.ArrayUtils;
 
 /**
- * The trading system needs sources of course value data. This class provides
- * this interface.
+ * The DataSource provides course value data from a given data source.
  * 
  * @author Max Rumford
  *
@@ -35,7 +34,7 @@ public class DataSource {
 	 * 
 	 * @param sourcePath {@code String} The path to the CSV file to be read.
 	 * @param format     {@link CsvFormat} The format of the CSV file.
-	 * @return {@link ValueDateTupel[]} An array of {@link ValueDateTupel}
+	 * @return {@code ValueDateTupel[]} An array of {@link ValueDateTupel}
 	 *         representing the read data.
 	 * @throws FileNotFoundException    if the FileReader can not find a file for
 	 *                                  the given {@code sourcePath}.
@@ -108,7 +107,7 @@ public class DataSource {
 	 *                                  passed {@code String[]}.
 	 * @throws IllegalArgumentException If the date pattern could not be recognized
 	 *                                  in subroutine
-	 *                                  {@link de.rumford.tradingsystem.helper.DataSource#DataSource.evaluateDatePattern(CsvFormat)}.
+	 *                                  {@link #evaluateDatePattern(CsvFormat)}.
 	 * @throws IllegalArgumentException If the given date values cannot be parsed to
 	 *                                  Integers.
 	 * @throws IllegalArgumentException If the given time values cannot be parsed to

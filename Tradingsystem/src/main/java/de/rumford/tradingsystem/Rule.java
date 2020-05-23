@@ -12,9 +12,10 @@ import de.rumford.tradingsystem.helper.Validator;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
- * Rules are the centerpiece of a trading system. Based on these rules a system
- * tries to forecast future developments of a given asset and thus advises its
- * user.
+ * The Rules class provides the functionality necessary for every rule to be
+ * used by the other classes of this library. Rules are the centerpiece of a
+ * trading system. Based on these rules a system tries to forecast future
+ * developments of a given asset and thus advises its user.
  * <p>
  * Although every investor should develop their own, these rules need to share
  * some functionality so they can actually be used in this trading system. As
@@ -25,22 +26,36 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
  * 
  * Abstract class to be extend on developing new rules for the trading system.
  * 
+ * {@link #calculateAndSetDerivedValues()} is called on first invocation of
+ * {@link #getSdAdjustedForecasts()} and {@link #getForecastScalar()}
+ * respectively.
+ * 
  * @author Max Rumford
- * @apiNote {@link #calculateAndSetDerivedValues()} is called on first
- *          invocation of {@link #getSdAdjustedForecasts()} and
- *          {@link #getForecastScalar()} respectively.
- *
  */
 public abstract class Rule {
 
+	/* The scalar used to scale theses rules' forecasts to the given base scale. */
 	private double forecastScalar;
+	/* The weights assigned to this rule. Has no internal effects. */
 	private double weight;
+	/* The variations this rule might have. */
 	private Rule[] variations;
+	/*
+	 * A datetime representing the start of the reference window for forecast
+	 * scaling.
+	 */
 	private LocalDateTime startOfReferenceWindow;
+	/*
+	 * A datetime representing the end of the reference window for forecast scaling.
+	 */
 	private LocalDateTime endOfReferenceWindow;
+	/* The base value used for forecast calculation. */
 	private BaseValue baseValue;
+	/* The value to which the forecasts will be scaled. */
 	private double baseScale;
+	/* The scaled forecasts. */
 	private ValueDateTupel[] forecasts;
+	/* The standard deviation adjusted forecasts. */
 	private ValueDateTupel[] sdAdjustedForecasts = null;
 
 	/**
@@ -610,6 +625,9 @@ public abstract class Rule {
 	 * ======================================================================
 	 */
 
+	/**
+	 * A hash code for this Rule.
+	 */
 	@GeneratedCode
 	@Override
 	public int hashCode() {
@@ -631,6 +649,9 @@ public abstract class Rule {
 		return result;
 	}
 
+	/**
+	 * Checks if this Rule is equal to another Rule.
+	 */
 	@GeneratedCode
 	@Override
 	public boolean equals(Object obj) {
@@ -671,6 +692,9 @@ public abstract class Rule {
 		return true;
 	}
 
+	/**
+	 * Outputs the fields of this Rule as a {@code String}.
+	 */
 	@GeneratedCode
 	@Override
 	public String toString() {
@@ -747,6 +771,8 @@ public abstract class Rule {
 	}
 
 	/**
+	 * Get the variations for this rule.
+	 * 
 	 * @return variations Rule
 	 */
 	public final Rule[] getVariations() {
@@ -754,6 +780,8 @@ public abstract class Rule {
 	}
 
 	/**
+	 * Set the variations for this rule.
+	 * 
 	 * @param variations the variations to set
 	 */
 	private void setVariations(Rule[] variations) {
@@ -761,6 +789,8 @@ public abstract class Rule {
 	}
 
 	/**
+	 * Get the end of reference window for this rule.
+	 * 
 	 * @return startOfReferenceWindow Rule
 	 */
 	public final LocalDateTime getStartOfReferenceWindow() {
@@ -768,6 +798,8 @@ public abstract class Rule {
 	}
 
 	/**
+	 * Set the start of reference window for this rule.
+	 *
 	 * @param startOfReferenceWindow the startOfReferenceWindow to set
 	 */
 	private void setStartOfReferenceWindow(LocalDateTime startOfReferenceWindow) {
@@ -775,6 +807,8 @@ public abstract class Rule {
 	}
 
 	/**
+	 * Get the end of reference window for this rule.
+	 * 
 	 * @return endOfReferenceWindow Rule
 	 */
 	public final LocalDateTime getEndOfReferenceWindow() {
@@ -782,6 +816,8 @@ public abstract class Rule {
 	}
 
 	/**
+	 * Set the end of reference window for this rule.
+	 * 
 	 * @param endOfReferenceWindow the endOfReferenceWindow to set
 	 */
 	private void setEndOfReferenceWindow(LocalDateTime endOfReferenceWindow) {
@@ -789,6 +825,8 @@ public abstract class Rule {
 	}
 
 	/**
+	 * Get the base scale for this rule.
+	 * 
 	 * @return baseScale Rule
 	 */
 	public final double getBaseScale() {
@@ -796,6 +834,8 @@ public abstract class Rule {
 	}
 
 	/**
+	 * Set the base scale for this rule.
+	 * 
 	 * @param baseScale the baseScale to set
 	 */
 	private void setBaseScale(double baseScale) {
@@ -817,6 +857,8 @@ public abstract class Rule {
 	}
 
 	/**
+	 * Set the standard deviation adjusted forecasts for this rule.
+	 * 
 	 * @param forecasts the forecasts to set
 	 */
 	private void setForecasts(ValueDateTupel[] forecasts) {
@@ -825,8 +867,6 @@ public abstract class Rule {
 
 	/**
 	 * Get the standard deviation adjusted forecasts for this rule.
-	 * <p>
-	 * Is set to private as the forecast values have no meaning unscaled.
 	 * 
 	 * @return sdAdjustedForecasts Rule
 	 */

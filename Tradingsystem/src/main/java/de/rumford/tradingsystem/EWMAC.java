@@ -6,8 +6,8 @@ import de.rumford.tradingsystem.helper.GeneratedCode;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
- * The EWMAC is a non-binary rule utilizing the different horizons of its 2
- * underlying {@link EWMA}. When the shorter horizon EWMA raises above the
+ * The EWMAC is a non-binary {@link Rule} utilizing the different horizons of
+ * its 2 underlying {@link EWMA}. When the shorter horizon EWMA raises above the
  * longer horizon EWMA in value the underlying asset has been rising in the
  * not-so-distant past and is thus expected to rise further, and vice-versa.
  * 
@@ -16,7 +16,9 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
  */
 public class EWMAC extends Rule {
 
+	/* The longer horizon EWMA. */
 	private EWMA longHorizonEwma;
+	/* The shorter horizon EWMA. */
 	private EWMA shortHorizonEwma;
 
 	/**
@@ -42,9 +44,9 @@ public class EWMAC extends Rule {
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 * @param longHorizon            {@code int} The horizon of the long horizon
 	 *                               EWMA. Should be 4* shortHorizon, but can be
-	 *                               anything > shortHorizon.
+	 *                               anything greater than shortHorizon.
 	 * @param shortHorizon           {@code int} The horizon of the short horizon
-	 *                               EWMA. Must be >= 2;
+	 *                               EWMA. Must be greater or equal to 2;
 	 * @param baseScale              Same as in
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 */
@@ -101,7 +103,9 @@ public class EWMAC extends Rule {
 	 * OVERRIDES
 	 * ======================================================================
 	 */
-
+	/**
+	 * A hash code for this EWMAC.
+	 */
 	@GeneratedCode
 	@Override
 	public int hashCode() {
@@ -112,6 +116,9 @@ public class EWMAC extends Rule {
 		return result;
 	}
 
+	/**
+	 * Checks if this EWMAC is equal to another EWMAC.
+	 */
 	@GeneratedCode
 	@Override
 	public boolean equals(Object obj) {
@@ -135,6 +142,9 @@ public class EWMAC extends Rule {
 		return true;
 	}
 
+	/**
+	 * Outputs the fields of this EWMAC as a {@code String}.
+	 */
 	@GeneratedCode
 	@Override
 	public String toString() {

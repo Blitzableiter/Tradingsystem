@@ -1,6 +1,8 @@
 package de.rumford.tradingsystem.helper;
 
 /**
+ * This enum represents three variations of how date fields can be ordered.
+ * 
  * @author Max Rumford
  *
  */
