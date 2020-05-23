@@ -6,7 +6,7 @@ import de.rumford.tradingsystem.BaseValue;
 import de.rumford.tradingsystem.Rule;
 
 /**
- * Validator class as used throughout the library. Contains solely of static
+ * Validator class as used throughout the library containing solely of static
  * methods representing validation of input values.
  * 
  * @author Max Rumford

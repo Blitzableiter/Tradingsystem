@@ -18,9 +18,13 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
  */
 public class EWMA {
 
+	/* The horizon this EWMA shall cover. */
 	private int horizon;
+	/* The decay factor for recent values calculated from the given horizon. */
 	private double decay;
+	/* The values this EWMA shall be based upon. */
 	private ValueDateTupel[] baseValues;
+	/* The calculated EWMA values. */
 	private ValueDateTupel[] ewmaValues;
 
 	/**
@@ -125,6 +129,9 @@ public class EWMA {
 	 * ======================================================================
 	 */
 
+	/**
+	 * A hash code for this EWMA.
+	 */
 	@GeneratedCode
 	@Override
 	public int hashCode() {
@@ -134,6 +141,9 @@ public class EWMA {
 		return result;
 	}
 
+	/**
+	 * Checks if this EWMA is equal to another EWMA.
+	 */
 	@GeneratedCode
 	@Override
 	public boolean equals(Object obj) {
@@ -149,6 +159,9 @@ public class EWMA {
 		return true;
 	}
 
+	/**
+	 * Outputs the fields of this EWMA as a {@code String}.
+	 */
 	@GeneratedCode
 	@Override
 	public String toString() {
@@ -162,7 +175,7 @@ public class EWMA {
 	 */
 
 	/**
-	 * Get the horizon of an EWMA
+	 * Get the horizon of this EWMA.
 	 * 
 	 * @return {@code int} horizon of the EWMA
 	 */
@@ -171,7 +184,7 @@ public class EWMA {
 	}
 
 	/**
-	 * Set the horizon of an EWMA
+	 * Set the horizon of this EWMA.
 	 * 
 	 * @param horizon {@code int} horizon to be set
 	 */
@@ -180,7 +193,7 @@ public class EWMA {
 	}
 
 	/**
-	 * Get the decay of an EWMA
+	 * Get the decay of this EWMA.
 	 * 
 	 * @return {@code double} decay of the EWMA
 	 */
@@ -189,8 +202,7 @@ public class EWMA {
 	}
 
 	/**
-	 * Set the decay of an EWMA Is only called upon creation of a new instance,
-	 * hence private
+	 * Set the decay of this EWMA.
 	 * 
 	 * @param horizon {@code int} horizon on which the decay is derived from
 	 */
@@ -199,6 +211,8 @@ public class EWMA {
 	}
 
 	/**
+	 * Get the base values of this EWMA.
+	 * 
 	 * @return baseValues EWMA
 	 */
 	public ValueDateTupel[] getBaseValues() {
@@ -206,6 +220,8 @@ public class EWMA {
 	}
 
 	/**
+	 * Set the base values of this EWMA.
+	 * 
 	 * @param baseValues the baseValues to set
 	 */
 	private void setBaseValues(ValueDateTupel[] baseValues) {
@@ -213,6 +229,8 @@ public class EWMA {
 	}
 
 	/**
+	 * Get the EWMA values of this EWMA.
+	 * 
 	 * @return ewmaValues EWMA
 	 */
 	public ValueDateTupel[] getEwmaValues() {
@@ -220,6 +238,8 @@ public class EWMA {
 	}
 
 	/**
+	 * Set the EWMA values of this EWMA.
+	 * 
 	 * @param ewmaValues the ewmaValues to set
 	 */
 	private void setEwmaValues(ValueDateTupel[] ewmaValues) {

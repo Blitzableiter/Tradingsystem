@@ -40,12 +40,20 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
  */
 public class BaseValue {
 
+	/* Factor used in the lookback window for standard deviation */
 	private static final int LOOKBACK_WINDOW = 25;
+	/* Starting value for the short index values if no values are provided */
 	private static final double SHORT_INDEX_INITIAL_VALUE = 1000d;
 
+	/* Name to identify an instance. Has no effect. */
 	private String name;
+	/* The values upon which the calculations shall take place. */
 	private ValueDateTupel[] values;
+	/*
+	 * An array of values representing the short index values to the given values.
+	 */
 	private ValueDateTupel[] shortIndexValues;
+	/* An array of values representing the standard deviation values. */
 	private ValueDateTupel[] standardDeviationValues;
 
 	/**
@@ -264,6 +272,9 @@ public class BaseValue {
 	 * ======================================================================
 	 */
 
+	/**
+	 * A hash code for this base value
+	 */
 	@GeneratedCode
 	@Override
 	public int hashCode() {
@@ -275,6 +286,9 @@ public class BaseValue {
 		return result;
 	}
 
+	/**
+	 * Checks if this base value is equal to another base value.
+	 */
 	@GeneratedCode
 	@Override
 	public boolean equals(Object obj) {
@@ -297,18 +311,15 @@ public class BaseValue {
 		return true;
 	}
 
+	/**
+	 * Outputs the fields of this base value as a {@code String}.
+	 */
 	@GeneratedCode
 	@Override
 	public String toString() {
 		return "BaseValue [name=" + this.getName() + ", values=" + Arrays.toString(this.getValues())
 				+ ", shortIndexValues=" + Arrays.toString(this.getShortIndexValues()) + "]";
 	}
-
-	/**
-	 * ======================================================================
-	 * FACTORIES
-	 * ======================================================================
-	 */
 
 	/**
 	 * ======================================================================
@@ -372,6 +383,8 @@ public class BaseValue {
 	}
 
 	/**
+	 * Get the standard deviation values for this base value.
+	 * 
 	 * @return standardDeviationValues BaseValue
 	 */
 	public ValueDateTupel[] getStandardDeviationValues() {
@@ -379,6 +392,8 @@ public class BaseValue {
 	}
 
 	/**
+	 * Set the standard deviation values for this base value.
+	 * 
 	 * @param standardDeviationValues the standardDeviationValues to set
 	 */
 	private void setStandardDeviationValues(ValueDateTupel[] standardDeviationValues) {

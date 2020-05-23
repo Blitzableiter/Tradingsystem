@@ -32,9 +32,13 @@ import de.rumford.tradingsystem.helper.Validator;
  */
 public class DiversificationMultiplier {
 
+	/* The value of this diversification multiplier. */
 	private double value = 0d;
+	/* The weights of the given rules. */
 	private double[] weights;
+	/* The relevant forecasts of the given rules. */
 	private double[][] relevantForecasts;
+	/* The correaltions of the given rules. */
 	private double[][] correlations;
 
 	/**
@@ -196,6 +200,9 @@ public class DiversificationMultiplier {
 	 * ======================================================================
 	 */
 
+	/**
+	 * A hash code for this diversification multiplier.
+	 */
 	@GeneratedCode
 	@Override
 	public int hashCode() {
@@ -210,6 +217,10 @@ public class DiversificationMultiplier {
 		return result;
 	}
 
+	/**
+	 * Checks if this diversification multiplier is equal to another diversification
+	 * multiplier.
+	 */
 	@GeneratedCode
 	@Override
 	public boolean equals(Object obj) {
@@ -231,6 +242,9 @@ public class DiversificationMultiplier {
 		return true;
 	}
 
+	/**
+	 * Outputs the fields of this diversification multiplier as a {@code String}.
+	 */
 	@GeneratedCode
 	@Override
 	public String toString() {
@@ -244,6 +258,7 @@ public class DiversificationMultiplier {
 	 * GETTERS AND SETTERS
 	 * ======================================================================
 	 */
+
 	/**
 	 * Get value of this {@link DiversificationMultiplier}
 	 * 
@@ -254,6 +269,8 @@ public class DiversificationMultiplier {
 	}
 
 	/**
+	 * Set the value in this {@link DiversificationMultiplier}
+	 * 
 	 * @param value the value to set
 	 */
 	private void setValue(double value) {
@@ -279,6 +296,8 @@ public class DiversificationMultiplier {
 	}
 
 	/**
+	 * Get the relevant forecasts in this {@link DiversificationMultiplier}
+	 * 
 	 * @return relevantForecasts DiversificationMultiplier
 	 */
 	public double[][] getRelevantForecasts() {
@@ -286,6 +305,8 @@ public class DiversificationMultiplier {
 	}
 
 	/**
+	 * Set the relevant forecasts in this {@link DiversificationMultiplier}
+	 * 
 	 * @param relevantForecasts the relevantForecasts to set
 	 */
 	private void setRelevantForecasts(double[][] relevantForecasts) {

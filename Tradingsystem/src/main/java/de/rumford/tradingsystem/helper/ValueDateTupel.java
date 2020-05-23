@@ -33,7 +33,9 @@ import de.rumford.tradingsystem.BaseValue;
  */
 public class ValueDateTupel {
 
+	/* The value to be represented. */
 	private double value;
+	/* The datetime to be represented. */
 	private LocalDateTime date;
 
 	static final String MESSAGE_ARRAY_MUST_NOT_BE_NULL = "Given array must not be null";
@@ -615,6 +617,10 @@ public class ValueDateTupel {
 	 * OVERRIDES
 	 * ======================================================================
 	 */
+
+	/**
+	 * A hash code for this ValueDateTupel.
+	 */
 	@GeneratedCode
 	@Override
 	public int hashCode() {
@@ -627,6 +633,9 @@ public class ValueDateTupel {
 		return result;
 	}
 
+	/**
+	 * Checks if this ValueDateTupel is equal to another ValueDateTupel.
+	 */
 	@GeneratedCode
 	@Override
 	public boolean equals(Object obj) {
@@ -647,6 +656,9 @@ public class ValueDateTupel {
 		return true;
 	}
 
+	/**
+	 * Outputs the fields of this ValueDateTupel as a {@code String}.
+	 */
 	@GeneratedCode
 	@Override
 	public String toString() {
@@ -658,6 +670,7 @@ public class ValueDateTupel {
 	 * GETTERS AND SETTERS
 	 * ======================================================================
 	 */
+
 	/**
 	 * Get the value of a {@link ValueDateTupel}
 	 * 

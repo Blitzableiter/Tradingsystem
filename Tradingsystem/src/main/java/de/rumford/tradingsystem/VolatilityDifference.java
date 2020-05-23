@@ -30,7 +30,9 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
  */
 public class VolatilityDifference extends Rule {
 
+	/* An array of values representing volatility values for a given base value. */
 	private ValueDateTupel[] volatilityIndices;
+	/* The lookback window used for volatility calculation. */
 	private int lookbackWindow;
 
 	/**
@@ -315,6 +317,9 @@ public class VolatilityDifference extends Rule {
 	 * ======================================================================
 	 */
 
+	/**
+	 * A hash code for this VolatilityDifference.
+	 */
 	@GeneratedCode
 	@Override
 	public int hashCode() {
@@ -325,6 +330,9 @@ public class VolatilityDifference extends Rule {
 		return result;
 	}
 
+	/**
+	 * Checks if this VolatilityDifference is equal to another VolatilityDifference.
+	 */
 	@GeneratedCode
 	@Override
 	public boolean equals(Object obj) {
@@ -342,6 +350,9 @@ public class VolatilityDifference extends Rule {
 		return true;
 	}
 
+	/**
+	 * Outputs the fields of this VolatilityDifference as a {@code String}.
+	 */
 	@GeneratedCode
 	@Override
 	public String toString() {

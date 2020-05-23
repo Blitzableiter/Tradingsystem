@@ -1,9 +1,10 @@
 package de.rumford.tradingsystem.helper;
 
 /**
- * Comma separated files can have different formats. This enumeration represents
- * four combinations of EU and US CSVs, each combined with a different order in
- * date values.
+ * This enum provides the most common ways a CSV can be structured, including
+ * the symbols for field, date, time, and thousands separator, as well as the
+ * decimal point and the order of values (year, month, day) inside the date
+ * value.
  * 
  * @author Max Rumford
  *
