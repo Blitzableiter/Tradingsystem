@@ -9,26 +9,26 @@ package de.rumford.tradingsystem.helper;
  *
  */
 public enum CsvFormat {
-	EU(";", ".", ":", ",", ".", MonthDayOrder.DAY_MONTH_YEAR),
-	EU_YEAR_MONTH_DAY(";", ".", ":", ",", ".", MonthDayOrder.YEAR_MONTH_DAY),
-	US(",", "/", ":", ".", ",", MonthDayOrder.MONTH_DAY_YEAR),
-	US_YEAR_MONTH_DAY(",", "/", ":", ".", ",", MonthDayOrder.YEAR_MONTH_DAY);
+	EU(";", ".", ":", ",", ".", DateOrder.DAY_MONTH_YEAR),
+	EU_YEAR_MONTH_DAY(";", ".", ":", ",", ".", DateOrder.YEAR_MONTH_DAY),
+	US(",", "/", ":", ".", ",", DateOrder.MONTH_DAY_YEAR),
+	US_YEAR_MONTH_DAY(",", "/", ":", ".", ",", DateOrder.YEAR_MONTH_DAY);
 
 	private final String fieldSeparator;
 	private final String dateSeparator;
 	private final String timeSeparator;
 	private final String decimalPoint;
 	private final String thousandsSeparator;
-	private final MonthDayOrder monthDayOrder;
+	private final DateOrder dateOrder;
 
 	CsvFormat(String fieldSeparator, String dateSeparator, String timeSeparator, String decimalPoint,
-			String thousandSeparator, MonthDayOrder monthDayOrder) {
+			String thousandSeparator, DateOrder dateOrder) {
 		this.fieldSeparator = fieldSeparator;
 		this.dateSeparator = dateSeparator;
 		this.timeSeparator = timeSeparator;
 		this.decimalPoint = decimalPoint;
 		this.thousandsSeparator = thousandSeparator;
-		this.monthDayOrder = monthDayOrder;
+		this.dateOrder = dateOrder;
 	}
 
 	/**
@@ -72,9 +72,9 @@ public enum CsvFormat {
 	}
 
 	/**
-	 * @return monthDayOrder CsvFormat
+	 * @return dateOrder CsvFormat
 	 */
-	public MonthDayOrder getMonthDayOrder() {
-		return monthDayOrder;
+	public DateOrder getMonthDayOrder() {
+		return dateOrder;
 	}
 }

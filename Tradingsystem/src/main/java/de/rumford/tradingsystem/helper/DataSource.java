@@ -184,11 +184,11 @@ public class DataSource {
 		int monthPosition;
 		int dayPosition;
 		int yearPosition;
-		if (format.getMonthDayOrder() == MonthDayOrder.DAY_MONTH_YEAR) {
+		if (format.getMonthDayOrder() == DateOrder.DAY_MONTH_YEAR) {
 			dayPosition = 0;
 			monthPosition = 1;
 			yearPosition = 2;
-		} else if (format.getMonthDayOrder() == MonthDayOrder.MONTH_DAY_YEAR) {
+		} else if (format.getMonthDayOrder() == DateOrder.MONTH_DAY_YEAR) {
 			dayPosition = 1;
 			monthPosition = 0;
 			yearPosition = 2;
