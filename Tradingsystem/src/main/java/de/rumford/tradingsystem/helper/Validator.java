@@ -42,7 +42,7 @@ public class Validator {
 	 * following specifications:
 	 * <ul>
 	 * <li>Must not be null</li>
-	 * <li>Must be of length > 0</li>
+	 * <li>Must be of length greater than 0</li>
 	 * <li>Must not contain null</li>
 	 * <li>Must not contain NaNs as values</li>
 	 * </ul>
@@ -186,9 +186,8 @@ public class Validator {
 	/**
 	 * Validates the given array of arrays.
 	 * <ul>
-	 * <li>Must not be null.
+	 * <li>Must not be null.</li>
 	 * </ul>
-	 * </li>
 	 * 
 	 * @param values {@code double[]} The array to be validated.
 	 * @throws IllegalArgumentException if any of the above specifications are not

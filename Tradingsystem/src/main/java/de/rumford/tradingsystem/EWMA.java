@@ -25,8 +25,10 @@ public class EWMA {
 
 	/**
 	 * Constructor for the {@link EWMA} class
-	 * 
-	 * @param horizon {@code int} horizon this EWMA is to be over
+	 *
+	 * @param baseValues {@code ValueDateTupel[]} The values this EWMA shall is to
+	 *                   be based on.
+	 * @param horizon    {@code int} horizon this EWMA is to be over
 	 */
 	public EWMA(ValueDateTupel[] baseValues, int horizon) {
 		validateBaseValues(baseValues);

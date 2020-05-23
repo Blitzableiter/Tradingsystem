@@ -8,6 +8,12 @@ import de.rumford.tradingsystem.helper.CsvFormat;
 import de.rumford.tradingsystem.helper.DataSource;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
+/**
+ * The ProgrammersClient is an example of how to use this library.
+ * 
+ * @author Max Rumford
+ *
+ */
 public class ProgrammersClient {
 	static final String WORKING_DIR = Path.of("src", "test", "resources").toString();
 
@@ -39,7 +45,6 @@ public class ProgrammersClient {
 	static SubSystem subSystem;
 
 	private ProgrammersClient() {
-
 	}
 
 	public static void main(String[] args) throws IOException {

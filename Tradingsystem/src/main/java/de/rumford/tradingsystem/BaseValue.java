@@ -10,10 +10,11 @@ import de.rumford.tradingsystem.helper.Validator;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
- * The BaseValue is a substantial part for every trading system. It encapsulates
- * the underlying value, e.g. a stocks tracker, and represents its values as an
- * array of {@link ValueDateTupel}. This are guaranteed to be in ascending order
- * and free of duplicates.
+ * The BaseValue is a substantial part for every trading system and provides the
+ * values to be decided upon by the rules. It encapsulates the underlying value,
+ * e.g. a stocks tracker, and represents its values as an array of
+ * {@link ValueDateTupel}. This are guaranteed to be in ascending order and free
+ * of duplicates.
  * <p>
  * Each BaseValue has two final static values that cannot be changed and are
  * deemed to preserve comparability of base values. The first such value is the
@@ -49,17 +50,17 @@ public class BaseValue {
 
 	/**
 	 * Creates a new {@link BaseValue} instance using the passed {@code String} for
-	 * identification and stores the passed {@link ValueDateTupel[]} as values.
-	 * Short index values are calculated based on the given values as specified in
-	 * {@link BaseValue#calculateShortIndexValues(double[])}.
+	 * identification and stores the passed array of {@link ValueDateTupel} as
+	 * values. Short index values are calculated based on the given values as
+	 * specified in {@link BaseValue#calculateShortIndexValues(ValueDateTupel[])}.
 	 * 
 	 * @param name   {@code String} Name used to identify the represented base
 	 *               value. Is not used for calculation of any kind. Must be of
-	 *               length > {@code 0}.
-	 * @param values {@link ValueDateTupel[]} Values of the represented base value.
-	 *               Must not be null. Must be of length > {@code 0}. Must be in an
-	 *               ascending order. Must not contain nulls. Must not contain
-	 *               values of Double.NaN.
+	 *               length greater than {@code 0}.
+	 * @param values {@code ValueDateTupel[]} Values of the represented base value.
+	 *               Must not be null. Must be of length greater than {@code 0}.
+	 *               Must be in an ascending order. Must not contain nulls. Must not
+	 *               contain values of Double.NaN.
 	 * @throws IllegalArgumentException if the input values are not within
 	 *                                  specification
 	 */
@@ -75,22 +76,24 @@ public class BaseValue {
 
 	/**
 	 * Creates a new {@link BaseValue} instance using the passed {@code String} for
-	 * identification and stores the passed {@link ValueDateTupel[]} as values and
-	 * the second passed {@link ValueDateTupel[]} as shortIndexValues.
+	 * identification and stores the passed array of {@link ValueDateTupel} as
+	 * values and the second passed array of {@link ValueDateTupel} as
+	 * shortIndexValues.
 	 * 
 	 * @param name             {@code String} Name used to identify the represented
 	 *                         base value. Fulfills no purpose and is not used for
-	 *                         calculation of any kind. Must be of length >
-	 *                         {@code 0}.
-	 * @param values           {@link ValueDateTupel[]} Values of the represented
-	 *                         base value. Must not be null. Must be of length >
-	 *                         {@code 0}. Must be in an ascending order. Must not
-	 *                         contain nulls. Must not contain values of Double.NaN.
-	 * @param shortIndexValues {@link ValueDateTupel[]} Short index values of the
+	 *                         calculation of any kind. Must be of length greater
+	 *                         than {@code 0}.
+	 * @param values           {@code ValueDateTupel[]} Values of the represented
+	 *                         base value. Must not be null. Must be of length
+	 *                         greater than {@code 0}. Must be in an ascending
+	 *                         order. Must not contain nulls. Must not contain
+	 *                         values of Double.NaN.
+	 * @param shortIndexValues {@code ValueDateTupel[]} Short index values of the
 	 *                         represented base value. Must not be null. Must be of
-	 *                         length > {@code 0}. Must be in an ascending order.
-	 *                         Must not contain nulls. Must not contain values of
-	 *                         Double.NaN.
+	 *                         length greater than {@code 0}. Must be in an
+	 *                         ascending order. Must not contain nulls. Must not
+	 *                         contain values of Double.NaN.
 	 * @throws IllegalArgumentException if the input values are not within
 	 *                                  specification
 	 */
@@ -133,9 +136,9 @@ public class BaseValue {
 	 * If return of the base value exceeds 50% the return used to calculate the
 	 * short index value is floored to 50%.
 	 * 
-	 * @param values {@link ValueDateTupel[]} values to base the short index values
+	 * @param values {@codeValueDateTupel[]} values to base the short index values
 	 *               on
-	 * @return {@link ValueDateTupel[]} array of short index values
+	 * @return {@code ValueDateTupel[]} array of short index values
 	 * @throws IllegalArgumentException if the passed values array contains no
 	 *                                  elements
 	 */
@@ -235,9 +238,10 @@ public class BaseValue {
 	 * 
 	 * @param name   {@code String} Name to be set for a {@link BaseValue}. Must not
 	 *               be null. Must not have a length of {@code 0}.
-	 * @param values {@link ValueDateTupel[]} Values to be set for a
+	 * @param values {@code ValueDateTupel[]} Values to be set for a
 	 *               {@link BaseValue}. Must pass
-	 *               {@link Util#validateValues(ValueDateTupel[])}.
+	 *               {@link Validator#validateValues(ValueDateTupel[])} and
+	 *               {@link Validator#validateDates(ValueDateTupel[])}.
 	 * @throws IllegalArgumentException if one of the above specifications is not
 	 *                                  met.
 	 */
@@ -259,6 +263,7 @@ public class BaseValue {
 	 * OVERRIDES
 	 * ======================================================================
 	 */
+
 	@GeneratedCode
 	@Override
 	public int hashCode() {
@@ -331,7 +336,7 @@ public class BaseValue {
 	/**
 	 * Get the values of this {@link BaseValue}
 	 * 
-	 * @return values {@link ValueDateTupel[]} BaseValue
+	 * @return values {@code ValueDateTupel[]} BaseValue
 	 */
 	public ValueDateTupel[] getValues() {
 		return values;
@@ -340,7 +345,7 @@ public class BaseValue {
 	/**
 	 * Set the values of this {@link BaseValue}
 	 * 
-	 * @param values {@link ValueDateTupel[]} the values to be set
+	 * @param values {@code ValueDateTupel[]} the values to be set
 	 */
 	private void setValues(ValueDateTupel[] values) {
 		this.values = values;
@@ -349,7 +354,7 @@ public class BaseValue {
 	/**
 	 * Get the shortIndexValues of this {@link BaseValue}
 	 * 
-	 * @return shortIndexValues {@link ValueDateTupel[]} shortIndexValues of this
+	 * @return shortIndexValues {@code ValueDateTupel[]} shortIndexValues of this
 	 *         {@link BaseValue}
 	 */
 	public ValueDateTupel[] getShortIndexValues() {
@@ -359,7 +364,7 @@ public class BaseValue {
 	/**
 	 * Set the shortIndexValues of this {@link BaseValue}
 	 * 
-	 * @param shortIndexValues {@link ValueDateTupel[]} the shortIndexValues to be
+	 * @param shortIndexValues {@code ValueDateTupel[]} the shortIndexValues to be
 	 *                         set
 	 */
 	private void setShortIndexValues(ValueDateTupel[] shortIndexValues) {

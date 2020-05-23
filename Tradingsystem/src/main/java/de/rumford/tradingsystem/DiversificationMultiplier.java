@@ -10,6 +10,9 @@ import de.rumford.tradingsystem.helper.GeneratedCode;
 import de.rumford.tradingsystem.helper.Validator;
 
 /**
+ * The DiversificationMultiplier negates the fact that using multiple rules upon
+ * a single base value flattens the forecast curve.
+ * <p>
  * "The only free real estate in capital investment is diversification". By
  * diversifying between assets the risk of an investment shall be reduced.
  * <p>

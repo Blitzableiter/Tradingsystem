@@ -25,11 +25,11 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
  * 
  * Abstract class to be extend on developing new rules for the trading system.
  * 
+ * {@link #calculateAndSetDerivedValues()} is called on first invocation of
+ * {@link #getSdAdjustedForecasts()} and {@link #getForecastScalar()}
+ * respectively.
+ * 
  * @author Max Rumford
- * @apiNote {@link #calculateAndSetDerivedValues()} is called on first
- *          invocation of {@link #getSdAdjustedForecasts()} and
- *          {@link #getForecastScalar()} respectively.
- *
  */
 public abstract class Rule {
 

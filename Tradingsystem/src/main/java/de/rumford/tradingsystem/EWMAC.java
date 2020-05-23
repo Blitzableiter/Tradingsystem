@@ -42,9 +42,9 @@ public class EWMAC extends Rule {
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 * @param longHorizon            {@code int} The horizon of the long horizon
 	 *                               EWMA. Should be 4* shortHorizon, but can be
-	 *                               anything > shortHorizon.
+	 *                               anything greater than shortHorizon.
 	 * @param shortHorizon           {@code int} The horizon of the short horizon
-	 *                               EWMA. Must be >= 2;
+	 *                               EWMA. Must be greater or equal to 2;
 	 * @param baseScale              Same as in
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 */

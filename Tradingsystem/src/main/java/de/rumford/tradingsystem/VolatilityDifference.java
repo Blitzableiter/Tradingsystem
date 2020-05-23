@@ -18,6 +18,9 @@ import de.rumford.tradingsystem.helper.Validator;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
+ * The VolatilityDifference is a {@link Rule} providing forecasts based on
+ * historic and recent volatility of the base value.
+ * <p>
  * Historically, times of higher volatility in a asset tended to be accompanied
  * by falls in course value. This rule exploits this behavior by comparing the
  * current volatility of an asset with its historic counterpart.
@@ -31,7 +34,7 @@ public class VolatilityDifference extends Rule {
 	private int lookbackWindow;
 
 	/**
-	 * Creates a new {@link VolatilityDifference} instance using the passed
+	 * Creates a new VolatilityDifference instance using the passed
 	 * {@link BaseValue} to calculate the volatility indices and the average
 	 * volatility.
 	 * 
@@ -46,7 +49,7 @@ public class VolatilityDifference extends Rule {
 	 * @param endOfReferenceWindow   Same as in
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 * @param lookbackWindow         {@code int} The lookback window to be used for
-	 *                               this {@link VolatilityDifference}. See
+	 *                               this VolatilityDifference. See
 	 *                               {@link #validateLookbackWindow(int)} for
 	 *                               limitations.
 	 * @param baseScale              Same as in
@@ -68,7 +71,7 @@ public class VolatilityDifference extends Rule {
 	}
 
 	/**
-	 * Creates a new {@link VolatilityDifference} instance using the passed
+	 * Creates a new VolatilityDifference instance using the passed
 	 * {@link BaseValue} to calculate the volatility indices and the average
 	 * volatility.
 	 * 
@@ -83,14 +86,14 @@ public class VolatilityDifference extends Rule {
 	 * @param endOfReferenceWindow   Same as in
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 * @param lookbackWindow         {@code int} The lookback window to be used for
-	 *                               this {@link VolatilityDifference}. See
+	 *                               this VolatilityDifference. See
 	 *                               {@link #validateLookbackWindow(int)} for
 	 *                               limitations.
 	 * @param baseScale              Same as in
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 * @param volatilityIndices      {@code ValueDateTupel[]} The volatility indices
 	 *                               used for forecast calculations. See
-	 *                               {@link VolatilityDifference#validateVolatilityIndices(ValueDateTupel[])}
+	 *                               {@link #validateVolatilityIndices(ValueDateTupel[])}
 	 *                               for limitations.
 	 */
 	public VolatilityDifference(BaseValue baseValue, VolatilityDifference[] variations,
@@ -119,11 +122,11 @@ public class VolatilityDifference extends Rule {
 	}
 
 	/**
-	 * Calculate the volatility index values for this {@link VolatilityDifference}.
-	 * If the lookback window is longer than there are base values, an empty
-	 * {@link ValueDateTupel[]} is returned.
+	 * Calculate the volatility index values for this VolatilityDifference. If the
+	 * lookback window is longer than there are base values, an empty
+	 * {@code ValueDateTupel[]} is returned.
 	 * 
-	 * @return {@link ValueDateTupel[]} calculated volatility indices. If the number
+	 * @return {@code ValueDateTupel[]} calculated volatility indices. If the number
 	 *         of values in the instance base value is smaller than the lookback
 	 *         window the returned array only contains {@code Double.NaN}. Else, all
 	 *         values until the lookback window is reached contain
@@ -217,7 +220,8 @@ public class VolatilityDifference extends Rule {
 	}
 
 	/**
-	 * Validates the given lookback window. The lookback window must be >= 1.
+	 * Validates the given lookback window. The lookback window must be greater than
+	 * or equal to 1.
 	 * 
 	 * @param lookbackWindow {@code int} The lookback window to be validated.
 	 * @throws IllegalArgumentException if the given lookbackWindow does not meet
@@ -352,10 +356,10 @@ public class VolatilityDifference extends Rule {
 	 */
 
 	/**
-	 * Get the volatility indices for this {@link VolatilityDifference}.
+	 * Get the volatility indices for this VolatilityDifference.
 	 * 
-	 * @return {@link ValueDateTupel[]} The volatility indices for this
-	 *         {@link VolatilityDifference}
+	 * @return {@code ValueDateTupel[]} The volatility indices for this
+	 *         VolatilityDifference
 	 */
 	public ValueDateTupel[] getVolatilityIndices() {
 		return volatilityIndices;
@@ -364,7 +368,7 @@ public class VolatilityDifference extends Rule {
 	/**
 	 * Set the volatilityIndices
 	 * 
-	 * @param volatilityIndices {@link ValueDateTupel[]} the volatilityIndices to
+	 * @param volatilityIndices {@code ValueDateTupel[]} the volatilityIndices to
 	 *                          set
 	 */
 	private void setVolatilityIndices(ValueDateTupel[] volatilityIndices) {
@@ -372,19 +376,19 @@ public class VolatilityDifference extends Rule {
 	}
 
 	/**
-	 * Get the lookbackWindow for this {@link VolatilityDifference}.
+	 * Get the lookbackWindow for this VolatilityDifference.
 	 * 
-	 * @return {@code int} The lookback window for this {@link VolatilityDifference}
+	 * @return {@code int} The lookback window for this VolatilityDifference
 	 */
 	public int getLookbackWindow() {
 		return lookbackWindow;
 	}
 
 	/**
-	 * Set the lookback window for this {@link VolatilityDifference}.
+	 * Set the lookback window for this VolatilityDifference.
 	 * 
 	 * @param lookbackWindow {@code int} The lookback window to be set for this
-	 *                       {@link VolatilityDifference}
+	 *                       VolatilityDifference
 	 */
 	private void setLookbackWindow(int lookbackWindow) {
 		this.lookbackWindow = lookbackWindow;

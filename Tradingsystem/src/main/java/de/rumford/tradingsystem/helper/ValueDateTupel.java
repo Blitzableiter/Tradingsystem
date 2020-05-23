@@ -15,6 +15,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import de.rumford.tradingsystem.BaseValue;
 
 /**
+ * A ValueDateTupel represents a decimal value at a given point in time.
+ * <p>
  * The ValueDateTupel is the most used helper class in this library. It consists
  * of a LocalDateTime value representing a point in time, and of a double,
  * representing any kind of decimal value associated with the aforementioned
@@ -64,8 +66,8 @@ public class ValueDateTupel {
 	 * @throws IllegalArgumentException If the given array is null.
 	 * @throws IllegalArgumentException If the given value to be added is null.
 	 * @throws IllegalArgumentException If the position is negative.
-	 * @throws IllegalArgumentException If the given position is > the length of the
-	 *                                  given array.
+	 * @throws IllegalArgumentException If the given position is greater than the
+	 *                                  length of the given array.
 	 */
 	public static ValueDateTupel[] addOneAt(ValueDateTupel[] valueDateTupels, ValueDateTupel vdtToBeAdded,
 			int position) {
@@ -121,9 +123,9 @@ public class ValueDateTupel {
 	 * If the missing {@link LocalDateTime} would be the last value in the new
 	 * array, its value will be set to match the previously last one.
 	 * 
-	 * @param valueDateTupel {@code ValueDateTupel[][]} Array of arrays of
-	 *                       {@link ValueDateTupel} whose {@link LocalDateTime}
-	 *                       shall be aligned.
+	 * @param valueDateTupels {@code ValueDateTupel[][]} Array of arrays of
+	 *                        {@link ValueDateTupel} whose {@link LocalDateTime}
+	 *                        shall be aligned.
 	 * @return {@code ValueDateTupel[][]} Array of arrays of {@link ValueDateTupel}
 	 *         with now aligned {@link LocalDateTime} values.
 	 * @throws IllegalArgumentException If the given array of arrays is null.
@@ -375,7 +377,7 @@ public class ValueDateTupel {
 	/**
 	 * Creates an empty array of {@link ValueDateTupel}.
 	 * 
-	 * @return {@link ValueDateTupel[]} An Empty array of {@link ValueDateTupel}.
+	 * @return {@code ValueDateTupel[]} An Empty array of {@link ValueDateTupel}.
 	 */
 	public static ValueDateTupel[] createEmptyArray() {
 		return ValueDateTupel.createEmptyArray(0);
@@ -385,7 +387,7 @@ public class ValueDateTupel {
 	 * Creates an empty array of {@link ValueDateTupel} with the given length.
 	 * 
 	 * @param length {@code int} Length the new array should have.
-	 * @return {@link ValueDateTupel[]} An Empty array of {@link ValueDateTupel}.
+	 * @return {@code ValueDateTupel[]} An Empty array of {@link ValueDateTupel}.
 	 */
 	public static ValueDateTupel[] createEmptyArray(int length) {
 		return new ValueDateTupel[length];
@@ -396,8 +398,10 @@ public class ValueDateTupel {
 	 * {@link LocalDateTime} in its values. Returns the containing
 	 * {@link ValueDateTupel} if so, returns {@code null} otherwise.
 	 * 
-	 * @param dtToBeFound {@link LocalDateTime} Value to be found inside the
-	 *                    {@link BaseValue} values.
+	 * @param valueDateTupels {@code ValueDateTupel[]} The array of
+	 *                        {@link ValueDateTupel} to be searched through.
+	 * @param dtToBeFound     {@link LocalDateTime} Value to be found inside the
+	 *                        {@link BaseValue} values.
 	 * @return {@link ValueDateTupel} containing the given {@link LocalDateTime}.
 	 *         {@code null} if the given {@link LocalDateTime} cannot be found.
 	 */
@@ -467,12 +471,12 @@ public class ValueDateTupel {
 	}
 
 	/**
-	 * Get all {@link LocalDateTime} from an array of {@link ValueDateTupel[]}.
+	 * Get all {@link LocalDateTime} from an array of {@link ValueDateTupel}.
 	 * 
-	 * @param valueDateTupels {@link ValueDateTupel[]} An array of
+	 * @param valueDateTupels {@code ValueDateTupel[]} An array of
 	 *                        {@link ValueDateTupel}}.
 	 * @return {@code LocalDateTime[]} An array of {@link LocalDateTime} of the
-	 *         given {@link ValueDateTupel[]}. Returns an empty array if the given
+	 *         given {@code ValueDateTupel[]}. Returns an empty array if the given
 	 *         array is empty.
 	 * @throws IllegalArgumentException if the given array is null.
 	 */
@@ -525,12 +529,12 @@ public class ValueDateTupel {
 	}
 
 	/**
-	 * Get all values from an array of {@link ValueDateTupel[]}.
+	 * Get all values from an array of {@link ValueDateTupel}.
 	 * 
-	 * @param valueDateTupels {@link ValueDateTupel[]} An array of
+	 * @param valueDateTupels {@code ValueDateTupel[]} An array of
 	 *                        {@link ValueDateTupel}}.
 	 * @return {@code double[]} An array of values of the given
-	 *         {@link ValueDateTupel[]}. Returns an empty array if the given array
+	 *         {@code ValueDateTupel[]}. Returns an empty array if the given array
 	 *         is empty.
 	 * @throws IllegalArgumentException if the given array is null.
 	 */
@@ -545,15 +549,15 @@ public class ValueDateTupel {
 	}
 
 	/**
-	 * Evaluate if the given {@link ValueDateTupel[]} is sorted in ascending order,
-	 * i.e., if the value at position 0 has the lowest {@link LocalDateTime} value
-	 * (implicit check) and all subsequent {@link ValueDateTupel} each have a
+	 * Evaluate if the given array of {@link ValueDateTupel} is sorted in ascending
+	 * order, i.e., if the value at position 0 has the lowest {@link LocalDateTime}
+	 * value (implicit check) and all subsequent {@link ValueDateTupel} each have a
 	 * {@link LocalDateTime} after
 	 * ({@link LocalDateTime#isAfter(ChronoLocalDateTime)}) the previous one.
 	 * <p>
 	 * If two values have the same {@link LocalDateTime} false will be returned.
 	 * 
-	 * @param valueDateTupels {@link ValueDateTupel[]} array of
+	 * @param valueDateTupels {@code ValueDateTupel[]} array of
 	 *                        {@link ValueDateTupel} to be checked for ascending
 	 *                        order.
 	 * @return {@code boolean} False, if any date is not chronologically after its
@@ -576,15 +580,15 @@ public class ValueDateTupel {
 	}
 
 	/**
-	 * Evaluate if the given {@link ValueDateTupel[]} is sorted in descending order,
-	 * i.e., if the value at position 0 has the highest {@link LocalDateTime} value
-	 * (implicit check) and all subsequent {@link ValueDateTupel} each have a
+	 * Evaluate if the given array of {@link ValueDateTupel} is sorted in descending
+	 * order, i.e., if the value at position 0 has the highest {@link LocalDateTime}
+	 * value (implicit check) and all subsequent {@link ValueDateTupel} each have a
 	 * {@link LocalDateTime} before
 	 * ({@link LocalDateTime#isBefore(ChronoLocalDateTime)}) the previous one.
 	 * <p>
 	 * If two values have the same {@link LocalDateTime} false will be returned.
 	 * 
-	 * @param valueDateTupels {@link ValueDateTupel[]} array of
+	 * @param valueDateTupels {@code ValueDateTupel[]} array of
 	 *                        {@link ValueDateTupel} to be checked for descending
 	 *                        order.
 	 * @return {@code boolean} False, if any date is not chronologically before its
