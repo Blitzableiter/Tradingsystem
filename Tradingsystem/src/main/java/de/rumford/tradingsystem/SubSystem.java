@@ -230,28 +230,6 @@ public class SubSystem {
 	}
 
 	/**
-	 * Check if the given rules are unique by utilizing {@link Rule#equals(Object)}
-	 * 
-	 * @param rules {@code Rule} An array of rules to be check for uniqueness.
-	 * @return {@code boolean} True, if the rules are unique. False otherwise.
-	 */
-	static boolean areRulesUnique(Rule[] rules) {
-		if (rules == null)
-			throw new IllegalArgumentException("The given rules must not be null");
-		if (ArrayUtils.contains(rules, null))
-			throw new IllegalArgumentException("The given array must not contain nulls");
-		if (rules.length == 0)
-			throw new IllegalArgumentException("The given array of rules must not be empty.");
-
-		for (int i = 0; i < rules.length - 1; i++) {
-			if (rules[i].equals(rules[i + 1])) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
 	 * Calculates the combined forecasts for all rules of this Sub System.
 	 * 
 	 * @return {@code ValueDateTupel[]} The combined forecasts for all rules,
@@ -433,7 +411,7 @@ public class SubSystem {
 	 * Validate the given rules. <br>
 	 * Rules have to fulfill the following criteria:
 	 * <ul>
-	 * <li>Be unique by {@link SubSystem#areRulesUnique(Rule[])}</li>
+	 * <li>Be unique by {@link Util#areRulesUnique(Rule[])}</li>
 	 * <li>Equal in startOfReferenceWindow and endOfReferenceWinow by
 	 * {@link LocalDateTime#isEqual(ChronoLocalDateTime)}</li>
 	 * </ul>
@@ -442,7 +420,7 @@ public class SubSystem {
 	 * @throws IllegalArgumentException if the given rules are not unique.
 	 */
 	private static void validateRules(Rule[] rules) {
-		if (!areRulesUnique(rules))
+		if (!Util.areRulesUnique(rules))
 			throw new IllegalArgumentException("The given rules are not unique. Only unique rules can be used.");
 
 		/* All rules need to have the same reference window */
