@@ -527,47 +527,6 @@ class RuleTest {
 	}
 
 	/**
-	 * Test method for {@link Util#calculateWeightsForThreeCorrelations(double[])}.
-	 */
-	@Test
-	void testCalculateWeightsForThreeCorrelations() {
-		// Excel: 0.3, 0.366666666666667, 0.333333333333333
-		double[] expectedValue = { .3, 0.3666666666666667, 1d / 3d };
-		double[] correlations = { .5, .6, .4 };
-
-		double[] actualValue = Util.calculateWeightsForThreeCorrelations(correlations);
-
-		assertArrayEquals(expectedValue, actualValue, "Weights for 3 correlations are not correctly calculated");
-	}
-
-	/**
-	 * Test method for {@link Util#calculateWeightsForThreeCorrelations(double[])}.
-	 */
-	@Test
-	void testCalculateWeightsForThreeCorrelations_negativeCorrelations() {
-		double[] correlations1 = { .5, .6, -.4 };
-		double[] correlations2 = { .5, .6, 0 };
-
-		double[] actualValue1 = Util.calculateWeightsForThreeCorrelations(correlations1);
-		double[] actualValue2 = Util.calculateWeightsForThreeCorrelations(correlations2);
-
-		assertArrayEquals(actualValue1, actualValue2, "Weights for negative correlations are not correctly calculated");
-	}
-
-	/**
-	 * Test method for {@link Util#calculateWeightsForThreeCorrelations(double[])}.
-	 */
-	@Test
-	void testCalculateWeightsForThreeCorrelations_threeEqualWeights() {
-		double[] expectedValue = { 1d / 3d, 1d / 3d, 1d / 3d };
-		double[] correlations = { 1, 1, 1 };
-
-		double[] actualValue = Util.calculateWeightsForThreeCorrelations(correlations);
-
-		assertArrayEquals(expectedValue, actualValue, "Weights for 3 equal correlations are not correctly calculated");
-	}
-
-	/**
 	 * Test method for {@link Validator#validateCorrelations(double[])}.
 	 */
 	@Test
