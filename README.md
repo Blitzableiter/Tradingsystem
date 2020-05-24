@@ -51,3 +51,7 @@ Robert Carver, Systematic Trading (2015), HARRIMAN HOUSE LTD.
 - log4j:log4j:1.2.17
 
   https://mvnrepository.com/artifact/log4j/log4j
+
+# Contributing
+
+If you want to contribute to this repository please make sure to always build the project before commiting your changes, so the javadocs will be kept up-to-date.

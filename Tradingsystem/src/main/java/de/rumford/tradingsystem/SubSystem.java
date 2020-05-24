@@ -81,7 +81,7 @@ public class SubSystem {
 	}
 
 	/**
-	 * Performs a backtest for this SubSystem in the given time period. Utilizes
+	 * Performs a backtest for the given parameters. Utilizes
 	 * {@link #calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], double, double)}
 	 * for actual performance calculation and returns performance value for the last
 	 * day.
@@ -96,15 +96,30 @@ public class SubSystem {
 	 * @return {@code double} The performance value on the last day of the given
 	 *         test window.
 	 */
-	public double backtest(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow) {
+	public static double backtest(BaseValue baseValue, LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow,
+			ValueDateTupel[] combinedForecasts, double baseScale, double capital) {
 
-		BaseValue instanceBaseValue = this.getBaseValue();
-		double capitalAfterBacktest = this.getCapital();
-
-		ValueDateTupel[] performanceValues = calculatePerformanceValues(instanceBaseValue, startOfTestWindow,
-				endOfTestWindow, this.getCombinedForecasts(), this.getBaseScale(), capitalAfterBacktest);
+		ValueDateTupel[] performanceValues = calculatePerformanceValues(baseValue, startOfTestWindow, endOfTestWindow,
+				combinedForecasts, baseScale, capital);
 
 		return performanceValues[performanceValues.length - 1].getValue();
+	}
+
+	/**
+	 * Calls
+	 * {@link #calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], double, double)}
+	 * with instance properties.
+	 * 
+	 * @param startOfTestWindow {@link LocalDateTime} First time interval of test
+	 *                          window.
+	 * @param endOfTestWindow   {@link LocalDateTime} Last time interval of test
+	 *                          window.
+	 * @return {@code double} by way of
+	 *         {@link #backtest(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], double, double)}.
+	 */
+	public double backtest(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow) {
+		return SubSystem.backtest(this.getBaseValue(), startOfTestWindow, endOfTestWindow, this.getCombinedForecasts(),
+				this.getBaseScale(), this.getCapital());
 	}
 
 	/**
@@ -123,9 +138,9 @@ public class SubSystem {
 	 * @param baseScale         {@code double} The scale the given forecasts are
 	 *                          based upon.
 	 * @param capital           {@code double} The starting capital.
-	 * @return {@code ValueDateTupel} An array of {@link ValueDateTupel} containing
-	 *         the value of all held assets + cash for each time interval between
-	 *         the given startOfTestWindow and endOfTestWindow.
+	 * @return {@code ValueDateTupel[]} An array of {@link ValueDateTupel}
+	 *         containing the value of all held assets + cash for each time interval
+	 *         between the given startOfTestWindow and endOfTestWindow.
 	 */
 	public static ValueDateTupel[] calculatePerformanceValues(BaseValue baseValue, LocalDateTime startOfTestWindow,
 			LocalDateTime endOfTestWindow, ValueDateTupel[] combinedForecasts, double baseScale, double capital) {
@@ -227,6 +242,23 @@ public class SubSystem {
 
 		}
 		return performanceValues;
+	}
+
+	/**
+	 * Calls
+	 * {@link #calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], double, double)}
+	 * with instance properties.
+	 * 
+	 * @param startOfTestWindow {@link LocalDateTime} First time interval for
+	 *                          testing.
+	 * @param endOfTestWindow   {@link LocalDateTime} Last time interval for
+	 *                          testing.
+	 * @return {@code ValueDateTupel[]} by way of
+	 *         {@link #calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], double, double)}.
+	 */
+	public ValueDateTupel[] calculatePerformanceValues(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow) {
+		return SubSystem.calculatePerformanceValues(this.getBaseValue(), startOfTestWindow, endOfTestWindow,
+				this.getCombinedForecasts(), this.getBaseScale(), this.getCapital());
 	}
 
 	/**
