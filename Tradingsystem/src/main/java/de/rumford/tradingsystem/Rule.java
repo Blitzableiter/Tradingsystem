@@ -2,7 +2,6 @@ package de.rumford.tradingsystem;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.stream.DoubleStream;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -34,10 +33,8 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
  */
 public abstract class Rule {
 
-	/* The scalar used to scale theses rules' forecasts to the given base scale. */
-	private double forecastScalar;
-	/* The weights assigned to this rule. Has no internal effects. */
-	private double weight;
+	/* The base value used for forecast calculation. */
+	private BaseValue baseValue;
 	/* The variations this rule might have. */
 	private Rule[] variations;
 	/*
@@ -49,14 +46,17 @@ public abstract class Rule {
 	 * A datetime representing the end of the reference window for forecast scaling.
 	 */
 	private LocalDateTime endOfReferenceWindow;
-	/* The base value used for forecast calculation. */
-	private BaseValue baseValue;
 	/* The value to which the forecasts will be scaled. */
 	private double baseScale;
-	/* The scaled forecasts. */
-	private ValueDateTupel[] forecasts;
+
 	/* The standard deviation adjusted forecasts. */
 	private ValueDateTupel[] sdAdjustedForecasts = null;
+	/* The scalar used to scale theses rules' forecasts to the given base scale. */
+	private double forecastScalar;
+	/* The scaled forecasts. */
+	private ValueDateTupel[] forecasts;
+	/* The weights assigned to this rule. */
+	private double weight;
 
 	/**
 	 * Public constructor for class Rule. Rule is an abstract class and depends on
@@ -108,6 +108,36 @@ public abstract class Rule {
 	 * @return {@code double} The raw forecast value for the given LocalDateTime.
 	 */
 	abstract double calculateRawForecast(LocalDateTime forecastDateTime);
+
+	/**
+	 * Extract the relevant forecasts for this rule.
+	 * 
+	 * @return {@code ValueDateTupel[]} An array of the relevant forecasts for this
+	 *         rule.
+	 */
+	public ValueDateTupel[] extractRelevantForecasts() {
+		return ValueDateTupel.getElements(this.getForecasts(), this.getStartOfReferenceWindow(),
+				this.getEndOfReferenceWindow());
+	}
+
+	/**
+	 * Extract the relevant forecast values for this rule.
+	 * 
+	 * @return {@code double[]} An array of the relevant forecast values for this
+	 *         rule.
+	 */
+	public double[] extractRelevantForecastValues() {
+		return ValueDateTupel.getValues(this.extractRelevantForecasts());
+	}
+
+	/**
+	 * Evaluates if the current rule has variations.
+	 * 
+	 * @return {@code boolean} True, if the rule has variations. False otherwise.
+	 */
+	public boolean hasVariations() {
+		return this.getVariations() != null;
+	}
 
 	/**
 	 * Calculates all values derived from raw forecasts. This takes into
@@ -164,6 +194,75 @@ public abstract class Rule {
 				.getValue();
 
 		return Util.adjustForStandardDeviation(rawForecast, sdValue);
+	}
+
+	/**
+	 * Calculates the forecast scalar. If this rule has variations the variations'
+	 * forecasts and respective weights are used to calculate the forecast scalar.
+	 * Else this rule's standard deviation adjusted values are used.
+	 * 
+	 * @param baseScale {@code double} The base scale to which the forecast scalar
+	 *                  should scale the forecasts.
+	 * @return {@code double} The calculated forecast scalar.
+	 */
+	private double calculateForecastScalar() {
+
+		double instanceBaseScale = this.getBaseScale();
+		Rule[] instanceVariations = this.getVariations();
+		ValueDateTupel[] relevantForecastValues;
+
+		/*
+		 * If the rule has variations, use the variations' forecasts multiplied with
+		 * their respective weights method to get the base for the forecast scalar.
+		 */
+		if (instanceVariations != null) {
+			/* local array of weighted and combined variations' forecasts. */
+			relevantForecastValues = ValueDateTupel.createEmptyArray(instanceVariations[0].getForecasts().length);
+
+			/* Loop over each variation */
+			for (Rule variation : instanceVariations) {
+				/* Loop over each forecast value inside each variation. */
+				for (int i = 0; i < variation.getForecasts().length; i++) {
+
+					/*
+					 * Calculate the value to be added to the current weighted forecast value for
+					 * this rule
+					 */
+					double valueToBeAdded = variation.getForecasts()[i].getValue() * variation.getWeight();
+
+					/*
+					 * If the variations forecast value at this position is null (i.e. when we're in
+					 * the first variation's loop) create a new ValueDateTupel
+					 */
+					if (relevantForecastValues[i] == null) {
+						relevantForecastValues[i] = new ValueDateTupel(variation.getForecasts()[i].getDate(),
+								valueToBeAdded);
+					} else {
+						/*
+						 * If there already is a value at position i add the value to the existing value
+						 */
+						relevantForecastValues[i].setValue(relevantForecastValues[i].getValue() + valueToBeAdded);
+					}
+				}
+			}
+
+		} else {
+			/*
+			 * If the rule doesn't have variations use this rules sd adjusted forecast
+			 * values
+			 */
+			relevantForecastValues = this.getSdAdjustedForecasts();
+		}
+
+		relevantForecastValues = ValueDateTupel.getElements(relevantForecastValues, this.getStartOfReferenceWindow(),
+				this.getEndOfReferenceWindow());
+
+		double calculatedForecastScalar = Util.calculateForecastScalar(ValueDateTupel.getValues(relevantForecastValues),
+				instanceBaseScale);
+		if (Double.isNaN(calculatedForecastScalar))
+			throw new IllegalArgumentException("Illegal values in calulated forecast values. Adjust reference window.");
+
+		return calculatedForecastScalar;
 	}
 
 	/**
@@ -279,245 +378,6 @@ public abstract class Rule {
 	}
 
 	/**
-	 * Calculates the forecast scalar. If this rule has variations the variations'
-	 * forecasts and respective weights are used to calculate the forecast scalar.
-	 * Else this rule's standard deviation adjusted values are used.
-	 * 
-	 * @param baseScale {@code double} The base scale to which the forecast scalar
-	 *                  should scale the forecasts.
-	 * @return {@code double} The calculated forecast scalar.
-	 */
-	private double calculateForecastScalar() {
-
-		double instanceBaseScale = this.getBaseScale();
-		Rule[] instanceVariations = this.getVariations();
-		ValueDateTupel[] relevantForecastValues;
-
-		/*
-		 * If the rule has variations, use the variations' forecasts multiplied with
-		 * their respective weights method to get the base for the forecast scalar.
-		 */
-		if (instanceVariations != null) {
-			/* local array of weighted and combined variations' forecasts. */
-			relevantForecastValues = ValueDateTupel.createEmptyArray(instanceVariations[0].getForecasts().length);
-
-			/* Loop over each variation */
-			for (Rule variation : instanceVariations) {
-				/* Loop over each forecast value inside each variation. */
-				for (int i = 0; i < variation.getForecasts().length; i++) {
-
-					/*
-					 * Calculate the value to be added to the current weighted forecast value for
-					 * this rule
-					 */
-					double valueToBeAdded = variation.getForecasts()[i].getValue() * variation.getWeight();
-
-					/*
-					 * If the variations forecast value at this position is null (i.e. when we're in
-					 * the first variation's loop) create a new ValueDateTupel
-					 */
-					if (relevantForecastValues[i] == null) {
-						relevantForecastValues[i] = new ValueDateTupel(variation.getForecasts()[i].getDate(),
-								valueToBeAdded);
-					} else {
-						/*
-						 * If there already is a value at position i add the value to the existing value
-						 */
-						relevantForecastValues[i].setValue(relevantForecastValues[i].getValue() + valueToBeAdded);
-					}
-				}
-			}
-
-		} else {
-			/*
-			 * If the rule doesn't have variations use this rules sd adjusted forecast
-			 * values
-			 */
-			relevantForecastValues = this.getSdAdjustedForecasts();
-		}
-
-		relevantForecastValues = ValueDateTupel.getElements(relevantForecastValues, this.getStartOfReferenceWindow(),
-				this.getEndOfReferenceWindow());
-
-		double calculatedForecastScalar = Util.calculateForecastScalar(ValueDateTupel.getValues(relevantForecastValues),
-				instanceBaseScale);
-		if (Double.isNaN(calculatedForecastScalar))
-			throw new IllegalArgumentException("Illegal values in calulated forecast values. Adjust reference window.");
-
-		return calculatedForecastScalar;
-	}
-
-	/**
-	 * Calculates and sets the weights for this rule's variations based on their
-	 * correlations. This calculation is an approximation of (Robert Carver,
-	 * Systematic Trading (2015), p. 79, Table 8). Using the actual table would
-	 * muddy the weights and render them inaccurate.
-	 */
-	private void weighVariations() {
-		Rule[] instanceVariations = this.getVariations();
-		if (instanceVariations == null)
-			return;
-
-		/* If there is only 1 variation then its weight is 100% */
-		switch (instanceVariations.length) {
-		case 1:
-			instanceVariations[0].setWeight(1d);
-			break;
-		/* If there are 2 variations their weights are 50% each */
-		case 2:
-			instanceVariations[0].setWeight(0.5d);
-			instanceVariations[1].setWeight(0.5d);
-			break;
-		case 3:
-			ValueDateTupel[] forecastsA = ValueDateTupel.getElements(instanceVariations[0].getForecasts(),
-					this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
-			ValueDateTupel[] forecastsB = ValueDateTupel.getElements(instanceVariations[1].getForecasts(),
-					this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
-			ValueDateTupel[] forecastsC = ValueDateTupel.getElements(instanceVariations[2].getForecasts(),
-					this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
-
-			/*
-			 * Extract the values from the forecasts array, as the Dates are not needed for
-			 * correlation calculation.
-			 */
-			double[][] variationsForecasts = {};
-			variationsForecasts = ArrayUtils.add(variationsForecasts, ValueDateTupel.getValues(forecastsA));
-			variationsForecasts = ArrayUtils.add(variationsForecasts, ValueDateTupel.getValues(forecastsB));
-			variationsForecasts = ArrayUtils.add(variationsForecasts, ValueDateTupel.getValues(forecastsC));
-
-			/* Find the correlations for the given variations. */
-			double[] correlations;
-			correlations = Util.calculateCorrelationOfRows(variationsForecasts);
-
-			if (ArrayUtils.contains(correlations, Double.NaN))
-				throw new IllegalArgumentException(
-						"Correlations cannot be calculated due to illegal values in given variations.");
-
-			/* Find the weights corresponding to the calculated correlations. */
-			double[] weights = Rule.calculateWeightsForThreeCorrelations(correlations);
-
-			/* Set the weights of the underlying variations */
-			for (int i = 0; i < weights.length; i++) {
-				instanceVariations[i].setWeight(weights[i]);
-			}
-			break;
-		}
-	}
-
-	/**
-	 * Calculate the weights that should be given to the rows of values making up
-	 * the given correlations. Expects an array of length 3, where position 0 holds
-	 * the correlation of rows A and B, position 1 holds the correlation for rows A
-	 * and C, and position 2 holds the correlation for rows B and C.
-	 * 
-	 * @param correlations {@code double[]} Three values representing the
-	 *                     correlations between the rows A, B and C. The expected
-	 *                     array is constructed as follows: { corr_AB, corr_AC,
-	 *                     corr_BC }. See {@link #validateCorrelations(double[])}
-	 *                     for limitations.
-	 * @return {@code double[]} The calculated weights { w_A, w_B, w_C }.
-	 */
-	public static double[] calculateWeightsForThreeCorrelations(double[] correlations) {
-
-		validateCorrelations(correlations);
-
-		for (int i = 0; i < correlations.length; i++) {
-			/* Floor negative correlations at 0 (See Carver: "Systematic Trading", p. 79) */
-			if (correlations[i] < 0)
-				correlations[i] = 0;
-		}
-
-		double[] weights = {};
-		/*
-		 * Catch three equal correlations. Three correlations of 1 each would break
-		 * further calculation.
-		 */
-		if (correlations[0] == correlations[1] && correlations[0] == correlations[2]) {
-			double correlationOfOneThird = 1d / 3d;
-			weights = ArrayUtils.add(weights, correlationOfOneThird);
-			weights = ArrayUtils.add(weights, correlationOfOneThird);
-			weights = ArrayUtils.add(weights, correlationOfOneThird);
-			return weights;
-		}
-
-		/* Get the average correlation each row of values has */
-		double averageCorrelationA = (correlations[0] + correlations[1]) / 2;
-		double averageCorrelationB = (correlations[0] + correlations[2]) / 2;
-		double averageCorrelationC = (correlations[1] + correlations[2]) / 2;
-
-		double[] averageCorrelations = {};
-		averageCorrelations = ArrayUtils.add(averageCorrelations, averageCorrelationA);
-		averageCorrelations = ArrayUtils.add(averageCorrelations, averageCorrelationB);
-		averageCorrelations = ArrayUtils.add(averageCorrelations, averageCorrelationC);
-
-		/* Subtract each average correlation from 1 to get an inverse-ish value */
-		for (int i = 0; i < averageCorrelations.length; i++)
-			averageCorrelations[i] = 1 - averageCorrelations[i];
-
-		/* Calculate the sum of average calculations. */
-		double sumOfAverageCorrelations = DoubleStream.of(averageCorrelations).sum();
-
-		/*
-		 * Normalize the average correlations so they sum up to 1. These normalized
-		 * values are the weights.
-		 */
-		for (int i = 0; i < averageCorrelations.length; i++)
-			weights = ArrayUtils.add(weights, averageCorrelations[i] / sumOfAverageCorrelations);
-
-		return weights;
-	}
-
-	/**
-	 * Validates the given correlations.
-	 * 
-	 * @param correlations {@code double[]} Correlations to be validated. Must not
-	 *                     be null. Must have a length of 3. Must only contain
-	 *                     values {@code !Double.NaN} and {@code -1 <= value <= 1}.
-	 * @throws IllegalArgumentException if the above specifications are not met.
-	 */
-	private static void validateCorrelations(double[] correlations) {
-		/* Check if the given array is null */
-		if (correlations == null)
-			throw new IllegalArgumentException("Correlations array must not be null");
-		/* Check if the given array contains exactly three elements. */
-		if (correlations.length != 3)
-			throw new IllegalArgumentException("There must be exactly three correlation values in the given array");
-
-		/* Check all given values inside the array */
-		for (int i = 0; i < correlations.length; i++) {
-			if (Double.isNaN(correlations[i]))
-				throw new IllegalArgumentException(
-						"NaN-values are not allowed. Correlation at position " + i + " is NaN.");
-			if (correlations[i] > 1)
-				throw new IllegalArgumentException("Correlation at position " + i + " is greater than 1");
-			if (correlations[i] < -1)
-				throw new IllegalArgumentException("Correlation at position " + i + " is less than -1");
-		}
-	}
-
-	/**
-	 * Extract the relevant forecast values for this rule.
-	 * 
-	 * @return {@code double[]} An array of the relevant forecast values for this
-	 *         rule.
-	 */
-	public double[] getRelevantForecastValues() {
-		ValueDateTupel[] relevantForecasts = ValueDateTupel.getElements(this.getForecasts(),
-				this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
-
-		return ValueDateTupel.getValues(relevantForecasts);
-	}
-
-	/**
-	 * Evaluates if the current rule has variations.
-	 * 
-	 * @return {@code boolean} True, if the rule has variations. False otherwise.
-	 */
-	public boolean hasVariations() {
-		return this.getVariations() != null;
-	}
-
-	/**
 	 * Validates if the given instance variables meet specifications.
 	 * 
 	 * @param baseValue              {@link BaseValue} The base value to be used in
@@ -578,44 +438,69 @@ public abstract class Rule {
 
 		/* A rule can have no variations, so variations == null is acceptable. */
 		if (variations != null) {
-			/* Check if there are too many variations for this rule */
-			if (variations.length > 3)
-				throw new IllegalArgumentException("A rule must not contain more than 3 variations.");
-
-			/* Check if the given variations array is empty. */
-			if (variations.length == 0)
-				throw new IllegalArgumentException("The given variations array must not be empty.");
-
-			for (int i = 0; i < variations.length; i++) {
-				/* Check if the given variations array contains nulls. */
-				if (variations[i] == null)
-					throw new IllegalArgumentException(
-							"The variation at position " + i + " in the given variations array is null.");
-
-				/* Check if main rule and variations share reference window. */
-				if (!variations[i].getStartOfReferenceWindow().equals(startOfReferenceWindow)) {
-					throw new IllegalArgumentException(
-							"The given reference window does not match the variation's at position " + i
-									+ ". The given start of reference window is different.");
-				}
-				if (!variations[i].getEndOfReferenceWindow().equals(endOfReferenceWindow)) {
-					throw new IllegalArgumentException(
-							"The given reference window does not match the variation's at position " + i
-									+ ". The given end of reference window is different.");
-				}
-			}
-
-			try {
-				Validator.validateRulesVsBaseValue(variations, baseValue);
-			} catch (IllegalArgumentException e) {
-				throw new IllegalArgumentException("The given variations do not meet specifications.", e);
-			}
+			Validator.validateVariations(variations, startOfReferenceWindow, endOfReferenceWindow, baseValue);
 		}
 
 		try {
 			Validator.validatePositiveDouble(baseScale);
 		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException("The given base scale does not meet specifications.", e);
+		}
+	}
+
+	/**
+	 * Calculates and sets the weights for this rule's variations based on their
+	 * correlations. This calculation is an approximation of (Robert Carver,
+	 * Systematic Trading (2015), p. 79, Table 8). Using the actual table would
+	 * muddy the weights and render them inaccurate.
+	 */
+	private void weighVariations() {
+		Rule[] instanceVariations = this.getVariations();
+		if (instanceVariations == null)
+			return;
+
+		/* If there is only 1 variation then its weight is 100% */
+		switch (instanceVariations.length) {
+		case 1:
+			instanceVariations[0].setWeight(1d);
+			break;
+		/* If there are 2 variations their weights are 50% each */
+		case 2:
+			instanceVariations[0].setWeight(0.5d);
+			instanceVariations[1].setWeight(0.5d);
+			break;
+		case 3:
+			ValueDateTupel[][] forecasts = {};
+			for (Rule variation : instanceVariations) {
+				ValueDateTupel[] fcs = variation.extractRelevantForecasts();
+				forecasts = ArrayUtils.add(forecasts, fcs);
+			}
+
+			/*
+			 * Extract the values from the forecasts array, as the Dates are not needed for
+			 * correlation calculation.
+			 */
+			double[][] variationsForecasts = {};
+			for (ValueDateTupel[] forecast : forecasts) {
+				variationsForecasts = ArrayUtils.add(variationsForecasts, ValueDateTupel.getValues(forecast));
+			}
+
+			/* Find the correlations for the given variations. */
+			double[] correlations;
+			correlations = Util.calculateCorrelationOfRows(variationsForecasts);
+
+			if (ArrayUtils.contains(correlations, Double.NaN))
+				throw new IllegalArgumentException(
+						"Correlations cannot be calculated due to illegal values in given variations.");
+
+			/* Find the weights corresponding to the calculated correlations. */
+			double[] weights = Util.calculateWeightsForThreeCorrelations(correlations);
+
+			/* Set the weights of the underlying variations */
+			for (int i = 0; i < weights.length; i++) {
+				instanceVariations[i].setWeight(weights[i]);
+			}
+			break;
 		}
 	}
 

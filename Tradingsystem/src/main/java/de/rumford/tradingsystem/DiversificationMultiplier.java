@@ -147,7 +147,7 @@ public class DiversificationMultiplier {
 				for (double[] forecasts : forecastsToAdd)
 					relevantForecasts = ArrayUtils.add(relevantForecasts, forecasts);
 			} else {
-				relevantForecasts = ArrayUtils.add(relevantForecasts, rule.getRelevantForecastValues());
+				relevantForecasts = ArrayUtils.add(relevantForecasts, rule.extractRelevantForecastValues());
 			}
 		}
 		return relevantForecasts;
