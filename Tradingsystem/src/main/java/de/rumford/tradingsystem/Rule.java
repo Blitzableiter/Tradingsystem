@@ -115,7 +115,7 @@ public abstract class Rule {
 	 * @return {@code ValueDateTupel[]} An array of the relevant forecasts for this
 	 *         rule.
 	 */
-	public ValueDateTupel[] extractRelevantForecasts() {
+	public final ValueDateTupel[] extractRelevantForecasts() {
 		return ValueDateTupel.getElements(this.getForecasts(), this.getStartOfReferenceWindow(),
 				this.getEndOfReferenceWindow());
 	}
@@ -126,7 +126,7 @@ public abstract class Rule {
 	 * @return {@code double[]} An array of the relevant forecast values for this
 	 *         rule.
 	 */
-	public double[] extractRelevantForecastValues() {
+	public final double[] extractRelevantForecastValues() {
 		return ValueDateTupel.getValues(this.extractRelevantForecasts());
 	}
 
@@ -135,7 +135,7 @@ public abstract class Rule {
 	 * 
 	 * @return {@code boolean} True, if the rule has variations. False otherwise.
 	 */
-	public boolean hasVariations() {
+	public final boolean hasVariations() {
 		return this.getVariations() != null;
 	}
 
