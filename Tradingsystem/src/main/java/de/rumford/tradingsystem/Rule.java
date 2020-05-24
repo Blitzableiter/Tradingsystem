@@ -110,16 +110,24 @@ public abstract class Rule {
 	abstract double calculateRawForecast(LocalDateTime forecastDateTime);
 
 	/**
+	 * Extract the relevant forecasts for this rule.
+	 * 
+	 * @return {@code ValueDateTupel[]} An array of the relevant forecasts for this
+	 *         rule.
+	 */
+	public ValueDateTupel[] extractRelevantForecasts() {
+		return ValueDateTupel.getElements(this.getForecasts(), this.getStartOfReferenceWindow(),
+				this.getEndOfReferenceWindow());
+	}
+
+	/**
 	 * Extract the relevant forecast values for this rule.
 	 * 
 	 * @return {@code double[]} An array of the relevant forecast values for this
 	 *         rule.
 	 */
 	public double[] extractRelevantForecastValues() {
-		ValueDateTupel[] relevantForecasts = ValueDateTupel.getElements(this.getForecasts(),
-				this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
-
-		return ValueDateTupel.getValues(relevantForecasts);
+		return ValueDateTupel.getValues(this.extractRelevantForecasts());
 	}
 
 	/**
@@ -462,21 +470,20 @@ public abstract class Rule {
 			instanceVariations[1].setWeight(0.5d);
 			break;
 		case 3:
-			ValueDateTupel[] forecastsA = ValueDateTupel.getElements(instanceVariations[0].getForecasts(),
-					this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
-			ValueDateTupel[] forecastsB = ValueDateTupel.getElements(instanceVariations[1].getForecasts(),
-					this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
-			ValueDateTupel[] forecastsC = ValueDateTupel.getElements(instanceVariations[2].getForecasts(),
-					this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow());
+			ValueDateTupel[][] forecasts = {};
+			for (Rule variation : instanceVariations) {
+				ValueDateTupel[] fcs = variation.extractRelevantForecasts();
+				forecasts = ArrayUtils.add(forecasts, fcs);
+			}
 
 			/*
 			 * Extract the values from the forecasts array, as the Dates are not needed for
 			 * correlation calculation.
 			 */
 			double[][] variationsForecasts = {};
-			variationsForecasts = ArrayUtils.add(variationsForecasts, ValueDateTupel.getValues(forecastsA));
-			variationsForecasts = ArrayUtils.add(variationsForecasts, ValueDateTupel.getValues(forecastsB));
-			variationsForecasts = ArrayUtils.add(variationsForecasts, ValueDateTupel.getValues(forecastsC));
+			for (ValueDateTupel[] forecast : forecasts) {
+				variationsForecasts = ArrayUtils.add(variationsForecasts, ValueDateTupel.getValues(forecast));
+			}
 
 			/* Find the correlations for the given variations. */
 			double[] correlations;
