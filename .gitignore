@@ -6,4 +6,4 @@
 /Tradingsystem/lib/
 /Tradingsystem/resources/
 /Tradingsystem/target/*
-!/Tradingsystem/target/apidocs
+!/Tradingsystem/target/Tradingsystem-*-javadoc.jar

@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"de.rumford.tradingsystem"},{"l":"de.rumford.tradingsystem.helper"}]
