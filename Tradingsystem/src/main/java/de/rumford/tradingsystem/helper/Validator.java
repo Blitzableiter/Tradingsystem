@@ -23,6 +23,62 @@ public class Validator {
 	}
 
 	/**
+	 * Validates the given array of arrays.
+	 * <ul>
+	 * <li>Must not be null.</li>
+	 * </ul>
+	 * 
+	 * @param values {@code double[]} The array to be validated.
+	 * @throws IllegalArgumentException if any of the above specifications are not
+	 *                                  met.
+	 */
+	public static void validateArrayOfDoubles(double[] values) {
+		if (values == null)
+			throw new IllegalArgumentException("Given array must not be null");
+	}
+
+	/**
+	 * Validates the given {@link BaseValue}.
+	 * <ul>
+	 * <li>Must not be null.</li>
+	 * </ul>
+	 * 
+	 * @param baseValue {@link BaseValue} The base value to be validated.
+	 */
+	public static void validateBaseValue(BaseValue baseValue) {
+		if (baseValue == null)
+			throw new IllegalArgumentException("Base value must not be null");
+	}
+
+	/**
+	 * Validates the given correlations.
+	 * 
+	 * @param correlations {@code double[]} Correlations to be validated. Must not
+	 *                     be null. Must have a length of 3. Must only contain
+	 *                     values {@code !Double.NaN} and {@code -1 <= value <= 1}.
+	 * @throws IllegalArgumentException if the above specifications are not met.
+	 */
+	public static void validateCorrelations(double[] correlations) {
+		/* Check if the given array is null */
+		if (correlations == null)
+			throw new IllegalArgumentException("Correlations array must not be null");
+		/* Check if the given array contains exactly three elements. */
+		if (correlations.length != 3)
+			throw new IllegalArgumentException("There must be exactly three correlation values in the given array");
+
+		/* Check all given values inside the array */
+		for (int i = 0; i < correlations.length; i++) {
+			if (Double.isNaN(correlations[i]))
+				throw new IllegalArgumentException(
+						"NaN-values are not allowed. Correlation at position " + i + " is NaN.");
+			if (correlations[i] > 1)
+				throw new IllegalArgumentException("Correlation at position " + i + " is greater than 1");
+			if (correlations[i] < -1)
+				throw new IllegalArgumentException("Correlation at position " + i + " is less than -1");
+		}
+	}
+
+	/**
 	 * Validates if the given array of ValueDateTupel is sorted in an ascending
 	 * order.
 	 * 
@@ -38,36 +94,23 @@ public class Validator {
 	}
 
 	/**
-	 * Validates the given array of ValueDateTupel. The given array must fulfill the
-	 * following specifications:
+	 * Validates the given double value. The value must meet the following
+	 * specifications:
 	 * <ul>
-	 * <li>Must not be null</li>
-	 * <li>Must be of length greater than 0</li>
-	 * <li>Must not contain null</li>
-	 * <li>Must not contain NaNs as values</li>
+	 * <li>Must not be Double.NaN.</li>
+	 * <li>Must be a positive decimal.</li>
 	 * </ul>
 	 * 
-	 * @param values {@code ValueDateTupel[]} The values to be validated.
-	 * @throws IllegalArgumentException if the given array does not meet the above
-	 *                                  specifications.
+	 * @param value {@code double} The value to validate.
+	 * @throws IllegalArgumentException if the above specifications are not met.
 	 */
-	public static void validateValues(ValueDateTupel[] values) {
-		/* Check if passed values array is null */
-		if (values == null)
-			throw new IllegalArgumentException("The given values array must not be null");
-		/* Check if passed values array contains elements */
-		if (values.length == 0)
-			throw new IllegalArgumentException("Values must not be an empty array");
+	public static void validatePositiveDouble(double value) {
+		if (Double.isNaN(value))
+			throw new IllegalArgumentException("Value must not be Double.NaN");
 
-		for (ValueDateTupel value : values) {
-			/* Validate if there are null values in the given values array. */
-			if (value == null)
-				throw new IllegalArgumentException("Given values must not contain null.");
+		if (value <= 0)
+			throw new IllegalArgumentException("Value must be a positive decimal");
 
-			/* Validate if there are NaN values in the given values array. */
-			if (Double.isNaN(value.getValue()))
-				throw new IllegalArgumentException("Given values must not contain NaN.");
-		}
 	}
 
 	/**
@@ -87,6 +130,27 @@ public class Validator {
 
 		if (rules.length == 0)
 			throw new IllegalArgumentException("Rules must not be an empty array");
+	}
+
+	/**
+	 * Validates the given array of {@link Rule} against the given
+	 * {@link BaseValue}.
+	 * <ul>
+	 * <li>All rules must have the given {@link BaseValue} as their own
+	 * {@link BaseValue}.</li>
+	 * </ul>
+	 * 
+	 * @param rules     {@code Rule[]} The array of {@link Rule} to be validated.
+	 * @param baseValue {@link BaseValue} The {@link BaseValue} to be validated.
+	 * @throws IllegalArgumentException if any of the above specifications are not
+	 *                                  met.
+	 */
+	public static void validateRulesVsBaseValue(Rule[] rules, BaseValue baseValue) {
+		for (int i = 0; i < rules.length; i++)
+			if (!rules[i].getBaseValue().equals(baseValue))
+				throw new IllegalArgumentException(
+						"The base value of all rules must be equal to given base value but the rule at position " + i
+								+ " does not comply.");
 	}
 
 	/**
@@ -130,72 +194,100 @@ public class Validator {
 	}
 
 	/**
-	 * Validates the given {@link BaseValue}.
+	 * Validates the given array of ValueDateTupel. The given array must fulfill the
+	 * following specifications:
 	 * <ul>
-	 * <li>Must not be null.</li>
+	 * <li>Must not be null</li>
+	 * <li>Must be of length greater than 0</li>
+	 * <li>Must not contain null</li>
+	 * <li>Must not contain NaNs as values</li>
 	 * </ul>
 	 * 
-	 * @param baseValue {@link BaseValue} The base value to be validated.
+	 * @param values {@code ValueDateTupel[]} The values to be validated.
+	 * @throws IllegalArgumentException if the given array does not meet the above
+	 *                                  specifications.
 	 */
-	public static void validateBaseValue(BaseValue baseValue) {
-		if (baseValue == null)
-			throw new IllegalArgumentException("Base value must not be null");
-	}
-
-	/**
-	 * Validates the given double value. The value must meet the following
-	 * specifications:
-	 * <ul>
-	 * <li>Must not be Double.NaN.</li>
-	 * <li>Must be a positive decimal.</li>
-	 * </ul>
-	 * 
-	 * @param value {@code double} The value to validate.
-	 * @throws IllegalArgumentException if the above specifications are not met.
-	 */
-	public static void validatePositiveDouble(double value) {
-		if (Double.isNaN(value))
-			throw new IllegalArgumentException("Value must not be Double.NaN");
-
-		if (value <= 0)
-			throw new IllegalArgumentException("Value must be a positive decimal");
-
-	}
-
-	/**
-	 * Validates the given array of {@link Rule} against the given
-	 * {@link BaseValue}.
-	 * <ul>
-	 * <li>All rules must have the given {@link BaseValue} as their own
-	 * {@link BaseValue}.</li>
-	 * </ul>
-	 * 
-	 * @param rules     {@code Rule[]} The array of {@link Rule} to be validated.
-	 * @param baseValue {@link BaseValue} The {@link BaseValue} to be validated.
-	 * @throws IllegalArgumentException if any of the above specifications are not
-	 *                                  met.
-	 */
-	public static void validateRulesVsBaseValue(Rule[] rules, BaseValue baseValue) {
-		for (int i = 0; i < rules.length; i++)
-			if (!rules[i].getBaseValue().equals(baseValue))
-				throw new IllegalArgumentException(
-						"The base value of all rules must be equal to given base value but the rule at position " + i
-								+ " does not comply.");
-	}
-
-	/**
-	 * Validates the given array of arrays.
-	 * <ul>
-	 * <li>Must not be null.</li>
-	 * </ul>
-	 * 
-	 * @param values {@code double[]} The array to be validated.
-	 * @throws IllegalArgumentException if any of the above specifications are not
-	 *                                  met.
-	 */
-	public static void validateArrayOfDoubles(double[] values) {
+	public static void validateValues(ValueDateTupel[] values) {
+		/* Check if passed values array is null */
 		if (values == null)
-			throw new IllegalArgumentException("Given array must not be null");
+			throw new IllegalArgumentException("The given values array must not be null");
+		/* Check if passed values array contains elements */
+		if (values.length == 0)
+			throw new IllegalArgumentException("Values must not be an empty array");
+
+		for (ValueDateTupel value : values) {
+			/* Validate if there are null values in the given values array. */
+			if (value == null)
+				throw new IllegalArgumentException("Given values must not contain null.");
+
+			/* Validate if there are NaN values in the given values array. */
+			if (Double.isNaN(value.getValue()))
+				throw new IllegalArgumentException("Given values must not contain NaN.");
+		}
+	}
+
+	/**
+	 * Validates the given variations array of {@link Rule} against the given
+	 * {@link LocalDateTime} values for startOfReferenceWindow and
+	 * endOfReferenceWindow and the given {@link BaseValue}. Must fulfill the
+	 * following specifications:
+	 * <ul>
+	 * <li>Must not be of length greater than 3.</li>
+	 * <li>Must not be of length 0.</li>
+	 * <li>Elements must not be null.</li>
+	 * <li>Elements' {@link Rule#getStartOfReferenceWindow()} must equal the given
+	 * startOfReferenceWindow.</li>
+	 * <li>Elements' {@link Rule#getEndOfReferenceWindow()} must equal the given
+	 * endOfReferenceWindow.</li>
+	 * <li>Must pass {@link #validateRulesVsBaseValue(Rule[], BaseValue)}.</li>
+	 * </ul>
+	 * 
+	 * @param variations             {@code Rule[]} An array of {@link Rule}
+	 *                               representing a rules' variations.
+	 * @param startOfReferenceWindow {@link LocalDateTime} The start of reference
+	 *                               window of the {@link Rule} containing the given
+	 *                               variations.
+	 * @param endOfReferenceWindow   {@link LocalDateTime} The end of reference
+	 *                               window of the {@link Rule} containing the given
+	 *                               variations.
+	 * @param baseValue              {@link BaseValue} The base value of the
+	 *                               {@link Rule} containing the given variations.
+	 */
+	public static void validateVariations(Rule[] variations, LocalDateTime startOfReferenceWindow,
+			LocalDateTime endOfReferenceWindow, BaseValue baseValue) {
+		/* Check if there are too many variations for this rule */
+		if (variations.length > 3)
+			throw new IllegalArgumentException("A rule must not contain more than 3 variations.");
+
+		/* Check if the given variations array is empty. */
+		if (variations.length == 0)
+			throw new IllegalArgumentException("The given variations array must not be empty.");
+
+		for (int i = 0; i < variations.length; i++) {
+			/* Check if the given variations array contains nulls. */
+			if (variations[i] == null)
+				throw new IllegalArgumentException(
+						"The variation at position " + i + " in the given variations array is null.");
+
+			/* Check if main rule and variations share reference window. */
+			if (!variations[i].getStartOfReferenceWindow().equals(startOfReferenceWindow)) {
+				throw new IllegalArgumentException(
+						"The given reference window does not match the variation's at position " + i
+								+ ". The given start of reference window is different.");
+			}
+			if (!variations[i].getEndOfReferenceWindow().equals(endOfReferenceWindow)) {
+				throw new IllegalArgumentException(
+						"The given reference window does not match the variation's at position " + i
+								+ ". The given end of reference window is different.");
+			}
+		}
+
+		try {
+			Validator.validateRulesVsBaseValue(variations, baseValue);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("The given variations do not meet specifications.", e);
+		}
+
 	}
 
 }

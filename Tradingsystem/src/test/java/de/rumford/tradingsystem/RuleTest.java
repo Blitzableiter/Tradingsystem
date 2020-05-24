@@ -12,9 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.rumford.tradingsystem.helper.BaseValueFactory;
-import de.rumford.tradingsystem.helper.GeneratedCode;
-import de.rumford.tradingsystem.helper.ValueDateTupel;
+import de.rumford.tradingsystem.helper.*;
 
 /**
  * Test class for {@link Rule}.
@@ -529,7 +527,7 @@ class RuleTest {
 	}
 
 	/**
-	 * Test method for {@link Rule#calculateWeightsForThreeCorrelations(double[])}.
+	 * Test method for {@link Util#calculateWeightsForThreeCorrelations(double[])}.
 	 */
 	@Test
 	void testCalculateWeightsForThreeCorrelations() {
@@ -537,40 +535,40 @@ class RuleTest {
 		double[] expectedValue = { .3, 0.3666666666666667, 1d / 3d };
 		double[] correlations = { .5, .6, .4 };
 
-		double[] actualValue = Rule.calculateWeightsForThreeCorrelations(correlations);
+		double[] actualValue = Util.calculateWeightsForThreeCorrelations(correlations);
 
 		assertArrayEquals(expectedValue, actualValue, "Weights for 3 correlations are not correctly calculated");
 	}
 
 	/**
-	 * Test method for {@link Rule#calculateWeightsForThreeCorrelations(double[])}.
+	 * Test method for {@link Util#calculateWeightsForThreeCorrelations(double[])}.
 	 */
 	@Test
 	void testCalculateWeightsForThreeCorrelations_negativeCorrelations() {
 		double[] correlations1 = { .5, .6, -.4 };
 		double[] correlations2 = { .5, .6, 0 };
 
-		double[] actualValue1 = Rule.calculateWeightsForThreeCorrelations(correlations1);
-		double[] actualValue2 = Rule.calculateWeightsForThreeCorrelations(correlations2);
+		double[] actualValue1 = Util.calculateWeightsForThreeCorrelations(correlations1);
+		double[] actualValue2 = Util.calculateWeightsForThreeCorrelations(correlations2);
 
 		assertArrayEquals(actualValue1, actualValue2, "Weights for negative correlations are not correctly calculated");
 	}
 
 	/**
-	 * Test method for {@link Rule#calculateWeightsForThreeCorrelations(double[])}.
+	 * Test method for {@link Util#calculateWeightsForThreeCorrelations(double[])}.
 	 */
 	@Test
 	void testCalculateWeightsForThreeCorrelations_threeEqualWeights() {
 		double[] expectedValue = { 1d / 3d, 1d / 3d, 1d / 3d };
 		double[] correlations = { 1, 1, 1 };
 
-		double[] actualValue = Rule.calculateWeightsForThreeCorrelations(correlations);
+		double[] actualValue = Util.calculateWeightsForThreeCorrelations(correlations);
 
 		assertArrayEquals(expectedValue, actualValue, "Weights for 3 equal correlations are not correctly calculated");
 	}
 
 	/**
-	 * Test method for {@link Rule#validateCorrelations(double[])}.
+	 * Test method for {@link Validator#validateCorrelations(double[])}.
 	 */
 	@Test
 	void testValidateCorrelations_arrayNull() {
@@ -578,13 +576,13 @@ class RuleTest {
 		double[] correlations = null;
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> Rule.calculateWeightsForThreeCorrelations(correlations), "Array of null is not properly handled");
+				() -> Util.calculateWeightsForThreeCorrelations(correlations), "Array of null is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for {@link Rule#validateCorrelations(double[])}.
+	 * Test method for {@link Validator#validateCorrelations(double[])}.
 	 */
 	@Test
 	void testValidateCorrelations_arrayOfLengthNotThree() {
@@ -592,14 +590,14 @@ class RuleTest {
 		double[] correlations = { 0, 0 };
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> Rule.calculateWeightsForThreeCorrelations(correlations),
+				() -> Util.calculateWeightsForThreeCorrelations(correlations),
 				"Array of length != 3 is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for {@link Rule#validateCorrelations(double[])}.
+	 * Test method for {@link Validator#validateCorrelations(double[])}.
 	 */
 	@Test
 	void testValidateCorrelations_arrayContainsNan() {
@@ -607,14 +605,14 @@ class RuleTest {
 		double[] correlations = { 0, Double.NaN, 0 };
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> Rule.calculateWeightsForThreeCorrelations(correlations),
+				() -> Util.calculateWeightsForThreeCorrelations(correlations),
 				"Array containing Double.NaN is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for {@link Rule#validateCorrelations(double[])}.
+	 * Test method for {@link Validator#validateCorrelations(double[])}.
 	 */
 	@Test
 	void testValidateCorrelations_arrayContainsValueGreaterThan1() {
@@ -622,14 +620,14 @@ class RuleTest {
 		double[] correlations = { 0, 2, 0 };
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> Rule.calculateWeightsForThreeCorrelations(correlations),
+				() -> Util.calculateWeightsForThreeCorrelations(correlations),
 				"Array containing values greater than 1 is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for {@link Rule#validateCorrelations(double[])}.
+	 * Test method for {@link Validator#validateCorrelations(double[])}.
 	 */
 	@Test
 	void testValidateCorrelations_arrayContainsValueLessThanNegative1() {
@@ -637,7 +635,7 @@ class RuleTest {
 		double[] correlations = { 0, -2, 0 };
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> Rule.calculateWeightsForThreeCorrelations(correlations),
+				() -> Util.calculateWeightsForThreeCorrelations(correlations),
 				"Array containing values less than -1 is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
@@ -719,7 +717,7 @@ class RuleTest {
 	}
 
 	/**
-	 * Test method for {@link Rule#getRelevantForecastValues()}.
+	 * Test method for {@link Rule#extractRelevantForecastValues()}.
 	 */
 	@Test
 	void testGetRelevantForecastValues() {
@@ -729,7 +727,7 @@ class RuleTest {
 				9.058084130198298, // Excel: 9.0580841301983
 		};
 
-		double[] actualValues = realRule.getRelevantForecastValues();
+		double[] actualValues = realRule.extractRelevantForecastValues();
 
 		assertArrayEquals(expectedValues, actualValues, "Relevant forecasts are not properly extracted");
 	}

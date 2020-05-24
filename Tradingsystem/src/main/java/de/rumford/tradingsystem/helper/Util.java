@@ -183,4 +183,67 @@ public final class Util {
 		return latterValue / formerValue - 1d;
 	}
 
+	/**
+	 * Calculate the weights that should be given to the rows of values making up
+	 * the given correlations. Expects an array of length 3, where position 0 holds
+	 * the correlation of rows A and B, position 1 holds the correlation for rows A
+	 * and C, and position 2 holds the correlation for rows B and C.
+	 * 
+	 * @param correlations {@code double[]} Three values representing the
+	 *                     correlations between the rows A, B and C. The expected
+	 *                     array is constructed as follows: { corr_AB, corr_AC,
+	 *                     corr_BC }. See {@link Validator#validateCorrelations(double[])}
+	 *                     for limitations.
+	 * @return {@code double[]} The calculated weights { w_A, w_B, w_C }.
+	 */
+	public static double[] calculateWeightsForThreeCorrelations(double[] correlations) {
+	
+		Validator.validateCorrelations(correlations);
+	
+		for (int i = 0; i < correlations.length; i++) {
+			/* Floor negative correlations at 0 (See Carver: "Systematic Trading", p. 79) */
+			if (correlations[i] < 0)
+				correlations[i] = 0;
+		}
+	
+		double[] weights = {};
+		/*
+		 * Catch three equal correlations. Three correlations of 1 each would break
+		 * further calculation.
+		 */
+		if (correlations[0] == correlations[1] && correlations[0] == correlations[2]) {
+			double correlationOfOneThird = 1d / 3d;
+			weights = ArrayUtils.add(weights, correlationOfOneThird);
+			weights = ArrayUtils.add(weights, correlationOfOneThird);
+			weights = ArrayUtils.add(weights, correlationOfOneThird);
+			return weights;
+		}
+	
+		/* Get the average correlation each row of values has */
+		double averageCorrelationA = (correlations[0] + correlations[1]) / 2;
+		double averageCorrelationB = (correlations[0] + correlations[2]) / 2;
+		double averageCorrelationC = (correlations[1] + correlations[2]) / 2;
+	
+		double[] averageCorrelations = {};
+		averageCorrelations = ArrayUtils.add(averageCorrelations, averageCorrelationA);
+		averageCorrelations = ArrayUtils.add(averageCorrelations, averageCorrelationB);
+		averageCorrelations = ArrayUtils.add(averageCorrelations, averageCorrelationC);
+	
+		/* Subtract each average correlation from 1 to get an inverse-ish value */
+		for (int i = 0; i < averageCorrelations.length; i++)
+			averageCorrelations[i] = 1 - averageCorrelations[i];
+	
+		/* Calculate the sum of average calculations. */
+		double sumOfAverageCorrelations = DoubleStream.of(averageCorrelations).sum();
+	
+		/*
+		 * Normalize the average correlations so they sum up to 1. These normalized
+		 * values are the weights.
+		 */
+		for (int i = 0; i < averageCorrelations.length; i++)
+			weights = ArrayUtils.add(weights, averageCorrelations[i] / sumOfAverageCorrelations);
+	
+		return weights;
+	}
+
 }
