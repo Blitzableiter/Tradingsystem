@@ -148,8 +148,13 @@ public class EWMAC extends Rule {
 	@GeneratedCode
 	@Override
 	public String toString() {
-		return "EWMAC [longHorizonEwma=" + longHorizonEwma + ", shortHorizonEwma=" + shortHorizonEwma + ", toString()="
-				+ super.toString() + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("EWMAC [longHorizonEwma=");
+		builder.append(longHorizonEwma);
+		builder.append(", shortHorizonEwma=");
+		builder.append(shortHorizonEwma);
+		builder.append("]");
+		return builder.toString();
 	}
 
 	/**

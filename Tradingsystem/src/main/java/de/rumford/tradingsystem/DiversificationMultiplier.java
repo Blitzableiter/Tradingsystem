@@ -248,9 +248,17 @@ public class DiversificationMultiplier {
 	@GeneratedCode
 	@Override
 	public String toString() {
-		return "DiversificationMultiplier [value=" + value + ", weights=" + Arrays.toString(weights)
-				+ ", relevantForecasts=" + Arrays.toString(relevantForecasts) + ", correlations="
-				+ Arrays.toString(correlations) + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("DiversificationMultiplier [value=");
+		builder.append(value);
+		builder.append(", weights=");
+		builder.append(Arrays.toString(weights));
+		builder.append(", relevantForecasts=");
+		builder.append(Arrays.toString(relevantForecasts));
+		builder.append(", correlations=");
+		builder.append(Arrays.toString(correlations));
+		builder.append("]");
+		return builder.toString();
 	}
 
 	/**

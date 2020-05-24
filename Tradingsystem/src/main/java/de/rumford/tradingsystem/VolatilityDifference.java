@@ -356,8 +356,13 @@ public class VolatilityDifference extends Rule {
 	@GeneratedCode
 	@Override
 	public String toString() {
-		return "VolatilityDifference [volatilityIndices=" + Arrays.toString(volatilityIndices) + ", lookbackWindow="
-				+ lookbackWindow + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("VolatilityDifference [volatilityIndices=");
+		builder.append(Arrays.toString(volatilityIndices));
+		builder.append(", lookbackWindow=");
+		builder.append(lookbackWindow);
+		builder.append("]");
+		return builder.toString();
 	}
 
 	/**

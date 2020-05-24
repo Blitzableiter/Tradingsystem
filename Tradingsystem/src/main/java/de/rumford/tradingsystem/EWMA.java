@@ -1,5 +1,7 @@
 package de.rumford.tradingsystem;
 
+import java.util.Arrays;
+
 import org.apache.commons.lang3.ArrayUtils;
 
 import de.rumford.tradingsystem.helper.GeneratedCode;
@@ -165,7 +167,17 @@ public class EWMA {
 	@GeneratedCode
 	@Override
 	public String toString() {
-		return "EWMA [horizon=" + horizon + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("EWMA [horizon=");
+		builder.append(horizon);
+		builder.append(", decay=");
+		builder.append(decay);
+		builder.append(", baseValues=");
+		builder.append(Arrays.toString(baseValues));
+		builder.append(", ewmaValues=");
+		builder.append(Arrays.toString(ewmaValues));
+		builder.append("]");
+		return builder.toString();
 	}
 
 	/**
