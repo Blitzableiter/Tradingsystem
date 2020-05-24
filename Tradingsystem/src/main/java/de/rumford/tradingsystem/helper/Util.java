@@ -8,6 +8,8 @@ import org.apache.commons.math3.linear.BlockRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
+import de.rumford.tradingsystem.Rule;
+
 /**
  * Utility class as used throughout the library containing solely of static
  * methods representing mainly mathematical calculations.
@@ -23,6 +25,28 @@ public final class Util {
 	 * private constructor
 	 */
 	private Util() {
+	}
+
+	/**
+	 * Check if the given rules are unique by utilizing {@link Rule#equals(Object)}
+	 * 
+	 * @param rules {@code Rule} An array of rules to be check for uniqueness.
+	 * @return {@code boolean} True, if the rules are unique. False otherwise.
+	 */
+	public static boolean areRulesUnique(Rule[] rules) {
+		if (rules == null)
+			throw new IllegalArgumentException("The given rules must not be null");
+		if (ArrayUtils.contains(rules, null))
+			throw new IllegalArgumentException("The given array must not contain nulls");
+		if (rules.length == 0)
+			throw new IllegalArgumentException("The given array of rules must not be empty.");
+
+		for (int i = 0; i < rules.length - 1; i++) {
+			if (rules[i].equals(rules[i + 1])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -192,20 +216,21 @@ public final class Util {
 	 * @param correlations {@code double[]} Three values representing the
 	 *                     correlations between the rows A, B and C. The expected
 	 *                     array is constructed as follows: { corr_AB, corr_AC,
-	 *                     corr_BC }. See {@link Validator#validateCorrelations(double[])}
-	 *                     for limitations.
+	 *                     corr_BC }. See
+	 *                     {@link Validator#validateCorrelations(double[])} for
+	 *                     limitations.
 	 * @return {@code double[]} The calculated weights { w_A, w_B, w_C }.
 	 */
 	public static double[] calculateWeightsForThreeCorrelations(double[] correlations) {
-	
+
 		Validator.validateCorrelations(correlations);
-	
+
 		for (int i = 0; i < correlations.length; i++) {
 			/* Floor negative correlations at 0 (See Carver: "Systematic Trading", p. 79) */
 			if (correlations[i] < 0)
 				correlations[i] = 0;
 		}
-	
+
 		double[] weights = {};
 		/*
 		 * Catch three equal correlations. Three correlations of 1 each would break
@@ -218,31 +243,31 @@ public final class Util {
 			weights = ArrayUtils.add(weights, correlationOfOneThird);
 			return weights;
 		}
-	
+
 		/* Get the average correlation each row of values has */
 		double averageCorrelationA = (correlations[0] + correlations[1]) / 2;
 		double averageCorrelationB = (correlations[0] + correlations[2]) / 2;
 		double averageCorrelationC = (correlations[1] + correlations[2]) / 2;
-	
+
 		double[] averageCorrelations = {};
 		averageCorrelations = ArrayUtils.add(averageCorrelations, averageCorrelationA);
 		averageCorrelations = ArrayUtils.add(averageCorrelations, averageCorrelationB);
 		averageCorrelations = ArrayUtils.add(averageCorrelations, averageCorrelationC);
-	
+
 		/* Subtract each average correlation from 1 to get an inverse-ish value */
 		for (int i = 0; i < averageCorrelations.length; i++)
 			averageCorrelations[i] = 1 - averageCorrelations[i];
-	
+
 		/* Calculate the sum of average calculations. */
 		double sumOfAverageCorrelations = DoubleStream.of(averageCorrelations).sum();
-	
+
 		/*
 		 * Normalize the average correlations so they sum up to 1. These normalized
 		 * values are the weights.
 		 */
 		for (int i = 0; i < averageCorrelations.length; i++)
 			weights = ArrayUtils.add(weights, averageCorrelations[i] / sumOfAverageCorrelations);
-	
+
 		return weights;
 	}
 

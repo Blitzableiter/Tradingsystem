@@ -1,9 +1,7 @@
 package de.rumford.tradingsystem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 
@@ -88,93 +86,6 @@ class SubSystemTest {
 		SubSystem subsys = new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE);
 		SubSystem subsys2 = new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE);
 		assertEquals(subsys, subsys2, "Equal Objects are not considered equal");
-	}
-
-	/**
-	 * Test method for {@link SubSystem#areRulesUnique(Rule[])}.
-	 */
-	@Test
-	void testAreRulesUnique_identicalRules() {
-		r1 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
-		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
-		Rule[] rules = { r1, r2 };
-
-		assertFalse(SubSystem.areRulesUnique(rules), "Identical rules are not identified.");
-	}
-
-	/**
-	 * Test method for {@link SubSystem#areRulesUnique(Rule[])}.
-	 */
-	@Test
-	void testAreRulesUnique_uniqueRules() {
-		Rule[] variations = { r3 };
-		r2 = RealRule.from(baseValue, variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
-				VARIATOR);
-		Rule[] rules = { r1, r2 };
-		assertTrue(SubSystem.areRulesUnique(rules), "Unique rules are not identified.");
-
-		r2 = RealRule.from(baseValue, null, localDateTimeJan09220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
-		Rule[] rules2 = { r1, r2 };
-		assertTrue(SubSystem.areRulesUnique(rules2), "Unique rules are not identified.");
-
-		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan11220000, BASE_SCALE, VARIATOR);
-		Rule[] rules3 = { r1, r2 };
-		assertTrue(SubSystem.areRulesUnique(rules3), "Unique rules are not identified.");
-
-		@SuppressWarnings("unused")
-		double diffBaseScale = (BASE_SCALE - 1 <= 0 ? BASE_SCALE + 1 : BASE_SCALE - 1);
-		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, diffBaseScale,
-				VARIATOR);
-		Rule[] rules4 = { r1, r2 };
-		assertTrue(SubSystem.areRulesUnique(rules4), "Unique rules are not identified.");
-
-		double diffVariator = VARIATOR - 1;
-		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
-				diffVariator);
-		Rule[] rules5 = { r1, r2 };
-		assertTrue(SubSystem.areRulesUnique(rules5), "Unique rules are not identified.");
-	}
-
-	/**
-	 * Test method for {@link SubSystem#areRulesUnique(Rule[])}.
-	 */
-	@Test
-	void testAreRulesUnique_rules_null() {
-		String expectedMessage = "The given rules must not be null";
-		Rule[] rules = null;
-
-		Exception thrown = assertThrows(IllegalArgumentException.class, () -> SubSystem.areRulesUnique(rules),
-				"Rules array of null is not properly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for {@link SubSystem#areRulesUnique(Rule[])}.
-	 */
-	@Test
-	void testAreRulesUnique_rulesContains_null() {
-		String expectedMessage = "The given array must not contain nulls";
-		Rule[] rules = { null };
-
-		Exception thrown = assertThrows(IllegalArgumentException.class, () -> SubSystem.areRulesUnique(rules),
-				"Rules array containing null is not properly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-	}
-
-	/**
-	 * Test method for {@link SubSystem#areRulesUnique(Rule[])}.
-	 */
-	@Test
-	void testAreRulesUnique_rules_empty() {
-		String expectedMessage = "The given array of rules must not be empty.";
-		Rule[] rules = {};
-
-		Exception thrown = assertThrows(IllegalArgumentException.class, () -> SubSystem.areRulesUnique(rules),
-				"Empty rules array is not properly handled");
-
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**

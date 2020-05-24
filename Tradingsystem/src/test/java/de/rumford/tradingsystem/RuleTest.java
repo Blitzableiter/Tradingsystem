@@ -22,9 +22,9 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
  * @author Max Rumford
  *
  */
-class RuleTest {
+public class RuleTest {
 
-	static class RealRule extends Rule {
+	public static class RealRule extends Rule {
 		private double variator;
 
 		public RealRule(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,

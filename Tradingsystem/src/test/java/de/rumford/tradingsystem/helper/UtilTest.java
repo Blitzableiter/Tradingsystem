@@ -1,11 +1,16 @@
 package de.rumford.tradingsystem.helper;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDateTime;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import de.rumford.tradingsystem.BaseValue;
+import de.rumford.tradingsystem.Rule;
+import de.rumford.tradingsystem.RuleTest.RealRule;
 
 /**
  * Test class for {@link Util}.
@@ -16,6 +21,37 @@ import org.junit.jupiter.api.Test;
 class UtilTest {
 
 	static final String MESSAGE_INCORRECT_EXCEPTION_MESSAGE = "Incorrect Exception message";
+
+	static final String BASE_VALUE_NAME = "Base value name";
+	static BaseValue baseValue;
+
+	static LocalDateTime localDateTimeJan09220000;
+	static LocalDateTime localDateTimeJan10220000;
+	static LocalDateTime localDateTimeJan11220000;
+	static LocalDateTime localDateTimeJan12220000;
+
+	static final double VARIATOR = 1;
+	static final double BASE_SCALE = 10;
+
+	static Rule r1;
+	static Rule r2;
+	static Rule r3;
+
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
+		baseValue = BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME);
+		localDateTimeJan09220000 = LocalDateTime.of(2020, 01, 9, 22, 0);
+		localDateTimeJan10220000 = LocalDateTime.of(2020, 01, 10, 22, 0);
+		localDateTimeJan11220000 = LocalDateTime.of(2020, 01, 11, 22, 0);
+		localDateTimeJan12220000 = LocalDateTime.of(2020, 01, 12, 22, 0);
+	}
+
+	@BeforeEach
+	void setUp() throws Exception {
+		r1 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
+		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 2);
+		r3 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 3);
+	}
 
 	/**
 	 * Test method for {@link Util#adjustForStandardDeviation(double, double)}.
@@ -42,6 +78,93 @@ class UtilTest {
 		double actualValue = Util.adjustForStandardDeviation(value, standardDeviation);
 
 		assertTrue(Double.isNaN(actualValue), "Stanard deviation of zero is not properly handled");
+	}
+
+	/**
+	 * Test method for {@link Util#areRulesUnique(Rule[])}.
+	 */
+	@Test
+	void testAreRulesUnique_identicalRules() {
+		r1 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
+		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
+		Rule[] rules = { r1, r2 };
+
+		assertFalse(Util.areRulesUnique(rules), "Identical rules are not identified.");
+	}
+
+	/**
+	 * Test method for {@link Util#areRulesUnique(Rule[])}.
+	 */
+	@Test
+	void testAreRulesUnique_uniqueRules() {
+		Rule[] variations = { r3 };
+		r2 = RealRule.from(baseValue, variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				VARIATOR);
+		Rule[] rules = { r1, r2 };
+		assertTrue(Util.areRulesUnique(rules), "Unique rules are not identified.");
+
+		r2 = RealRule.from(baseValue, null, localDateTimeJan09220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
+		Rule[] rules2 = { r1, r2 };
+		assertTrue(Util.areRulesUnique(rules2), "Unique rules are not identified.");
+
+		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan11220000, BASE_SCALE, VARIATOR);
+		Rule[] rules3 = { r1, r2 };
+		assertTrue(Util.areRulesUnique(rules3), "Unique rules are not identified.");
+
+		@SuppressWarnings("unused")
+		double diffBaseScale = (BASE_SCALE - 1 <= 0 ? BASE_SCALE + 1 : BASE_SCALE - 1);
+		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, diffBaseScale,
+				VARIATOR);
+		Rule[] rules4 = { r1, r2 };
+		assertTrue(Util.areRulesUnique(rules4), "Unique rules are not identified.");
+
+		double diffVariator = VARIATOR - 1;
+		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				diffVariator);
+		Rule[] rules5 = { r1, r2 };
+		assertTrue(Util.areRulesUnique(rules5), "Unique rules are not identified.");
+	}
+
+	/**
+	 * Test method for {@link Util#areRulesUnique(Rule[])}.
+	 */
+	@Test
+	void testAreRulesUnique_rules_null() {
+		String expectedMessage = "The given rules must not be null";
+		Rule[] rules = null;
+
+		Exception thrown = assertThrows(IllegalArgumentException.class, () -> Util.areRulesUnique(rules),
+				"Rules array of null is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Util#areRulesUnique(Rule[])}.
+	 */
+	@Test
+	void testAreRulesUnique_rulesContains_null() {
+		String expectedMessage = "The given array must not contain nulls";
+		Rule[] rules = { null };
+
+		Exception thrown = assertThrows(IllegalArgumentException.class, () -> Util.areRulesUnique(rules),
+				"Rules array containing null is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+	}
+
+	/**
+	 * Test method for {@link Util#areRulesUnique(Rule[])}.
+	 */
+	@Test
+	void testAreRulesUnique_rules_empty() {
+		String expectedMessage = "The given array of rules must not be empty.";
+		Rule[] rules = {};
+
+		Exception thrown = assertThrows(IllegalArgumentException.class, () -> Util.areRulesUnique(rules),
+				"Empty rules array is not properly handled");
+
+		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
