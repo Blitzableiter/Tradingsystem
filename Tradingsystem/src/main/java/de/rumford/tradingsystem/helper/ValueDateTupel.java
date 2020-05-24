@@ -662,7 +662,13 @@ public class ValueDateTupel {
 	@GeneratedCode
 	@Override
 	public String toString() {
-		return "ValueDateTupel [date=" + date + ", value=" + value + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("ValueDateTupel [value=");
+		builder.append(value);
+		builder.append(", date=");
+		builder.append(date);
+		builder.append("]");
+		return builder.toString();
 	}
 
 	/**

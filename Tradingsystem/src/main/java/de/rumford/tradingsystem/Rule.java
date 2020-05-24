@@ -583,11 +583,27 @@ public abstract class Rule {
 	@GeneratedCode
 	@Override
 	public String toString() {
-		return "Rule [forecastScalar=" + forecastScalar + ", weight=" + weight + ", variations="
-				+ Arrays.toString(variations) + ", startOfReferenceWindow=" + startOfReferenceWindow
-				+ ", endOfReferenceWindow=" + endOfReferenceWindow + ", baseValue=" + baseValue + ", baseScale="
-				+ baseScale + ", forecasts=" + Arrays.toString(forecasts) + ", sdAdjustedForecasts="
-				+ Arrays.toString(sdAdjustedForecasts) + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("Rule [baseValue=");
+		builder.append(baseValue);
+		builder.append(", variations=");
+		builder.append(Arrays.toString(variations));
+		builder.append(", startOfReferenceWindow=");
+		builder.append(startOfReferenceWindow);
+		builder.append(", endOfReferenceWindow=");
+		builder.append(endOfReferenceWindow);
+		builder.append(", baseScale=");
+		builder.append(baseScale);
+		builder.append(", sdAdjustedForecasts=");
+		builder.append(Arrays.toString(sdAdjustedForecasts));
+		builder.append(", forecastScalar=");
+		builder.append(forecastScalar);
+		builder.append(", forecasts=");
+		builder.append(Arrays.toString(forecasts));
+		builder.append(", weight=");
+		builder.append(weight);
+		builder.append("]");
+		return builder.toString();
 	}
 
 	/**

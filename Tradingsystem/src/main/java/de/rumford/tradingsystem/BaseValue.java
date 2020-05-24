@@ -317,8 +317,17 @@ public class BaseValue {
 	@GeneratedCode
 	@Override
 	public String toString() {
-		return "BaseValue [name=" + this.getName() + ", values=" + Arrays.toString(this.getValues())
-				+ ", shortIndexValues=" + Arrays.toString(this.getShortIndexValues()) + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("BaseValue [name=");
+		builder.append(name);
+		builder.append(", values=");
+		builder.append(Arrays.toString(values));
+		builder.append(", shortIndexValues=");
+		builder.append(Arrays.toString(shortIndexValues));
+		builder.append(", standardDeviationValues=");
+		builder.append(Arrays.toString(standardDeviationValues));
+		builder.append("]");
+		return builder.toString();
 	}
 
 	/**

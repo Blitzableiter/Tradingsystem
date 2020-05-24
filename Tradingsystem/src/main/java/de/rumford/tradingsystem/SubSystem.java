@@ -523,9 +523,21 @@ public class SubSystem {
 	@GeneratedCode
 	@Override
 	public String toString() {
-		return "SubSystem [baseValue=" + baseValue + ", diversificationMultiplier=" + diversificationMultiplier
-				+ ", capital=" + capital + ", combinedForecasts=" + Arrays.toString(combinedForecasts) + ", baseScale="
-				+ baseScale + ", rules=" + Arrays.toString(rules) + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("SubSystem [baseValue=");
+		builder.append(baseValue);
+		builder.append(", rules=");
+		builder.append(Arrays.toString(rules));
+		builder.append(", diversificationMultiplier=");
+		builder.append(diversificationMultiplier);
+		builder.append(", capital=");
+		builder.append(capital);
+		builder.append(", combinedForecasts=");
+		builder.append(Arrays.toString(combinedForecasts));
+		builder.append(", baseScale=");
+		builder.append(baseScale);
+		builder.append("]");
+		return builder.toString();
 	}
 
 	/**

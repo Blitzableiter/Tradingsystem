@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Arrays;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -101,20 +100,6 @@ class BaseValueTest {
 		baseValue2 = new BaseValue(NAME_OF_TEST_BASE_VALUES, values);
 
 		assertEquals(baseValue, baseValue2, "Two instances with the same contents are not equal");
-	}
-
-	/**
-	 * Test method for {@link BaseValue#BaseValue(String, ValueDateTupel[])}.
-	 */
-	@Test
-	void testBaseValue_ToString() {
-		baseValue = new BaseValue(NAME_OF_TEST_BASE_VALUES, values);
-		String expectedStringRepresentation = "BaseValue [name=" + NAME_OF_TEST_BASE_VALUES + ", values="
-				+ Arrays.toString(baseValue.getValues()) + ", shortIndexValues="
-				+ Arrays.toString(baseValue.getShortIndexValues()) + "]";
-
-		assertEquals(expectedStringRepresentation, baseValue.toString(),
-				"Incorrect String representation in toString()");
 	}
 
 	/**
