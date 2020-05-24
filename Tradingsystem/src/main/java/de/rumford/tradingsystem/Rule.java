@@ -21,7 +21,7 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
  * soon as the forecast determining calculation is done (done inside the
  * implementation of {@link #calculateRawForecast(LocalDateTime)}) all rules are
  * treated equally. This ensures compatibility and comparability between rules
- * an between trading systems.
+ * and between trading systems.
  * 
  * Abstract class to be extend on developing new rules for the trading system.
  * 
