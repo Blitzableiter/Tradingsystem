@@ -68,6 +68,9 @@ public class DiversificationMultiplier {
 		this.setValue(this.calculateDiversificiationMultiplierValue());
 	}
 
+	/**
+	 * Private class for extraction of weights and forecasts from the given rules.
+	 */
 	private class WeightsAndForecasts {
 		public double[] weights;
 		public double[][] forecasts;
