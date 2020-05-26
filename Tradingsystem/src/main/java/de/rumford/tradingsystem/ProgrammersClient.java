@@ -20,7 +20,8 @@ public class ProgrammersClient {
 	static final double CAPITAL = 10000;
 	static final String BASE_VALUE_NAME = "DAX";
 	static final String BASE_VALUE_FILE_NAME = Path.of(WORKING_DIR, "DAX - mod.csv").toString();
-	static final String SHORT_INDEX_VALUE_FILE_NAME = Path.of(WORKING_DIR, "DAX_short - mod.csv").toString();
+	static final String SHORT_INDEX_VALUE_FILE_NAME = Path.of(WORKING_DIR, "DAX_short - mod.csv")
+			.toString();
 
 	static final LocalDateTime START_OF_REFERENCE_WINDOW = LocalDateTime.of(2019, 1, 2, 22, 0);
 	static final LocalDateTime END_OF_REFERENCE_WINDOW = LocalDateTime.of(2019, 12, 30, 22, 0);
@@ -48,19 +49,20 @@ public class ProgrammersClient {
 	}
 
 	public static void main(String[] args) throws IOException {
-		ValueDateTupel[] shortIndexValues = DataSource.getDataFromCsv(SHORT_INDEX_VALUE_FILE_NAME, CsvFormat.EU);
-		baseValue = new BaseValue(BASE_VALUE_NAME, DataSource.getDataFromCsv(BASE_VALUE_FILE_NAME, CsvFormat.EU),
-				shortIndexValues);
+		ValueDateTupel[] shortIndexValues = DataSource.getDataFromCsv(SHORT_INDEX_VALUE_FILE_NAME,
+				CsvFormat.EU);
+		baseValue = new BaseValue(BASE_VALUE_NAME,
+				DataSource.getDataFromCsv(BASE_VALUE_FILE_NAME, CsvFormat.EU), shortIndexValues);
 		System.out.println("after base value");
 
-		volDif2 = new VolatilityDifference(baseValue, null, START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW,
-				LOOKBACK_WINDOW_2, BASE_SCALE);
+		volDif2 = new VolatilityDifference(baseValue, null, START_OF_REFERENCE_WINDOW,
+				END_OF_REFERENCE_WINDOW, LOOKBACK_WINDOW_2, BASE_SCALE);
 		System.out.println("after voldif2");
-		volDif4 = new VolatilityDifference(baseValue, null, START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW,
-				LOOKBACK_WINDOW_4, BASE_SCALE);
+		volDif4 = new VolatilityDifference(baseValue, null, START_OF_REFERENCE_WINDOW,
+				END_OF_REFERENCE_WINDOW, LOOKBACK_WINDOW_4, BASE_SCALE);
 		System.out.println("after voldif4");
-		volDif8 = new VolatilityDifference(baseValue, null, START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW,
-				LOOKBACK_WINDOW_8, BASE_SCALE);
+		volDif8 = new VolatilityDifference(baseValue, null, START_OF_REFERENCE_WINDOW,
+				END_OF_REFERENCE_WINDOW, LOOKBACK_WINDOW_8, BASE_SCALE);
 		System.out.println("after voldif8");
 		VolatilityDifference[] volDifVariations = { //
 				volDif2, //
@@ -70,20 +72,24 @@ public class ProgrammersClient {
 				END_OF_REFERENCE_WINDOW, 8, BASE_SCALE);
 		System.out.println("after voldiftop");
 
-		ewmacShort = new EWMAC(baseValue, null, START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW, 8, 2, BASE_SCALE);
+		ewmacShort = new EWMAC(baseValue, null, START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW,
+				8, 2, BASE_SCALE);
 		System.out.println("after ewmac short");
-		ewmacMiddle = new EWMAC(baseValue, null, START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW, 16, 4, BASE_SCALE);
+		ewmacMiddle = new EWMAC(baseValue, null, START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW,
+				16, 4, BASE_SCALE);
 		System.out.println("after ewmac middle");
-		ewmacLong = new EWMAC(baseValue, null, START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW, 32, 8, BASE_SCALE);
+		ewmacLong = new EWMAC(baseValue, null, START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW,
+				32, 8, BASE_SCALE);
 		System.out.println("after ewmac long");
 		EWMAC[] ewmacVariations = { //
 				ewmacShort, //
 				ewmacMiddle, //
 				ewmacLong };
-		ewmacTop = new EWMAC(baseValue, ewmacVariations, START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW, 0, 0,
-				BASE_SCALE);
+		ewmacTop = new EWMAC(baseValue, ewmacVariations, START_OF_REFERENCE_WINDOW,
+				END_OF_REFERENCE_WINDOW, 0, 0, BASE_SCALE);
 
-		System.out.println(ValueDateTupel.getElement(baseValue.getValues(), END_OF_REFERENCE_WINDOW));
+		System.out
+				.println(ValueDateTupel.getElement(baseValue.getValues(), END_OF_REFERENCE_WINDOW));
 
 		Rule[] rules = { volDifTop, ewmacTop };
 

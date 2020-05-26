@@ -109,8 +109,8 @@ public final class Util {
 			double[] noDuplicates = DoubleStream.of(valuesMatrix[i]).distinct().toArray();
 			if (noDuplicates.length == 1) {
 				throw new IllegalArgumentException(
-						"Correlations cannot be calculated caused by all identical values in row at position " + i
-								+ ".");
+						"Correlations cannot be calculated caused by all identical values in row at position "
+								+ i + ".");
 			}
 		}
 
@@ -125,9 +125,11 @@ public final class Util {
 
 		double[] correlations = {};
 		for (int rowIndex = 0; rowIndex < correlationMatrix.getRowDimension(); rowIndex++) {
-			for (int columnIndex = 0; columnIndex < correlationMatrix.getColumnDimension(); columnIndex++) {
+			for (int columnIndex = 0; columnIndex < correlationMatrix
+					.getColumnDimension(); columnIndex++) {
 				if (columnIndex < rowIndex)
-					correlations = ArrayUtils.add(correlations, correlationMatrix.getEntry(rowIndex, columnIndex));
+					correlations = ArrayUtils.add(correlations,
+							correlationMatrix.getEntry(rowIndex, columnIndex));
 			}
 		}
 		return correlations;

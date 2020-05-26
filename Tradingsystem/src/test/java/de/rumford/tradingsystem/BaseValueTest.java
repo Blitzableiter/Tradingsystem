@@ -52,11 +52,16 @@ class BaseValueTest {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		localDateTimeJan01_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
-		localDateTimeJan02_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
-		localDateTimeJan03_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
-		localDateTimeJan04_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
-		localDateTimeJan05_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 5), LocalTime.of(22, 0));
+		localDateTimeJan01_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 1),
+				LocalTime.of(22, 0));
+		localDateTimeJan02_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 2),
+				LocalTime.of(22, 0));
+		localDateTimeJan03_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 3),
+				LocalTime.of(22, 0));
+		localDateTimeJan04_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 4),
+				LocalTime.of(22, 0));
+		localDateTimeJan05_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 5),
+				LocalTime.of(22, 0));
 
 		valuedatetupel1 = new ValueDateTupel(localDateTimeJan01_22_00_00, 200d);
 		valuedatetupel2 = new ValueDateTupel(localDateTimeJan02_22_00_00, 400d);
@@ -110,8 +115,8 @@ class BaseValueTest {
 		String nullName = null;
 		String expectedMessage = "The given name must not be null";
 
-		Exception thrown = assertThrows(IllegalArgumentException.class, () -> new BaseValue(nullName, values),
-				"Empty name not properly rejected");
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new BaseValue(nullName, values), "Empty name not properly rejected");
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
@@ -124,7 +129,8 @@ class BaseValueTest {
 		String expectedMessage = "The given values array must not be null";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, nullValues), "Empty name not properly rejected");
+				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, nullValues),
+				"Empty name not properly rejected");
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
@@ -135,8 +141,8 @@ class BaseValueTest {
 	void testBaseValue_emptyName() {
 		String expectedMessage = "Name must not be an empty String";
 
-		Exception thrown = assertThrows(IllegalArgumentException.class, () -> new BaseValue(EMPTY_STRING, values),
-				"Empty name not properly rejected");
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new BaseValue(EMPTY_STRING, values), "Empty name not properly rejected");
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
@@ -148,7 +154,8 @@ class BaseValueTest {
 		String expectedMessage = "Values must not be an empty array";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, emptyValues), "Empty values not properly rejected");
+				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, emptyValues),
+				"Empty values not properly rejected");
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
@@ -205,7 +212,8 @@ class BaseValueTest {
 		String expectedMessage = "Name must not be an empty String";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new BaseValue(EMPTY_STRING, values, shortValues), "Empty name not properly rejected");
+				() -> new BaseValue(EMPTY_STRING, values, shortValues),
+				"Empty name not properly rejected");
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
@@ -236,7 +244,8 @@ class BaseValueTest {
 				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values, null),
 				"Empty short index values not properly rejected");
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-		assertEquals(expectedCauseMessage, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCauseMessage, thrown.getCause().getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -252,7 +261,8 @@ class BaseValueTest {
 				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values, emptyValues),
 				"Empty short index values not properly rejected");
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-		assertEquals(expectedCauseMessage, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCauseMessage, thrown.getCause().getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -269,7 +279,8 @@ class BaseValueTest {
 				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values, shortValues),
 				"Duplicate date/time values in short index values are not properly handled");
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-		assertEquals(expectedCauseMessage, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCauseMessage, thrown.getCause().getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -279,13 +290,15 @@ class BaseValueTest {
 	void testBaseValue_name_values_nanInShortIndexValues() {
 		String expectedMessage = "Given short index values do not meet the specifications.";
 		String expectedCauseMessage = "Given values must not contain NaN.";
-		shortValues = ArrayUtils.add(shortValues, new ValueDateTupel(localDateTimeJan05_22_00_00, Double.NaN));
+		shortValues = ArrayUtils.add(shortValues,
+				new ValueDateTupel(localDateTimeJan05_22_00_00, Double.NaN));
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values, shortValues),
 				"NaN values in short index values are not properly handled");
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-		assertEquals(expectedCauseMessage, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCauseMessage, thrown.getCause().getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -301,7 +314,8 @@ class BaseValueTest {
 				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values, shortValues),
 				"nulls in short index values are not properly handled");
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-		assertEquals(expectedCauseMessage, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCauseMessage, thrown.getCause().getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -314,7 +328,8 @@ class BaseValueTest {
 
 		ValueDateTupel[] actualValues = baseValue.getShortIndexValues();
 
-		assertArrayEquals(shortValues, actualValues, "The calculated short index values are not as expected");
+		assertArrayEquals(shortValues, actualValues,
+				"The calculated short index values are not as expected");
 	}
 
 	/**
@@ -333,6 +348,7 @@ class BaseValueTest {
 		baseValue = new BaseValue(NAME_OF_TEST_BASE_VALUES, values);
 		ValueDateTupel[] actualValues = baseValue.getShortIndexValues();
 
-		assertArrayEquals(shortValues, actualValues, "The calculated short index values are not as expected");
+		assertArrayEquals(shortValues, actualValues,
+				"The calculated short index values are not as expected");
 	}
 }

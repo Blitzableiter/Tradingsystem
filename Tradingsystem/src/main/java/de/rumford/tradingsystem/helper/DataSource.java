@@ -44,7 +44,8 @@ public class DataSource {
 	 * @throws IllegalArgumentException if any of the rows in the read CSV file does
 	 *                                  not contain exactly 3 columns.
 	 */
-	public static ValueDateTupel[] getDataFromCsv(String sourcePath, CsvFormat format) throws IOException {
+	public static ValueDateTupel[] getDataFromCsv(String sourcePath, CsvFormat format)
+			throws IOException {
 		File file;
 		try {
 			file = new File(sourcePath);
@@ -68,7 +69,8 @@ public class DataSource {
 				String[] columns = line.split(Pattern.quote(format.getFieldSeparator()));
 
 				if (columns.length != 3) {
-					throw new IllegalArgumentException("The passed CSV does not have an appropriate number of columns");
+					throw new IllegalArgumentException(
+							"The passed CSV does not have an appropriate number of columns");
 				}
 
 				/*
@@ -131,8 +133,8 @@ public class DataSource {
 			year = Integer.parseInt(date[datePositions[2]]);
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException(
-					"The date values of the read CSV file cannot be parsed into numbers. Failing value >" + columns[0]
-							+ "<");
+					"The date values of the read CSV file cannot be parsed into numbers. Failing value >"
+							+ columns[0] + "<");
 		}
 		/*
 		 * Catch Exception so BufferedReader can be closed (in calling method) on
@@ -153,8 +155,8 @@ public class DataSource {
 			second = Integer.parseInt(time[2]);
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException(
-					"The time values of the read CSV file cannot be parsed into numbers. Failing value >" + columns[1]
-							+ "<");
+					"The time values of the read CSV file cannot be parsed into numbers. Failing value >"
+							+ columns[1] + "<");
 		}
 
 		LocalDateTime localDateTime;
@@ -220,7 +222,8 @@ public class DataSource {
 		}
 		/* Replace non-US decimal points with US decimal points */
 		if (!format.getDecimalPoint().equals(CsvFormat.US.getDecimalPoint())) {
-			valueString = valueString.replace(format.getDecimalPoint(), CsvFormat.US.getDecimalPoint());
+			valueString = valueString.replace(format.getDecimalPoint(),
+					CsvFormat.US.getDecimalPoint());
 		}
 
 		double value;
@@ -228,7 +231,8 @@ public class DataSource {
 		try {
 			value = Double.parseDouble(valueString);
 		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("The course value >" + columns[0] + "< cannot be parsed");
+			throw new IllegalArgumentException(
+					"The course value >" + columns[0] + "< cannot be parsed");
 		} catch (Exception e) {
 			throw e;
 		}

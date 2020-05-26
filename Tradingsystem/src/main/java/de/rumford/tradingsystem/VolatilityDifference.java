@@ -58,8 +58,8 @@ public class VolatilityDifference extends Rule {
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 */
 	public VolatilityDifference(BaseValue baseValue, VolatilityDifference[] variations,
-			LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow, int lookbackWindow,
-			double baseScale) {
+			LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow,
+			int lookbackWindow, double baseScale) {
 		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
 
 		/* Check if lookback window fulfills requirements. */
@@ -67,7 +67,8 @@ public class VolatilityDifference extends Rule {
 		this.setLookbackWindow(lookbackWindow);
 
 		/* Calculate volatility index values based on the base value and set it */
-		ValueDateTupel[] calculatedVolatilityIndices = calculateVolatilityIndices(baseValue, lookbackWindow);
+		ValueDateTupel[] calculatedVolatilityIndices = calculateVolatilityIndices(baseValue,
+				lookbackWindow);
 		this.validateVolatilityIndices(calculatedVolatilityIndices);
 		this.setVolatilityIndices(calculatedVolatilityIndices);
 	}
@@ -99,8 +100,8 @@ public class VolatilityDifference extends Rule {
 	 *                               for limitations.
 	 */
 	public VolatilityDifference(BaseValue baseValue, VolatilityDifference[] variations,
-			LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow, int lookbackWindow,
-			double baseScale, ValueDateTupel[] volatilityIndices) {
+			LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow,
+			int lookbackWindow, double baseScale, ValueDateTupel[] volatilityIndices) {
 		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
 
 		/* Check if lookback window fulfills requirements. */
@@ -119,7 +120,8 @@ public class VolatilityDifference extends Rule {
 	 */
 	@Override
 	double calculateRawForecast(LocalDateTime forecastDateTime) {
-		double currentVolatilty = ValueDateTupel.getElement(this.getVolatilityIndices(), forecastDateTime).getValue();
+		double currentVolatilty = ValueDateTupel
+				.getElement(this.getVolatilityIndices(), forecastDateTime).getValue();
 		return calculateAverageVolatility(forecastDateTime) - currentVolatilty;
 	}
 
@@ -136,7 +138,8 @@ public class VolatilityDifference extends Rule {
 	 * @throws IllegalArgumentException if the number of base values is smaller than
 	 *                                  the given lookback window.
 	 */
-	private static ValueDateTupel[] calculateVolatilityIndices(BaseValue baseValue, int lookbackWindow) {
+	private static ValueDateTupel[] calculateVolatilityIndices(BaseValue baseValue,
+			int lookbackWindow) {
 		ValueDateTupel[] baseValues = baseValue.getValues();
 
 		ValueDateTupel[] volatilityIndices = null;
@@ -155,7 +158,8 @@ public class VolatilityDifference extends Rule {
 		 * Fill the spaces before reaching lookbackWindow with NaN
 		 */
 		for (int i = 0; i < lookbackWindow; i++) {
-			ValueDateTupel volatilityIndexNaN = new ValueDateTupel(baseValues[i].getDate(), Double.NaN);
+			ValueDateTupel volatilityIndexNaN = new ValueDateTupel(baseValues[i].getDate(),
+					Double.NaN);
 			volatilityIndices = ArrayUtils.add(volatilityIndices, volatilityIndexNaN);
 		}
 
@@ -186,8 +190,8 @@ public class VolatilityDifference extends Rule {
 			StandardDeviation sd = new StandardDeviation();
 			double volatilityIndexValue = sd.evaluate(tempDoubleValues);
 
-			ValueDateTupel volatilityIndexValueDateTupel = new ValueDateTupel(baseValues[i].getDate(),
-					volatilityIndexValue);
+			ValueDateTupel volatilityIndexValueDateTupel = new ValueDateTupel(
+					baseValues[i].getDate(), volatilityIndexValue);
 
 			/* Add calculated standard deviation to volatility indices */
 			volatilityIndices = ArrayUtils.add(volatilityIndices, volatilityIndexValueDateTupel);
@@ -206,11 +210,12 @@ public class VolatilityDifference extends Rule {
 	 */
 	private double calculateAverageVolatility(LocalDateTime dateToBeCalculatedFor) {
 		/* Starting point is the first DateTime that exceeds the lookback window. */
-		LocalDateTime startingDateTime = this.getVolatilityIndices()[this.getLookbackWindow()].getDate();
+		LocalDateTime startingDateTime = this.getVolatilityIndices()[this.getLookbackWindow()]
+				.getDate();
 
 		/* Get all relevant volatility index values */
-		ValueDateTupel[] relevantVolatilityIndices = ValueDateTupel.getElements(this.getVolatilityIndices(),
-				startingDateTime, dateToBeCalculatedFor);
+		ValueDateTupel[] relevantVolatilityIndices = ValueDateTupel
+				.getElements(this.getVolatilityIndices(), startingDateTime, dateToBeCalculatedFor);
 
 		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();
 		/* Extract all relevant values into statistics object */
@@ -272,18 +277,21 @@ public class VolatilityDifference extends Rule {
 					"Given volatility indices are not properly sorted or there are duplicate LocalDateTime values");
 
 		try {
-			Validator.validateTimeWindow(this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow(),
-					volatilityIndices);
+			Validator.validateTimeWindow(this.getStartOfReferenceWindow(),
+					this.getEndOfReferenceWindow(), volatilityIndices);
 		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("Giving volatility indices do not meet specificiation.", e);
+			throw new IllegalArgumentException(
+					"Giving volatility indices do not meet specificiation.", e);
 		}
 
 		/*
 		 * The given volatility indices value must not contain NaNs in the area
 		 * delimited by startOfReferenceWindow and endOfReferenceWindow.
 		 */
-		int startOfReferencePosition = ValueDateTupel.getPosition(volatilityIndices, this.getStartOfReferenceWindow());
-		int endOfReferencePosition = ValueDateTupel.getPosition(volatilityIndices, this.getEndOfReferenceWindow());
+		int startOfReferencePosition = ValueDateTupel.getPosition(volatilityIndices,
+				this.getStartOfReferenceWindow());
+		int endOfReferencePosition = ValueDateTupel.getPosition(volatilityIndices,
+				this.getEndOfReferenceWindow());
 
 		for (int i = startOfReferencePosition; i <= endOfReferencePosition; i++) {
 			if (Double.isNaN(volatilityIndices[i].getValue()))
@@ -307,8 +315,9 @@ public class VolatilityDifference extends Rule {
 		 * LocalDateTimes to the set. Therefore, the both are not properly aligned.
 		 */
 		if (baseValueSet.size() != volatilityIndicesSet.size())
-			throw new IllegalArgumentException("Base value and volatility index values are not properly aligned."
-					+ " Utilize ValueDateTupel.alignDates(ValueDateTupel[][]) before creating a new VolatilityDifference.");
+			throw new IllegalArgumentException(
+					"Base value and volatility index values are not properly aligned."
+							+ " Utilize ValueDateTupel.alignDates(ValueDateTupel[][]) before creating a new VolatilityDifference.");
 	}
 
 	/**

@@ -112,12 +112,14 @@ public class BaseValue {
 			Validator.validateValues(shortIndexValues);
 			Validator.validateDates(shortIndexValues);
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Given short index values do not meet the specifications.", e);
+			throw new IllegalArgumentException(
+					"Given short index values do not meet the specifications.", e);
 		}
 
 		ValueDateTupel[][] valuesAndShortIndexValues = { values, shortIndexValues };
 
-		ValueDateTupel[][] alignedValuesAndShortIndexValues = ValueDateTupel.alignDates(valuesAndShortIndexValues);
+		ValueDateTupel[][] alignedValuesAndShortIndexValues = ValueDateTupel
+				.alignDates(valuesAndShortIndexValues);
 		this.setValues(alignedValuesAndShortIndexValues[0]);
 		this.setShortIndexValues(alignedValuesAndShortIndexValues[1]);
 	}
@@ -155,8 +157,10 @@ public class BaseValue {
 		 * Declare the return value. There are always as many short index values as
 		 * there are base values.
 		 */
-		ValueDateTupel[] calculatedShortIndexValues = ValueDateTupel.createEmptyArray(values.length);
-		calculatedShortIndexValues[0] = new ValueDateTupel(values[0].getDate(), SHORT_INDEX_INITIAL_VALUE);
+		ValueDateTupel[] calculatedShortIndexValues = ValueDateTupel
+				.createEmptyArray(values.length);
+		calculatedShortIndexValues[0] = new ValueDateTupel(values[0].getDate(),
+				SHORT_INDEX_INITIAL_VALUE);
 
 		ValueDateTupel formerValue;
 		ValueDateTupel latterValue;
@@ -169,7 +173,8 @@ public class BaseValue {
 			formerValue = values[i - 1];
 			latterValue = values[i];
 
-			double returnPercentagePoints = Util.calculateReturn(formerValue.getValue(), latterValue.getValue());
+			double returnPercentagePoints = Util.calculateReturn(formerValue.getValue(),
+					latterValue.getValue());
 
 			/**
 			 * If the base value generates more than 50% in returns (and thus decreasing the
@@ -181,7 +186,8 @@ public class BaseValue {
 			double shortIndexValue = calculatedShortIndexValues[i - 1].getValue()
 					- calculatedShortIndexValues[i - 1].getValue() * returnPercentagePoints;
 
-			calculatedShortIndexValues[i] = new ValueDateTupel(latterValue.getDate(), shortIndexValue);
+			calculatedShortIndexValues[i] = new ValueDateTupel(latterValue.getDate(),
+					shortIndexValue);
 		}
 
 		return calculatedShortIndexValues;

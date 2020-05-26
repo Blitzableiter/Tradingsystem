@@ -53,7 +53,8 @@ class EWMATest {
 		String expectedMessage = "The horizon must not be < 2";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new EWMA(baseValue.getValues(), horizonOf1), "Horizon less than 2 is not properly handled.");
+				() -> new EWMA(baseValue.getValues(), horizonOf1),
+				"Horizon less than 2 is not properly handled.");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -68,11 +69,13 @@ class EWMATest {
 
 		ValueDateTupel[] emptyValuesArray = ValueDateTupel.createEmptyArray();
 
-		Exception thrown = assertThrows(IllegalArgumentException.class, () -> new EWMA(emptyValuesArray, 2),
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> new EWMA(emptyValuesArray, 2),
 				"Empty base values array is not properly handled.");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**

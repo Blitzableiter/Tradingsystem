@@ -51,7 +51,8 @@ public class EWMAC extends Rule {
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 */
 	public EWMAC(BaseValue baseValue, EWMAC[] variations, LocalDateTime startOfReferenceWindow,
-			LocalDateTime endOfReferenceWindow, int longHorizon, int shortHorizon, double baseScale) {
+			LocalDateTime endOfReferenceWindow, int longHorizon, int shortHorizon,
+			double baseScale) {
 		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
 
 		this.validateHorizonValues(longHorizon, shortHorizon);
@@ -73,7 +74,8 @@ public class EWMAC extends Rule {
 		double longHorizonEwmaValue = ValueDateTupel
 				.getElement(this.getLongHorizonEwma().getEwmaValues(), forecastDateTime).getValue();
 		double shortHorizonEwmaValue = ValueDateTupel
-				.getElement(this.getShortHorizonEwma().getEwmaValues(), forecastDateTime).getValue();
+				.getElement(this.getShortHorizonEwma().getEwmaValues(), forecastDateTime)
+				.getValue();
 
 		return shortHorizonEwmaValue - longHorizonEwmaValue;
 	}
@@ -91,7 +93,8 @@ public class EWMAC extends Rule {
 		/* The horizons are not used when this rule has variations. */
 		if (this.getVariations() == null) {
 			if (longHorizon <= shortHorizon)
-				throw new IllegalArgumentException("The long horizon must be greater than the short horizon");
+				throw new IllegalArgumentException(
+						"The long horizon must be greater than the short horizon");
 
 			if (shortHorizon < 2)
 				throw new IllegalArgumentException("The short horizon must not be < 2");

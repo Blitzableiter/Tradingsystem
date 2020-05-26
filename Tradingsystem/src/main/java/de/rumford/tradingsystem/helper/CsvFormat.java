@@ -22,8 +22,8 @@ public enum CsvFormat {
 	private final String thousandsSeparator;
 	private final DateOrder dateOrder;
 
-	CsvFormat(String fieldSeparator, String dateSeparator, String timeSeparator, String decimalPoint,
-			String thousandSeparator, DateOrder dateOrder) {
+	CsvFormat(String fieldSeparator, String dateSeparator, String timeSeparator,
+			String decimalPoint, String thousandSeparator, DateOrder dateOrder) {
 		this.fieldSeparator = fieldSeparator;
 		this.dateSeparator = dateSeparator;
 		this.timeSeparator = timeSeparator;

@@ -161,7 +161,8 @@ public class DiversificationMultiplier {
 
 			/* If a rule has variations get their weights and forecasts */
 			if (rule.hasVariations()) {
-				WeightsAndForecasts wafToAdd = getWeightsAndForecastsFromRules(rule.getVariations());
+				WeightsAndForecasts wafToAdd = getWeightsAndForecastsFromRules(
+						rule.getVariations());
 				for (double weight : wafToAdd.weights)
 					weights = ArrayUtils.add(weights, weight * rule.getWeight());
 
@@ -178,7 +179,8 @@ public class DiversificationMultiplier {
 					weight = 1d / rules.length;
 				weights = ArrayUtils.add(weights, weight);
 
-				relevantForecasts = ArrayUtils.add(relevantForecasts, rule.extractRelevantForecastValues());
+				relevantForecasts = ArrayUtils.add(relevantForecasts,
+						rule.extractRelevantForecastValues());
 			}
 		}
 		return new WeightsAndForecasts(weights, relevantForecasts);

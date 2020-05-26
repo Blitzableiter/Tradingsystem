@@ -24,7 +24,8 @@ class ValidatorTest {
 		double[] correlations = null;
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> Validator.validateCorrelations(correlations), "Array of null is not properly handled");
+				() -> Validator.validateCorrelations(correlations),
+				"Array of null is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -38,7 +39,8 @@ class ValidatorTest {
 		double[] correlations = { 0, 0 };
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> Validator.validateCorrelations(correlations), "Array of length != 3 is not properly handled");
+				() -> Validator.validateCorrelations(correlations),
+				"Array of length != 3 is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
