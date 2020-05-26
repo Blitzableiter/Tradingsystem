@@ -148,23 +148,7 @@ public class ValueDateTupel {
 			throw new IllegalArgumentException("Given array of arrays must not be null");
 
 		/* TreeSet (unique and sorted) of all dates in all valueDateTupel[] */
-		TreeSet<LocalDateTime> uniqueSortedDates = new TreeSet<>();
-
-		/* For each array in ValueDateTupels ... */
-		for (int rowIndex = 0; rowIndex < valueDateTupels.length; rowIndex++) {
-
-			try {
-				Validator.validateValues(valueDateTupels[rowIndex]);
-				Validator.validateDates(valueDateTupels[rowIndex]);
-			} catch (IllegalArgumentException e) {
-				throw new IllegalArgumentException(
-						"The array at position " + rowIndex + " does not meet specifications.", e);
-			}
-
-			/* ... add all values into uniqueSortedDates */
-			uniqueSortedDates
-					.addAll(Arrays.asList(ValueDateTupel.getDates(valueDateTupels[rowIndex])));
-		}
+		TreeSet<LocalDateTime> uniqueSortedDates = getUniqueDates(valueDateTupels);
 
 		/* Load unique sorted dates into an ArrayList to have access to an index. */
 		List<LocalDateTime> uniqueSortedDatesList = new ArrayList<>(uniqueSortedDates);
@@ -341,6 +325,34 @@ public class ValueDateTupel {
 			}
 		}
 		return valueDateTupels;
+	}
+
+	/**
+	 * Get unique dates from an array of arrays of {@link ValueDateTupel}.
+	 * 
+	 * @param valueDateTupels {@code ValueDateTupel[][]} The array of arrays of
+	 *                        {@link ValueDateTupel} the get all unique dates from.
+	 * @return {@code TreeSet<LocalDateTime>} A TreeSet of all unique dates.
+	 */
+	private static TreeSet<LocalDateTime> getUniqueDates(ValueDateTupel[][] valueDateTupels) {
+		TreeSet<LocalDateTime> uniqueSortedDates = new TreeSet<>();
+
+		/* For each array in ValueDateTupels ... */
+		for (int rowIndex = 0; rowIndex < valueDateTupels.length; rowIndex++) {
+
+			try {
+				Validator.validateValues(valueDateTupels[rowIndex]);
+				Validator.validateDates(valueDateTupels[rowIndex]);
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException(
+						"The array at position " + rowIndex + " does not meet specifications.", e);
+			}
+
+			/* ... add all values into uniqueSortedDates */
+			uniqueSortedDates
+					.addAll(Arrays.asList(ValueDateTupel.getDates(valueDateTupels[rowIndex])));
+		}
+		return uniqueSortedDates;
 	}
 
 	/**
