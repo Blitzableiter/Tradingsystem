@@ -54,18 +54,30 @@ class VolatilityDifferenceTest {
 	 */
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		localDateTime2019Dec31220000 = LocalDateTime.of(LocalDate.of(2019, 12, 31), LocalTime.of(22, 0));
-		localDateTime2020Jan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
-		localDateTime2020Jan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
-		localDateTime2020Jan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
-		localDateTime2020Jan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
-		localDateTime2020Jan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5), LocalTime.of(22, 0));
-		localDateTime2020Jan08220000 = LocalDateTime.of(LocalDate.of(2020, 1, 8), LocalTime.of(22, 0));
-		localDateTime2020Jan09220000 = LocalDateTime.of(LocalDate.of(2020, 1, 9), LocalTime.of(22, 0));
-		localDateTime2020Jan10220000 = LocalDateTime.of(LocalDate.of(2020, 1, 10), LocalTime.of(22, 0));
-		localDateTime2020Jan11220000 = LocalDateTime.of(LocalDate.of(2020, 1, 11), LocalTime.of(22, 0));
-		localDateTime2020Jan12220000 = LocalDateTime.of(LocalDate.of(2020, 1, 12), LocalTime.of(22, 0));
-		localDateTime2020Jan31220000 = LocalDateTime.of(LocalDate.of(2020, 1, 31), LocalTime.of(22, 0));
+		localDateTime2019Dec31220000 = LocalDateTime.of(LocalDate.of(2019, 12, 31),
+				LocalTime.of(22, 0));
+		localDateTime2020Jan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1),
+				LocalTime.of(22, 0));
+		localDateTime2020Jan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2),
+				LocalTime.of(22, 0));
+		localDateTime2020Jan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3),
+				LocalTime.of(22, 0));
+		localDateTime2020Jan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4),
+				LocalTime.of(22, 0));
+		localDateTime2020Jan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5),
+				LocalTime.of(22, 0));
+		localDateTime2020Jan08220000 = LocalDateTime.of(LocalDate.of(2020, 1, 8),
+				LocalTime.of(22, 0));
+		localDateTime2020Jan09220000 = LocalDateTime.of(LocalDate.of(2020, 1, 9),
+				LocalTime.of(22, 0));
+		localDateTime2020Jan10220000 = LocalDateTime.of(LocalDate.of(2020, 1, 10),
+				LocalTime.of(22, 0));
+		localDateTime2020Jan11220000 = LocalDateTime.of(LocalDate.of(2020, 1, 11),
+				LocalTime.of(22, 0));
+		localDateTime2020Jan12220000 = LocalDateTime.of(LocalDate.of(2020, 1, 12),
+				LocalTime.of(22, 0));
+		localDateTime2020Jan31220000 = LocalDateTime.of(LocalDate.of(2020, 1, 31),
+				LocalTime.of(22, 0));
 	}
 
 	/**
@@ -84,10 +96,12 @@ class VolatilityDifferenceTest {
 	 */
 	@Test
 	void testVolatilityDifference() {
-		volatilityDifference = new VolatilityDifference(baseValue, null, localDateTime2020Jan03220000,
-				localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE);
-		volatilityDifference2 = new VolatilityDifference(baseValue, null, localDateTime2020Jan03220000,
-				localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE);
+		volatilityDifference = new VolatilityDifference(baseValue, null,
+				localDateTime2020Jan03220000, localDateTime2020Jan04220000, lookbackWindow,
+				BASE_SCALE);
+		volatilityDifference2 = new VolatilityDifference(baseValue, null,
+				localDateTime2020Jan03220000, localDateTime2020Jan04220000, lookbackWindow,
+				BASE_SCALE);
 
 		assertEquals(volatilityDifference, volatilityDifference2,
 				"Two identical instances are not considered identical");
@@ -99,7 +113,8 @@ class VolatilityDifferenceTest {
 	 */
 	@Test
 	void testVolatilityDifference_volatilityIndicesGiven() {
-		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000,
+				Double.NaN);
 		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
 		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000, 5d);
 		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04220000, 10d);
@@ -109,10 +124,12 @@ class VolatilityDifferenceTest {
 		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex3);
 		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex4);
 
-		VolatilityDifference volDif = new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-				localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray);
-		VolatilityDifference volDif2 = new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-				localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray);
+		VolatilityDifference volDif = new VolatilityDifference(baseValue, null,
+				localDateTime2020Jan02220000, localDateTime2020Jan04220000, lookbackWindow,
+				BASE_SCALE, volatilityIndicesArray);
+		VolatilityDifference volDif2 = new VolatilityDifference(baseValue, null,
+				localDateTime2020Jan02220000, localDateTime2020Jan04220000, lookbackWindow,
+				BASE_SCALE, volatilityIndicesArray);
 
 		assertEquals(volDif, volDif2, "Two identical instances are not considered identical");
 	}
@@ -125,21 +142,27 @@ class VolatilityDifferenceTest {
 	void testCalculateVolatilityIndices() {
 		double expectedVolatilityValue2 = 0.5303300858899106; // Excel: 0.530330085889911
 		double expectedVolatilityValue3 = 0.6010407640085653; // Excel: 0.601040764008565
-		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
-		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, Double.NaN);
-		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000, expectedVolatilityValue2);
-		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04220000, expectedVolatilityValue3);
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000,
+				Double.NaN);
+		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000,
+				Double.NaN);
+		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000,
+				expectedVolatilityValue2);
+		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04220000,
+				expectedVolatilityValue3);
 		ValueDateTupel[] expectedValues = ValueDateTupel.createEmptyArray();
 		expectedValues = ArrayUtils.add(expectedValues, volatilityIndex1);
 		expectedValues = ArrayUtils.add(expectedValues, volatilityIndex2);
 		expectedValues = ArrayUtils.add(expectedValues, volatilityIndex3);
 		expectedValues = ArrayUtils.add(expectedValues, volatilityIndex4);
 
-		volatilityDifference = new VolatilityDifference(baseValue, null, localDateTime2020Jan03220000,
-				localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE);
+		volatilityDifference = new VolatilityDifference(baseValue, null,
+				localDateTime2020Jan03220000, localDateTime2020Jan04220000, lookbackWindow,
+				BASE_SCALE);
 		ValueDateTupel[] actualValues = volatilityDifference.getVolatilityIndices();
 
-		assertArrayEquals(expectedValues, actualValues, "Volatility index values are not properly calculated");
+		assertArrayEquals(expectedValues, actualValues,
+				"Volatility index values are not properly calculated");
 	}
 
 	/**
@@ -156,7 +179,8 @@ class VolatilityDifferenceTest {
 						localDateTime2020Jan04220000, lookbackWindowTooGreat, BASE_SCALE),
 				"Too great of a lookback window is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), "Too great of a lookback window is not correctly handled.");
+		assertEquals(expectedMessage, thrown.getMessage(),
+				"Too great of a lookback window is not correctly handled.");
 	}
 
 	/**
@@ -203,7 +227,8 @@ class VolatilityDifferenceTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, emptyVolatilityIndicesArray),
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE,
+						emptyVolatilityIndicesArray),
 				"Empty array of volatlilty indices is not correctly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
@@ -217,7 +242,8 @@ class VolatilityDifferenceTest {
 	void testValidateVolatilityIndices_unsortedVolatilityIndicesArray() {
 		String expectedMessage = "Given volatility indices are not properly sorted or there are duplicate LocalDateTime values";
 
-		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000,
+				Double.NaN);
 		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
 		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan04220000, 5d);
 		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan03220000, 10d);
@@ -229,7 +255,8 @@ class VolatilityDifferenceTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE,
+						volatilityIndicesArray),
 				"Improperly sorted volatility indices are not correctly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
@@ -243,7 +270,8 @@ class VolatilityDifferenceTest {
 	void testValidateVolatilityIndices_duplicatesInVolatilityIndicesArray() {
 		String expectedMessage = "Given volatility indices are not properly sorted or there are duplicate LocalDateTime values";
 
-		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000,
+				Double.NaN);
 		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
 		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan02220000, 5d);
 		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04220000, 10d);
@@ -255,7 +283,8 @@ class VolatilityDifferenceTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE,
+						volatilityIndicesArray),
 				"Duplicate volatility indices are not correctly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
@@ -270,7 +299,8 @@ class VolatilityDifferenceTest {
 		String expectedMessage = "Giving volatility indices do not meet specificiation.";
 		String expectedCause = "Given values do not include given start value for time window";
 
-		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan03220000, Double.NaN);
+		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan03220000,
+				Double.NaN);
 		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan04220000, 5d);
 		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan05220000, 10d);
 		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
@@ -280,11 +310,13 @@ class VolatilityDifferenceTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE,
+						volatilityIndicesArray),
 				"Invalid start of reference window value is not correctly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -296,7 +328,8 @@ class VolatilityDifferenceTest {
 		String expectedMessage = "Giving volatility indices do not meet specificiation.";
 		String expectedCause = "Given values do not include given end value for time window";
 
-		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000,
+				Double.NaN);
 		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
 		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000, 5d);
 		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
@@ -306,11 +339,13 @@ class VolatilityDifferenceTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE,
+						volatilityIndicesArray),
 				"Invalid end of reference window value is not correctly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -323,7 +358,8 @@ class VolatilityDifferenceTest {
 
 		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, 100d);
 		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
-		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000, Double.NaN);
+		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000,
+				Double.NaN);
 		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04220000, 10d);
 		volatilityIndicesArray = ValueDateTupel.createEmptyArray();
 		volatilityIndicesArray = ArrayUtils.add(volatilityIndicesArray, volatilityIndex1);
@@ -333,7 +369,8 @@ class VolatilityDifferenceTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE,
+						volatilityIndicesArray),
 				"NaNs in relevant area of volatility indices are not correctly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
@@ -348,7 +385,8 @@ class VolatilityDifferenceTest {
 		String expectedMessage = "Base value and volatility index values are not properly aligned."
 				+ " Utilize ValueDateTupel.alignDates(ValueDateTupel[][]) before creating a new VolatilityDifference.";
 
-		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000, Double.NaN);
+		ValueDateTupel volatilityIndex1 = new ValueDateTupel(localDateTime2020Jan01220000,
+				Double.NaN);
 		ValueDateTupel volatilityIndex2 = new ValueDateTupel(localDateTime2020Jan02220000, 100d);
 		ValueDateTupel volatilityIndex3 = new ValueDateTupel(localDateTime2020Jan03220000, 5d);
 		ValueDateTupel volatilityIndex4 = new ValueDateTupel(localDateTime2020Jan04220000, 10d);
@@ -362,7 +400,8 @@ class VolatilityDifferenceTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new VolatilityDifference(baseValue, null, localDateTime2020Jan02220000,
-						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE, volatilityIndicesArray),
+						localDateTime2020Jan04220000, lookbackWindow, BASE_SCALE,
+						volatilityIndicesArray),
 				"Not aligned base value and volatility indices are not correctly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
@@ -376,8 +415,9 @@ class VolatilityDifferenceTest {
 		baseValue = BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME);
 		double expectedValue = -0.5604475969404489; /* Excel: -0.560447596940449 */
 
-		VolatilityDifference volDif = new VolatilityDifference(baseValue, null, localDateTime2020Jan08220000,
-				localDateTime2020Jan10220000, lookbackWindow, BASE_SCALE);
+		VolatilityDifference volDif = new VolatilityDifference(baseValue, null,
+				localDateTime2020Jan08220000, localDateTime2020Jan10220000, lookbackWindow,
+				BASE_SCALE);
 		double actualValue = volDif.calculateRawForecast(localDateTime2020Jan11220000);
 
 		assertEquals(expectedValue, actualValue, "Raw Forecast is not correctly calculated");

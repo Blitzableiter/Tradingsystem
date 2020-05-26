@@ -48,9 +48,12 @@ class UtilTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		r1 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
-		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 2);
-		r3 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, 3);
+		r1 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000,
+				BASE_SCALE, VARIATOR);
+		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000,
+				BASE_SCALE, 2);
+		r3 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000,
+				BASE_SCALE, 3);
 	}
 
 	/**
@@ -64,7 +67,8 @@ class UtilTest {
 
 		double actualValue = Util.adjustForStandardDeviation(value, standardDeviation);
 
-		assertEquals(expectedValue, actualValue, "Standard deviation adjusted value is not correctly calculated");
+		assertEquals(expectedValue, actualValue,
+				"Standard deviation adjusted value is not correctly calculated");
 	}
 
 	/**
@@ -85,8 +89,10 @@ class UtilTest {
 	 */
 	@Test
 	void testAreRulesUnique_identicalRules() {
-		r1 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
-		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
+		r1 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000,
+				BASE_SCALE, VARIATOR);
+		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000,
+				BASE_SCALE, VARIATOR);
 		Rule[] rules = { r1, r2 };
 
 		assertFalse(Util.areRulesUnique(rules), "Identical rules are not identified.");
@@ -98,29 +104,31 @@ class UtilTest {
 	@Test
 	void testAreRulesUnique_uniqueRules() {
 		Rule[] variations = { r3 };
-		r2 = RealRule.from(baseValue, variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
-				VARIATOR);
+		r2 = RealRule.from(baseValue, variations, localDateTimeJan10220000,
+				localDateTimeJan12220000, BASE_SCALE, VARIATOR);
 		Rule[] rules = { r1, r2 };
 		assertTrue(Util.areRulesUnique(rules), "Unique rules are not identified.");
 
-		r2 = RealRule.from(baseValue, null, localDateTimeJan09220000, localDateTimeJan12220000, BASE_SCALE, VARIATOR);
+		r2 = RealRule.from(baseValue, null, localDateTimeJan09220000, localDateTimeJan12220000,
+				BASE_SCALE, VARIATOR);
 		Rule[] rules2 = { r1, r2 };
 		assertTrue(Util.areRulesUnique(rules2), "Unique rules are not identified.");
 
-		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan11220000, BASE_SCALE, VARIATOR);
+		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan11220000,
+				BASE_SCALE, VARIATOR);
 		Rule[] rules3 = { r1, r2 };
 		assertTrue(Util.areRulesUnique(rules3), "Unique rules are not identified.");
 
 		@SuppressWarnings("unused")
 		double diffBaseScale = (BASE_SCALE - 1 <= 0 ? BASE_SCALE + 1 : BASE_SCALE - 1);
-		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, diffBaseScale,
-				VARIATOR);
+		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000,
+				diffBaseScale, VARIATOR);
 		Rule[] rules4 = { r1, r2 };
 		assertTrue(Util.areRulesUnique(rules4), "Unique rules are not identified.");
 
 		double diffVariator = VARIATOR - 1;
-		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
-				diffVariator);
+		r2 = RealRule.from(baseValue, null, localDateTimeJan10220000, localDateTimeJan12220000,
+				BASE_SCALE, diffVariator);
 		Rule[] rules5 = { r1, r2 };
 		assertTrue(Util.areRulesUnique(rules5), "Unique rules are not identified.");
 	}
@@ -133,8 +141,8 @@ class UtilTest {
 		String expectedMessage = "The given rules must not be null";
 		Rule[] rules = null;
 
-		Exception thrown = assertThrows(IllegalArgumentException.class, () -> Util.areRulesUnique(rules),
-				"Rules array of null is not properly handled");
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> Util.areRulesUnique(rules), "Rules array of null is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -147,7 +155,8 @@ class UtilTest {
 		String expectedMessage = "The given array must not contain nulls";
 		Rule[] rules = { null };
 
-		Exception thrown = assertThrows(IllegalArgumentException.class, () -> Util.areRulesUnique(rules),
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> Util.areRulesUnique(rules),
 				"Rules array containing null is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
@@ -161,8 +170,8 @@ class UtilTest {
 		String expectedMessage = "The given array of rules must not be empty.";
 		Rule[] rules = {};
 
-		Exception thrown = assertThrows(IllegalArgumentException.class, () -> Util.areRulesUnique(rules),
-				"Empty rules array is not properly handled");
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> Util.areRulesUnique(rules), "Empty rules array is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -216,8 +225,8 @@ class UtilTest {
 		double[] values = null;
 		String expectedMessage = "Given array must not be null";
 
-		Exception thrown = assertThrows(IllegalArgumentException.class, () -> Util.calculateAverage(values),
-				"Array of null is not properly handled");
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> Util.calculateAverage(values), "Array of null is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -261,7 +270,8 @@ class UtilTest {
 		String expectedMessage = "Given array of values must not be empty";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> Util.calculateForecastScalar(values, baseScale), "Empty values array is not properly handled");
+				() -> Util.calculateForecastScalar(values, baseScale),
+				"Empty values array is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -277,10 +287,12 @@ class UtilTest {
 		double baseScale = 0;
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> Util.calculateForecastScalar(values, baseScale), "Base scale of 0 is not properly handled");
+				() -> Util.calculateForecastScalar(values, baseScale),
+				"Base scale of 0 is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -339,7 +351,8 @@ class UtilTest {
 
 		double[] actualValue = Util.calculateCorrelationOfRows(values);
 
-		assertArrayEquals(expectedValue, actualValue, "Correlations between three rows are not correctly calculated");
+		assertArrayEquals(expectedValue, actualValue,
+				"Correlations between three rows are not correctly calculated");
 	}
 
 	/**
@@ -367,7 +380,8 @@ class UtilTest {
 		double[][] values = { row1, row2, row3 };
 		String expectedmessage = "Correlations cannot be calculated caused by all identical values in row at position 0.";
 
-		Exception thrown = assertThrows(IllegalArgumentException.class, () -> Util.calculateCorrelationOfRows(values),
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> Util.calculateCorrelationOfRows(values),
 				"Arrays containing all equal values are not properly handled.");
 
 		assertEquals(expectedmessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
@@ -384,7 +398,8 @@ class UtilTest {
 
 		double[] actualValue = Util.calculateWeightsForThreeCorrelations(correlations);
 
-		assertArrayEquals(expectedValue, actualValue, "Weights for 3 correlations are not correctly calculated");
+		assertArrayEquals(expectedValue, actualValue,
+				"Weights for 3 correlations are not correctly calculated");
 	}
 
 	/**
@@ -398,7 +413,8 @@ class UtilTest {
 		double[] actualValue1 = Util.calculateWeightsForThreeCorrelations(correlations1);
 		double[] actualValue2 = Util.calculateWeightsForThreeCorrelations(correlations2);
 
-		assertArrayEquals(actualValue1, actualValue2, "Weights for negative correlations are not correctly calculated");
+		assertArrayEquals(actualValue1, actualValue2,
+				"Weights for negative correlations are not correctly calculated");
 	}
 
 	/**
@@ -411,7 +427,8 @@ class UtilTest {
 
 		double[] actualValue = Util.calculateWeightsForThreeCorrelations(correlations);
 
-		assertArrayEquals(expectedValue, actualValue, "Weights for 3 equal correlations are not correctly calculated");
+		assertArrayEquals(expectedValue, actualValue,
+				"Weights for 3 equal correlations are not correctly calculated");
 	}
 
 }

@@ -21,10 +21,14 @@ public class BaseValueFactory {
 	}
 
 	public static final BaseValue jan1Jan4calcShort(String name) {
-		LocalDateTime localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4),
+				LocalTime.of(22, 0));
 
 		ValueDateTupel valuedatetupel1 = new ValueDateTupel(localDateTimeJan01220000, 200d);
 		ValueDateTupel valuedatetupel2 = new ValueDateTupel(localDateTimeJan02220000, 400d);
@@ -41,11 +45,16 @@ public class BaseValueFactory {
 	}
 
 	public static final BaseValue jan1Jan5calcShort(String name) {
-		LocalDateTime localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5),
+				LocalTime.of(22, 0));
 
 		ValueDateTupel valuedatetupel1 = new ValueDateTupel(localDateTimeJan01220000, 100d);
 		ValueDateTupel valuedatetupel2 = new ValueDateTupel(localDateTimeJan02220000, 200d);
@@ -64,11 +73,16 @@ public class BaseValueFactory {
 	}
 
 	public static final BaseValue jan1Jan5calcShort_sameValuesOn2To5(String name) {
-		LocalDateTime localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5),
+				LocalTime.of(22, 0));
 
 		ValueDateTupel valuedatetupel1 = new ValueDateTupel(localDateTimeJan01220000, 101d);
 		ValueDateTupel valuedatetupel2 = new ValueDateTupel(localDateTimeJan02220000, 100d);
@@ -87,37 +101,68 @@ public class BaseValueFactory {
 	}
 
 	public static final BaseValue jan1Jan31calcShort(String name) {
-		LocalDateTime localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan06220000 = LocalDateTime.of(LocalDate.of(2020, 1, 6), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan07220000 = LocalDateTime.of(LocalDate.of(2020, 1, 7), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan08220000 = LocalDateTime.of(LocalDate.of(2020, 1, 8), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan09220000 = LocalDateTime.of(LocalDate.of(2020, 1, 9), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan10220000 = LocalDateTime.of(LocalDate.of(2020, 1, 10), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan11220000 = LocalDateTime.of(LocalDate.of(2020, 1, 11), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan12220000 = LocalDateTime.of(LocalDate.of(2020, 1, 12), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan13220000 = LocalDateTime.of(LocalDate.of(2020, 1, 13), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan14220000 = LocalDateTime.of(LocalDate.of(2020, 1, 14), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan15220000 = LocalDateTime.of(LocalDate.of(2020, 1, 15), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan16220000 = LocalDateTime.of(LocalDate.of(2020, 1, 16), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan17220000 = LocalDateTime.of(LocalDate.of(2020, 1, 17), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan18220000 = LocalDateTime.of(LocalDate.of(2020, 1, 18), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan19220000 = LocalDateTime.of(LocalDate.of(2020, 1, 19), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan20220000 = LocalDateTime.of(LocalDate.of(2020, 1, 20), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan21220000 = LocalDateTime.of(LocalDate.of(2020, 1, 21), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan22220000 = LocalDateTime.of(LocalDate.of(2020, 1, 22), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan23220000 = LocalDateTime.of(LocalDate.of(2020, 1, 23), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan24220000 = LocalDateTime.of(LocalDate.of(2020, 1, 24), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan25220000 = LocalDateTime.of(LocalDate.of(2020, 1, 25), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan26220000 = LocalDateTime.of(LocalDate.of(2020, 1, 26), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan27220000 = LocalDateTime.of(LocalDate.of(2020, 1, 27), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan28220000 = LocalDateTime.of(LocalDate.of(2020, 1, 28), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan29220000 = LocalDateTime.of(LocalDate.of(2020, 1, 29), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan30220000 = LocalDateTime.of(LocalDate.of(2020, 1, 30), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan31220000 = LocalDateTime.of(LocalDate.of(2020, 1, 31), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan06220000 = LocalDateTime.of(LocalDate.of(2020, 1, 6),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan07220000 = LocalDateTime.of(LocalDate.of(2020, 1, 7),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan08220000 = LocalDateTime.of(LocalDate.of(2020, 1, 8),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan09220000 = LocalDateTime.of(LocalDate.of(2020, 1, 9),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan10220000 = LocalDateTime.of(LocalDate.of(2020, 1, 10),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan11220000 = LocalDateTime.of(LocalDate.of(2020, 1, 11),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan12220000 = LocalDateTime.of(LocalDate.of(2020, 1, 12),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan13220000 = LocalDateTime.of(LocalDate.of(2020, 1, 13),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan14220000 = LocalDateTime.of(LocalDate.of(2020, 1, 14),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan15220000 = LocalDateTime.of(LocalDate.of(2020, 1, 15),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan16220000 = LocalDateTime.of(LocalDate.of(2020, 1, 16),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan17220000 = LocalDateTime.of(LocalDate.of(2020, 1, 17),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan18220000 = LocalDateTime.of(LocalDate.of(2020, 1, 18),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan19220000 = LocalDateTime.of(LocalDate.of(2020, 1, 19),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan20220000 = LocalDateTime.of(LocalDate.of(2020, 1, 20),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan21220000 = LocalDateTime.of(LocalDate.of(2020, 1, 21),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan22220000 = LocalDateTime.of(LocalDate.of(2020, 1, 22),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan23220000 = LocalDateTime.of(LocalDate.of(2020, 1, 23),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan24220000 = LocalDateTime.of(LocalDate.of(2020, 1, 24),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan25220000 = LocalDateTime.of(LocalDate.of(2020, 1, 25),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan26220000 = LocalDateTime.of(LocalDate.of(2020, 1, 26),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan27220000 = LocalDateTime.of(LocalDate.of(2020, 1, 27),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan28220000 = LocalDateTime.of(LocalDate.of(2020, 1, 28),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan29220000 = LocalDateTime.of(LocalDate.of(2020, 1, 29),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan30220000 = LocalDateTime.of(LocalDate.of(2020, 1, 30),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan31220000 = LocalDateTime.of(LocalDate.of(2020, 1, 31),
+				LocalTime.of(22, 0));
 
 		ValueDateTupel valuedatetupel1 = new ValueDateTupel(localDateTimeJan01220000, 200d);
 		ValueDateTupel valuedatetupel2 = new ValueDateTupel(localDateTimeJan02220000, 400d);
@@ -188,42 +233,78 @@ public class BaseValueFactory {
 	}
 
 	public static final BaseValue jan1Feb05calcShort(String name) {
-		LocalDateTime localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan06220000 = LocalDateTime.of(LocalDate.of(2020, 1, 6), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan07220000 = LocalDateTime.of(LocalDate.of(2020, 1, 7), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan08220000 = LocalDateTime.of(LocalDate.of(2020, 1, 8), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan09220000 = LocalDateTime.of(LocalDate.of(2020, 1, 9), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan10220000 = LocalDateTime.of(LocalDate.of(2020, 1, 10), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan11220000 = LocalDateTime.of(LocalDate.of(2020, 1, 11), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan12220000 = LocalDateTime.of(LocalDate.of(2020, 1, 12), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan13220000 = LocalDateTime.of(LocalDate.of(2020, 1, 13), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan14220000 = LocalDateTime.of(LocalDate.of(2020, 1, 14), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan15220000 = LocalDateTime.of(LocalDate.of(2020, 1, 15), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan16220000 = LocalDateTime.of(LocalDate.of(2020, 1, 16), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan17220000 = LocalDateTime.of(LocalDate.of(2020, 1, 17), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan18220000 = LocalDateTime.of(LocalDate.of(2020, 1, 18), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan19220000 = LocalDateTime.of(LocalDate.of(2020, 1, 19), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan20220000 = LocalDateTime.of(LocalDate.of(2020, 1, 20), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan21220000 = LocalDateTime.of(LocalDate.of(2020, 1, 21), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan22220000 = LocalDateTime.of(LocalDate.of(2020, 1, 22), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan23220000 = LocalDateTime.of(LocalDate.of(2020, 1, 23), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan24220000 = LocalDateTime.of(LocalDate.of(2020, 1, 24), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan25220000 = LocalDateTime.of(LocalDate.of(2020, 1, 25), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan26220000 = LocalDateTime.of(LocalDate.of(2020, 1, 26), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan27220000 = LocalDateTime.of(LocalDate.of(2020, 1, 27), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan28220000 = LocalDateTime.of(LocalDate.of(2020, 1, 28), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan29220000 = LocalDateTime.of(LocalDate.of(2020, 1, 29), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan30220000 = LocalDateTime.of(LocalDate.of(2020, 1, 30), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeJan31220000 = LocalDateTime.of(LocalDate.of(2020, 1, 31), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeFeb01220000 = LocalDateTime.of(LocalDate.of(2020, 2, 1), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeFeb02220000 = LocalDateTime.of(LocalDate.of(2020, 2, 2), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeFeb03220000 = LocalDateTime.of(LocalDate.of(2020, 2, 3), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeFeb04220000 = LocalDateTime.of(LocalDate.of(2020, 2, 4), LocalTime.of(22, 0));
-		LocalDateTime localDateTimeFeb05220000 = LocalDateTime.of(LocalDate.of(2020, 2, 5), LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan06220000 = LocalDateTime.of(LocalDate.of(2020, 1, 6),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan07220000 = LocalDateTime.of(LocalDate.of(2020, 1, 7),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan08220000 = LocalDateTime.of(LocalDate.of(2020, 1, 8),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan09220000 = LocalDateTime.of(LocalDate.of(2020, 1, 9),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan10220000 = LocalDateTime.of(LocalDate.of(2020, 1, 10),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan11220000 = LocalDateTime.of(LocalDate.of(2020, 1, 11),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan12220000 = LocalDateTime.of(LocalDate.of(2020, 1, 12),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan13220000 = LocalDateTime.of(LocalDate.of(2020, 1, 13),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan14220000 = LocalDateTime.of(LocalDate.of(2020, 1, 14),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan15220000 = LocalDateTime.of(LocalDate.of(2020, 1, 15),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan16220000 = LocalDateTime.of(LocalDate.of(2020, 1, 16),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan17220000 = LocalDateTime.of(LocalDate.of(2020, 1, 17),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan18220000 = LocalDateTime.of(LocalDate.of(2020, 1, 18),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan19220000 = LocalDateTime.of(LocalDate.of(2020, 1, 19),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan20220000 = LocalDateTime.of(LocalDate.of(2020, 1, 20),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan21220000 = LocalDateTime.of(LocalDate.of(2020, 1, 21),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan22220000 = LocalDateTime.of(LocalDate.of(2020, 1, 22),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan23220000 = LocalDateTime.of(LocalDate.of(2020, 1, 23),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan24220000 = LocalDateTime.of(LocalDate.of(2020, 1, 24),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan25220000 = LocalDateTime.of(LocalDate.of(2020, 1, 25),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan26220000 = LocalDateTime.of(LocalDate.of(2020, 1, 26),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan27220000 = LocalDateTime.of(LocalDate.of(2020, 1, 27),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan28220000 = LocalDateTime.of(LocalDate.of(2020, 1, 28),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan29220000 = LocalDateTime.of(LocalDate.of(2020, 1, 29),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan30220000 = LocalDateTime.of(LocalDate.of(2020, 1, 30),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeJan31220000 = LocalDateTime.of(LocalDate.of(2020, 1, 31),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeFeb01220000 = LocalDateTime.of(LocalDate.of(2020, 2, 1),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeFeb02220000 = LocalDateTime.of(LocalDate.of(2020, 2, 2),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeFeb03220000 = LocalDateTime.of(LocalDate.of(2020, 2, 3),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeFeb04220000 = LocalDateTime.of(LocalDate.of(2020, 2, 4),
+				LocalTime.of(22, 0));
+		LocalDateTime localDateTimeFeb05220000 = LocalDateTime.of(LocalDate.of(2020, 2, 5),
+				LocalTime.of(22, 0));
 
 		ValueDateTupel valuedatetupel1 = new ValueDateTupel(localDateTimeJan01220000, 200d);
 		ValueDateTupel valuedatetupel2 = new ValueDateTupel(localDateTimeJan02220000, 400d);

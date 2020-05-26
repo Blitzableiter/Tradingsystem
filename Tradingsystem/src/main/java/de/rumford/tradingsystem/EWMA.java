@@ -91,7 +91,8 @@ public class EWMA {
 				previousEwma = newValue;
 			}
 			/* Add the new value to the array of EWMA values */
-			ewmaValues = ArrayUtils.add(ewmaValues, new ValueDateTupel(baseValue.getDate(), newValue));
+			ewmaValues = ArrayUtils.add(ewmaValues,
+					new ValueDateTupel(baseValue.getDate(), newValue));
 		}
 		return ewmaValues;
 	}
@@ -110,7 +111,8 @@ public class EWMA {
 			Validator.validateValues(baseValues);
 			Validator.validateDates(baseValues);
 		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("The given values do not meet the specifications.", e);
+			throw new IllegalArgumentException("The given values do not meet the specifications.",
+					e);
 		}
 	}
 

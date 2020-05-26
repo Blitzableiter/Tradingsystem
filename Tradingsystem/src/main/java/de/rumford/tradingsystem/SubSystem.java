@@ -103,11 +103,12 @@ public class SubSystem {
 	 * @return {@code double} The performance value on the last day of the given
 	 *         test window.
 	 */
-	public static double backtest(BaseValue baseValue, LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow,
-			ValueDateTupel[] combinedForecasts, double baseScale, double capital) {
+	public static double backtest(BaseValue baseValue, LocalDateTime startOfTestWindow,
+			LocalDateTime endOfTestWindow, ValueDateTupel[] combinedForecasts, double baseScale,
+			double capital) {
 
-		ValueDateTupel[] performanceValues = calculatePerformanceValues(baseValue, startOfTestWindow, endOfTestWindow,
-				combinedForecasts, baseScale, capital);
+		ValueDateTupel[] performanceValues = calculatePerformanceValues(baseValue,
+				startOfTestWindow, endOfTestWindow, combinedForecasts, baseScale, capital);
 
 		return performanceValues[performanceValues.length - 1].getValue();
 	}
@@ -125,8 +126,8 @@ public class SubSystem {
 	 *         {@link #backtest(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], double, double)}.
 	 */
 	public double backtest(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow) {
-		return SubSystem.backtest(this.getBaseValue(), startOfTestWindow, endOfTestWindow, this.getCombinedForecasts(),
-				this.getBaseScale(), this.getCapital());
+		return SubSystem.backtest(this.getBaseValue(), startOfTestWindow, endOfTestWindow,
+				this.getCombinedForecasts(), this.getBaseScale(), this.getCapital());
 	}
 
 	/**
@@ -149,8 +150,9 @@ public class SubSystem {
 	 *         containing the value of all held assets + cash for each time interval
 	 *         between the given startOfTestWindow and endOfTestWindow.
 	 */
-	public static ValueDateTupel[] calculatePerformanceValues(BaseValue baseValue, LocalDateTime startOfTestWindow,
-			LocalDateTime endOfTestWindow, ValueDateTupel[] combinedForecasts, double baseScale, double capital) {
+	public static ValueDateTupel[] calculatePerformanceValues(BaseValue baseValue,
+			LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow,
+			ValueDateTupel[] combinedForecasts, double baseScale, double capital) {
 
 		try {
 			Validator.validateTimeWindow(startOfTestWindow, endOfTestWindow, baseValue.getValues());
@@ -160,7 +162,8 @@ public class SubSystem {
 			 * base values in combination with the given test window.
 			 */
 			if (e.getMessage().contains("values"))
-				throw new IllegalArgumentException("Given base value and test window do not fit.", e);
+				throw new IllegalArgumentException("Given base value and test window do not fit.",
+						e);
 
 			throw new IllegalArgumentException(MESSAGE_ILLEGAL_TEST_WINDOW, e);
 		}
@@ -177,29 +180,32 @@ public class SubSystem {
 		}
 
 		/* Fetch all base values inside the test window */
-		ValueDateTupel[] relevantBaseValues = ValueDateTupel.getElements(baseValue.getValues(), startOfTestWindow,
-				endOfTestWindow);
+		ValueDateTupel[] relevantBaseValues = ValueDateTupel.getElements(baseValue.getValues(),
+				startOfTestWindow, endOfTestWindow);
 
 		/* Get the product price factor to calculate long and short product prices */
-		double productPriceFactor = calculateProductPriceFactor(ValueDateTupel.getValues(relevantBaseValues));
+		double productPriceFactor = calculateProductPriceFactor(
+				ValueDateTupel.getValues(relevantBaseValues));
 
 		/*
 		 * Calculate the product prices based on the base value for each interval inside
 		 * the testing timespan and the calculated productPriceFactor
 		 */
-		ValueDateTupel[] productPrices = calculateProductPrices(relevantBaseValues, productPriceFactor);
+		ValueDateTupel[] productPrices = calculateProductPrices(relevantBaseValues,
+				productPriceFactor);
 
 		/*
 		 * Calculate the short product prices based on the base value for each interval
 		 * inside the testing timespan and the calculated productPriceFactor
 		 */
-		ValueDateTupel[] relevantShortIndexValues = ValueDateTupel.getElements(baseValue.getShortIndexValues(),
-				startOfTestWindow, endOfTestWindow);
-		ValueDateTupel[] shortProductPrices = calculateProductPrices(relevantShortIndexValues, productPriceFactor);
+		ValueDateTupel[] relevantShortIndexValues = ValueDateTupel
+				.getElements(baseValue.getShortIndexValues(), startOfTestWindow, endOfTestWindow);
+		ValueDateTupel[] shortProductPrices = calculateProductPrices(relevantShortIndexValues,
+				productPriceFactor);
 
 		/* Fetch all forecasts relevant for this backtest. */
-		ValueDateTupel[] relevantCombinedForecasts = ValueDateTupel.getElements(combinedForecasts, startOfTestWindow,
-				endOfTestWindow);
+		ValueDateTupel[] relevantCombinedForecasts = ValueDateTupel.getElements(combinedForecasts,
+				startOfTestWindow, endOfTestWindow);
 
 		ValueDateTupel[] performanceValues = {};
 
@@ -222,7 +228,8 @@ public class SubSystem {
 			 * Add this capital as performance value, as the overall value of cash + assets
 			 * held will not change during buying.
 			 */
-			ValueDateTupel performanceValue = new ValueDateTupel(relevantCombinedForecasts[i].getDate(), capital);
+			ValueDateTupel performanceValue = new ValueDateTupel(
+					relevantCombinedForecasts[i].getDate(), capital);
 			performanceValues = ArrayUtils.add(performanceValues, performanceValue);
 
 			if (relevantCombinedForecasts[i].getValue() > 0) {
@@ -235,8 +242,9 @@ public class SubSystem {
 
 			} else if (relevantCombinedForecasts[i].getValue() < 0) {
 				/* short position */
-				shortProductsCount = calculateProductsCount(capital, shortProductPrices[i].getValue(),
-						relevantCombinedForecasts[i].getValue(), baseScale);
+				shortProductsCount = calculateProductsCount(capital,
+						shortProductPrices[i].getValue(), relevantCombinedForecasts[i].getValue(),
+						baseScale);
 
 				/* "Buy" the calculated count of products and thus reduce the cash capital */
 				capital -= shortProductsCount * shortProductPrices[i].getValue();
@@ -263,9 +271,11 @@ public class SubSystem {
 	 * @return {@code ValueDateTupel[]} by way of
 	 *         {@link #calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], double, double)}.
 	 */
-	public ValueDateTupel[] calculatePerformanceValues(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow) {
-		return SubSystem.calculatePerformanceValues(this.getBaseValue(), startOfTestWindow, endOfTestWindow,
-				this.getCombinedForecasts(), this.getBaseScale(), this.getCapital());
+	public ValueDateTupel[] calculatePerformanceValues(LocalDateTime startOfTestWindow,
+			LocalDateTime endOfTestWindow) {
+		return SubSystem.calculatePerformanceValues(this.getBaseValue(), startOfTestWindow,
+				endOfTestWindow, this.getCombinedForecasts(), this.getBaseScale(),
+				this.getCapital());
 	}
 
 	/**
@@ -293,13 +303,15 @@ public class SubSystem {
 					/* Combined forecasts must be filled with values on first go-through */
 					ValueDateTupel vdtToAdd = new ValueDateTupel(forecasts[fcIndex].getDate(),
 							forecasts[fcIndex].getValue() * rulesWeight);
-					calculatedCombinedForecasts = ArrayUtils.add(calculatedCombinedForecasts, vdtToAdd);
+					calculatedCombinedForecasts = ArrayUtils.add(calculatedCombinedForecasts,
+							vdtToAdd);
 				} else {
 					/*
 					 * If this is not the first go-through add the weighted forecasts of the current
 					 * rule
 					 */
-					ValueDateTupel vdtToAdd = new ValueDateTupel(calculatedCombinedForecasts[fcIndex].getDate(),
+					ValueDateTupel vdtToAdd = new ValueDateTupel(
+							calculatedCombinedForecasts[fcIndex].getDate(),
 							calculatedCombinedForecasts[fcIndex].getValue()
 									+ forecasts[fcIndex].getValue() * rulesWeight);
 					calculatedCombinedForecasts[fcIndex] = vdtToAdd;
@@ -312,12 +324,14 @@ public class SubSystem {
 		 * values at 2 x base scale or -2 x base scale respectively
 		 */
 		final double instanceBaseScale = this.getBaseScale();
-		final double diversificationMultiplierValue = this.getDiversificationMultiplier().getValue();
+		final double diversificationMultiplierValue = this.getDiversificationMultiplier()
+				.getValue();
 		final double MAX_VALUE = instanceBaseScale * 2;
 		final double MIN_VALUE = 0 - MAX_VALUE;
 
 		for (int fcIndex = 0; fcIndex < calculatedCombinedForecasts.length; fcIndex++) {
-			double fcWithDM = calculatedCombinedForecasts[fcIndex].getValue() * diversificationMultiplierValue;
+			double fcWithDM = calculatedCombinedForecasts[fcIndex].getValue()
+					* diversificationMultiplierValue;
 			if (fcWithDM > MAX_VALUE)
 				fcWithDM = MAX_VALUE;
 			if (fcWithDM < MIN_VALUE)
@@ -353,7 +367,8 @@ public class SubSystem {
 	 * @param priceFactorBaseScale {@code double} The base scale to use.
 	 * @return {@code double} The calculated factor.
 	 */
-	private static double calculateProductPriceFactor(double[] values, double priceFactorBaseScale) {
+	private static double calculateProductPriceFactor(double[] values,
+			double priceFactorBaseScale) {
 		double averageCourseValue = Util.calculateAverage(values);
 
 		return 1 / (averageCourseValue / priceFactorBaseScale);
@@ -370,12 +385,15 @@ public class SubSystem {
 	 * @return {@code ValueDateTupel[]} An array of prices using the dates of the
 	 *         given baseValues.
 	 */
-	private static ValueDateTupel[] calculateProductPrices(ValueDateTupel[] baseValues, double productPriceFactor) {
+	private static ValueDateTupel[] calculateProductPrices(ValueDateTupel[] baseValues,
+			double productPriceFactor) {
 		ValueDateTupel[] productPrices = {};
 		for (ValueDateTupel baseValue : baseValues)
-			productPrices = ValueDateTupel.addOneAt(productPrices,
-					new ValueDateTupel(baseValue.getDate(), baseValue.getValue() * productPriceFactor),
-					productPrices.length);
+			productPrices = ValueDateTupel
+					.addOneAt(productPrices,
+							new ValueDateTupel(baseValue.getDate(),
+									baseValue.getValue() * productPriceFactor),
+							productPrices.length);
 
 		return productPrices;
 	}
@@ -391,7 +409,8 @@ public class SubSystem {
 	 *                  scaled.
 	 * @return {@code int} The number of products to buy.
 	 */
-	private static long calculateProductsCount(double capital, double price, double forecast, double baseScale) {
+	private static long calculateProductsCount(double capital, double price, double forecast,
+			double baseScale) {
 		/* Number of products if forecast had MAX_VALUE */
 		double maxProductsCount = capital / price;
 
@@ -426,7 +445,8 @@ public class SubSystem {
 	 *                  {@link Validator#validatePositiveDouble(double)}.
 	 * @throws IllegalArgumentException if any of the above criteria is not met.
 	 */
-	private static void validateInput(BaseValue baseValue, Rule[] rules, double capital, double baseScale) {
+	private static void validateInput(BaseValue baseValue, Rule[] rules, double capital,
+			double baseScale) {
 		Validator.validateBaseValue(baseValue);
 
 		Validator.validateRules(rules);
@@ -460,15 +480,18 @@ public class SubSystem {
 	 */
 	private static void validateRules(Rule[] rules) {
 		if (!Util.areRulesUnique(rules))
-			throw new IllegalArgumentException("The given rules are not unique. Only unique rules can be used.");
+			throw new IllegalArgumentException(
+					"The given rules are not unique. Only unique rules can be used.");
 
 		/* All rules need to have the same reference window */
 		for (int i = 1; i < rules.length; i++) {
-			if (!rules[i].getStartOfReferenceWindow().isEqual(rules[i - 1].getStartOfReferenceWindow())
-					|| !rules[i].getEndOfReferenceWindow().isEqual(rules[i - 1].getEndOfReferenceWindow())) {
+			if (!rules[i].getStartOfReferenceWindow()
+					.isEqual(rules[i - 1].getStartOfReferenceWindow())
+					|| !rules[i].getEndOfReferenceWindow()
+							.isEqual(rules[i - 1].getEndOfReferenceWindow())) {
 				throw new IllegalArgumentException(
-						"All rules need to have the same reference window but rules at position " + (i - 1) + " and "
-								+ i + " differ.");
+						"All rules need to have the same reference window but rules at position "
+								+ (i - 1) + " and " + i + " differ.");
 			}
 		}
 
@@ -495,7 +518,8 @@ public class SubSystem {
 		temp = Double.doubleToLongBits(capital);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + Arrays.hashCode(combinedForecasts);
-		result = prime * result + ((diversificationMultiplier == null) ? 0 : diversificationMultiplier.hashCode());
+		result = prime * result
+				+ ((diversificationMultiplier == null) ? 0 : diversificationMultiplier.hashCode());
 		result = prime * result + Arrays.hashCode(rules);
 		return result;
 	}

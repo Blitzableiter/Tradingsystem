@@ -28,8 +28,8 @@ class DataSourceTest {
 	final static int FOLDER_NAME_LENGTH = FILE_NAME_LENGTH;
 
 	/* Have all temporary created files inside a folder inside src/test/resources */
-	private static String workingDir = Path
-			.of("src", "test", "resources", RandomStringUtils.randomAlphanumeric(FOLDER_NAME_LENGTH)).toString();
+	private static String workingDir = Path.of("src", "test", "resources",
+			RandomStringUtils.randomAlphanumeric(FOLDER_NAME_LENGTH)).toString();
 
 	/*
 	 * Generate random file names as not to accidentally overwrite any existing
@@ -44,8 +44,8 @@ class DataSourceTest {
 	final static String FILE_NAME_CORRECT_FILE_EU_THOUSANDS_SEPARATOR = workingDir
 			+ RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH);
 	final static String FILE_NAME_NULL = null;
-	final static String FILE_NAME_UNKOWN = Path.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH))
-			.toString();
+	final static String FILE_NAME_UNKOWN = Path
+			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
 	final static String FILE_NAME_DIRECTORY = Path
 			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
 	final static String FILE_NAME_FILE_HAS_HEADINGS = Path
@@ -121,14 +121,22 @@ class DataSourceTest {
 		new File(FILE_NAME_DIRECTORY).mkdirs();
 		bw_headings = new BufferedWriter(new FileWriter(new File(FILE_NAME_FILE_HAS_HEADINGS)));
 		bw_four_columns = new BufferedWriter(new FileWriter(new File(FILE_NAME_FOUR_COLUMNS)));
-		bw_day_non_integer = new BufferedWriter(new FileWriter(new File(FILE_NAME_DAY_NON_INTEGER)));
-		bw_month_non_integer = new BufferedWriter(new FileWriter(new File(FILE_NAME_MONTH_NON_INTEGER)));
-		bw_year_non_integer = new BufferedWriter(new FileWriter(new File(FILE_NAME_YEAR_NON_INTEGER)));
-		bw_hour_non_integer = new BufferedWriter(new FileWriter(new File(FILE_NAME_HOUR_NON_INTEGER)));
-		bw_minute_non_integer = new BufferedWriter(new FileWriter(new File(FILE_NAME_MINUTE_NON_INTEGER)));
-		bw_second_non_integer = new BufferedWriter(new FileWriter(new File(FILE_NAME_SECOND_NON_INTEGER)));
-		bw_date_value_out_of_range = new BufferedWriter(new FileWriter(new File(FILE_NAME_DATE_VALUE_OUT_OF_RANGE)));
-		bw_course_value_invalid = new BufferedWriter(new FileWriter(new File(FILE_NAME_COURSE_VALUE_INVALID)));
+		bw_day_non_integer = new BufferedWriter(
+				new FileWriter(new File(FILE_NAME_DAY_NON_INTEGER)));
+		bw_month_non_integer = new BufferedWriter(
+				new FileWriter(new File(FILE_NAME_MONTH_NON_INTEGER)));
+		bw_year_non_integer = new BufferedWriter(
+				new FileWriter(new File(FILE_NAME_YEAR_NON_INTEGER)));
+		bw_hour_non_integer = new BufferedWriter(
+				new FileWriter(new File(FILE_NAME_HOUR_NON_INTEGER)));
+		bw_minute_non_integer = new BufferedWriter(
+				new FileWriter(new File(FILE_NAME_MINUTE_NON_INTEGER)));
+		bw_second_non_integer = new BufferedWriter(
+				new FileWriter(new File(FILE_NAME_SECOND_NON_INTEGER)));
+		bw_date_value_out_of_range = new BufferedWriter(
+				new FileWriter(new File(FILE_NAME_DATE_VALUE_OUT_OF_RANGE)));
+		bw_course_value_invalid = new BufferedWriter(
+				new FileWriter(new File(FILE_NAME_COURSE_VALUE_INVALID)));
 
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_eu_ok);
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_us_ok);
@@ -305,7 +313,8 @@ class DataSourceTest {
 
 		ValueDateTupel[] values = {};
 		try {
-			values = DataSource.getDataFromCsv(FILE_NAME_CORRECT_FILE_EUR_YMD, CsvFormat.EU_YEAR_MONTH_DAY);
+			values = DataSource.getDataFromCsv(FILE_NAME_CORRECT_FILE_EUR_YMD,
+					CsvFormat.EU_YEAR_MONTH_DAY);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			fail("IllegalArgumentException getting Data");
@@ -421,7 +430,8 @@ class DataSourceTest {
 			fail("File could not be written");
 		}
 
-		assertThrows(Exception.class, () -> DataSource.getDataFromCsv(FILE_NAME_FILE_HAS_HEADINGS, CsvFormat.US),
+		assertThrows(Exception.class,
+				() -> DataSource.getDataFromCsv(FILE_NAME_FILE_HAS_HEADINGS, CsvFormat.US),
 				"Headings in CSV are not properly handled");
 	}
 

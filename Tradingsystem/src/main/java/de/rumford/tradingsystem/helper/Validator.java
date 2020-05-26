@@ -64,7 +64,8 @@ public class Validator {
 			throw new IllegalArgumentException("Correlations array must not be null");
 		/* Check if the given array contains exactly three elements. */
 		if (correlations.length != 3)
-			throw new IllegalArgumentException("There must be exactly three correlation values in the given array");
+			throw new IllegalArgumentException(
+					"There must be exactly three correlation values in the given array");
 
 		/* Check all given values inside the array */
 		for (int i = 0; i < correlations.length; i++) {
@@ -72,9 +73,11 @@ public class Validator {
 				throw new IllegalArgumentException(
 						"NaN-values are not allowed. Correlation at position " + i + " is NaN.");
 			if (correlations[i] > 1)
-				throw new IllegalArgumentException("Correlation at position " + i + " is greater than 1");
+				throw new IllegalArgumentException(
+						"Correlation at position " + i + " is greater than 1");
 			if (correlations[i] < -1)
-				throw new IllegalArgumentException("Correlation at position " + i + " is less than -1");
+				throw new IllegalArgumentException(
+						"Correlation at position " + i + " is less than -1");
 		}
 	}
 
@@ -90,7 +93,8 @@ public class Validator {
 		 * The values cannot be used if they are not in ascending order.
 		 */
 		if (!ValueDateTupel.isSortedAscending(values))
-			throw new IllegalArgumentException("Given values are not properly sorted or there are non-unique values.");
+			throw new IllegalArgumentException(
+					"Given values are not properly sorted or there are non-unique values.");
 	}
 
 	/**
@@ -149,8 +153,8 @@ public class Validator {
 		for (int i = 0; i < rules.length; i++)
 			if (!rules[i].getBaseValue().equals(baseValue))
 				throw new IllegalArgumentException(
-						"The base value of all rules must be equal to given base value but the rule at position " + i
-								+ " does not comply.");
+						"The base value of all rules must be equal to given base value but the rule at position "
+								+ i + " does not comply.");
 	}
 
 	/**
@@ -174,8 +178,8 @@ public class Validator {
 	 * @throws IllegalArgumentException if any of the above specifications are not
 	 *                                  met.
 	 */
-	public static void validateTimeWindow(LocalDateTime startOfTimeWindow, LocalDateTime endOfTimeWindow,
-			ValueDateTupel[] values) {
+	public static void validateTimeWindow(LocalDateTime startOfTimeWindow,
+			LocalDateTime endOfTimeWindow, ValueDateTupel[] values) {
 		/* Check if LocalDateTimes are null */
 		if (startOfTimeWindow == null)
 			throw new IllegalArgumentException("Start of time window value must not be null");
@@ -183,14 +187,17 @@ public class Validator {
 			throw new IllegalArgumentException("End of time window value must not be null");
 		/* Check if time window is properly defined: end must be after start */
 		if (!endOfTimeWindow.isAfter(startOfTimeWindow))
-			throw new IllegalArgumentException("End of time window value must be after start of time window value");
+			throw new IllegalArgumentException(
+					"End of time window value must be after start of time window value");
 
 		/* The given startOfTimeWindow must be included in the given base values. */
 		if (!ValueDateTupel.containsDate(values, startOfTimeWindow))
-			throw new IllegalArgumentException("Given values do not include given start value for time window");
+			throw new IllegalArgumentException(
+					"Given values do not include given start value for time window");
 		/* The given endOfTimeWindow must be included in the given base values. */
 		if (!ValueDateTupel.containsDate(values, endOfTimeWindow))
-			throw new IllegalArgumentException("Given values do not include given end value for time window");
+			throw new IllegalArgumentException(
+					"Given values do not include given end value for time window");
 	}
 
 	/**
@@ -266,8 +273,8 @@ public class Validator {
 		for (int i = 0; i < variations.length; i++) {
 			/* Check if the given variations array contains nulls. */
 			if (variations[i] == null)
-				throw new IllegalArgumentException(
-						"The variation at position " + i + " in the given variations array is null.");
+				throw new IllegalArgumentException("The variation at position " + i
+						+ " in the given variations array is null.");
 
 			/* Check if main rule and variations share reference window. */
 			if (!variations[i].getStartOfReferenceWindow().equals(startOfReferenceWindow)) {
@@ -285,7 +292,8 @@ public class Validator {
 		try {
 			Validator.validateRulesVsBaseValue(variations, baseValue);
 		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("The given variations do not meet specifications.", e);
+			throw new IllegalArgumentException("The given variations do not meet specifications.",
+					e);
 		}
 
 	}

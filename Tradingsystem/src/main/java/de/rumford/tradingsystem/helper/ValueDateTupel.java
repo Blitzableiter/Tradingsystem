@@ -71,19 +71,21 @@ public class ValueDateTupel {
 	 * @throws IllegalArgumentException If the given position is greater than the
 	 *                                  length of the given array.
 	 */
-	public static ValueDateTupel[] addOneAt(ValueDateTupel[] valueDateTupels, ValueDateTupel vdtToBeAdded,
-			int position) {
+	public static ValueDateTupel[] addOneAt(ValueDateTupel[] valueDateTupels,
+			ValueDateTupel vdtToBeAdded, int position) {
 		if (valueDateTupels == null)
 			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
 		if (vdtToBeAdded == null)
 			throw new IllegalArgumentException(MESSAGE_VALUE_MUST_NOT_BE_NULL);
 		if (position < 0)
-			throw new IllegalArgumentException("Cannot not add a value at position < 0. Given position is " + position);
+			throw new IllegalArgumentException(
+					"Cannot not add a value at position < 0. Given position is " + position);
 		if (position > valueDateTupels.length)
-			throw new IllegalArgumentException("Cannot add a value at position > " + valueDateTupels.length
-					+ ". Given position is " + position + ".");
+			throw new IllegalArgumentException("Cannot add a value at position > "
+					+ valueDateTupels.length + ". Given position is " + position + ".");
 
-		ValueDateTupel[] extendedArray = ValueDateTupel.createEmptyArray(valueDateTupels.length + 1);
+		ValueDateTupel[] extendedArray = ValueDateTupel
+				.createEmptyArray(valueDateTupels.length + 1);
 
 		/* Add new ValueDateTupel at the beginning of the given array. */
 		if (position == 0) {
@@ -106,7 +108,8 @@ public class ValueDateTupel {
 		/* Add new ValueDateTupel at the given position. */
 		extendedArray[position] = vdtToBeAdded;
 		/* Add all values subsequent to the new ValueDateTupel */
-		System.arraycopy(valueDateTupels, position, extendedArray, position + 1, valueDateTupels.length - position);
+		System.arraycopy(valueDateTupels, position, extendedArray, position + 1,
+				valueDateTupels.length - position);
 		return extendedArray;
 	}
 
@@ -159,7 +162,8 @@ public class ValueDateTupel {
 			}
 
 			/* ... add all values into uniqueSortedDates */
-			uniqueSortedDates.addAll(Arrays.asList(ValueDateTupel.getDates(valueDateTupels[rowIndex])));
+			uniqueSortedDates
+					.addAll(Arrays.asList(ValueDateTupel.getDates(valueDateTupels[rowIndex])));
 		}
 
 		/* Load unique sorted dates into an ArrayList to have access to an index. */
@@ -188,7 +192,8 @@ public class ValueDateTupel {
 				 * array add the new element to the end
 				 */
 				if (fieldIndex >= valueDateTupels[rowIndex].length) {
-					valueDateTupelToBeAdded = new ValueDateTupel(uniqueSortedDatesList.get(fieldIndex), Double.NaN);
+					valueDateTupelToBeAdded = new ValueDateTupel(
+							uniqueSortedDatesList.get(fieldIndex), Double.NaN);
 					valueDateTupels[rowIndex] = ValueDateTupel.addOneAt(valueDateTupels[rowIndex],
 							valueDateTupelToBeAdded, fieldIndex);
 					/*
@@ -202,11 +207,13 @@ public class ValueDateTupel {
 				 * If the currentDateTime out of the list of unique values is already in the
 				 * given row nothing has to be done.
 				 */
-				if (uniqueSortedDatesList.get(fieldIndex).isEqual(valueDateTupels[rowIndex][fieldIndex].getDate()))
+				if (uniqueSortedDatesList.get(fieldIndex)
+						.isEqual(valueDateTupels[rowIndex][fieldIndex].getDate()))
 					continue;
-				valueDateTupelToBeAdded = new ValueDateTupel(uniqueSortedDatesList.get(fieldIndex), Double.NaN);
-				valueDateTupels[rowIndex] = ValueDateTupel.addOneAt(valueDateTupels[rowIndex], valueDateTupelToBeAdded,
-						fieldIndex);
+				valueDateTupelToBeAdded = new ValueDateTupel(uniqueSortedDatesList.get(fieldIndex),
+						Double.NaN);
+				valueDateTupels[rowIndex] = ValueDateTupel.addOneAt(valueDateTupels[rowIndex],
+						valueDateTupelToBeAdded, fieldIndex);
 			}
 
 			/*
@@ -365,13 +372,15 @@ public class ValueDateTupel {
 	 * @throws IllegalArgumentException If the given {@link LocalDateTime} is null.
 	 * 
 	 */
-	public static boolean containsDate(ValueDateTupel[] valueDateTupels, LocalDateTime dtToBeFound) {
+	public static boolean containsDate(ValueDateTupel[] valueDateTupels,
+			LocalDateTime dtToBeFound) {
 		if (valueDateTupels == null)
 			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
 		if (dtToBeFound == null)
 			throw new IllegalArgumentException(MESSAGE_VALUE_MUST_NOT_BE_NULL);
 		/* Load all values from the given array into an ArrayList. */
-		List<LocalDateTime> list = new ArrayList<>(Arrays.asList(ValueDateTupel.getDates(valueDateTupels)));
+		List<LocalDateTime> list = new ArrayList<>(
+				Arrays.asList(ValueDateTupel.getDates(valueDateTupels)));
 		/* Utilize the generic contains method on ArrayList. */
 		return list.contains(dtToBeFound);
 	}
@@ -407,7 +416,8 @@ public class ValueDateTupel {
 	 * @return {@link ValueDateTupel} containing the given {@link LocalDateTime}.
 	 *         {@code null} if the given {@link LocalDateTime} cannot be found.
 	 */
-	public static ValueDateTupel getElement(ValueDateTupel[] valueDateTupels, LocalDateTime dtToBeFound) {
+	public static ValueDateTupel getElement(ValueDateTupel[] valueDateTupels,
+			LocalDateTime dtToBeFound) {
 		/* Check if given array is null */
 		if (valueDateTupels == null)
 			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
@@ -437,8 +447,8 @@ public class ValueDateTupel {
 	 * @return {@code ValueDateTupel[]} The found elements. null, if dtFrom or dtTo
 	 *         cannot be found in the given array.
 	 */
-	public static ValueDateTupel[] getElements(ValueDateTupel[] valueDateTupels, LocalDateTime dtFrom,
-			LocalDateTime dtTo) {
+	public static ValueDateTupel[] getElements(ValueDateTupel[] valueDateTupels,
+			LocalDateTime dtFrom, LocalDateTime dtTo) {
 		int positionFrom;
 		int positionTo;
 		/*
@@ -567,7 +577,8 @@ public class ValueDateTupel {
 	 * @throws IllegalArgumentException If the given array is null.
 	 * @throws IllegalArgumentException If the given array contains null values.
 	 */
-	public static boolean isSortedAscending(ValueDateTupel[] valueDateTupels) throws IllegalArgumentException {
+	public static boolean isSortedAscending(ValueDateTupel[] valueDateTupels)
+			throws IllegalArgumentException {
 		if (valueDateTupels == null)
 			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
 		if (ValueDateTupel.contains(valueDateTupels, null))
@@ -602,7 +613,8 @@ public class ValueDateTupel {
 		if (valueDateTupels == null)
 			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
 		if (ValueDateTupel.contains(valueDateTupels, null))
-			throw new IllegalArgumentException("The given array must not contain any null LocalDateTime");
+			throw new IllegalArgumentException(
+					"The given array must not contain any null LocalDateTime");
 
 		for (int i = 1; i < valueDateTupels.length; i++) {
 			if (!valueDateTupels[i].getDate().isBefore(valueDateTupels[i - 1].getDate())) {
