@@ -59,12 +59,24 @@ public class DiversificationMultiplier {
 	public DiversificationMultiplier(Rule[] rules) {
 		validateInput(rules);
 
-		this.setWeights(getWeightsFromRules(rules));
-		this.setRelevantForecasts(getRelevantForecastsFromRules(rules));
+		WeightsAndForecasts weightsAndForecasts = getWeightsAndForecastsFromRules(rules);
+		this.setWeights(weightsAndForecasts.weights);
+		this.setRelevantForecasts(weightsAndForecasts.forecasts);
 
 		this.setCorrelations(getCorrelationsFromForecasts(this.getRelevantForecasts()));
 
 		this.setValue(this.calculateDiversificiationMultiplierValue());
+	}
+
+	private class WeightsAndForecasts {
+		public double[] weights;
+		public double[][] forecasts;
+
+		public WeightsAndForecasts(double[] weights, double[][] relevantForecasts) {
+			this.weights = weights;
+			this.forecasts = relevantForecasts;
+		}
+
 	}
 
 	/**
@@ -131,45 +143,28 @@ public class DiversificationMultiplier {
 	}
 
 	/**
-	 * Recursively get the relevant forecasts from the given array of Rules. Uses
-	 * the same algorithm for determination as {@link #getWeightsFromRules(Rule[])}
+	 * Recursively get the weights and forecasts from the given array of Rules.
 	 * 
 	 * @param rules {@code Rule[]} The array of rules to be searched.
-	 * @return {@code double[]} The extracted from the given array of Rules.
+	 * @return {@link WeightsAndForecasts} The extracted weights and forecasts from
+	 *         the given array of Rules.
 	 */
-	private static double[][] getRelevantForecastsFromRules(Rule[] rules) {
-		double[][] relevantForecasts = {};
-		/* Iterate over the given rules */
-		for (Rule rule : rules) {
-			/* If a rule has variations get their forecasts */
-			if (rule.hasVariations()) {
-				double[][] forecastsToAdd = getRelevantForecastsFromRules(rule.getVariations());
-				for (double[] forecasts : forecastsToAdd)
-					relevantForecasts = ArrayUtils.add(relevantForecasts, forecasts);
-			} else {
-				relevantForecasts = ArrayUtils.add(relevantForecasts, rule.extractRelevantForecastValues());
-			}
-		}
-		return relevantForecasts;
-	}
-
-	/**
-	 * Recursively get the weights from the given array of Rules. Uses the same
-	 * algorithm for determination as
-	 * {@link #getRelevantForecastsFromRules(Rule[])}.
-	 * 
-	 * @param rules {@code Rule[]} The array of rules to be searched.
-	 * @return {@code double[]} The extracted from the given array of Rules.
-	 */
-	private static double[] getWeightsFromRules(Rule[] rules) {
+	private WeightsAndForecasts getWeightsAndForecastsFromRules(Rule[] rules) {
 		double[] weights = {};
+		double[][] relevantForecasts = {};
+
 		/* Iterate over the given rules */
 		for (Rule rule : rules) {
-			/* If a rule has variations get their weights */
+
+			/* If a rule has variations get their weights and forecasts */
 			if (rule.hasVariations()) {
-				double[] weightsToAdd = getWeightsFromRules(rule.getVariations());
-				for (double weight : weightsToAdd)
+				WeightsAndForecasts wafToAdd = getWeightsAndForecastsFromRules(rule.getVariations());
+				for (double weight : wafToAdd.weights)
 					weights = ArrayUtils.add(weights, weight * rule.getWeight());
+
+				for (double[] forecasts : wafToAdd.forecasts)
+					relevantForecasts = ArrayUtils.add(relevantForecasts, forecasts);
+
 			} else {
 				double weight = rule.getWeight();
 				/*
@@ -179,9 +174,11 @@ public class DiversificationMultiplier {
 				if (weight == 0)
 					weight = 1d / rules.length;
 				weights = ArrayUtils.add(weights, weight);
+
+				relevantForecasts = ArrayUtils.add(relevantForecasts, rule.extractRelevantForecastValues());
 			}
 		}
-		return weights;
+		return new WeightsAndForecasts(weights, relevantForecasts);
 	}
 
 	/**
