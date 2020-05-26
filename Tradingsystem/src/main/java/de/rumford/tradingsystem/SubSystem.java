@@ -89,10 +89,17 @@ public class SubSystem {
 	 * @see SubSystem#calculatePerformanceValues(BaseValue, LocalDateTime,
 	 *      LocalDateTime, ValueDateTupel[], double, double)
 	 * 
+	 * @param baseValue         {@link BaseValue} The base value to be tested
+	 *                          against.
 	 * @param startOfTestWindow {@link LocalDateTime} First time interval of test
 	 *                          window.
 	 * @param endOfTestWindow   {@link LocalDateTime} Last time interval of test
 	 *                          window.
+	 * @param combinedForecasts {@code ValueDateTupel[]} The forecasts to be used
+	 *                          for performance calculation.
+	 * @param baseScale         {@code double} The value to which to scale the
+	 *                          forecasts to.
+	 * @param capital           {@code double} The starting capital.
 	 * @return {@code double} The performance value on the last day of the given
 	 *         test window.
 	 */
