@@ -1,6 +1,8 @@
 package de.rumford.tradingsystem.helper;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import de.rumford.tradingsystem.BaseValue;
 import de.rumford.tradingsystem.Rule;
@@ -296,6 +298,33 @@ public class Validator {
 					e);
 		}
 
+	}
+
+	/**
+	 * Validates the given row of values. The row has to have at least 1 value not
+	 * Double.NaN.
+	 * 
+	 * @param valueDateTupels {@code ValueDateTupel[]} The array of
+	 *                        {@link ValueDateTupel} to be validated.
+	 * @throws IllegalArgumentException if the given row contains only Double.NaN.
+	 */
+	public static void validateRow(ValueDateTupel[] valueDateTupels) {
+		double[] values = ValueDateTupel.getValues(valueDateTupels);
+		/* If the first value is NaN, check if the array only contains NaN. */
+		if (Double.isNaN(values[0])) {
+			Set<Double> uniqueValues = new HashSet<>();
+			for (double value : values)
+				uniqueValues.add(value);
+
+			/*
+			 * If the size of a set of all values is 1 then it contains only this one value
+			 * in all elements. If this value is Double.NaN, no values were set but
+			 * Double.NaN.
+			 */
+			if (uniqueValues.size() == 1)
+				throw new IllegalArgumentException(
+						"Row contains only Double.NaN. Rows must contain at least one value != Double.NaN");
+		}
 	}
 
 }
