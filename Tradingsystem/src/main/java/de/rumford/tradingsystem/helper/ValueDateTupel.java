@@ -161,12 +161,6 @@ public class ValueDateTupel {
 
 		/* Loop over all rows */
 		for (int rowIndex = 0; rowIndex < valueDateTupels.length; rowIndex++) {
-			/*
-			 * If the row's length equals the length of uniqueSortedDates no
-			 * Value has to be added as it already contains all dateTimes.
-			 */
-			if (valueDateTupels[rowIndex].length == uniqueSortedDates.size())
-				continue;
 
 			try {
 				/* Validate if the row contains at least one suitable value. */
@@ -175,6 +169,13 @@ public class ValueDateTupel {
 				throw new IllegalArgumentException(
 						"Row at position " + rowIndex + " is not valid.");
 			}
+
+			/*
+			 * If the row's length equals the length of uniqueSortedDates no
+			 * Value has to be added as it already contains all dateTimes.
+			 */
+			if (valueDateTupels[rowIndex].length == uniqueSortedDates.size())
+				continue;
 
 			/* Enhance current row by missing LocalDateTime values. */
 			valueDateTupels[rowIndex] = enhanceRowByNaNs(
