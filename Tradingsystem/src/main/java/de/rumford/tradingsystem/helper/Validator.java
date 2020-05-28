@@ -326,5 +326,4 @@ public class Validator {
 						"Row contains only Double.NaN. Rows must contain at least one value != Double.NaN");
 		}
 	}
-
 }

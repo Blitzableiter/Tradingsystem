@@ -5,7 +5,10 @@ package de.rumford.tradingsystem.helper;
 
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TreeSet;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -156,102 +159,67 @@ public class ValueDateTupel {
 			if (valueDateTupels[rowIndex].length == uniqueSortedDates.size())
 				continue;
 
-			/* Validate if the row contains at least one suitable value. */
-			Validator.validateRow(valueDateTupels[rowIndex]);
+			try {
+				/* Validate if the row contains at least one suitable value. */
+				Validator.validateRow(valueDateTupels[rowIndex]);
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException(
+						"Row at position " + rowIndex + " is not valid.");
+			}
 
 			/* Enhance current row by missing LocalDateTime values. */
 			valueDateTupels[rowIndex] = enhanceRowByNaNs(valueDateTupels[rowIndex],
 					uniqueSortedDates);
 
-			try {
-				/* Replace all values of Double.NaN by real values. */
-				valueDateTupels[rowIndex] = enhanceRowByValues(valueDateTupels[rowIndex]);
-			} catch (IllegalArgumentException e) {
-				throw new IllegalArgumentException(
-						"Row at position " + rowIndex + " is not valid.");
-			}
+			/* Replace all values of Double.NaN by real values. */
+			valueDateTupels[rowIndex] = replaceNansByValues(valueDateTupels[rowIndex]);
 
 		}
 		return valueDateTupels;
 	}
 
 	/**
-	 * Enhances the given row by its missing values.
+	 * Finds all {@link LocalDateTime} present in uniqueSortedDates but not in
+	 * valueDateTupels and add them to the latter with a value of Double.NaN.
 	 * 
-	 * @param valueDateTupels {@code ValueDateTupel[]} An array of
-	 *                        {@link ValueDateTupel} to be enhanced.
-	 * @return {@code ValueDateTupel[]} The same array of {@link ValueDateTupel} but
-	 *         with real values instead of Double.NaN.
+	 * @param valueDateTupels   {@code ValueDateTupel[]} The array of
+	 *                          {@link ValueDateTupel} to be enhanced.
+	 * @param uniqueSortedDates {@code TreeSet<LocalDateTime>} A {@link TreeSet} of
+	 *                          {@link LocalDateTime} containing all unique
+	 *                          LocalDateTimes.
+	 * @return {@code ValueDateTupel[]} valueDateTupels + all LocalDateTime
+	 *         additionally given by uniqueSortedDates. Array is sorted as by
+	 *         {@link #isSortedAscending(ValueDateTupel[])}.
 	 */
-	private static ValueDateTupel[] enhanceRowByValues(ValueDateTupel[] valueDateTupels) {
+	private static ValueDateTupel[] enhanceRowByNaNs(ValueDateTupel[] valueDateTupels,
+			TreeSet<LocalDateTime> uniqueSortedDates) {
+
+		/* Load unique sorted dates into an ArrayList to have access to an index. */
+		List<LocalDateTime> uniqueSortedDatesList = new ArrayList<>(uniqueSortedDates);
+
 		/*
-		 * Loop over all dateTimes for each row to assess if they are Double.NaN.
+		 * Loop over all unique dateTimes to assess if they are in the current row. If
+		 * not, missing dateTimes are added into the original arrays. Their value is set
+		 * to Double.NaN
 		 */
-		for (int fieldIndex = 0; fieldIndex < valueDateTupels.length; fieldIndex++) {
-			/*
-			 * If the ValueDateTupel contains a value other than Double.NaN continue with
-			 * the next iteration.
-			 */
-			if (!Double.isNaN(valueDateTupels[fieldIndex].getValue()))
-				continue;
+		for (int fieldIndex = 0; fieldIndex < uniqueSortedDates.size(); fieldIndex++) {
+			ValueDateTupel valueDateTupelToBeAdded = new ValueDateTupel(
+					uniqueSortedDatesList.get(fieldIndex), Double.NaN);
 
-			/*
-			 * If the first valueDateTupel contains Double.NaN, its value will be set to
-			 * match the next non-NaN-value. If the following values are also Double.NaN,
-			 * iterate through the array until a value != Double.NaN is found.
-			 */
-			if (fieldIndex == 0) {
-				valueDateTupels = fillStartingValues(valueDateTupels);
-				continue;
-			}
+			if (fieldIndex < valueDateTupels.length && uniqueSortedDatesList.get(fieldIndex)
+					.isEqual(valueDateTupels[fieldIndex].getDate())) {
 
-			/*
-			 * The missing value will be set to average the values of its direct predecessor
-			 * and successor.
-			 * 
-			 * If there are multiple values missing in a row, all of those will get the
-			 * average value of the last position before and the first position after all
-			 * missing values.
-			 * 
-			 * If all values until the last one are missing, all consecutive NaN values will
-			 * be set to the last position before all NaNs.
-			 */
-			int limitIndex = fieldIndex;
-
-			double valueToBeSet = Double.NaN;
-
-			while (Double.isNaN(valueDateTupels[limitIndex].getValue())) {
-				limitIndex++;
 				/*
-				 * If there are no values in the remaining array set all values to be the last
-				 * non-NaN, which is at fieldIndex-1.
+				 * Nothing has to be done, as we're not at the end of the list and the current
+				 * LocalDateTime out of the list of unique values is already in the given row.
 				 */
-				if (limitIndex == valueDateTupels.length) {
-					limitIndex--;
-					valueToBeSet = valueDateTupels[fieldIndex - 1].getValue();
-					break;
-				}
-
+				continue;
 			}
 
-			/*
-			 * If the value to be set has already been calculated then there is NaNs left in
-			 * the array, no more real values, until the very last position. All remaining
-			 * values can be set to this value then. After that the loop can be left.
-			 */
-			if (!Double.isNaN(valueToBeSet)) {
-				int localIndex = fieldIndex;
-				while (localIndex < valueDateTupels.length) {
-					valueDateTupels[localIndex].setValue(valueToBeSet);
-					localIndex++;
-				}
-				break;
-			}
-
-			/* Fill in a "gap" of Double.NaN-values */
-			valueDateTupels = fillCenterValues(valueDateTupels, fieldIndex - 1, limitIndex);
-
+			valueDateTupels = ValueDateTupel.addOneAt(valueDateTupels, valueDateTupelToBeAdded,
+					fieldIndex);
 		}
+
 		return valueDateTupels;
 	}
 
@@ -323,51 +291,6 @@ public class ValueDateTupel {
 			valueDateTupels[localFieldIndex - 1]
 					.setValue(valueDateTupels[localFieldIndex].getValue());
 			localFieldIndex--;
-		}
-
-		return valueDateTupels;
-	}
-
-	/**
-	 * Finds all {@link LocalDateTime} present in uniqueSortedDates but not in
-	 * valueDateTupels and add them to the latter with a value of Double.NaN.
-	 * 
-	 * @param valueDateTupels   {@code ValueDateTupel[]} The array of
-	 *                          {@link ValueDateTupel} to be enhanced.
-	 * @param uniqueSortedDates {@code TreeSet<LocalDateTime>} A {@link TreeSet} of
-	 *                          {@link LocalDateTime} containing all unique
-	 *                          LocalDateTimes.
-	 * @return {@code ValueDateTupel[]} valueDateTupels + all LocalDateTime
-	 *         additionally given by uniqueSortedDates. Array is sorted as by
-	 *         {@link #isSortedAscending(ValueDateTupel[])}.
-	 */
-	private static ValueDateTupel[] enhanceRowByNaNs(ValueDateTupel[] valueDateTupels,
-			TreeSet<LocalDateTime> uniqueSortedDates) {
-
-		/* Load unique sorted dates into an ArrayList to have access to an index. */
-		List<LocalDateTime> uniqueSortedDatesList = new ArrayList<>(uniqueSortedDates);
-
-		/*
-		 * Loop over all unique dateTimes to assess if they are in the current row. If
-		 * not, missing dateTimes are added into the original arrays. Their value is set
-		 * to Double.NaN
-		 */
-		for (int fieldIndex = 0; fieldIndex < uniqueSortedDates.size(); fieldIndex++) {
-			ValueDateTupel valueDateTupelToBeAdded = new ValueDateTupel(
-					uniqueSortedDatesList.get(fieldIndex), Double.NaN);
-
-			if (fieldIndex < valueDateTupels.length && uniqueSortedDatesList.get(fieldIndex)
-					.isEqual(valueDateTupels[fieldIndex].getDate())) {
-
-				/*
-				 * Nothing has to be done, as we're not at the end of the list and the current
-				 * LocalDateTime out of the list of unique values is already in the given row.
-				 */
-				continue;
-			}
-
-			valueDateTupels = ValueDateTupel.addOneAt(valueDateTupels, valueDateTupelToBeAdded,
-					fieldIndex);
 		}
 
 		return valueDateTupels;
@@ -680,6 +603,86 @@ public class ValueDateTupel {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Replace Double.NaN in a given row by real values values.
+	 * 
+	 * @param valueDateTupels {@code ValueDateTupel[]} An array of
+	 *                        {@link ValueDateTupel} to be enhanced.
+	 * @return {@code ValueDateTupel[]} The same array of {@link ValueDateTupel} but
+	 *         with real values instead of Double.NaN.
+	 */
+	private static ValueDateTupel[] replaceNansByValues(ValueDateTupel[] valueDateTupels) {
+		/*
+		 * Loop over all dateTimes for each row to assess if they are Double.NaN.
+		 */
+		for (int fieldIndex = 0; fieldIndex < valueDateTupels.length; fieldIndex++) {
+			/*
+			 * If the ValueDateTupel contains a value other than Double.NaN continue with
+			 * the next iteration.
+			 */
+			if (!Double.isNaN(valueDateTupels[fieldIndex].getValue()))
+				continue;
+
+			/*
+			 * If the first valueDateTupel contains Double.NaN, its value will be set to
+			 * match the next non-NaN-value. If the following values are also Double.NaN,
+			 * iterate through the array until a value != Double.NaN is found.
+			 */
+			if (fieldIndex == 0) {
+				valueDateTupels = fillStartingValues(valueDateTupels);
+				continue;
+			}
+
+			/*
+			 * The missing value will be set to average the values of its direct predecessor
+			 * and successor.
+			 * 
+			 * If there are multiple values missing in a row, all of those will get the
+			 * average value of the last position before and the first position after all
+			 * missing values.
+			 * 
+			 * If all values until the last one are missing, all consecutive NaN values will
+			 * be set to the last position before all NaNs.
+			 */
+			int limitIndex = fieldIndex;
+
+			double valueToBeSet = Double.NaN;
+
+			while (Double.isNaN(valueDateTupels[limitIndex].getValue())) {
+				limitIndex++;
+				/*
+				 * If there are no values in the remaining array set all values to be the last
+				 * non-NaN, which is at fieldIndex-1.
+				 */
+				if (limitIndex == valueDateTupels.length) {
+					limitIndex--;
+					valueToBeSet = valueDateTupels[fieldIndex - 1].getValue();
+					break;
+				}
+
+			}
+
+			/*
+			 * If the value to be set has already been calculated then there is NaNs left in
+			 * the array, no more real values, until the very last position. All remaining
+			 * values can be set to this value then. After that the loop can be left.
+			 */
+			if (!Double.isNaN(valueToBeSet)) {
+				int localIndex = fieldIndex;
+				while (localIndex < valueDateTupels.length) {
+					valueDateTupels[localIndex].setValue(valueToBeSet);
+					localIndex++;
+				}
+				break;
+			}
+
+			/* Fill in a "gap" of Double.NaN-values */
+			valueDateTupels = fillCenterValues(valueDateTupels, fieldIndex - 1, limitIndex);
+
+		}
+		return valueDateTupels;
 	}
 
 	/**
