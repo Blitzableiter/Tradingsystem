@@ -153,7 +153,8 @@ class SubSystemTest {
 	}
 
 	/**
-	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 * Test method for
+	 * {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
 	void testValidateInput_baseValueNull() {
@@ -169,7 +170,8 @@ class SubSystemTest {
 	}
 
 	/**
-	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 * Test method for
+	 * {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
 	void testValidateInput_rulesNull() {
@@ -185,7 +187,8 @@ class SubSystemTest {
 	}
 
 	/**
-	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 * Test method for
+	 * {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
 	void testValidateInput_rulesEmptyArray() {
@@ -202,7 +205,8 @@ class SubSystemTest {
 	}
 
 	/**
-	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 * Test method for
+	 * {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
 	void testValidateInput_rules_baseValueDoesntMatch_givenBaseValue() {
@@ -222,7 +226,8 @@ class SubSystemTest {
 	}
 
 	/**
-	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 * Test method for
+	 * {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
 	void testValidateInput_capitalNaN() {
@@ -241,7 +246,8 @@ class SubSystemTest {
 	}
 
 	/**
-	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 * Test method for
+	 * {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
 	void testValidateInput_capitalZeroOrLess() {
@@ -269,7 +275,8 @@ class SubSystemTest {
 	}
 
 	/**
-	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 * Test method for
+	 * {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
 	void testValidateInput_baseScaleNaN() {
@@ -288,7 +295,8 @@ class SubSystemTest {
 	}
 
 	/**
-	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 * Test method for
+	 * {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
 	void testValidateInput_baseScaleZeroOrLess() {
@@ -341,7 +349,8 @@ class SubSystemTest {
 	 */
 	@Test
 	void testBacktest() {
-		double expectedValue = 1831472.7037588374; // Excel: 1,831,582.23, diff.
+		double expectedValue = 1831472.7037588374; // Excel: 1,831,582.23,
+																							 // diff.
 		// approx 0.00598%
 
 		assertEquals(expectedValue,

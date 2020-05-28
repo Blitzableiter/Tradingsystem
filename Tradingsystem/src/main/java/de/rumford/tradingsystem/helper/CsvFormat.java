@@ -1,10 +1,10 @@
 package de.rumford.tradingsystem.helper;
 
 /**
- * This enum provides the most common ways a CSV can be structured, including
- * the symbols for field, date, time, and thousands separator, as well as the
- * decimal point and the order of values (year, month, day) inside the date
- * value.
+ * This enum provides the most common ways a CSV can be structured,
+ * including the symbols for field, date, time, and thousands separator, as
+ * well as the decimal point and the order of values (year, month, day)
+ * inside the date value.
  * 
  * @author Max Rumford
  *

@@ -57,7 +57,8 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for {@link Util#adjustForStandardDeviation(double, double)}.
+	 * Test method for
+	 * {@link Util#adjustForStandardDeviation(double, double)}.
 	 */
 	@Test
 	void testAdjustForStandardDeviation() {
@@ -73,7 +74,8 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for {@link Util#adjustForStandardDeviation(double, double)}.
+	 * Test method for
+	 * {@link Util#adjustForStandardDeviation(double, double)}.
 	 */
 	@Test
 	void testAdjustForStandardDeviation_sd0() {
@@ -251,7 +253,8 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for {@link Util#calculateForecastScalar(double[], double)}.
+	 * Test method for
+	 * {@link Util#calculateForecastScalar(double[], double)}.
 	 */
 	@Test
 	void testCalculateForecastScalar() {
@@ -266,7 +269,8 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for {@link Util#calculateForecastScalar(double[], double)}.
+	 * Test method for
+	 * {@link Util#calculateForecastScalar(double[], double)}.
 	 */
 	@Test
 	void testCalculateForecastScalar_absoluteAverage0() {
@@ -281,7 +285,8 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for {@link Util#calculateForecastScalar(double[], double)}.
+	 * Test method for
+	 * {@link Util#calculateForecastScalar(double[], double)}.
 	 */
 	@Test
 	void testCalculateForecastScalar_noValues() {
@@ -298,7 +303,8 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for {@link Util#calculateForecastScalar(double[], double)}.
+	 * Test method for
+	 * {@link Util#calculateForecastScalar(double[], double)}.
 	 */
 	@Test
 	void testCalculateForecastScalar_baseScale0() {
@@ -415,7 +421,8 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for {@link Util#calculateWeightsForThreeCorrelations(double[])}.
+	 * Test method for
+	 * {@link Util#calculateWeightsForThreeCorrelations(double[])}.
 	 */
 	@Test
 	void testCalculateWeightsForThreeCorrelations() {
@@ -431,7 +438,8 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for {@link Util#calculateWeightsForThreeCorrelations(double[])}.
+	 * Test method for
+	 * {@link Util#calculateWeightsForThreeCorrelations(double[])}.
 	 */
 	@Test
 	void testCalculateWeightsForThreeCorrelations_negativeCorrelations() {
@@ -448,7 +456,8 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for {@link Util#calculateWeightsForThreeCorrelations(double[])}.
+	 * Test method for
+	 * {@link Util#calculateWeightsForThreeCorrelations(double[])}.
 	 */
 	@Test
 	void testCalculateWeightsForThreeCorrelations_threeEqualWeights() {

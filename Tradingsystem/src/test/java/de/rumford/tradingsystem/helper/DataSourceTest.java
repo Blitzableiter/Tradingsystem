@@ -28,7 +28,8 @@ class DataSourceTest {
 	final static int FOLDER_NAME_LENGTH = FILE_NAME_LENGTH;
 
 	/*
-	 * Have all temporary created files inside a folder inside src/test/resources
+	 * Have all temporary created files inside a folder inside
+	 * src/test/resources
 	 */
 	private static String workingDir = Path
 			.of("src", "test", "resources",
@@ -36,8 +37,8 @@ class DataSourceTest {
 			.toString();
 
 	/*
-	 * Generate random file names as not to accidentally overwrite any existing
-	 * files
+	 * Generate random file names as not to accidentally overwrite any
+	 * existing files
 	 */
 	final static String FILE_NAME_CORRECT_FILE_EUR = Path
 			.of(workingDir,

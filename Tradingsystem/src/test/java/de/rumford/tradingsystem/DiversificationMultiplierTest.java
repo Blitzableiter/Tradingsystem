@@ -164,10 +164,10 @@ class DiversificationMultiplierTest {
 
 		divMulti = new DiversificationMultiplier(rules);
 
-//		System.out.println(Arrays.toString(ss1.getRelevantForecastValues()));
-//		System.out.println(Arrays.toString(ss2.getRelevantForecastValues()));
-//		System.out.println(Arrays.toString(ss3.getRelevantForecastValues()));
-//		System.out.println(Arrays.toString(ss4.getRelevantForecastValues()));
+		// System.out.println(Arrays.toString(ss1.getRelevantForecastValues()));
+		// System.out.println(Arrays.toString(ss2.getRelevantForecastValues()));
+		// System.out.println(Arrays.toString(ss3.getRelevantForecastValues()));
+		// System.out.println(Arrays.toString(ss4.getRelevantForecastValues()));
 
 		assertEquals(expectedValue, divMulti.getValue(),
 				"Diversification Multiplier is not correctly calculated when rules have no variations");

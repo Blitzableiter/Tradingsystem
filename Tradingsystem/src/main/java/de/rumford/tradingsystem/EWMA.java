@@ -10,10 +10,10 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
  * The EWMA class represents the mathematical concept of an exponentially
- * weighted moving average. In an EWMA, the "older" a given base value is (in
- * proportion to the "current" base value) the less it influences the current
- * EWMA value. This influence deteriorates exponentially by the given horizon to
- * the power of 2, thus the name.
+ * weighted moving average. In an EWMA, the "older" a given base value is
+ * (in proportion to the "current" base value) the less it influences the
+ * current EWMA value. This influence deteriorates exponentially by the
+ * given horizon to the power of 2, thus the name.
  * 
  * @author Max Rumford
  *
@@ -22,7 +22,9 @@ public class EWMA {
 
 	/* The horizon this EWMA shall cover. */
 	private int horizon;
-	/* The decay factor for recent values calculated from the given horizon. */
+	/*
+	 * The decay factor for recent values calculated from the given horizon.
+	 */
 	private double decay;
 	/* The values this EWMA shall be based upon. */
 	private ValueDateTupel[] baseValues;
@@ -32,8 +34,8 @@ public class EWMA {
 	/**
 	 * Constructor for the {@link EWMA} class
 	 *
-	 * @param baseValues {@code ValueDateTupel[]} The values this EWMA shall is to
-	 *                   be based on.
+	 * @param baseValues {@code ValueDateTupel[]} The values this EWMA shall
+	 *                   is to be based on.
 	 * @param horizon    {@code int} horizon this EWMA is to be over
 	 */
 	public EWMA(ValueDateTupel[] baseValues, int horizon) {
@@ -50,8 +52,8 @@ public class EWMA {
 	 * Calculate the decay value based on the given horizon.
 	 * 
 	 * @param horizon {@code int} Horizon of this EWMA.
-	 * @return {@code double} the decay used to calculate the importance of the
-	 *         previous EWMA.
+	 * @return {@code double} the decay used to calculate the importance of
+	 *         the previous EWMA.
 	 */
 	private double calculateDecay(int horizon) {
 		return 2d / (horizon + 1d);
@@ -61,7 +63,8 @@ public class EWMA {
 	 * Calculate the EWMA-value for given previous value and base value
 	 * 
 	 * @param previousEWMA {@code double} EWMA of the previous time period
-	 * @param baseValue    {@code double} base value of the current time period
+	 * @param baseValue    {@code double} base value of the current time
+	 *                     period
 	 * @return {@code double} EWMA for the current time period
 	 */
 	public double calculateEWMA(double previousEWMA, double baseValue) {
@@ -73,8 +76,8 @@ public class EWMA {
 	/**
 	 * Calculate the EWMA values based on the given base values.
 	 * 
-	 * @param baseValues {@code ValueDateTupel[]} The base values of the given
-	 *                   asset.
+	 * @param baseValues {@code ValueDateTupel[]} The base values of the
+	 *                   given asset.
 	 * @return {@code ValueDateTupel[]} An array of calculated EWMA values.
 	 */
 	private ValueDateTupel[] calculateEwmaValues(
@@ -102,11 +105,13 @@ public class EWMA {
 	/**
 	 * Validates the given base values.
 	 * 
-	 * @param baseValues {@code ValueDateTupel[]} the base values the EWMA is to be
-	 *                   calculated on. Must pass
-	 *                   {@link Validator#validateValues(ValueDateTupel[])} and
+	 * @param baseValues {@code ValueDateTupel[]} the base values the EWMA is
+	 *                   to be calculated on. Must pass
+	 *                   {@link Validator#validateValues(ValueDateTupel[])}
+	 *                   and
 	 *                   {@link Validator#validateDates(ValueDateTupel[])}.
-	 * @throws IllegalArgumentException if the above specifications are not met.
+	 * @throws IllegalArgumentException if the above specifications are not
+	 *                                  met.
 	 */
 	private static void validateBaseValues(ValueDateTupel[] baseValues) {
 		try {
