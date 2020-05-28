@@ -597,8 +597,7 @@ public class ValueDateTupel {
 	 * @throws IllegalArgumentException If the given array is null.
 	 * @throws IllegalArgumentException If the given array contains null values.
 	 */
-	public static boolean isSortedAscending(ValueDateTupel[] valueDateTupels)
-			throws IllegalArgumentException {
+	public static boolean isSortedAscending(ValueDateTupel[] valueDateTupels) {
 		if (valueDateTupels == null)
 			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
 		if (ValueDateTupel.contains(valueDateTupels, null))

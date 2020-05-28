@@ -78,7 +78,7 @@ public class EWMA {
 	 * @return {@code ValueDateTupel[]} An array of calculated EWMA values.
 	 */
 	private ValueDateTupel[] calculateEwmaValues(ValueDateTupel[] baseValues) {
-		ValueDateTupel[] ewmaValues = ValueDateTupel.createEmptyArray();
+		ValueDateTupel[] newEwmaValues = ValueDateTupel.createEmptyArray();
 		double previousEwma = 0;
 		/* Calculate all EWMA-Values */
 		for (ValueDateTupel baseValue : baseValues) {
@@ -93,10 +93,10 @@ public class EWMA {
 				previousEwma = newValue;
 			}
 			/* Add the new value to the array of EWMA values */
-			ewmaValues = ArrayUtils.add(ewmaValues,
+			newEwmaValues = ArrayUtils.add(newEwmaValues,
 					new ValueDateTupel(baseValue.getDate(), newValue));
 		}
-		return ewmaValues;
+		return newEwmaValues;
 	}
 
 	/**

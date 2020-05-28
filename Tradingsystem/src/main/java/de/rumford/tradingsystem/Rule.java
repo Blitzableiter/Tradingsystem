@@ -522,10 +522,10 @@ public abstract class Rule {
 			instanceVariations[1].setWeight(0.5d);
 			break;
 		case 3:
-			ValueDateTupel[][] forecasts = {};
+			ValueDateTupel[][] calculatedForecasts = {};
 			for (Rule variation : instanceVariations) {
 				ValueDateTupel[] fcs = variation.extractRelevantForecasts();
-				forecasts = ArrayUtils.add(forecasts, fcs);
+				calculatedForecasts = ArrayUtils.add(calculatedForecasts, fcs);
 			}
 
 			/*
@@ -533,7 +533,7 @@ public abstract class Rule {
 			 * needed for correlation calculation.
 			 */
 			double[][] variationsForecasts = {};
-			for (ValueDateTupel[] forecast : forecasts) {
+			for (ValueDateTupel[] forecast : calculatedForecasts) {
 				variationsForecasts = ArrayUtils.add(variationsForecasts,
 						ValueDateTupel.getValues(forecast));
 			}
