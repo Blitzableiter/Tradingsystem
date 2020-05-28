@@ -25,7 +25,8 @@ class EWMATest {
 	EWMA ewma4;
 	EWMA ewma8;
 
-	BaseValue baseValue = BaseValueFactory.jan1Jan5calcShort("My base value");
+	BaseValue baseValue = BaseValueFactory
+			.jan1Jan5calcShort("My base value");
 
 	@BeforeEach
 	void setUp() throws Exception {

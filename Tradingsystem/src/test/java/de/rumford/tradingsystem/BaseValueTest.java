@@ -52,26 +52,33 @@ class BaseValueTest {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		localDateTimeJan01_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 1),
-				LocalTime.of(22, 0));
-		localDateTimeJan02_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 2),
-				LocalTime.of(22, 0));
-		localDateTimeJan03_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 3),
-				LocalTime.of(22, 0));
-		localDateTimeJan04_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 4),
-				LocalTime.of(22, 0));
-		localDateTimeJan05_22_00_00 = LocalDateTime.of(LocalDate.of(2020, 1, 5),
-				LocalTime.of(22, 0));
+		localDateTimeJan01_22_00_00 = LocalDateTime
+				.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
+		localDateTimeJan02_22_00_00 = LocalDateTime
+				.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
+		localDateTimeJan03_22_00_00 = LocalDateTime
+				.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
+		localDateTimeJan04_22_00_00 = LocalDateTime
+				.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
+		localDateTimeJan05_22_00_00 = LocalDateTime
+				.of(LocalDate.of(2020, 1, 5), LocalTime.of(22, 0));
 
-		valuedatetupel1 = new ValueDateTupel(localDateTimeJan01_22_00_00, 200d);
-		valuedatetupel2 = new ValueDateTupel(localDateTimeJan02_22_00_00, 400d);
-		valuedatetupel3 = new ValueDateTupel(localDateTimeJan03_22_00_00, 500d);
-		valuedatetupel4 = new ValueDateTupel(localDateTimeJan04_22_00_00, 400d);
+		valuedatetupel1 = new ValueDateTupel(localDateTimeJan01_22_00_00,
+				200d);
+		valuedatetupel2 = new ValueDateTupel(localDateTimeJan02_22_00_00,
+				400d);
+		valuedatetupel3 = new ValueDateTupel(localDateTimeJan03_22_00_00,
+				500d);
+		valuedatetupel4 = new ValueDateTupel(localDateTimeJan04_22_00_00,
+				400d);
 		valuedatetupel5 = new ValueDateTupel(localDateTimeJan01_22_00_00,
 				1000d);
-		valuedatetupel6 = new ValueDateTupel(localDateTimeJan02_22_00_00, 500d);
-		valuedatetupel7 = new ValueDateTupel(localDateTimeJan03_22_00_00, 375d);
-		valuedatetupel8 = new ValueDateTupel(localDateTimeJan04_22_00_00, 450d);
+		valuedatetupel6 = new ValueDateTupel(localDateTimeJan02_22_00_00,
+				500d);
+		valuedatetupel7 = new ValueDateTupel(localDateTimeJan03_22_00_00,
+				375d);
+		valuedatetupel8 = new ValueDateTupel(localDateTimeJan04_22_00_00,
+				450d);
 
 		shortValues = ValueDateTupel.createEmptyArray();
 		shortValues = ArrayUtils.add(shortValues, valuedatetupel5);
@@ -275,8 +282,7 @@ class BaseValueTest {
 		String expectedCauseMessage = "Values must not be an empty array";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values,
-						emptyValues),
+				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values, emptyValues),
 				"Empty short index values not properly rejected");
 		assertEquals(expectedMessage, thrown.getMessage(),
 				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
@@ -295,8 +301,7 @@ class BaseValueTest {
 		shortValues = ArrayUtils.add(shortValues, valuedatetupel1);
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values,
-						shortValues),
+				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values, shortValues),
 				"Duplicate date/time values in short index values are not properly handled");
 		assertEquals(expectedMessage, thrown.getMessage(),
 				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
@@ -315,8 +320,7 @@ class BaseValueTest {
 				new ValueDateTupel(localDateTimeJan05_22_00_00, Double.NaN));
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values,
-						shortValues),
+				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values, shortValues),
 				"NaN values in short index values are not properly handled");
 		assertEquals(expectedMessage, thrown.getMessage(),
 				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
@@ -334,8 +338,7 @@ class BaseValueTest {
 		shortValues = ArrayUtils.add(shortValues, null);
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values,
-						shortValues),
+				() -> new BaseValue(NAME_OF_TEST_BASE_VALUES, values, shortValues),
 				"nulls in short index values are not properly handled");
 		assertEquals(expectedMessage, thrown.getMessage(),
 				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);

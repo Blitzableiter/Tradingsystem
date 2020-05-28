@@ -21,29 +21,28 @@ public class DataSource {
 	}
 
 	/**
-	 * Reads the data from a given CSV path. Assumes the following "columns":
-	 * Date, Time, value. Depending on the formatting of the CSV file the
-	 * corresponding {@link CsvFormat} has to be passed. The underlying
-	 * enumeration is not final and can be altered to suit the user's needs.
+	 * Reads the data from a given CSV path. Assumes the following "columns": Date,
+	 * Time, value. Depending on the formatting of the CSV file the corresponding
+	 * {@link CsvFormat} has to be passed. The underlying enumeration is not final
+	 * and can be altered to suit the user's needs.
 	 * <p>
-	 * The CSV file to be parsed is expected not to have column headings. If so,
-	 * the values of the first row might not be parsed and an
-	 * IllegalArgumentException as explained below might be thrown. If the row
-	 * can be parsed it will most likely not contain any useful information and
-	 * might result in incorrect calculation results. The CSV file should always
-	 * be cleared of headings.
+	 * The CSV file to be parsed is expected not to have column headings. If so, the
+	 * values of the first row might not be parsed and an IllegalArgumentException
+	 * as explained below might be thrown. If the row can be parsed it will most
+	 * likely not contain any useful information and might result in incorrect
+	 * calculation results. The CSV file should always be cleared of headings.
 	 * 
 	 * @param sourcePath {@code String} The path to the CSV file to be read.
 	 * @param format     {@link CsvFormat} The format of the CSV file.
 	 * @return {@code ValueDateTupel[]} An array of {@link ValueDateTupel}
 	 *         representing the read data.
-	 * @throws FileNotFoundException    if the FileReader can not find a file
-	 *                                  for the given {@code sourcePath}.
-	 * @throws IOException              if the given {@code sourcePath} cannot
-	 *                                  be properly resolved to an actual file.
+	 * @throws FileNotFoundException    if the FileReader can not find a file for
+	 *                                  the given {@code sourcePath}.
+	 * @throws IOException              if the given {@code sourcePath} cannot be
+	 *                                  properly resolved to an actual file.
 	 * @throws IllegalArgumentException if the given path is invalid.
-	 * @throws IllegalArgumentException if any of the rows in the read CSV file
-	 *                                  does not contain exactly 3 columns.
+	 * @throws IllegalArgumentException if any of the rows in the read CSV file does
+	 *                                  not contain exactly 3 columns.
 	 */
 	public static ValueDateTupel[] getDataFromCsv(String sourcePath,
 			CsvFormat format) throws IOException {
@@ -78,8 +77,7 @@ public class DataSource {
 				}
 
 				/*
-				 * Parse the first and second field (date, time) into a
-				 * LocalDateTime instance
+				 * Parse the first and second field (date, time) into a LocalDateTime instance
 				 */
 				String[] dateAndTimeStrings = new String[2];
 				System.arraycopy(columns, 0, dateAndTimeStrings, 0, 2);
@@ -102,26 +100,26 @@ public class DataSource {
 	}
 
 	/**
-	 * Parse the given columns {date, time} into a {@link LocalDateTime}
-	 * instance. Expects an array of Strings of length 2.
+	 * Parse the given columns {date, time} into a {@link LocalDateTime} instance.
+	 * Expects an array of Strings of length 2.
 	 * 
 	 * @param columns {@code String[]} The columns containing the String
 	 *                representing date and time.
-	 * @param format  {@link CsvFormat} The {@link CsvFormat} representing the
-	 *                given CSV file.
+	 * @param format  {@link CsvFormat} The {@link CsvFormat} representing the given
+	 *                CSV file.
 	 * @return {@link LocalDateTime} representation of the passed {date, time}
 	 *         columns.
-	 * @throws IllegalArgumentException If there are not exactly two columns in
-	 *                                  the passed {@code String[]}.
-	 * @throws IllegalArgumentException If the date pattern could not be
-	 *                                  recognized in subroutine
+	 * @throws IllegalArgumentException If there are not exactly two columns in the
+	 *                                  passed {@code String[]}.
+	 * @throws IllegalArgumentException If the date pattern could not be recognized
+	 *                                  in subroutine
 	 *                                  {@link #evaluateDatePattern(CsvFormat)}.
-	 * @throws IllegalArgumentException If the given date values cannot be
-	 *                                  parsed to Integers.
-	 * @throws IllegalArgumentException If the given time values cannot be
-	 *                                  parsed to Integers.
-	 * @throws IllegalArgumentException If the given date and time values cannot
-	 *                                  be parsed to {@link LocalDateTime}}.
+	 * @throws IllegalArgumentException If the given date values cannot be parsed to
+	 *                                  Integers.
+	 * @throws IllegalArgumentException If the given time values cannot be parsed to
+	 *                                  Integers.
+	 * @throws IllegalArgumentException If the given date and time values cannot be
+	 *                                  parsed to {@link LocalDateTime}}.
 	 */
 	private static LocalDateTime parseLocalDateTime(String[] columns,
 			CsvFormat format) {
@@ -145,8 +143,8 @@ public class DataSource {
 							+ columns[0] + "<");
 		}
 		/*
-		 * Catch Exception so BufferedReader can be closed (in calling method)
-		 * on unknown Exceptions to avoid memory leakage.
+		 * Catch Exception so BufferedReader can be closed (in calling method) on
+		 * unknown Exceptions to avoid memory leakage.
 		 */
 		catch (Exception e) {
 			throw e;
@@ -185,8 +183,8 @@ public class DataSource {
 	 * {@link IllegalArgumentException} will be thrown due to an unknown format.
 	 * 
 	 * @param format {@link CsvFormat} Format of the CSV file to be parsed.
-	 * @return {@code int[]} containing the position of {day, month, year}
-	 *         values inside the date field of the given CSV.
+	 * @return {@code int[]} containing the position of {day, month, year} values
+	 *         inside the date field of the given CSV.
 	 * @throws IllegalArgumentException if the date given date pattern is not
 	 *                                  recognized.
 	 */
@@ -214,22 +212,22 @@ public class DataSource {
 	}
 
 	/**
-	 * Parse the course value String into a {@code double} representing its
-	 * values.
+	 * Parse the course value String into a {@code double} representing its values.
 	 * 
-	 * @param columns {@code String[]} The String representation of the CSV
-	 *                column containing the value.
+	 * @param columns {@code String[]} The String representation of the CSV column
+	 *                containing the value.
 	 * @param format  {@link CsvFormat} Format the CSV file is in.
 	 * @return {@code double} The parsed value.
 	 * @throws IllegalArgumentException if the passed String cannot be properly
 	 *                                  parsed
 	 */
-	private static double parseCourseValue(String[] columns, CsvFormat format) {
+	private static double parseCourseValue(String[] columns,
+			CsvFormat format) {
 		String valueString = columns[0];
 		/* Eliminate thousands separator from String */
 		if (valueString.contains(format.getThousandsSeparator())) {
-			valueString = valueString.replaceAll(
-					Pattern.quote(format.getThousandsSeparator()), "");
+			valueString = valueString
+					.replaceAll(Pattern.quote(format.getThousandsSeparator()), "");
 		}
 		/* Replace non-US decimal points with US decimal points */
 		if (!format.getDecimalPoint().equals(CsvFormat.US.getDecimalPoint())) {
@@ -239,8 +237,7 @@ public class DataSource {
 
 		double value;
 		/*
-		 * At this point all hindering sings have been eradicated from the
-		 * String
+		 * At this point all hindering sings have been eradicated from the String
 		 */
 		try {
 			value = Double.parseDouble(valueString);

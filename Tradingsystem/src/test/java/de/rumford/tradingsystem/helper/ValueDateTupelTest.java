@@ -99,8 +99,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending() {
@@ -112,8 +111,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending_notInOrder() {
@@ -125,8 +123,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending_twoEqualDates() {
@@ -138,8 +135,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending_arrayNull() {
@@ -154,8 +150,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending_arrayContainsNull() {
@@ -171,8 +166,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending() {
@@ -184,8 +178,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending_notInOrder() {
@@ -197,8 +190,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending_twoEqualDates() {
@@ -210,8 +202,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending_arrayNull() {
@@ -226,8 +217,7 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending_arrayContainsNull() {
@@ -351,8 +341,7 @@ class ValueDateTupelTest {
 		ValueDateTupel[] expectedVdtArray2 = { //
 				new ValueDateTupel(LocalDateTime.of(2020, 1, 1, 0, 0), 999), //
 				new ValueDateTupel(LocalDateTime.of(2020, 1, 2, 0, 0), 1099.6), //
-				new ValueDateTupel(LocalDateTime.of(2020, 1, 3, 0, 0),
-						1200.2) };
+				new ValueDateTupel(LocalDateTime.of(2020, 1, 3, 0, 0), 1200.2) };
 		ValueDateTupel[][] expectedValue = { //
 				expectedVdtArray1, //
 				expectedVdtArray2 };
@@ -361,8 +350,7 @@ class ValueDateTupelTest {
 				valueDateTupel3 };
 		ValueDateTupel[] vdtArray2 = {
 				new ValueDateTupel(LocalDateTime.of(2020, 1, 1, 0, 0), 999),
-				new ValueDateTupel(LocalDateTime.of(2020, 1, 3, 0, 0),
-						1200.2) };
+				new ValueDateTupel(LocalDateTime.of(2020, 1, 3, 0, 0), 1200.2) };
 		ValueDateTupel[][] vdtArraysArray = { vdtArray1, vdtArray2 };
 		ValueDateTupel[][] actualValue = ValueDateTupel
 				.alignDates(vdtArraysArray);
@@ -421,7 +409,8 @@ class ValueDateTupelTest {
 		String expectedMessage = "The array at position 0 does not meet specifications.";
 		String expectedCause = "Given values must not contain null.";
 
-		ValueDateTupel[] vdtArray1 = { valueDateTupel1, null, valueDateTupel5 };
+		ValueDateTupel[] vdtArray1 = { valueDateTupel1, null,
+				valueDateTupel5 };
 		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3,
 				valueDateTupel4 };
 		ValueDateTupel[][] vdtArraysArray = { vdtArray1, vdtArray2 };
@@ -524,9 +513,9 @@ class ValueDateTupelTest {
 		String expectedMessage = MESSAGE_ARRAY_MUST_NOT_BE_NULL;
 
 		ValueDateTupel[] valueDateTupelArray = null;
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> ValueDateTupel.contains(valueDateTupelArray,
-						valueDateTupel4),
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> ValueDateTupel
+						.contains(valueDateTupelArray, valueDateTupel4),
 				"Array of null is not properly handled.");
 
 		assertEquals(expectedMessage, thrown.getMessage(),
@@ -660,9 +649,9 @@ class ValueDateTupelTest {
 		String expectedMessage = "Given array must not be null";
 
 		ValueDateTupel[] valueDateTupelArray = null;
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> ValueDateTupel.addOneAt(valueDateTupelArray,
-						valueDateTupel1, 0),
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> ValueDateTupel
+						.addOneAt(valueDateTupelArray, valueDateTupel1, 0),
 				"Array of null is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(),
@@ -700,8 +689,8 @@ class ValueDateTupelTest {
 				valueDateTupel3, valueDateTupel4 };
 		int negativePosition = -1;
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> ValueDateTupel.addOneAt(valueDateTupelArray,
-						valueDateTupel1, negativePosition),
+				() -> ValueDateTupel.addOneAt(valueDateTupelArray, valueDateTupel1,
+						negativePosition),
 				"Position < 0 is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(),
@@ -720,8 +709,8 @@ class ValueDateTupelTest {
 				valueDateTupel3, valueDateTupel4 };
 		int tooLargeAPosition = 4;
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> ValueDateTupel.addOneAt(valueDateTupelArray,
-						valueDateTupel1, tooLargeAPosition),
+				() -> ValueDateTupel.addOneAt(valueDateTupelArray, valueDateTupel1,
+						tooLargeAPosition),
 				"Position > array.length is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(),
@@ -770,9 +759,9 @@ class ValueDateTupelTest {
 		String expectedMessage = MESSAGE_ARRAY_MUST_NOT_BE_NULL;
 
 		ValueDateTupel[] valueDateTupelArray = null;
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> ValueDateTupel.getElement(valueDateTupelArray,
-						date_20200101),
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> ValueDateTupel
+						.getElement(valueDateTupelArray, date_20200101),
 				"Array of null is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(),
@@ -949,8 +938,7 @@ class ValueDateTupelTest {
 		ValueDateTupel[] vdtArray = { valueDateTupel4, valueDateTupel5 };
 
 		assertNull(
-				ValueDateTupel.getElements(vdtArray, date_20200102,
-						date_20200105),
+				ValueDateTupel.getElements(vdtArray, date_20200102, date_20200105),
 				"dtFrom not in array is not properly handled.");
 	}
 
@@ -963,8 +951,7 @@ class ValueDateTupelTest {
 		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2 };
 
 		assertNull(
-				ValueDateTupel.getElements(vdtArray, date_20200102,
-						date_20200105),
+				ValueDateTupel.getElements(vdtArray, date_20200102, date_20200105),
 				"dtTo not in array is not properly handled.");
 	}
 

@@ -87,10 +87,12 @@ class SubSystemTest {
 	 */
 	@Test
 	void testSubSystem() {
-		SubSystem subsys = new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE);
+		SubSystem subsys = new SubSystem(baseValue, rules, CAPITAL,
+				BASE_SCALE);
 		SubSystem subsys2 = new SubSystem(baseValue, rules, CAPITAL,
 				BASE_SCALE);
-		assertEquals(subsys, subsys2, "Equal Objects are not considered equal");
+		assertEquals(subsys, subsys2,
+				"Equal Objects are not considered equal");
 	}
 
 	/**
@@ -151,8 +153,7 @@ class SubSystemTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
 	void testValidateInput_baseValueNull() {
@@ -168,8 +169,7 @@ class SubSystemTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
 	void testValidateInput_rulesNull() {
@@ -185,17 +185,16 @@ class SubSystemTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
 	void testValidateInput_rulesEmptyArray() {
 		Rule[] emptyRulesArray = {};
 		String expectedMessage = "Rules must not be an empty array";
 
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new SubSystem(baseValue, emptyRulesArray, CAPITAL,
-						BASE_SCALE),
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> new SubSystem(baseValue,
+						emptyRulesArray, CAPITAL, BASE_SCALE),
 				"Empty rules array is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(),
@@ -203,8 +202,7 @@ class SubSystemTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
 	void testValidateInput_rules_baseValueDoesntMatch_givenBaseValue() {
@@ -224,8 +222,7 @@ class SubSystemTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
 	void testValidateInput_capitalNaN() {
@@ -244,8 +241,7 @@ class SubSystemTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
 	void testValidateInput_capitalZeroOrLess() {
@@ -255,8 +251,7 @@ class SubSystemTest {
 		String expectedCause = "Value must be a positive decimal";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> new SubSystem(baseValue, rules, negativeCapital,
-						BASE_SCALE),
+				() -> new SubSystem(baseValue, rules, negativeCapital, BASE_SCALE),
 				"Negative capital value is not properly handled");
 
 		Exception thrown2 = assertThrows(IllegalArgumentException.class,
@@ -274,8 +269,7 @@ class SubSystemTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
 	void testValidateInput_baseScaleNaN() {
@@ -294,8 +288,7 @@ class SubSystemTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
+	 * Test method for {@link SubSystem#validateInput(BaseValue, Rule[], double)}.
 	 */
 	@Test
 	void testValidateInput_baseScaleZeroOrLess() {
@@ -308,8 +301,7 @@ class SubSystemTest {
 				() -> new SubSystem(baseValue, rules, CAPITAL, baseScaleZero),
 				"Base scale of zero is not properly handled");
 		Exception thrown2 = assertThrows(IllegalArgumentException.class,
-				() -> new SubSystem(baseValue, rules, CAPITAL,
-						baseScaleSubZero),
+				() -> new SubSystem(baseValue, rules, CAPITAL, baseScaleSubZero),
 				"Base scale sub zero is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(),
@@ -329,16 +321,17 @@ class SubSystemTest {
 	@Test
 	void testCalculateCombinedForecasts() {
 		double expectedValue1 = 13.398963140010043; // Excel: 13.3988598882083,
-													// diff. approx
-													// 0.0007706%
+		// diff. approx
+		// 0.0007706%
 		double expectedValue2 = 20; // Excel: 20
 
 		assertEquals(expectedValue1,
 				subSystem.getCombinedForecasts()[0].getValue(),
 				"Combined forecasts are not correctly calculated");
 		assertEquals(expectedValue2,
-				subSystem.getCombinedForecasts()[subSystem
-						.getCombinedForecasts().length - 1].getValue(),
+				subSystem
+						.getCombinedForecasts()[subSystem.getCombinedForecasts().length
+								- 1].getValue(),
 				"Combined forecasts are not correctly calculated");
 	}
 
@@ -349,7 +342,7 @@ class SubSystemTest {
 	@Test
 	void testBacktest() {
 		double expectedValue = 1831472.7037588374; // Excel: 1,831,582.23, diff.
-													// approx 0.00598%
+		// approx 0.00598%
 
 		assertEquals(expectedValue,
 				subSystem.backtest(localDateTimeJan10220000,
@@ -364,8 +357,7 @@ class SubSystemTest {
 	@Test
 	void testBacktest_positiveAndNegativeForecasts() {
 		VolatilityDifference volDif = new VolatilityDifference(baseValue, null,
-				localDateTimeJan10220000, localDateTimeJan12220000, 4,
-				BASE_SCALE);
+				localDateTimeJan10220000, localDateTimeJan12220000, 4, BASE_SCALE);
 		Rule[] rules = { volDif };
 		subSystem = new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE);
 
@@ -442,13 +434,13 @@ class SubSystemTest {
 	@Test
 	void testCalculatePerformanceValues() {
 		double expectedValue = 16454612.6646818; // Excel: 16454586.0867138,
-													// diff. approx 0.000162%
+		// diff. approx 0.000162%
 
 		ValueDateTupel[] performanceValues = SubSystem
 				.calculatePerformanceValues(subSystem.getBaseValue(),
 						localDateTimeJan10220000, localDateTimeFeb05220000,
-						subSystem.getCombinedForecasts(),
-						subSystem.getBaseScale(), subSystem.getCapital());
+						subSystem.getCombinedForecasts(), subSystem.getBaseScale(),
+						subSystem.getCapital());
 		assertEquals(expectedValue,
 				performanceValues[performanceValues.length - 2].getValue(),
 				"Performance values are not properly calculated");
@@ -460,11 +452,11 @@ class SubSystemTest {
 	 */
 	@Test
 	void testCalculatePerformanceValues_positiveAndNegativeForecasts() {
-		VolatilityDifference volDif4 = new VolatilityDifference(baseValue, null,
-				localDateTimeJan10220000, localDateTimeJan12220000, 4,
+		VolatilityDifference volDif4 = new VolatilityDifference(baseValue,
+				null, localDateTimeJan10220000, localDateTimeJan12220000, 4,
 				BASE_SCALE);
-		VolatilityDifference volDif8 = new VolatilityDifference(baseValue, null,
-				localDateTimeJan10220000, localDateTimeJan12220000, 8,
+		VolatilityDifference volDif8 = new VolatilityDifference(baseValue,
+				null, localDateTimeJan10220000, localDateTimeJan12220000, 8,
 				BASE_SCALE);
 
 		Rule[] rules = { volDif4, volDif8 };
@@ -475,8 +467,8 @@ class SubSystemTest {
 		ValueDateTupel[] performanceValues = SubSystem
 				.calculatePerformanceValues(subSystem.getBaseValue(),
 						localDateTimeJan10220000, localDateTimeFeb05220000,
-						subSystem.getCombinedForecasts(),
-						subSystem.getBaseScale(), subSystem.getCapital());
+						subSystem.getCombinedForecasts(), subSystem.getBaseScale(),
+						subSystem.getCapital());
 		assertEquals(expectedValue,
 				performanceValues[performanceValues.length - 1].getValue(),
 				"Performance values are not properly calculated");
@@ -488,8 +480,8 @@ class SubSystemTest {
 	 */
 	@Test
 	void testCalculatePerformanceValues_positiveNegativeAndZeroForecasts() {
-		VolatilityDifference volDif4 = new VolatilityDifference(baseValue, null,
-				localDateTimeJan10220000, localDateTimeJan12220000, 4,
+		VolatilityDifference volDif4 = new VolatilityDifference(baseValue,
+				null, localDateTimeJan10220000, localDateTimeJan12220000, 4,
 				BASE_SCALE);
 		RealRule rr = RealRule.from(baseValue, null, localDateTimeJan10220000,
 				localDateTimeJan12220000, BASE_SCALE, VARIATOR);
@@ -502,8 +494,8 @@ class SubSystemTest {
 		ValueDateTupel[] performanceValues = SubSystem
 				.calculatePerformanceValues(subSystem.getBaseValue(),
 						localDateTimeJan10220000, localDateTimeFeb05220000,
-						subSystem.getCombinedForecasts(),
-						subSystem.getBaseScale(), subSystem.getCapital());
+						subSystem.getCombinedForecasts(), subSystem.getBaseScale(),
+						subSystem.getCapital());
 		assertEquals(expectedValue,
 				performanceValues[performanceValues.length - 1].getValue(),
 				"Performance values are not properly calculated");
@@ -520,10 +512,9 @@ class SubSystemTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> SubSystem.calculatePerformanceValues(
-						subSystem.getBaseValue(), null,
-						localDateTimeFeb05220000,
-						subSystem.getCombinedForecasts(),
-						subSystem.getBaseScale(), subSystem.getCapital()),
+						subSystem.getBaseValue(), null, localDateTimeFeb05220000,
+						subSystem.getCombinedForecasts(), subSystem.getBaseScale(),
+						subSystem.getCapital()),
 				"Invalid start of test window is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(),
@@ -543,9 +534,9 @@ class SubSystemTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> SubSystem.calculatePerformanceValues(
-						subSystem.getBaseValue(), localDateTimeJan10220000,
-						null, subSystem.getCombinedForecasts(),
-						subSystem.getBaseScale(), subSystem.getCapital()),
+						subSystem.getBaseValue(), localDateTimeJan10220000, null,
+						subSystem.getCombinedForecasts(), subSystem.getBaseScale(),
+						subSystem.getCapital()),
 				"Invalid end of test window is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(),
@@ -566,8 +557,7 @@ class SubSystemTest {
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> SubSystem.calculatePerformanceValues(
 						subSystem.getBaseValue(), localDateTimeJan10220000,
-						localDateTimeJan10220000,
-						subSystem.getCombinedForecasts(),
+						localDateTimeJan10220000, subSystem.getCombinedForecasts(),
 						subSystem.getBaseScale(), subSystem.getCapital()),
 				"End of test window not after start of test window is not properly handled");
 
@@ -589,8 +579,7 @@ class SubSystemTest {
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> SubSystem.calculatePerformanceValues(
 						subSystem.getBaseValue(), localDateTime2019Dec31220000,
-						localDateTimeFeb05220000,
-						subSystem.getCombinedForecasts(),
+						localDateTimeFeb05220000, subSystem.getCombinedForecasts(),
 						subSystem.getBaseScale(), subSystem.getCapital()),
 				"Start of test window not in base values is not properly handled");
 
@@ -612,8 +601,7 @@ class SubSystemTest {
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> SubSystem.calculatePerformanceValues(
 						subSystem.getBaseValue(), localDateTimeJan10220000,
-						localDateTimeDec31220000,
-						subSystem.getCombinedForecasts(),
+						localDateTimeDec31220000, subSystem.getCombinedForecasts(),
 						subSystem.getBaseScale(), subSystem.getCapital()),
 				"End of test window not in base values is not properly handled");
 
@@ -635,8 +623,7 @@ class SubSystemTest {
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> SubSystem.calculatePerformanceValues(
 						subSystem.getBaseValue(), localDateTimeJan09220000,
-						localDateTimeFeb05220000,
-						subSystem.getCombinedForecasts(),
+						localDateTimeFeb05220000, subSystem.getCombinedForecasts(),
 						subSystem.getBaseScale(), subSystem.getCapital()),
 				"Start of test window not in forecasts is not properly handled");
 

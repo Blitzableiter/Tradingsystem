@@ -27,8 +27,8 @@ public class ProgrammersClient {
 
 	static final LocalDateTime START_OF_REFERENCE_WINDOW = LocalDateTime
 			.of(2019, 1, 2, 22, 0);
-	static final LocalDateTime END_OF_REFERENCE_WINDOW = LocalDateTime.of(2019,
-			12, 30, 22, 0);
+	static final LocalDateTime END_OF_REFERENCE_WINDOW = LocalDateTime
+			.of(2019, 12, 30, 22, 0);
 	static final double BASE_SCALE = 10;
 
 	static final int LOOKBACK_WINDOW_2 = 2;
@@ -77,8 +77,7 @@ public class ProgrammersClient {
 				volDif4, //
 				volDif8 };
 		volDifTop = new VolatilityDifference(baseValue, volDifVariations,
-				START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW, 8,
-				BASE_SCALE);
+				START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW, 8, BASE_SCALE);
 		System.out.println("after voldiftop");
 
 		ewmacShort = new EWMAC(baseValue, null, START_OF_REFERENCE_WINDOW,

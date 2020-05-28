@@ -136,7 +136,7 @@ class DiversificationMultiplierTest {
 	@Test
 	void testCalculateDiversificiationMultiplierValue() {
 		double expectedDiversificationMultiplier = 3.862140866820605; // Excel:
-																		// 3.8621408668206
+		// 3.8621408668206
 
 		double actualDiversificationMultiplier = divMulti.getValue();
 

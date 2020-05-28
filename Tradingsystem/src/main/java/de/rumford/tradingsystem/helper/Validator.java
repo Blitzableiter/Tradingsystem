@@ -31,8 +31,8 @@ public class Validator {
 	 * </ul>
 	 * 
 	 * @param values {@code double[]} The array to be validated.
-	 * @throws IllegalArgumentException if any of the above specifications are
-	 *                                  not met.
+	 * @throws IllegalArgumentException if any of the above specifications are not
+	 *                                  met.
 	 */
 	public static void validateArrayOfDoubles(double[] values) {
 		if (values == null)
@@ -55,10 +55,9 @@ public class Validator {
 	/**
 	 * Validates the given correlations.
 	 * 
-	 * @param correlations {@code double[]} Correlations to be validated. Must
-	 *                     not be null. Must have a length of 3. Must only
-	 *                     contain values {@code !Double.NaN} and
-	 *                     {@code -1 <= value <= 1}.
+	 * @param correlations {@code double[]} Correlations to be validated. Must not
+	 *                     be null. Must have a length of 3. Must only contain
+	 *                     values {@code !Double.NaN} and {@code -1 <= value <= 1}.
 	 * @throws IllegalArgumentException if the above specifications are not met.
 	 */
 	public static void validateCorrelations(double[] correlations) {
@@ -75,8 +74,8 @@ public class Validator {
 		for (int i = 0; i < correlations.length; i++) {
 			if (Double.isNaN(correlations[i]))
 				throw new IllegalArgumentException(
-						"NaN-values are not allowed. Correlation at position "
-								+ i + " is NaN.");
+						"NaN-values are not allowed. Correlation at position " + i
+								+ " is NaN.");
 			if (correlations[i] > 1)
 				throw new IllegalArgumentException(
 						"Correlation at position " + i + " is greater than 1");
@@ -151,11 +150,10 @@ public class Validator {
 	 * {@link BaseValue}.</li>
 	 * </ul>
 	 * 
-	 * @param rules     {@code Rule[]} The array of {@link Rule} to be
-	 *                  validated.
+	 * @param rules     {@code Rule[]} The array of {@link Rule} to be validated.
 	 * @param baseValue {@link BaseValue} The {@link BaseValue} to be validated.
-	 * @throws IllegalArgumentException if any of the above specifications are
-	 *                                  not met.
+	 * @throws IllegalArgumentException if any of the above specifications are not
+	 *                                  met.
 	 */
 	public static void validateRulesVsBaseValue(Rule[] rules,
 			BaseValue baseValue) {
@@ -178,14 +176,14 @@ public class Validator {
 	 * <li>values must contain endOfTimeWindow.</li>
 	 * </ul>
 	 * 
-	 * @param startOfTimeWindow {@link LocalDateTime} The start of Time window
-	 *                          to be checked.
-	 * @param endOfTimeWindow   {@link LocalDateTime} The end of Time window to
-	 *                          be checked.
+	 * @param startOfTimeWindow {@link LocalDateTime} The start of Time window to be
+	 *                          checked.
+	 * @param endOfTimeWindow   {@link LocalDateTime} The end of Time window to be
+	 *                          checked.
 	 * @param values            {@code ValueDateTupel[]} The array of
 	 *                          {@link ValueDateTupel} to be checked.
-	 * @throws IllegalArgumentException if any of the above specifications are
-	 *                                  not met.
+	 * @throws IllegalArgumentException if any of the above specifications are not
+	 *                                  met.
 	 */
 	public static void validateTimeWindow(LocalDateTime startOfTimeWindow,
 			LocalDateTime endOfTimeWindow, ValueDateTupel[] values) {
@@ -202,8 +200,7 @@ public class Validator {
 					"End of time window value must be after start of time window value");
 
 		/*
-		 * The given startOfTimeWindow must be included in the given base
-		 * values.
+		 * The given startOfTimeWindow must be included in the given base values.
 		 */
 		if (!ValueDateTupel.containsDate(values, startOfTimeWindow))
 			throw new IllegalArgumentException(
@@ -217,8 +214,8 @@ public class Validator {
 	}
 
 	/**
-	 * Validates the given array of ValueDateTupel. The given array must fulfill
-	 * the following specifications:
+	 * Validates the given array of ValueDateTupel. The given array must fulfill the
+	 * following specifications:
 	 * <ul>
 	 * <li>Must not be null</li>
 	 * <li>Must be of length greater than 0</li>
@@ -227,8 +224,8 @@ public class Validator {
 	 * </ul>
 	 * 
 	 * @param values {@code ValueDateTupel[]} The values to be validated.
-	 * @throws IllegalArgumentException if the given array does not meet the
-	 *                                  above specifications.
+	 * @throws IllegalArgumentException if the given array does not meet the above
+	 *                                  specifications.
 	 */
 	public static void validateValues(ValueDateTupel[] values) {
 		/* Check if passed values array is null */
@@ -262,8 +259,8 @@ public class Validator {
 	 * <li>Must not be of length greater than 3.</li>
 	 * <li>Must not be of length 0.</li>
 	 * <li>Elements must not be null.</li>
-	 * <li>Elements' {@link Rule#getStartOfReferenceWindow()} must equal the
-	 * given startOfReferenceWindow.</li>
+	 * <li>Elements' {@link Rule#getStartOfReferenceWindow()} must equal the given
+	 * startOfReferenceWindow.</li>
 	 * <li>Elements' {@link Rule#getEndOfReferenceWindow()} must equal the given
 	 * endOfReferenceWindow.</li>
 	 * <li>Must pass {@link #validateRulesVsBaseValue(Rule[], BaseValue)}.</li>
@@ -271,15 +268,14 @@ public class Validator {
 	 * 
 	 * @param variations             {@code Rule[]} An array of {@link Rule}
 	 *                               representing a rules' variations.
-	 * @param startOfReferenceWindow {@link LocalDateTime} The start of
-	 *                               reference window of the {@link Rule}
-	 *                               containing the given variations.
-	 * @param endOfReferenceWindow   {@link LocalDateTime} The end of reference
-	 *                               window of the {@link Rule} containing the
-	 *                               given variations.
-	 * @param baseValue              {@link BaseValue} The base value of the
-	 *                               {@link Rule} containing the given
+	 * @param startOfReferenceWindow {@link LocalDateTime} The start of reference
+	 *                               window of the {@link Rule} containing the given
 	 *                               variations.
+	 * @param endOfReferenceWindow   {@link LocalDateTime} The end of reference
+	 *                               window of the {@link Rule} containing the given
+	 *                               variations.
+	 * @param baseValue              {@link BaseValue} The base value of the
+	 *                               {@link Rule} containing the given variations.
 	 */
 	public static void validateVariations(Rule[] variations,
 			LocalDateTime startOfReferenceWindow,
@@ -297,8 +293,8 @@ public class Validator {
 		for (int i = 0; i < variations.length; i++) {
 			/* Check if the given variations array contains nulls. */
 			if (variations[i] == null)
-				throw new IllegalArgumentException("The variation at position "
-						+ i + " in the given variations array is null.");
+				throw new IllegalArgumentException("The variation at position " + i
+						+ " in the given variations array is null.");
 
 			/* Check if main rule and variations share reference window. */
 			if (!variations[i].getStartOfReferenceWindow()
@@ -312,8 +308,7 @@ public class Validator {
 					.equals(endOfReferenceWindow)) {
 				throw new IllegalArgumentException(
 						"The given reference window does not match the variation's at position "
-								+ i
-								+ ". The given end of reference window is different.");
+								+ i + ". The given end of reference window is different.");
 			}
 		}
 
@@ -327,13 +322,12 @@ public class Validator {
 	}
 
 	/**
-	 * Validates the given row of values. The row has to have at least 1 value
-	 * not Double.NaN.
+	 * Validates the given row of values. The row has to have at least 1 value not
+	 * Double.NaN.
 	 * 
 	 * @param valueDateTupels {@code ValueDateTupel[]} The array of
 	 *                        {@link ValueDateTupel} to be validated.
-	 * @throws IllegalArgumentException if the given row contains only
-	 *                                  Double.NaN.
+	 * @throws IllegalArgumentException if the given row contains only Double.NaN.
 	 */
 	public static void validateRow(ValueDateTupel[] valueDateTupels) {
 		double[] values = ValueDateTupel.getValues(valueDateTupels);
@@ -344,9 +338,9 @@ public class Validator {
 				uniqueValues.add(value);
 
 			/*
-			 * If the size of a set of all values is 1 then it contains only
-			 * this one value in all elements. If this value is Double.NaN, no
-			 * values were set but Double.NaN.
+			 * If the size of a set of all values is 1 then it contains only this one value
+			 * in all elements. If this value is Double.NaN, no values were set but
+			 * Double.NaN.
 			 */
 			if (uniqueValues.size() == 1)
 				throw new IllegalArgumentException(
