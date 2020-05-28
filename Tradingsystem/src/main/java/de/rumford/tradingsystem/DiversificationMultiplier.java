@@ -145,8 +145,7 @@ public class DiversificationMultiplier {
 		 * If there is only one row of data return a 1x1 self correlation matrix
 		 */
 		if (forecasts.length == 1) {
-			double[][] returnValue = { { 1 } };
-			return returnValue;
+			return new double[][] { { 1 } };
 		}
 
 		/* Load the given values into rows of a matrix */
@@ -168,8 +167,8 @@ public class DiversificationMultiplier {
 	 *         from the given array of Rules.
 	 */
 	private WeightsAndForecasts getWeightsAndForecastsFromRules(Rule[] rules) {
-		double[] weights = {};
-		double[][] relevantForecasts = {};
+		double[] weightsFromRules = {};
+		double[][] relevantForecastsFromRules = {};
 
 		/* Iterate over the given rules */
 		for (Rule rule : rules) {
@@ -179,12 +178,12 @@ public class DiversificationMultiplier {
 				WeightsAndForecasts wafToAdd = getWeightsAndForecastsFromRules(
 						rule.getVariations());
 				for (double weight : wafToAdd.weights)
-					weights = ArrayUtils.add(weights,
+					weightsFromRules = ArrayUtils.add(weightsFromRules,
 							weight * rule.getWeight());
 
 				for (double[] forecasts : wafToAdd.forecasts)
-					relevantForecasts = ArrayUtils.add(relevantForecasts,
-							forecasts);
+					relevantForecastsFromRules = ArrayUtils
+							.add(relevantForecastsFromRules, forecasts);
 
 			} else {
 				double weight = rule.getWeight();
@@ -194,13 +193,15 @@ public class DiversificationMultiplier {
 				 */
 				if (weight == 0)
 					weight = 1d / rules.length;
-				weights = ArrayUtils.add(weights, weight);
+				weightsFromRules = ArrayUtils.add(weightsFromRules, weight);
 
-				relevantForecasts = ArrayUtils.add(relevantForecasts,
+				relevantForecastsFromRules = ArrayUtils.add(
+						relevantForecastsFromRules,
 						rule.extractRelevantForecastValues());
 			}
 		}
-		return new WeightsAndForecasts(weights, relevantForecasts);
+		return new WeightsAndForecasts(weightsFromRules,
+				relevantForecastsFromRules);
 	}
 
 	/**

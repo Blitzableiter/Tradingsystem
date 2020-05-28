@@ -219,7 +219,7 @@ public class BaseValue {
 
 		/* Initiate the squared returns. The first value is always Double.NaN */
 		ValueDateTupel[] squaredReturns = {};
-//		squaredReturns = ArrayUtils.add(squaredReturns, new ValueDateTupel(baseValues[0].getDate(), Double.NaN));
+
 		/* Calculate the squared returns */
 		for (int i = 0; i < baseValues.length - 1; i++) {
 			double returns;
@@ -238,8 +238,6 @@ public class BaseValue {
 		 * standard deviation from itself.
 		 */
 		ValueDateTupel[] standardDeviationValues = {};
-//		standardDeviationValues = ArrayUtils.add(standardDeviationValues,
-//				new ValueDateTupel(baseValues[0].getDate(), Double.NaN));
 
 		/* Fill in the calculated values. */
 		for (int i = 0; i < squaredReturns.length; i++) {
