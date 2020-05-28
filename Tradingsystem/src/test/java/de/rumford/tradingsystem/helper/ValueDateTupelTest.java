@@ -81,7 +81,8 @@ class ValueDateTupelTest {
 
 		ValueDateTupel[] actualArray = ValueDateTupel.createEmptyArray();
 
-		assertArrayEquals(expectedArray, actualArray, "A non empty array is created");
+		assertArrayEquals(expectedArray, actualArray,
+				"A non empty array is created");
 	}
 
 	/**
@@ -93,47 +94,52 @@ class ValueDateTupelTest {
 
 		ValueDateTupel[] actualArray = ValueDateTupel.createEmptyArray(2);
 
-		assertArrayEquals(expectedArray, actualArray, "The created array is not as expected");
+		assertArrayEquals(expectedArray, actualArray,
+				"The created array is not as expected");
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel2,
-				valueDateTupel3 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel2, valueDateTupel3 };
 
 		assertTrue(ValueDateTupel.isSortedAscending(valueDateTupelArray),
 				"The given array is falsly marked as not in ascending order");
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending_notInOrder() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3,
-				valueDateTupel2 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel3, valueDateTupel2 };
 
 		assertFalse(ValueDateTupel.isSortedAscending(valueDateTupelArray),
 				"The given array is falsly marked as in ascending order");
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending_twoEqualDates() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel2,
-				valueDateTupel2 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel2, valueDateTupel2 };
 
 		assertFalse(ValueDateTupel.isSortedAscending(valueDateTupelArray),
 				"The given array is falsly marked as in ascending order");
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending_arrayNull() {
@@ -143,61 +149,69 @@ class ValueDateTupelTest {
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.isSortedAscending(valueDateTupelArray),
 				"A null array is not properly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending_arrayContainsNull() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, null, valueDateTupel2 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, null,
+				valueDateTupel2 };
 		String expectedMessage = "The given array must not contain any nulls";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.isSortedAscending(valueDateTupelArray),
 				"An array containing null is not properly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel3, valueDateTupel2,
-				valueDateTupel1 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel3,
+				valueDateTupel2, valueDateTupel1 };
 
 		assertTrue(ValueDateTupel.isSortedDescending(valueDateTupelArray),
 				"The given array is falsly marked as not in descending order");
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending_notInOrder() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel3, valueDateTupel1,
-				valueDateTupel2 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel3,
+				valueDateTupel1, valueDateTupel2 };
 
 		assertFalse(ValueDateTupel.isSortedDescending(valueDateTupelArray),
 				"The given array is falsly marked as in descending order");
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending_twoEqualDates() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel2, valueDateTupel2,
-				valueDateTupel1 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel2,
+				valueDateTupel2, valueDateTupel1 };
 
 		assertFalse(ValueDateTupel.isSortedDescending(valueDateTupelArray),
 				"The given array is falsly marked as in descending order");
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending_arrayNull() {
@@ -207,21 +221,25 @@ class ValueDateTupelTest {
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.isSortedDescending(valueDateTupelArray),
 				"A null array is not properly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending_arrayContainsNull() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel2, null, valueDateTupel1 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel2, null,
+				valueDateTupel1 };
 		String expectedMessage = "The given array must not contain any null LocalDateTime";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.isSortedDescending(valueDateTupelArray),
 				"An array containing null is not properly handled");
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -229,16 +247,26 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testAlignDates() {
-		ValueDateTupel vdtCalculated20200102_200 = new ValueDateTupel(date_20200102, 200d);
-		ValueDateTupel vdtCalculated20200104_400 = new ValueDateTupel(date_20200104, 400d);
-		ValueDateTupel vdtCalculated20200101_200 = new ValueDateTupel(date_20200101, 200d);
-		ValueDateTupel vdtCalculated20200105_400 = new ValueDateTupel(date_20200105, 400d);
-		ValueDateTupel vdtCalculated20200102_250 = new ValueDateTupel(date_20200102, 250d);
-		ValueDateTupel vdtCalculated20200103_250 = new ValueDateTupel(date_20200103, 250d);
-		ValueDateTupel vdtCalculated20200101_300 = new ValueDateTupel(date_20200101, 300d);
-		ValueDateTupel vdtCalculated20200102_300 = new ValueDateTupel(date_20200102, 300d);
-		ValueDateTupel vdtCalculated20200104_300 = new ValueDateTupel(date_20200104, 300d);
-		ValueDateTupel vdtCalculated20200105_300 = new ValueDateTupel(date_20200105, 300d);
+		ValueDateTupel vdtCalculated20200102_200 = new ValueDateTupel(
+				date_20200102, 200d);
+		ValueDateTupel vdtCalculated20200104_400 = new ValueDateTupel(
+				date_20200104, 400d);
+		ValueDateTupel vdtCalculated20200101_200 = new ValueDateTupel(
+				date_20200101, 200d);
+		ValueDateTupel vdtCalculated20200105_400 = new ValueDateTupel(
+				date_20200105, 400d);
+		ValueDateTupel vdtCalculated20200102_250 = new ValueDateTupel(
+				date_20200102, 250d);
+		ValueDateTupel vdtCalculated20200103_250 = new ValueDateTupel(
+				date_20200103, 250d);
+		ValueDateTupel vdtCalculated20200101_300 = new ValueDateTupel(
+				date_20200101, 300d);
+		ValueDateTupel vdtCalculated20200102_300 = new ValueDateTupel(
+				date_20200102, 300d);
+		ValueDateTupel vdtCalculated20200104_300 = new ValueDateTupel(
+				date_20200104, 300d);
+		ValueDateTupel vdtCalculated20200105_300 = new ValueDateTupel(
+				date_20200105, 300d);
 		ValueDateTupel[] expectedVdtArray1 = { //
 				valueDateTupel1, //
 				vdtCalculated20200102_200, //
@@ -283,16 +311,22 @@ class ValueDateTupelTest {
 				expectedVdtArray5, //
 				expectedVdtArray6 };
 
-		ValueDateTupel[] vdtArray1 = { valueDateTupel1, valueDateTupel3, valueDateTupel5 };
-		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3, valueDateTupel4 };
-		ValueDateTupel[] vdtArray3 = { valueDateTupel1, valueDateTupel4, valueDateTupel5 };
-		ValueDateTupel[] vdtArray4 = { valueDateTupel3, valueDateTupel4, valueDateTupel5 };
-		ValueDateTupel[] vdtArray5 = { valueDateTupel1, valueDateTupel2, valueDateTupel3 };
-		ValueDateTupel[] vdtArray6 = { valueDateTupel1, valueDateTupel2, valueDateTupel3,
-				valueDateTupel4, valueDateTupel5 };
-		ValueDateTupel[][] vdtArraysArray = { vdtArray1, vdtArray2, vdtArray3, vdtArray4, vdtArray5,
-				vdtArray6 };
-		ValueDateTupel[][] actualValue = ValueDateTupel.alignDates(vdtArraysArray);
+		ValueDateTupel[] vdtArray1 = { valueDateTupel1, valueDateTupel3,
+				valueDateTupel5 };
+		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3,
+				valueDateTupel4 };
+		ValueDateTupel[] vdtArray3 = { valueDateTupel1, valueDateTupel4,
+				valueDateTupel5 };
+		ValueDateTupel[] vdtArray4 = { valueDateTupel3, valueDateTupel4,
+				valueDateTupel5 };
+		ValueDateTupel[] vdtArray5 = { valueDateTupel1, valueDateTupel2,
+				valueDateTupel3 };
+		ValueDateTupel[] vdtArray6 = { valueDateTupel1, valueDateTupel2,
+				valueDateTupel3, valueDateTupel4, valueDateTupel5 };
+		ValueDateTupel[][] vdtArraysArray = { vdtArray1, vdtArray2, vdtArray3,
+				vdtArray4, vdtArray5, vdtArray6 };
+		ValueDateTupel[][] actualValue = ValueDateTupel
+				.alignDates(vdtArraysArray);
 
 		assertArrayEquals(expectedValue, actualValue,
 				"Dates aren't correct after aligning ValueDateTuples");
@@ -317,16 +351,21 @@ class ValueDateTupelTest {
 		ValueDateTupel[] expectedVdtArray2 = { //
 				new ValueDateTupel(LocalDateTime.of(2020, 1, 1, 0, 0), 999), //
 				new ValueDateTupel(LocalDateTime.of(2020, 1, 2, 0, 0), 1099.6), //
-				new ValueDateTupel(LocalDateTime.of(2020, 1, 3, 0, 0), 1200.2) };
+				new ValueDateTupel(LocalDateTime.of(2020, 1, 3, 0, 0),
+						1200.2) };
 		ValueDateTupel[][] expectedValue = { //
 				expectedVdtArray1, //
 				expectedVdtArray2 };
 
-		ValueDateTupel[] vdtArray1 = { valueDateTupel1, valueDateTupel2, valueDateTupel3 };
-		ValueDateTupel[] vdtArray2 = { new ValueDateTupel(LocalDateTime.of(2020, 1, 1, 0, 0), 999),
-				new ValueDateTupel(LocalDateTime.of(2020, 1, 3, 0, 0), 1200.2) };
+		ValueDateTupel[] vdtArray1 = { valueDateTupel1, valueDateTupel2,
+				valueDateTupel3 };
+		ValueDateTupel[] vdtArray2 = {
+				new ValueDateTupel(LocalDateTime.of(2020, 1, 1, 0, 0), 999),
+				new ValueDateTupel(LocalDateTime.of(2020, 1, 3, 0, 0),
+						1200.2) };
 		ValueDateTupel[][] vdtArraysArray = { vdtArray1, vdtArray2 };
-		ValueDateTupel[][] actualValue = ValueDateTupel.alignDates(vdtArraysArray);
+		ValueDateTupel[][] actualValue = ValueDateTupel
+				.alignDates(vdtArraysArray);
 
 		assertArrayEquals(expectedValue[0], actualValue[0],
 				"Dates aren't correct after aligning ValueDateTuples");
@@ -347,7 +386,8 @@ class ValueDateTupelTest {
 				() -> ValueDateTupel.alignDates(vdtArraysArray), //
 				"Array of arrays = null is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -359,15 +399,18 @@ class ValueDateTupelTest {
 		String expectedCause = "The given values array must not be null";
 
 		ValueDateTupel[] vdtArray1 = null;
-		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3, valueDateTupel4 };
+		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3,
+				valueDateTupel4 };
 		ValueDateTupel[][] vdtArraysArray = { vdtArray1, vdtArray2 };
 		Exception thrown = assertThrows( //
 				IllegalArgumentException.class, //
 				() -> ValueDateTupel.alignDates(vdtArraysArray), //
 				"null in array of arrays is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
-		assertEquals(expectedCause, thrown.getCause().getMessage(), MESSAGE_ARRAY_MUST_NOT_BE_NULL);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedCause, thrown.getCause().getMessage(),
+				MESSAGE_ARRAY_MUST_NOT_BE_NULL);
 	}
 
 	/**
@@ -379,14 +422,16 @@ class ValueDateTupelTest {
 		String expectedCause = "Given values must not contain null.";
 
 		ValueDateTupel[] vdtArray1 = { valueDateTupel1, null, valueDateTupel5 };
-		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3, valueDateTupel4 };
+		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3,
+				valueDateTupel4 };
 		ValueDateTupel[][] vdtArraysArray = { vdtArray1, vdtArray2 };
 		Exception thrown = assertThrows( //
 				IllegalArgumentException.class, //
 				() -> ValueDateTupel.alignDates(vdtArraysArray), //
 				"null in array is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 		assertEquals(expectedCause, thrown.getCause().getMessage(),
 				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -399,15 +444,18 @@ class ValueDateTupelTest {
 		String expectedMessage = "The array at position 0 does not meet specifications.";
 		String expectedCause = "Given values are not properly sorted or there are non-unique values.";
 
-		ValueDateTupel[] vdtArray1 = { valueDateTupel1, valueDateTupel5, valueDateTupel3 };
-		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3, valueDateTupel4 };
+		ValueDateTupel[] vdtArray1 = { valueDateTupel1, valueDateTupel5,
+				valueDateTupel3 };
+		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3,
+				valueDateTupel4 };
 		ValueDateTupel[][] vdtArraysArray = { vdtArray1, vdtArray2 };
 		Exception thrown = assertThrows( //
 				IllegalArgumentException.class, //
 				() -> ValueDateTupel.alignDates(vdtArraysArray), //
 				"Unsorted array is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 		assertEquals(expectedCause, thrown.getCause().getMessage(),
 				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -425,14 +473,16 @@ class ValueDateTupelTest {
 		ValueDateTupel vdt5NaN = new ValueDateTupel(date_20200105, Double.NaN);
 
 		ValueDateTupel[] vdtArray1 = { vdt1NaN, vdt3NaN, vdt5NaN };
-		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3, valueDateTupel4 };
+		ValueDateTupel[] vdtArray2 = { valueDateTupel2, valueDateTupel3,
+				valueDateTupel4 };
 		ValueDateTupel[][] vdtArraysArray = { vdtArray1, vdtArray2 };
 		Exception thrown = assertThrows( //
 				IllegalArgumentException.class, //
 				() -> ValueDateTupel.alignDates(vdtArraysArray), //
 				"Only NaN values in ValueDateTupel is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 		assertEquals(expectedCause, thrown.getCause().getMessage(),
 				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -443,10 +493,11 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testContains() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel2,
-				valueDateTupel3 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel2, valueDateTupel3 };
 
-		assertTrue(ValueDateTupel.contains(valueDateTupelArray, valueDateTupel1),
+		assertTrue(
+				ValueDateTupel.contains(valueDateTupelArray, valueDateTupel1),
 				"An element which is in the array falsely cannot be identified");
 	}
 
@@ -456,10 +507,11 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testContains_unknownElement() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel2,
-				valueDateTupel3 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel2, valueDateTupel3 };
 
-		assertFalse(ValueDateTupel.contains(valueDateTupelArray, valueDateTupel4),
+		assertFalse(
+				ValueDateTupel.contains(valueDateTupelArray, valueDateTupel4),
 				"An unknown element is falsely marked as being in the given array");
 	}
 
@@ -473,10 +525,12 @@ class ValueDateTupelTest {
 
 		ValueDateTupel[] valueDateTupelArray = null;
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> ValueDateTupel.contains(valueDateTupelArray, valueDateTupel4),
+				() -> ValueDateTupel.contains(valueDateTupelArray,
+						valueDateTupel4),
 				"Array of null is not properly handled.");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -485,10 +539,11 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testContainsDate() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel2,
-				valueDateTupel3 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel2, valueDateTupel3 };
 
-		assertTrue(ValueDateTupel.containsDate(valueDateTupelArray, date_20200101),
+		assertTrue(
+				ValueDateTupel.containsDate(valueDateTupelArray, date_20200101),
 				"A DateTime which is in the array falsely cannot be identified");
 	}
 
@@ -498,10 +553,11 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testContainsDate_unknownDate() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel2,
-				valueDateTupel3 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel2, valueDateTupel3 };
 
-		assertFalse(ValueDateTupel.containsDate(valueDateTupelArray, date_20200104),
+		assertFalse(
+				ValueDateTupel.containsDate(valueDateTupelArray, date_20200104),
 				"An unknown DateTime is falsely marked as being in the given array");
 	}
 
@@ -514,11 +570,13 @@ class ValueDateTupelTest {
 		String expectedMessage = "Given array must not be null";
 
 		ValueDateTupel[] valueDateTupelArray = null;
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> ValueDateTupel.containsDate(valueDateTupelArray, date_20200101),
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> ValueDateTupel
+						.containsDate(valueDateTupelArray, date_20200101),
 				"Null array is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -529,13 +587,14 @@ class ValueDateTupelTest {
 	void testContainsDate_dateTimeNull() {
 		String expectedMessage = MESSAGE_VALUE_MUST_NOT_BE_NULL;
 
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel2,
-				valueDateTupel3 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel2, valueDateTupel3 };
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.containsDate(valueDateTupelArray, null),
 				"LocalDateTime of null is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -544,13 +603,13 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testAddOneAt_position_0() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel2, valueDateTupel3,
-				valueDateTupel4 };
-		ValueDateTupel[] expectedValue = { valueDateTupel1, valueDateTupel2, valueDateTupel3,
-				valueDateTupel4 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel2,
+				valueDateTupel3, valueDateTupel4 };
+		ValueDateTupel[] expectedValue = { valueDateTupel1, valueDateTupel2,
+				valueDateTupel3, valueDateTupel4 };
 
-		ValueDateTupel[] actualValue = ValueDateTupel.addOneAt(valueDateTupelArray, valueDateTupel1,
-				0);
+		ValueDateTupel[] actualValue = ValueDateTupel
+				.addOneAt(valueDateTupelArray, valueDateTupel1, 0);
 
 		assertArrayEquals(expectedValue, actualValue,
 				"Value cannot be added correctly at position 0");
@@ -562,13 +621,13 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testAddOneAt_position_end() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel2,
-				valueDateTupel3 };
-		ValueDateTupel[] expectedValue = { valueDateTupel1, valueDateTupel2, valueDateTupel3,
-				valueDateTupel4 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel2, valueDateTupel3 };
+		ValueDateTupel[] expectedValue = { valueDateTupel1, valueDateTupel2,
+				valueDateTupel3, valueDateTupel4 };
 
-		ValueDateTupel[] actualValue = ValueDateTupel.addOneAt(valueDateTupelArray, valueDateTupel4,
-				3);
+		ValueDateTupel[] actualValue = ValueDateTupel
+				.addOneAt(valueDateTupelArray, valueDateTupel4, 3);
 
 		assertArrayEquals(expectedValue, actualValue,
 				"Value cannot be added correctly at last position");
@@ -580,13 +639,13 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testAddOneAt_position_between() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3,
-				valueDateTupel4 };
-		ValueDateTupel[] expectedValue = { valueDateTupel1, valueDateTupel2, valueDateTupel3,
-				valueDateTupel4 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel3, valueDateTupel4 };
+		ValueDateTupel[] expectedValue = { valueDateTupel1, valueDateTupel2,
+				valueDateTupel3, valueDateTupel4 };
 
-		ValueDateTupel[] actualValue = ValueDateTupel.addOneAt(valueDateTupelArray, valueDateTupel2,
-				1);
+		ValueDateTupel[] actualValue = ValueDateTupel
+				.addOneAt(valueDateTupelArray, valueDateTupel2, 1);
 
 		assertArrayEquals(expectedValue, actualValue,
 				"Value cannot be added correctly at inbetween position");
@@ -602,10 +661,12 @@ class ValueDateTupelTest {
 
 		ValueDateTupel[] valueDateTupelArray = null;
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> ValueDateTupel.addOneAt(valueDateTupelArray, valueDateTupel1, 0),
+				() -> ValueDateTupel.addOneAt(valueDateTupelArray,
+						valueDateTupel1, 0),
 				"Array of null is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -616,14 +677,15 @@ class ValueDateTupelTest {
 	void testAddOneAt_valueNull() {
 		String expectedMessage = MESSAGE_VALUE_MUST_NOT_BE_NULL;
 
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3,
-				valueDateTupel4 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel3, valueDateTupel4 };
 		ValueDateTupel vdtNull = null;
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.addOneAt(valueDateTupelArray, vdtNull, 0),
 				"New value of null is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -634,14 +696,16 @@ class ValueDateTupelTest {
 	void testAddOneAt_position_negative() {
 		String expectedMessage = "Cannot not add a value at position < 0. Given position is -1";
 
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3,
-				valueDateTupel4 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel3, valueDateTupel4 };
 		int negativePosition = -1;
-		Exception thrown = assertThrows(IllegalArgumentException.class, () -> ValueDateTupel
-				.addOneAt(valueDateTupelArray, valueDateTupel1, negativePosition),
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> ValueDateTupel.addOneAt(valueDateTupelArray,
+						valueDateTupel1, negativePosition),
 				"Position < 0 is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -652,15 +716,16 @@ class ValueDateTupelTest {
 	void testAddOneAt_position_greater_arrayLength() {
 		String expectedMessage = "Cannot add a value at position > 3. Given position is 4.";
 
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3,
-				valueDateTupel4 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel3, valueDateTupel4 };
 		int tooLargeAPosition = 4;
-		Exception thrown = assertThrows(
-				IllegalArgumentException.class, () -> ValueDateTupel.addOneAt(valueDateTupelArray,
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> ValueDateTupel.addOneAt(valueDateTupelArray,
 						valueDateTupel1, tooLargeAPosition),
 				"Position > array.length is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -669,13 +734,15 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testContainsLocalDateTime() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3,
-				valueDateTupel4 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel3, valueDateTupel4 };
 		ValueDateTupel expectedValue = valueDateTupel1;
 
-		ValueDateTupel actualValue = ValueDateTupel.getElement(valueDateTupelArray, date_20200101);
+		ValueDateTupel actualValue = ValueDateTupel
+				.getElement(valueDateTupelArray, date_20200101);
 
-		assertEquals(expectedValue, actualValue, "Value cannot be properly found");
+		assertEquals(expectedValue, actualValue,
+				"Value cannot be properly found");
 	}
 
 	/**
@@ -684,12 +751,14 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testContainsLocalDateTime_dateNotFound() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3,
-				valueDateTupel4 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel3, valueDateTupel4 };
 
-		ValueDateTupel actualValue = ValueDateTupel.getElement(valueDateTupelArray, date_20200102);
+		ValueDateTupel actualValue = ValueDateTupel
+				.getElement(valueDateTupelArray, date_20200102);
 
-		assertNull(actualValue, "Date non existant in array is not properly handled");
+		assertNull(actualValue,
+				"Date non existant in array is not properly handled");
 	}
 
 	/**
@@ -702,10 +771,12 @@ class ValueDateTupelTest {
 
 		ValueDateTupel[] valueDateTupelArray = null;
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> ValueDateTupel.getElement(valueDateTupelArray, date_20200101),
+				() -> ValueDateTupel.getElement(valueDateTupelArray,
+						date_20200101),
 				"Array of null is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -716,14 +787,15 @@ class ValueDateTupelTest {
 	void testContainsLocalDateTime_dateToBeFoundNull() {
 		String expectedMessage = MESSAGE_VALUE_MUST_NOT_BE_NULL;
 
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3,
-				valueDateTupel4 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel3, valueDateTupel4 };
 		LocalDateTime dateNull = null;
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.getElement(valueDateTupelArray, dateNull),
 				"Date to be found of null is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -731,8 +803,8 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testGetValues() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3,
-				valueDateTupel4 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel3, valueDateTupel4 };
 		double[] expectedValues = { //
 				valueDateTupel1.getValue(), // 100
 				valueDateTupel3.getValue(), // 300
@@ -741,7 +813,8 @@ class ValueDateTupelTest {
 
 		double[] actualValues = ValueDateTupel.getValues(valueDateTupelArray);
 
-		assertArrayEquals(expectedValues, actualValues, "Incorrect values are gotten from array");
+		assertArrayEquals(expectedValues, actualValues,
+				"Incorrect values are gotten from array");
 	}
 
 	/**
@@ -756,7 +829,8 @@ class ValueDateTupelTest {
 				() -> ValueDateTupel.getValues(valueDateTupelArray),
 				"Null array is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -764,17 +838,19 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testGetDates() {
-		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1, valueDateTupel3,
-				valueDateTupel4 };
+		ValueDateTupel[] valueDateTupelArray = { valueDateTupel1,
+				valueDateTupel3, valueDateTupel4 };
 		LocalDateTime[] expectedValues = { //
 				valueDateTupel1.getDate(), // date_20200101
 				valueDateTupel3.getDate(), // date_20200102
 				valueDateTupel4.getDate() // date_20200103
 		};
 
-		LocalDateTime[] actualValues = ValueDateTupel.getDates(valueDateTupelArray);
+		LocalDateTime[] actualValues = ValueDateTupel
+				.getDates(valueDateTupelArray);
 
-		assertArrayEquals(expectedValues, actualValues, "Incorrect values are gotten from array");
+		assertArrayEquals(expectedValues, actualValues,
+				"Incorrect values are gotten from array");
 	}
 
 	/**
@@ -789,7 +865,8 @@ class ValueDateTupelTest {
 				() -> ValueDateTupel.getDates(valueDateTupelArray),
 				"Null array is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -798,14 +875,16 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testGetElements() {
-		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3,
-				valueDateTupel4, valueDateTupel5 };
-		ValueDateTupel[] expectedValue = { valueDateTupel2, valueDateTupel3, valueDateTupel4 };
+		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2,
+				valueDateTupel3, valueDateTupel4, valueDateTupel5 };
+		ValueDateTupel[] expectedValue = { valueDateTupel2, valueDateTupel3,
+				valueDateTupel4 };
 
-		ValueDateTupel[] actualValue = ValueDateTupel.getElements(vdtArray, date_20200102,
-				date_20200104);
+		ValueDateTupel[] actualValue = ValueDateTupel.getElements(vdtArray,
+				date_20200102, date_20200104);
 
-		assertArrayEquals(expectedValue, actualValue, "Elements cannot be correctly retrieved.");
+		assertArrayEquals(expectedValue, actualValue,
+				"Elements cannot be correctly retrieved.");
 	}
 
 	/**
@@ -814,12 +893,13 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testGetElements_dtFromNull() {
-		ValueDateTupel[] expectedValue = { valueDateTupel1, valueDateTupel2, valueDateTupel3,
-				valueDateTupel4 };
+		ValueDateTupel[] expectedValue = { valueDateTupel1, valueDateTupel2,
+				valueDateTupel3, valueDateTupel4 };
 
-		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3,
-				valueDateTupel4, valueDateTupel5 };
-		ValueDateTupel[] actualValue = ValueDateTupel.getElements(vdtArray, null, date_20200104);
+		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2,
+				valueDateTupel3, valueDateTupel4, valueDateTupel5 };
+		ValueDateTupel[] actualValue = ValueDateTupel.getElements(vdtArray,
+				null, date_20200104);
 
 		assertArrayEquals(expectedValue, actualValue,
 				"Elements cannot be correctly retrieved when dtFrom is null.");
@@ -831,12 +911,13 @@ class ValueDateTupelTest {
 	 */
 	@Test
 	void testGetElements_dtToNull() {
-		ValueDateTupel[] expectedValue = { valueDateTupel2, valueDateTupel3, valueDateTupel4,
-				valueDateTupel5 };
-
-		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3,
+		ValueDateTupel[] expectedValue = { valueDateTupel2, valueDateTupel3,
 				valueDateTupel4, valueDateTupel5 };
-		ValueDateTupel[] actualValue = ValueDateTupel.getElements(vdtArray, date_20200102, null);
+
+		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2,
+				valueDateTupel3, valueDateTupel4, valueDateTupel5 };
+		ValueDateTupel[] actualValue = ValueDateTupel.getElements(vdtArray,
+				date_20200102, null);
 
 		assertArrayEquals(expectedValue, actualValue,
 				"Elements cannot be correctly retrieved when dtTo is null.");
@@ -850,10 +931,10 @@ class ValueDateTupelTest {
 	void testGetElements_dtFromEqualsDtTo() {
 		ValueDateTupel[] expectedValue = { valueDateTupel2 };
 
-		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3,
-				valueDateTupel4, valueDateTupel5 };
-		ValueDateTupel[] actualValue = ValueDateTupel.getElements(vdtArray, date_20200102,
-				date_20200102);
+		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2,
+				valueDateTupel3, valueDateTupel4, valueDateTupel5 };
+		ValueDateTupel[] actualValue = ValueDateTupel.getElements(vdtArray,
+				date_20200102, date_20200102);
 
 		assertArrayEquals(expectedValue, actualValue,
 				"Elements cannot be correctly retrieved when dtFrom equals dtTo.");
@@ -867,7 +948,9 @@ class ValueDateTupelTest {
 	void testGetElements_dtFromNotInArray() {
 		ValueDateTupel[] vdtArray = { valueDateTupel4, valueDateTupel5 };
 
-		assertNull(ValueDateTupel.getElements(vdtArray, date_20200102, date_20200105),
+		assertNull(
+				ValueDateTupel.getElements(vdtArray, date_20200102,
+						date_20200105),
 				"dtFrom not in array is not properly handled.");
 	}
 
@@ -879,7 +962,9 @@ class ValueDateTupelTest {
 	void testGetElements_dtToNotInArray() {
 		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2 };
 
-		assertNull(ValueDateTupel.getElements(vdtArray, date_20200102, date_20200105),
+		assertNull(
+				ValueDateTupel.getElements(vdtArray, date_20200102,
+						date_20200105),
 				"dtTo not in array is not properly handled.");
 	}
 
@@ -892,10 +977,12 @@ class ValueDateTupelTest {
 		int expectedValueFirstPosition = 0;
 		int expectedValueLastPosition = 4;
 
-		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3,
-				valueDateTupel4, valueDateTupel5 };
-		int actualValueFirstPosition = ValueDateTupel.getPosition(vdtArray, date_20200101);
-		int actualValueLastPosition = ValueDateTupel.getPosition(vdtArray, date_20200105);
+		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2,
+				valueDateTupel3, valueDateTupel4, valueDateTupel5 };
+		int actualValueFirstPosition = ValueDateTupel.getPosition(vdtArray,
+				date_20200101);
+		int actualValueLastPosition = ValueDateTupel.getPosition(vdtArray,
+				date_20200105);
 
 		assertEquals(expectedValueLastPosition, actualValueLastPosition,
 				"Position cannot be correctly retrieved");
@@ -916,7 +1003,8 @@ class ValueDateTupelTest {
 				() -> ValueDateTupel.getPosition(vdtArray, date_20200102),
 				"Array of null is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -928,7 +1016,8 @@ class ValueDateTupelTest {
 		int expectedValue = Integer.MIN_VALUE;
 
 		ValueDateTupel[] vdtArray = {};
-		assertEquals(expectedValue, ValueDateTupel.getPosition(vdtArray, date_20200102),
+		assertEquals(expectedValue,
+				ValueDateTupel.getPosition(vdtArray, date_20200102),
 				"Empty array is not properly handled");
 	}
 
@@ -940,12 +1029,13 @@ class ValueDateTupelTest {
 	void testGetPosition_dtToBeFoundNull() {
 		String expectedMessage = MESSAGE_VALUE_MUST_NOT_BE_NULL;
 
-		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2, valueDateTupel3,
-				valueDateTupel4, valueDateTupel5 };
+		ValueDateTupel[] vdtArray = { valueDateTupel1, valueDateTupel2,
+				valueDateTupel3, valueDateTupel4, valueDateTupel5 };
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> ValueDateTupel.getPosition(vdtArray, null),
 				"Date to be found of null is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 }

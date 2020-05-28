@@ -42,40 +42,46 @@ public class DiversificationMultiplier {
 	private double[][] correlations;
 
 	/**
-	 * Constructor for the class DiversificationMultiplier (DM). A DM is always only
-	 * valid for a given set of rules (which should be, but don't have to be,
-	 * unique). There rules must be known upon instantiation of a new DM. Based on
-	 * the given rules the DM value is calculated, using the relative weights of all
-	 * given rules (relative based on their placing inside the rules tree).
+	 * Constructor for the class DiversificationMultiplier (DM). A DM is always
+	 * only valid for a given set of rules (which should be, but don't have to
+	 * be, unique). There rules must be known upon instantiation of a new DM.
+	 * Based on the given rules the DM value is calculated, using the relative
+	 * weights of all given rules (relative based on their placing inside the
+	 * rules tree).
 	 * <p>
-	 * There can be as many rules in the given array as desired, though the desired
-	 * ratio between rules (and their respective weights, which shrink with each new
-	 * layer) and their significance to the whole system should be accounted for and
-	 * is at the user's discretion.
+	 * There can be as many rules in the given array as desired, though the
+	 * desired ratio between rules (and their respective weights, which shrink
+	 * with each new layer) and their significance to the whole system should be
+	 * accounted for and is at the user's discretion.
 	 * 
-	 * @param rules {@code Rule[]} An array of {@link Rule}s to be accounted for in
-	 *              this DM. Must pass {@link Validator#validateRules(Rule[])}.
+	 * @param rules {@code Rule[]} An array of {@link Rule}s to be accounted for
+	 *              in this DM. Must pass
+	 *              {@link Validator#validateRules(Rule[])}.
 	 */
 	public DiversificationMultiplier(Rule[] rules) {
 		validateInput(rules);
 
-		WeightsAndForecasts weightsAndForecasts = getWeightsAndForecastsFromRules(rules);
+		WeightsAndForecasts weightsAndForecasts = getWeightsAndForecastsFromRules(
+				rules);
 		this.setWeights(weightsAndForecasts.weights);
 		this.setRelevantForecasts(weightsAndForecasts.forecasts);
 
-		this.setCorrelations(getCorrelationsFromForecasts(this.getRelevantForecasts()));
+		this.setCorrelations(
+				getCorrelationsFromForecasts(this.getRelevantForecasts()));
 
 		this.setValue(this.calculateDiversificiationMultiplierValue());
 	}
 
 	/**
-	 * Private class for extraction of weights and forecasts from the given rules.
+	 * Private class for extraction of weights and forecasts from the given
+	 * rules.
 	 */
 	private class WeightsAndForecasts {
 		public double[] weights;
 		public double[][] forecasts;
 
-		public WeightsAndForecasts(double[] weights, double[][] relevantForecasts) {
+		public WeightsAndForecasts(double[] weights,
+				double[][] relevantForecasts) {
 			this.weights = weights;
 			this.forecasts = relevantForecasts;
 		}
@@ -83,18 +89,18 @@ public class DiversificationMultiplier {
 	}
 
 	/**
-	 * Calculate the diversification multiplier for the weights and correlations set
-	 * with this class. Represents this formula with c = matrix of correlations, w =
-	 * list of weights, i,j = indices:
+	 * Calculate the diversification multiplier for the weights and correlations
+	 * set with this class. Represents this formula with c = matrix of
+	 * correlations, w = list of weights, i,j = indices:
 	 * 
 	 * 1 / sqrt[ SUM( c_i,j * w_i * w_j ) ]
 	 * 
 	 * @return {@code double} diversification multiplier for set weights and
 	 *         correlations
 	 * @throws IllegalArgumentException if correlations or weights do not meet
-	 *                                  criteria: non-empty, same number of values,
-	 *                                  correlations: same amount of rows and
-	 *                                  columns
+	 *                                  criteria: non-empty, same number of
+	 *                                  values, correlations: same amount of
+	 *                                  rows and columns
 	 */
 	private double calculateDiversificiationMultiplierValue() {
 		double[][] instanceCorrelations = this.getCorrelations();
@@ -104,19 +110,23 @@ public class DiversificationMultiplier {
 		double sumOfCorrelationsWeights = 0f;
 
 		/*
-		 * Get the sum of all correlations multiplier with both corresponding weights...
+		 * Get the sum of all correlations multiplier with both corresponding
+		 * weights...
 		 */
 		for (int row = 0; row < instanceCorrelations.length; row++) {
 			for (int col = 0; col < instanceCorrelations.length; col++) {
-				/* ... by multiplying the correlation with both corresponding weights */
-				sumOfCorrelationsWeights += instanceCorrelations[row][col] * instanceWeights[row]
-						* instanceWeights[col];
+				/*
+				 * ... by multiplying the correlation with both corresponding
+				 * weights
+				 */
+				sumOfCorrelationsWeights += instanceCorrelations[row][col]
+						* instanceWeights[row] * instanceWeights[col];
 			}
 		}
 
 		/*
-		 * sumOfCorrelationsWeights is always > 0 as there is always at least one weight
-		 * > 0 and at least on correlation > 0 (self correlation)
+		 * sumOfCorrelationsWeights is always > 0 as there is always at least
+		 * one weight > 0 and at least on correlation > 0 (self correlation)
 		 */
 		return 1 / Math.sqrt(sumOfCorrelationsWeights);
 	}
@@ -124,12 +134,16 @@ public class DiversificationMultiplier {
 	/**
 	 * Calculate the correlations from the given array of forecast arrays.
 	 * 
-	 * @param forecasts {@code double[][]} The forecasts to be used for calculation.
+	 * @param forecasts {@code double[][]} The forecasts to be used for
+	 *                  calculation.
 	 * @return {@code double[][]} A matrix of correlations, as by
 	 *         {@link PearsonsCorrelation#getCorrelationMatrix()}.
 	 */
-	private static double[][] getCorrelationsFromForecasts(double[][] forecasts) {
-		/* If there is only one row of data return a 1x1 self correlation matrix */
+	private static double[][] getCorrelationsFromForecasts(
+			double[][] forecasts) {
+		/*
+		 * If there is only one row of data return a 1x1 self correlation matrix
+		 */
 		if (forecasts.length == 1) {
 			double[][] returnValue = { { 1 } };
 			return returnValue;
@@ -141,7 +155,8 @@ public class DiversificationMultiplier {
 		matrix = matrix.transpose();
 
 		/* Get the correlations of the passed value arrays */
-		PearsonsCorrelation pearsonsCorrelations = new PearsonsCorrelation(matrix);
+		PearsonsCorrelation pearsonsCorrelations = new PearsonsCorrelation(
+				matrix);
 		return pearsonsCorrelations.getCorrelationMatrix().getData();
 	}
 
@@ -149,8 +164,8 @@ public class DiversificationMultiplier {
 	 * Recursively get the weights and forecasts from the given array of Rules.
 	 * 
 	 * @param rules {@code Rule[]} The array of rules to be searched.
-	 * @return {@link WeightsAndForecasts} The extracted weights and forecasts from
-	 *         the given array of Rules.
+	 * @return {@link WeightsAndForecasts} The extracted weights and forecasts
+	 *         from the given array of Rules.
 	 */
 	private WeightsAndForecasts getWeightsAndForecastsFromRules(Rule[] rules) {
 		double[] weights = {};
@@ -164,16 +179,18 @@ public class DiversificationMultiplier {
 				WeightsAndForecasts wafToAdd = getWeightsAndForecastsFromRules(
 						rule.getVariations());
 				for (double weight : wafToAdd.weights)
-					weights = ArrayUtils.add(weights, weight * rule.getWeight());
+					weights = ArrayUtils.add(weights,
+							weight * rule.getWeight());
 
 				for (double[] forecasts : wafToAdd.forecasts)
-					relevantForecasts = ArrayUtils.add(relevantForecasts, forecasts);
+					relevantForecasts = ArrayUtils.add(relevantForecasts,
+							forecasts);
 
 			} else {
 				double weight = rule.getWeight();
 				/*
-				 * If a top level rule has no variations its weight has not been set. Manually
-				 * set its weight to be 1/numberOfTopeLevelRules
+				 * If a top level rule has no variations its weight has not been
+				 * set. Manually set its weight to be 1/numberOfTopeLevelRules
 				 */
 				if (weight == 0)
 					weight = 1d / rules.length;
@@ -220,8 +237,8 @@ public class DiversificationMultiplier {
 	}
 
 	/**
-	 * Checks if this diversification multiplier is equal to another diversification
-	 * multiplier.
+	 * Checks if this diversification multiplier is equal to another
+	 * diversification multiplier.
 	 */
 	@GeneratedCode
 	@Override
@@ -237,7 +254,8 @@ public class DiversificationMultiplier {
 			return false;
 		if (!Arrays.deepEquals(relevantForecasts, other.relevantForecasts))
 			return false;
-		if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value))
+		if (Double.doubleToLongBits(value) != Double
+				.doubleToLongBits(other.value))
 			return false;
 		if (!Arrays.equals(weights, other.weights))
 			return false;
@@ -245,7 +263,8 @@ public class DiversificationMultiplier {
 	}
 
 	/**
-	 * Outputs the fields of this diversification multiplier as a {@code String}.
+	 * Outputs the fields of this diversification multiplier as a
+	 * {@code String}.
 	 */
 	@GeneratedCode
 	@Override
@@ -290,7 +309,8 @@ public class DiversificationMultiplier {
 	/**
 	 * Get the weights considered in this {@link DiversificationMultiplier}
 	 * 
-	 * @return {@code double[]} Weights in this {@link DiversificationMultiplier}
+	 * @return {@code double[]} Weights in this
+	 *         {@link DiversificationMultiplier}
 	 */
 	public double[] getWeights() {
 		return weights;

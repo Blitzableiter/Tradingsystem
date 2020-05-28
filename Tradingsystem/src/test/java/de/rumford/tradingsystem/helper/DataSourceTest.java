@@ -27,47 +27,82 @@ class DataSourceTest {
 	final static int FILE_NAME_LENGTH = 20;
 	final static int FOLDER_NAME_LENGTH = FILE_NAME_LENGTH;
 
-	/* Have all temporary created files inside a folder inside src/test/resources */
-	private static String workingDir = Path.of("src", "test", "resources",
-			RandomStringUtils.randomAlphanumeric(FOLDER_NAME_LENGTH)).toString();
+	/*
+	 * Have all temporary created files inside a folder inside
+	 * src/test/resources
+	 */
+	private static String workingDir = Path
+			.of("src", "test", "resources",
+					RandomStringUtils.randomAlphanumeric(FOLDER_NAME_LENGTH))
+			.toString();
 
 	/*
 	 * Generate random file names as not to accidentally overwrite any existing
 	 * files
 	 */
 	final static String FILE_NAME_CORRECT_FILE_EUR = Path
-			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+			.of(workingDir,
+					RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH))
+			.toString();
 	final static String FILE_NAME_CORRECT_FILE_US = Path
-			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+			.of(workingDir,
+					RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH))
+			.toString();
 	final static String FILE_NAME_CORRECT_FILE_EUR_YMD = Path
-			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+			.of(workingDir,
+					RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH))
+			.toString();
 	final static String FILE_NAME_CORRECT_FILE_EU_THOUSANDS_SEPARATOR = workingDir
 			+ RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH);
 	final static String FILE_NAME_NULL = null;
 	final static String FILE_NAME_UNKOWN = Path
-			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+			.of(workingDir,
+					RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH))
+			.toString();
 	final static String FILE_NAME_DIRECTORY = Path
-			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+			.of(workingDir,
+					RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH))
+			.toString();
 	final static String FILE_NAME_FILE_HAS_HEADINGS = Path
-			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+			.of(workingDir,
+					RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH))
+			.toString();
 	final static String FILE_NAME_FOUR_COLUMNS = Path
-			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+			.of(workingDir,
+					RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH))
+			.toString();
 	final static String FILE_NAME_DAY_NON_INTEGER = Path
-			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+			.of(workingDir,
+					RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH))
+			.toString();
 	final static String FILE_NAME_MONTH_NON_INTEGER = Path
-			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+			.of(workingDir,
+					RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH))
+			.toString();
 	final static String FILE_NAME_YEAR_NON_INTEGER = Path
-			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+			.of(workingDir,
+					RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH))
+			.toString();
 	final static String FILE_NAME_HOUR_NON_INTEGER = Path
-			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+			.of(workingDir,
+					RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH))
+			.toString();
 	final static String FILE_NAME_MINUTE_NON_INTEGER = Path
-			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+			.of(workingDir,
+					RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH))
+			.toString();
 	final static String FILE_NAME_SECOND_NON_INTEGER = Path
-			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+			.of(workingDir,
+					RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH))
+			.toString();
 	final static String FILE_NAME_DATE_VALUE_OUT_OF_RANGE = Path
-			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+			.of(workingDir,
+					RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH))
+			.toString();
 	final static String FILE_NAME_COURSE_VALUE_INVALID = Path
-			.of(workingDir, RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH)).toString();
+			.of(workingDir,
+					RandomStringUtils.randomAlphanumeric(FILE_NAME_LENGTH))
+			.toString();
 	static String[] FILE_NAMES = { //
 			FILE_NAME_CORRECT_FILE_EUR, //
 			FILE_NAME_CORRECT_FILE_US, //
@@ -109,18 +144,23 @@ class DataSourceTest {
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
 		new File(workingDir).mkdirs();
-		bw_eu_ok = new BufferedWriter(new FileWriter(new File(FILE_NAME_CORRECT_FILE_EUR)));
-		bw_us_ok = new BufferedWriter(new FileWriter(new File(FILE_NAME_CORRECT_FILE_US)));
-		bw_eu_ymd = new BufferedWriter(new FileWriter(new File(FILE_NAME_CORRECT_FILE_EUR_YMD)));
-		bw_eu_thousands_separator = new BufferedWriter(
-				new FileWriter(new File(FILE_NAME_CORRECT_FILE_EU_THOUSANDS_SEPARATOR)));
+		bw_eu_ok = new BufferedWriter(
+				new FileWriter(new File(FILE_NAME_CORRECT_FILE_EUR)));
+		bw_us_ok = new BufferedWriter(
+				new FileWriter(new File(FILE_NAME_CORRECT_FILE_US)));
+		bw_eu_ymd = new BufferedWriter(
+				new FileWriter(new File(FILE_NAME_CORRECT_FILE_EUR_YMD)));
+		bw_eu_thousands_separator = new BufferedWriter(new FileWriter(
+				new File(FILE_NAME_CORRECT_FILE_EU_THOUSANDS_SEPARATOR)));
 
 		/*
 		 * No Writer for FILE_NAME_NULL and FILE_NAME_UNKOWN
 		 */
 		new File(FILE_NAME_DIRECTORY).mkdirs();
-		bw_headings = new BufferedWriter(new FileWriter(new File(FILE_NAME_FILE_HAS_HEADINGS)));
-		bw_four_columns = new BufferedWriter(new FileWriter(new File(FILE_NAME_FOUR_COLUMNS)));
+		bw_headings = new BufferedWriter(
+				new FileWriter(new File(FILE_NAME_FILE_HAS_HEADINGS)));
+		bw_four_columns = new BufferedWriter(
+				new FileWriter(new File(FILE_NAME_FOUR_COLUMNS)));
 		bw_day_non_integer = new BufferedWriter(
 				new FileWriter(new File(FILE_NAME_DAY_NON_INTEGER)));
 		bw_month_non_integer = new BufferedWriter(
@@ -141,17 +181,22 @@ class DataSourceTest {
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_eu_ok);
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_us_ok);
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_eu_ymd);
-		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_eu_thousands_separator);
+		bufferedWriters = ArrayUtils.add(bufferedWriters,
+				bw_eu_thousands_separator);
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_headings);
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_four_columns);
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_day_non_integer);
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_month_non_integer);
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_year_non_integer);
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_hour_non_integer);
-		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_minute_non_integer);
-		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_second_non_integer);
-		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_date_value_out_of_range);
-		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_course_value_invalid);
+		bufferedWriters = ArrayUtils.add(bufferedWriters,
+				bw_minute_non_integer);
+		bufferedWriters = ArrayUtils.add(bufferedWriters,
+				bw_second_non_integer);
+		bufferedWriters = ArrayUtils.add(bufferedWriters,
+				bw_date_value_out_of_range);
+		bufferedWriters = ArrayUtils.add(bufferedWriters,
+				bw_course_value_invalid);
 	}
 
 	/**
@@ -219,7 +264,8 @@ class DataSourceTest {
 
 		ValueDateTupel[] values = {};
 		try {
-			values = DataSource.getDataFromCsv(FILE_NAME_CORRECT_FILE_EUR, CsvFormat.EU);
+			values = DataSource.getDataFromCsv(FILE_NAME_CORRECT_FILE_EUR,
+					CsvFormat.EU);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			fail("IllegalArgumentException getting Data");
@@ -230,7 +276,8 @@ class DataSourceTest {
 
 		final int actualValue = values.length;
 
-		assertEquals(expectedValue, actualValue, "Number of read files are not correct");
+		assertEquals(expectedValue, actualValue,
+				"Number of read files are not correct");
 	}
 
 	/**
@@ -266,7 +313,8 @@ class DataSourceTest {
 
 		ValueDateTupel[] values = {};
 		try {
-			values = DataSource.getDataFromCsv(FILE_NAME_CORRECT_FILE_US, CsvFormat.US);
+			values = DataSource.getDataFromCsv(FILE_NAME_CORRECT_FILE_US,
+					CsvFormat.US);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			fail("IllegalArgumentException getting Data");
@@ -277,7 +325,8 @@ class DataSourceTest {
 
 		final int actualValue = values.length;
 
-		assertEquals(expectedValue, actualValue, "Number of read files are not correct");
+		assertEquals(expectedValue, actualValue,
+				"Number of read files are not correct");
 	}
 
 	/**
@@ -325,7 +374,8 @@ class DataSourceTest {
 
 		final int actualValue = values.length;
 
-		assertEquals(expectedValue, actualValue, "Number of read files are not correct");
+		assertEquals(expectedValue, actualValue,
+				"Number of read files are not correct");
 	}
 
 	/**
@@ -361,7 +411,8 @@ class DataSourceTest {
 
 		ValueDateTupel[] values = {};
 		try {
-			values = DataSource.getDataFromCsv(FILE_NAME_CORRECT_FILE_EU_THOUSANDS_SEPARATOR,
+			values = DataSource.getDataFromCsv(
+					FILE_NAME_CORRECT_FILE_EU_THOUSANDS_SEPARATOR,
 					CsvFormat.EU_YEAR_MONTH_DAY);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
@@ -373,7 +424,8 @@ class DataSourceTest {
 
 		final int actualValue = values.length;
 
-		assertEquals(expectedValue, actualValue, "Number of read files are not correct");
+		assertEquals(expectedValue, actualValue,
+				"Number of read files are not correct");
 	}
 
 	/**
@@ -385,7 +437,8 @@ class DataSourceTest {
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> DataSource.getDataFromCsv(FILE_NAME_NULL, CsvFormat.US),
 				"null file name is not properly handled");
-		assertEquals(expectedValue, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedValue, thrown.getMessage(),
+				"Incorrect Exception message");
 	}
 
 	/**
@@ -397,7 +450,8 @@ class DataSourceTest {
 		Exception thrown = assertThrows(IOException.class,
 				() -> DataSource.getDataFromCsv(FILE_NAME_UNKOWN, CsvFormat.US),
 				"Unknown file name is not properly handled");
-		assertEquals(expectedValue, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedValue, thrown.getMessage(),
+				"Incorrect Exception message");
 	}
 
 	/**
@@ -407,9 +461,11 @@ class DataSourceTest {
 	void testGetDataFromCsv_directory() {
 		String expectedValue = "Given source path does not point to a file";
 		Exception thrown = assertThrows(IOException.class,
-				() -> DataSource.getDataFromCsv(FILE_NAME_DIRECTORY, CsvFormat.US),
+				() -> DataSource.getDataFromCsv(FILE_NAME_DIRECTORY,
+						CsvFormat.US),
 				"Directory as file name is not properly handled");
-		assertEquals(expectedValue, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedValue, thrown.getMessage(),
+				"Incorrect Exception message");
 	}
 
 	/**
@@ -431,7 +487,8 @@ class DataSourceTest {
 		}
 
 		assertThrows(Exception.class,
-				() -> DataSource.getDataFromCsv(FILE_NAME_FILE_HAS_HEADINGS, CsvFormat.US),
+				() -> DataSource.getDataFromCsv(FILE_NAME_FILE_HAS_HEADINGS,
+						CsvFormat.US),
 				"Headings in CSV are not properly handled");
 	}
 
@@ -452,9 +509,11 @@ class DataSourceTest {
 		}
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> DataSource.getDataFromCsv(FILE_NAME_FOUR_COLUMNS, CsvFormat.US),
+				() -> DataSource.getDataFromCsv(FILE_NAME_FOUR_COLUMNS,
+						CsvFormat.US),
 				"Headings in CSV are not properly handled");
-		assertEquals(expectedValue, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedValue, thrown.getMessage(),
+				"Incorrect Exception message");
 	}
 
 	/**
@@ -474,9 +533,11 @@ class DataSourceTest {
 		}
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> DataSource.getDataFromCsv(FILE_NAME_DAY_NON_INTEGER, CsvFormat.US),
+				() -> DataSource.getDataFromCsv(FILE_NAME_DAY_NON_INTEGER,
+						CsvFormat.US),
 				"Unparsable day in date field is not properly handled");
-		assertEquals(expectedValue, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedValue, thrown.getMessage(),
+				"Incorrect Exception message");
 	}
 
 	/**
@@ -496,9 +557,11 @@ class DataSourceTest {
 		}
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> DataSource.getDataFromCsv(FILE_NAME_MONTH_NON_INTEGER, CsvFormat.US),
+				() -> DataSource.getDataFromCsv(FILE_NAME_MONTH_NON_INTEGER,
+						CsvFormat.US),
 				"Unparsable month in date field is not properly handled");
-		assertEquals(expectedValue, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedValue, thrown.getMessage(),
+				"Incorrect Exception message");
 	}
 
 	/**
@@ -518,9 +581,11 @@ class DataSourceTest {
 		}
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> DataSource.getDataFromCsv(FILE_NAME_YEAR_NON_INTEGER, CsvFormat.US),
+				() -> DataSource.getDataFromCsv(FILE_NAME_YEAR_NON_INTEGER,
+						CsvFormat.US),
 				"Unparsable year in date field is not properly handled");
-		assertEquals(expectedValue, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedValue, thrown.getMessage(),
+				"Incorrect Exception message");
 	}
 
 	/**
@@ -540,9 +605,11 @@ class DataSourceTest {
 		}
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> DataSource.getDataFromCsv(FILE_NAME_HOUR_NON_INTEGER, CsvFormat.US),
+				() -> DataSource.getDataFromCsv(FILE_NAME_HOUR_NON_INTEGER,
+						CsvFormat.US),
 				"Unparsable hour in time field is not properly handled");
-		assertEquals(expectedValue, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedValue, thrown.getMessage(),
+				"Incorrect Exception message");
 	}
 
 	/**
@@ -562,9 +629,11 @@ class DataSourceTest {
 		}
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> DataSource.getDataFromCsv(FILE_NAME_MINUTE_NON_INTEGER, CsvFormat.US),
+				() -> DataSource.getDataFromCsv(FILE_NAME_MINUTE_NON_INTEGER,
+						CsvFormat.US),
 				"Unparsable minute in time field is not properly handled");
-		assertEquals(expectedValue, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedValue, thrown.getMessage(),
+				"Incorrect Exception message");
 	}
 
 	/**
@@ -584,9 +653,11 @@ class DataSourceTest {
 		}
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> DataSource.getDataFromCsv(FILE_NAME_SECOND_NON_INTEGER, CsvFormat.US),
+				() -> DataSource.getDataFromCsv(FILE_NAME_SECOND_NON_INTEGER,
+						CsvFormat.US),
 				"Unparsable second in time field is not properly handled");
-		assertEquals(expectedValue, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedValue, thrown.getMessage(),
+				"Incorrect Exception message");
 	}
 
 	/**
@@ -606,9 +677,11 @@ class DataSourceTest {
 		}
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> DataSource.getDataFromCsv(FILE_NAME_DATE_VALUE_OUT_OF_RANGE, CsvFormat.US),
+				() -> DataSource.getDataFromCsv(
+						FILE_NAME_DATE_VALUE_OUT_OF_RANGE, CsvFormat.US),
 				"Out of range date is not properly handled");
-		assertEquals(expectedValue, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedValue, thrown.getMessage(),
+				"Incorrect Exception message");
 	}
 
 	/**
@@ -628,9 +701,11 @@ class DataSourceTest {
 		}
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> DataSource.getDataFromCsv(FILE_NAME_COURSE_VALUE_INVALID, CsvFormat.US),
+				() -> DataSource.getDataFromCsv(FILE_NAME_COURSE_VALUE_INVALID,
+						CsvFormat.US),
 				"Out of range date is not properly handled");
-		assertEquals(expectedValue, thrown.getMessage(), "Incorrect Exception message");
+		assertEquals(expectedValue, thrown.getMessage(),
+				"Incorrect Exception message");
 	}
 
 }

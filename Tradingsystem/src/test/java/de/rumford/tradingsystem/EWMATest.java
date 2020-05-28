@@ -41,7 +41,8 @@ class EWMATest {
 	@Test
 	void testEWMA_ewma_instanceof_EWMA() {
 		assertTrue(ewma2 instanceof EWMA, "ewma2 is instanceof EWMA");
-		assertEquals(ewma2, ewma2_1, "Two EWMAs with the same horizon are equal");
+		assertEquals(ewma2, ewma2_1,
+				"Two EWMAs with the same horizon are equal");
 	}
 
 	/**
@@ -56,7 +57,8 @@ class EWMATest {
 				() -> new EWMA(baseValue.getValues(), horizonOf1),
 				"Horizon less than 2 is not properly handled.");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -73,7 +75,8 @@ class EWMATest {
 				() -> new EWMA(emptyValuesArray, 2),
 				"Empty base values array is not properly handled.");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 		assertEquals(expectedCause, thrown.getCause().getMessage(),
 				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -85,7 +88,8 @@ class EWMATest {
 	void testCalculateEWMA_Horizon2_baseValue786point75_Is_524point5() {
 		double calculatedValue = ewma2.calculateEWMA(0d, 786.75d);
 		double expectedValue = 524.5d;
-		assertEquals(expectedValue, calculatedValue, "Calculated EWMA is expected EWMA");
+		assertEquals(expectedValue, calculatedValue,
+				"Calculated EWMA is expected EWMA");
 	}
 
 	/**
@@ -95,7 +99,8 @@ class EWMATest {
 	void testCalculateEWMA_Horizon8_baseValue786point75_Is_174point833() {
 		double calculatedValue = ewma2.calculateEWMA(0d, 100d);
 		double expectedValue = (0d + 2d / 3d) * 100d;
-		assertEquals(expectedValue, calculatedValue, "Calculated EWMA is expected EWMA");
+		assertEquals(expectedValue, calculatedValue,
+				"Calculated EWMA is expected EWMA");
 	}
 
 	/**
@@ -104,7 +109,8 @@ class EWMATest {
 	@Test
 	void testCalculateDecay_DecayForHorizon2_Is_point67() {
 		double expectedValue = 2d / 3d;
-		assertEquals(expectedValue, ewma2.getDecay(), "Calculated Decay is expected Decay");
+		assertEquals(expectedValue, ewma2.getDecay(),
+				"Calculated Decay is expected Decay");
 	}
 
 }
