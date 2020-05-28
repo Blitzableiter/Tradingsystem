@@ -7,5 +7,5 @@ package de.rumford.tradingsystem.helper;
  *
  */
 public enum DateOrder {
-	YEAR_MONTH_DAY, DAY_MONTH_YEAR, MONTH_DAY_YEAR;
+  YEAR_MONTH_DAY, DAY_MONTH_YEAR, MONTH_DAY_YEAR;
 }
