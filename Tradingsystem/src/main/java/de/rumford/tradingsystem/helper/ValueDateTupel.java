@@ -17,16 +17,16 @@ import de.rumford.tradingsystem.BaseValue;
 /**
  * A ValueDateTupel represents a decimal value at a given point in time.
  * <p>
- * The ValueDateTupel is the most used helper class in this library. It consists
- * of a LocalDateTime value representing a point in time, and of a double,
- * representing any kind of decimal value associated with the aforementioned
- * point in time. By using LocalDateTime (an not just a class representing Date
- * values) intraday usage is possible.
+ * The ValueDateTupel is the most used helper class in this library. It
+ * consists of a LocalDateTime value representing a point in time, and of a
+ * double, representing any kind of decimal value associated with the
+ * aforementioned point in time. By using LocalDateTime (an not just a
+ * class representing Date values) intraday usage is possible.
  * <p>
- * The ValueDateTupel brings a lot of static method used throughout the entire
- * library. Most of these methods deal with arrays or larger structures of
- * ValueDateTupel, as the instance of ValueDateTupel by itself does not have
- * many limitations.
+ * The ValueDateTupel brings a lot of static method used throughout the
+ * entire library. Most of these methods deal with arrays or larger
+ * structures of ValueDateTupel, as the instance of ValueDateTupel by
+ * itself does not have many limitations.
  * 
  * @author Max Rumford
  *
@@ -42,8 +42,8 @@ public class ValueDateTupel {
 	static final String MESSAGE_VALUE_MUST_NOT_BE_NULL = "Given value must not be null";
 
 	/**
-	 * Creates a new {@link ValueDateTupel} instance using the given LocaDateTime
-	 * and double.
+	 * Creates a new {@link ValueDateTupel} instance using the given
+	 * LocaDateTime and double.
 	 * 
 	 * @param date  {@link LocalDateTime} The dateTime to be set for this
 	 *              {@link ValueDateTupel}
@@ -62,14 +62,15 @@ public class ValueDateTupel {
 	 * 
 	 * @param valueDateTupels {@code ValueDateTupel[]} Array to be extended.
 	 * @param vdtToBeAdded    {@link ValueDateTupel} Value to be added.
-	 * @param position        {@code int} Position the given value shall be put
-	 *                        into.
+	 * @param position        {@code int} Position the given value shall be
+	 *                        put into.
 	 * @return {@code ValueDateTupel[]} The extended array.
 	 * @throws IllegalArgumentException If the given array is null.
-	 * @throws IllegalArgumentException If the given value to be added is null.
+	 * @throws IllegalArgumentException If the given value to be added is
+	 *                                  null.
 	 * @throws IllegalArgumentException If the position is negative.
-	 * @throws IllegalArgumentException If the given position is greater than the
-	 *                                  length of the given array.
+	 * @throws IllegalArgumentException If the given position is greater than
+	 *                                  the length of the given array.
 	 */
 	public static ValueDateTupel[] addOneAt(ValueDateTupel[] valueDateTupels,
 			ValueDateTupel vdtToBeAdded, int position) {
@@ -104,8 +105,8 @@ public class ValueDateTupel {
 			return extendedArray;
 		}
 		/*
-		 * This code is only reached, when the new ValueDateTupel shall not be added at
-		 * end or at beginning.
+		 * This code is only reached, when the new ValueDateTupel shall not be
+		 * added at end or at beginning.
 		 */
 		/* Add all values prior to the new ValueDateTupel */
 		System.arraycopy(valueDateTupels, 0, extendedArray, 0, position);
@@ -119,33 +120,35 @@ public class ValueDateTupel {
 
 	/**
 	 * Add missing {@link LocalDateTime} values to all given
-	 * {@code ValueDateTupel[]}. The corresponding value will be set to average the
-	 * values of its direct predecessor and successor.
+	 * {@code ValueDateTupel[]}. The corresponding value will be set to
+	 * average the values of its direct predecessor and successor.
 	 * <p>
-	 * If there are multiple {@link LocalDateTime} missing in a row, all of those
-	 * will get the average value of the last position before and the first position
-	 * after all missing values.
+	 * If there are multiple {@link LocalDateTime} missing in a row, all of
+	 * those will get the average value of the last position before and the
+	 * first position after all missing values.
 	 * <p>
-	 * If the missing {@link LocalDateTime} would be the first value in the new
-	 * array, its value will be set to match the previously first one.
+	 * If the missing {@link LocalDateTime} would be the first value in the
+	 * new array, its value will be set to match the previously first one.
 	 * <p>
-	 * If the missing {@link LocalDateTime} would be the last value in the new
-	 * array, its value will be set to match the previously last one.
+	 * If the missing {@link LocalDateTime} would be the last value in the
+	 * new array, its value will be set to match the previously last one.
 	 * 
 	 * @param valueDateTupels {@code ValueDateTupel[][]} Array of arrays of
-	 *                        {@link ValueDateTupel} whose {@link LocalDateTime}
-	 *                        shall be aligned.
-	 * @return {@code ValueDateTupel[][]} Array of arrays of {@link ValueDateTupel}
-	 *         with now aligned {@link LocalDateTime} values.
+	 *                        {@link ValueDateTupel} whose
+	 *                        {@link LocalDateTime} shall be aligned.
+	 * @return {@code ValueDateTupel[][]} Array of arrays of
+	 *         {@link ValueDateTupel} with now aligned {@link LocalDateTime}
+	 *         values.
 	 * @throws IllegalArgumentException If the given array of arrays is null.
-	 * @throws IllegalArgumentException If the given array of arrays contains null.
-	 * @throws IllegalArgumentException If any array of the given array of arrays
-	 *                                  contains null.
-	 * @throws IllegalArgumentException If the given array contains an array of
-	 *                                  {@link ValueDateTupel} not sorted in
-	 *                                  ascending order.
-	 * @throws IllegalArgumentException If the one of the given arrays contains only
-	 *                                  {@link Double#NaN}.
+	 * @throws IllegalArgumentException If the given array of arrays contains
+	 *                                  null.
+	 * @throws IllegalArgumentException If any array of the given array of
+	 *                                  arrays contains null.
+	 * @throws IllegalArgumentException If the given array contains an array
+	 *                                  of {@link ValueDateTupel} not sorted
+	 *                                  in ascending order.
+	 * @throws IllegalArgumentException If the one of the given arrays
+	 *                                  contains only {@link Double#NaN}.
 	 */
 	public static ValueDateTupel[][] alignDates(
 			ValueDateTupel[][] valueDateTupels) {
@@ -169,8 +172,8 @@ public class ValueDateTupel {
 			}
 
 			/*
-			 * If the row's length equals the length of uniqueSortedDates no Value has to be
-			 * added as it already contains all dateTimes.
+			 * If the row's length equals the length of uniqueSortedDates no
+			 * Value has to be added as it already contains all dateTimes.
 			 */
 			if (valueDateTupels[rowIndex].length == uniqueSortedDates.size())
 				continue;
@@ -188,14 +191,15 @@ public class ValueDateTupel {
 	}
 
 	/**
-	 * Finds all {@link LocalDateTime} present in uniqueSortedDates but not in
-	 * valueDateTupels and add them to the latter with a value of Double.NaN.
+	 * Finds all {@link LocalDateTime} present in uniqueSortedDates but not
+	 * in valueDateTupels and add them to the latter with a value of
+	 * Double.NaN.
 	 * 
 	 * @param valueDateTupels   {@code ValueDateTupel[]} The array of
 	 *                          {@link ValueDateTupel} to be enhanced.
-	 * @param uniqueSortedDates {@code TreeSet<LocalDateTime>} A {@link TreeSet} of
-	 *                          {@link LocalDateTime} containing all unique
-	 *                          LocalDateTimes.
+	 * @param uniqueSortedDates {@code TreeSet<LocalDateTime>} A
+	 *                          {@link TreeSet} of {@link LocalDateTime}
+	 *                          containing all unique LocalDateTimes.
 	 * @return {@code ValueDateTupel[]} valueDateTupels + all LocalDateTime
 	 *         additionally given by uniqueSortedDates. Array is sorted as by
 	 *         {@link #isSortedAscending(ValueDateTupel[])}.
@@ -205,15 +209,16 @@ public class ValueDateTupel {
 			TreeSet<LocalDateTime> uniqueSortedDates) {
 
 		/*
-		 * Load unique sorted dates into an ArrayList to have access to an index.
+		 * Load unique sorted dates into an ArrayList to have access to an
+		 * index.
 		 */
 		List<LocalDateTime> uniqueSortedDatesList = new ArrayList<>(
 				uniqueSortedDates);
 
 		/*
-		 * Loop over all unique dateTimes to assess if they are in the current row. If
-		 * not, missing dateTimes are added into the original arrays. Their value is set
-		 * to Double.NaN
+		 * Loop over all unique dateTimes to assess if they are in the current
+		 * row. If not, missing dateTimes are added into the original arrays.
+		 * Their value is set to Double.NaN
 		 */
 		for (int fieldIndex = 0; fieldIndex < uniqueSortedDates
 				.size(); fieldIndex++) {
@@ -225,8 +230,9 @@ public class ValueDateTupel {
 							.isEqual(valueDateTupels[fieldIndex].getDate())) {
 
 				/*
-				 * Nothing has to be done, as we're not at the end of the list and the current
-				 * LocalDateTime out of the list of unique values is already in the given row.
+				 * Nothing has to be done, as we're not at the end of the list and
+				 * the current LocalDateTime out of the list of unique values is
+				 * already in the given row.
 				 */
 				continue;
 			}
@@ -239,8 +245,9 @@ public class ValueDateTupel {
 	}
 
 	/**
-	 * Fills up a gap of NaN-values in a given array of {@link ValueDateTupel} with
-	 * the average of the previously last and first next available non-NaN-value.
+	 * Fills up a gap of NaN-values in a given array of
+	 * {@link ValueDateTupel} with the average of the previously last and
+	 * first next available non-NaN-value.
 	 * 
 	 * @param valueDateTupels   {@code ValueDateTupel} Array of
 	 *                          {@link ValueDateTupel} holding the values.
@@ -248,16 +255,17 @@ public class ValueDateTupel {
 	 *                          non-NaN-value before the gap to be filled.
 	 * @param nextAvailable     {@code int} Index of the first available
 	 *                          non-NaN-value after the gap to be filled.
-	 * @return {@code ValueDateTupel} Array of {@link ValueDateTupel} with the gap
-	 *         filled.
+	 * @return {@code ValueDateTupel} Array of {@link ValueDateTupel} with
+	 *         the gap filled.
 	 */
 	private static ValueDateTupel[] fillCenterValues(
 			ValueDateTupel[] valueDateTupels, int previousAvailable,
 			int nextAvailable) {
 		/*
-		 * The value to be set to all missing values is the average of the last non-NaN
-		 * before the NaNs and the first non-NaN after the NaNs. This is the case when
-		 * the missing NaNs are not at the beginning or the end of the given array.
+		 * The value to be set to all missing values is the average of the last
+		 * non-NaN before the NaNs and the first non-NaN after the NaNs. This
+		 * is the case when the missing NaNs are not at the beginning or the
+		 * end of the given array.
 		 */
 		double valueToBeSet = (valueDateTupels[previousAvailable].getValue()
 				+ valueDateTupels[nextAvailable].getValue()) / 2;
@@ -272,15 +280,15 @@ public class ValueDateTupel {
 	}
 
 	/**
-	 * Fills the values at the beginning of the array. If the first valueDateTupel
-	 * contains Double.NaN, its value will be set to match the next non-NaN-value.
-	 * If the following values are also Double.NaN, iterate through the array until
-	 * a value != Double.NaN is found.
+	 * Fills the values at the beginning of the array. If the first
+	 * valueDateTupel contains Double.NaN, its value will be set to match the
+	 * next non-NaN-value. If the following values are also Double.NaN,
+	 * iterate through the array until a value != Double.NaN is found.
 	 *
 	 * @param valueDateTupels {@code ValueDateTupel[]} An array of
 	 *                        {@link ValueDateTupel} to be filled.
-	 * @return {@code ValueDateTupel[]} The same array of {@link ValueDateTupel} but
-	 *         with starting values filled.
+	 * @return {@code ValueDateTupel[]} The same array of
+	 *         {@link ValueDateTupel} but with starting values filled.
 	 * @throws IllegalArgumentException if the row only contains Double.NaN.
 	 */
 	private static ValueDateTupel[] fillStartingValues(
@@ -292,8 +300,8 @@ public class ValueDateTupel {
 		}
 
 		/*
-		 * If only one value has to be set execution can continue with the next loop
-		 * iteration
+		 * If only one value has to be set execution can continue with the next
+		 * loop iteration
 		 */
 		if (localFieldIndex == 1) {
 			valueDateTupels[localFieldIndex - 1]
@@ -302,7 +310,8 @@ public class ValueDateTupel {
 
 		/*
 		 * If multiple values have to be set iterate over them an fill them
-		 * subsequently, starting from the last NaN before the first valid value.
+		 * subsequently, starting from the last NaN before the first valid
+		 * value.
 		 */
 		while (localFieldIndex >= 1) {
 			valueDateTupels[localFieldIndex - 1]
@@ -316,8 +325,9 @@ public class ValueDateTupel {
 	/**
 	 * Get unique dates from an array of arrays of {@link ValueDateTupel}.
 	 * 
-	 * @param valueDateTupels {@code ValueDateTupel[][]} The array of arrays of
-	 *                        {@link ValueDateTupel} the get all unique dates from.
+	 * @param valueDateTupels {@code ValueDateTupel[][]} The array of arrays
+	 *                        of {@link ValueDateTupel} the get all unique
+	 *                        dates from.
 	 * @return {@code TreeSet<LocalDateTime>} A TreeSet of all unique dates.
 	 */
 	private static TreeSet<LocalDateTime> getUniqueDates(
@@ -343,13 +353,15 @@ public class ValueDateTupel {
 	}
 
 	/**
-	 * Check if the given {@link ValueDateTupel} can be found in the given array of
-	 * {@link ValueDateTupel}. Will only find exact matches.
+	 * Check if the given {@link ValueDateTupel} can be found in the given
+	 * array of {@link ValueDateTupel}. Will only find exact matches.
 	 * 
-	 * @param valueDateTupels {@code ValueDateTupel[]} Array to be searched in.
-	 * @param vdtToBeFound    {@link ValueDateTupel} Value to be searched for.
-	 * @return {@code boolean} True, if the given value can be found in the given
-	 *         array, false otherwise.
+	 * @param valueDateTupels {@code ValueDateTupel[]} Array to be searched
+	 *                        in.
+	 * @param vdtToBeFound    {@link ValueDateTupel} Value to be searched
+	 *                        for.
+	 * @return {@code boolean} True, if the given value can be found in the
+	 *         given array, false otherwise.
 	 */
 	public static boolean contains(ValueDateTupel[] valueDateTupels,
 			ValueDateTupel vdtToBeFound) {
@@ -364,13 +376,15 @@ public class ValueDateTupel {
 	 * Check if the given array of {@link ValueDateTupel} contains the given
 	 * {@link LocalDateTime}.
 	 * 
-	 * @param valueDateTupels {@code ValueDateTupel[]} Array to be searched in.
+	 * @param valueDateTupels {@code ValueDateTupel[]} Array to be searched
+	 *                        in.
 	 * @param dtToBeFound     {@link LocalDateTime} Value to be searched for.
-	 * @return {@code boolean} True, if the given value can be found inside the
-	 *         given array, false otherwise.
-	 * @throws IllegalArgumentException If the given array of {@link ValueDateTupel}
-	 *                                  is null.
-	 * @throws IllegalArgumentException If the given {@link LocalDateTime} is null.
+	 * @return {@code boolean} True, if the given value can be found inside
+	 *         the given array, false otherwise.
+	 * @throws IllegalArgumentException If the given array of
+	 *                                  {@link ValueDateTupel} is null.
+	 * @throws IllegalArgumentException If the given {@link LocalDateTime} is
+	 *                                  null.
 	 * 
 	 */
 	public static boolean containsDate(ValueDateTupel[] valueDateTupels,
@@ -389,17 +403,20 @@ public class ValueDateTupel {
 	/**
 	 * Creates an empty array of {@link ValueDateTupel}.
 	 * 
-	 * @return {@code ValueDateTupel[]} An Empty array of {@link ValueDateTupel}.
+	 * @return {@code ValueDateTupel[]} An Empty array of
+	 *         {@link ValueDateTupel}.
 	 */
 	public static ValueDateTupel[] createEmptyArray() {
 		return ValueDateTupel.createEmptyArray(0);
 	}
 
 	/**
-	 * Creates an empty array of {@link ValueDateTupel} with the given length.
+	 * Creates an empty array of {@link ValueDateTupel} with the given
+	 * length.
 	 * 
 	 * @param length {@code int} Length the new array should have.
-	 * @return {@code ValueDateTupel[]} An Empty array of {@link ValueDateTupel}.
+	 * @return {@code ValueDateTupel[]} An Empty array of
+	 *         {@link ValueDateTupel}.
 	 */
 	public static ValueDateTupel[] createEmptyArray(int length) {
 		return new ValueDateTupel[length];
@@ -412,10 +429,11 @@ public class ValueDateTupel {
 	 * 
 	 * @param valueDateTupels {@code ValueDateTupel[]} The array of
 	 *                        {@link ValueDateTupel} to be searched through.
-	 * @param dtToBeFound     {@link LocalDateTime} Value to be found inside the
-	 *                        {@link BaseValue} values.
-	 * @return {@link ValueDateTupel} containing the given {@link LocalDateTime}.
-	 *         {@code null} if the given {@link LocalDateTime} cannot be found.
+	 * @param dtToBeFound     {@link LocalDateTime} Value to be found inside
+	 *                        the {@link BaseValue} values.
+	 * @return {@link ValueDateTupel} containing the given
+	 *         {@link LocalDateTime}. {@code null} if the given
+	 *         {@link LocalDateTime} cannot be found.
 	 */
 	public static ValueDateTupel getElement(ValueDateTupel[] valueDateTupels,
 			LocalDateTime dtToBeFound) {
@@ -434,19 +452,19 @@ public class ValueDateTupel {
 	}
 
 	/**
-	 * Get all elements between two given DateTimes (inclusive) from the given
-	 * array. If null is passed for either LocalDateTime, the representing border
-	 * will be set to the boundaries of the given array.
+	 * Get all elements between two given DateTimes (inclusive) from the
+	 * given array. If null is passed for either LocalDateTime, the
+	 * representing border will be set to the boundaries of the given array.
 	 * 
 	 * @param valueDateTupels {@code ValueDateTupel[]} The base array.
 	 * @param dtFrom          {@link LocalDateTime} The first DateTime to be
-	 *                        included. If null, all values up until dtTo will be
-	 *                        given.
-	 * @param dtTo            {@link LocalDateTime} The last DateTime to be
-	 *                        included. If null, all values starting from dtFrom
+	 *                        included. If null, all values up until dtTo
 	 *                        will be given.
-	 * @return {@code ValueDateTupel[]} The found elements. null, if dtFrom or dtTo
-	 *         cannot be found in the given array.
+	 * @param dtTo            {@link LocalDateTime} The last DateTime to be
+	 *                        included. If null, all values starting from
+	 *                        dtFrom will be given.
+	 * @return {@code ValueDateTupel[]} The found elements. null, if dtFrom
+	 *         or dtTo cannot be found in the given array.
 	 */
 	public static ValueDateTupel[] getElements(
 			ValueDateTupel[] valueDateTupels, LocalDateTime dtFrom,
@@ -454,8 +472,9 @@ public class ValueDateTupel {
 		int positionFrom;
 		int positionTo;
 		/*
-		 * Get the position indices of the given LocalDateTime values. If null is
-		 * passed, set the positions to be the respective boundaries of the given array.
+		 * Get the position indices of the given LocalDateTime values. If null
+		 * is passed, set the positions to be the respective boundaries of the
+		 * given array.
 		 */
 		if (dtFrom == null) {
 			positionFrom = 0;
@@ -469,8 +488,8 @@ public class ValueDateTupel {
 		}
 
 		/*
-		 * If the given LocalDateTime values cannot be found in the given array return
-		 * null.
+		 * If the given LocalDateTime values cannot be found in the given array
+		 * return null.
 		 */
 		if (positionFrom == Integer.MIN_VALUE
 				|| positionTo == Integer.MIN_VALUE)
@@ -490,9 +509,9 @@ public class ValueDateTupel {
 	 * 
 	 * @param valueDateTupels {@code ValueDateTupel[]} An array of
 	 *                        {@link ValueDateTupel}}.
-	 * @return {@code LocalDateTime[]} An array of {@link LocalDateTime} of the
-	 *         given {@code ValueDateTupel[]}. Returns an empty array if the given
-	 *         array is empty.
+	 * @return {@code LocalDateTime[]} An array of {@link LocalDateTime} of
+	 *         the given {@code ValueDateTupel[]}. Returns an empty array if
+	 *         the given array is empty.
 	 * @throws IllegalArgumentException if the given array is null.
 	 */
 	public static LocalDateTime[] getDates(
@@ -508,14 +527,16 @@ public class ValueDateTupel {
 	}
 
 	/**
-	 * Finds the position of a given {@link LocalDateTime} in a given array of
-	 * {@link ValueDateTupel}.
+	 * Finds the position of a given {@link LocalDateTime} in a given array
+	 * of {@link ValueDateTupel}.
 	 * 
-	 * @param valueDateTupels {@code ValueDateTupel[]} The array to be searched.
+	 * @param valueDateTupels {@code ValueDateTupel[]} The array to be
+	 *                        searched.
 	 * @param dtToBeFound     {@link LocalDateTime} The value to be found.
-	 * @return {@code int} The position the given LocalDateTime was found. If the
-	 *         given LocalDateTime cannot be found, Integer.MIN_VALUE is returned.
-	 *         If the given array's length is 0 Integer.MIN_VALUE is returned.
+	 * @return {@code int} The position the given LocalDateTime was found. If
+	 *         the given LocalDateTime cannot be found, Integer.MIN_VALUE is
+	 *         returned. If the given array's length is 0 Integer.MIN_VALUE
+	 *         is returned.
 	 */
 	public static int getPosition(ValueDateTupel[] valueDateTupels,
 			LocalDateTime dtToBeFound) {
@@ -526,7 +547,8 @@ public class ValueDateTupel {
 			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
 
 		/*
-		 * If there are no values in the given array return the default return value.
+		 * If there are no values in the given array return the default return
+		 * value.
 		 */
 		if (valueDateTupels.length == 0)
 			return defaultReturnValue;
@@ -536,7 +558,8 @@ public class ValueDateTupel {
 			throw new IllegalArgumentException(MESSAGE_VALUE_MUST_NOT_BE_NULL);
 
 		/*
-		 * if the given LocalDateTime is in the given array, return its position.
+		 * if the given LocalDateTime is in the given array, return its
+		 * position.
 		 */
 		for (int i = 0; i < valueDateTupels.length; i++) {
 			if (valueDateTupels[i].getDate().equals(dtToBeFound))
@@ -553,8 +576,8 @@ public class ValueDateTupel {
 	 * @param valueDateTupels {@code ValueDateTupel[]} An array of
 	 *                        {@link ValueDateTupel}}.
 	 * @return {@code double[]} An array of values of the given
-	 *         {@code ValueDateTupel[]}. Returns an empty array if the given array
-	 *         is empty.
+	 *         {@code ValueDateTupel[]}. Returns an empty array if the given
+	 *         array is empty.
 	 * @throws IllegalArgumentException if the given array is null.
 	 */
 	public static double[] getValues(ValueDateTupel[] valueDateTupels) {
@@ -568,21 +591,23 @@ public class ValueDateTupel {
 	}
 
 	/**
-	 * Evaluate if the given array of {@link ValueDateTupel} is sorted in ascending
-	 * order, i.e., if the value at position 0 has the lowest {@link LocalDateTime}
-	 * value (implicit check) and all subsequent {@link ValueDateTupel} each have a
-	 * {@link LocalDateTime} after
+	 * Evaluate if the given array of {@link ValueDateTupel} is sorted in
+	 * ascending order, i.e., if the value at position 0 has the lowest
+	 * {@link LocalDateTime} value (implicit check) and all subsequent
+	 * {@link ValueDateTupel} each have a {@link LocalDateTime} after
 	 * ({@link LocalDateTime#isAfter(ChronoLocalDateTime)}) the previous one.
 	 * <p>
-	 * If two values have the same {@link LocalDateTime} false will be returned.
+	 * If two values have the same {@link LocalDateTime} false will be
+	 * returned.
 	 * 
 	 * @param valueDateTupels {@code ValueDateTupel[]} array of
-	 *                        {@link ValueDateTupel} to be checked for ascending
-	 *                        order.
-	 * @return {@code boolean} False, if any date is not chronologically after its
-	 *         predecessor, true if otherwise.
+	 *                        {@link ValueDateTupel} to be checked for
+	 *                        ascending order.
+	 * @return {@code boolean} False, if any date is not chronologically
+	 *         after its predecessor, true if otherwise.
 	 * @throws IllegalArgumentException If the given array is null.
-	 * @throws IllegalArgumentException If the given array contains null values.
+	 * @throws IllegalArgumentException If the given array contains null
+	 *                                  values.
 	 */
 	public static boolean isSortedAscending(
 			ValueDateTupel[] valueDateTupels) {
@@ -602,21 +627,24 @@ public class ValueDateTupel {
 	}
 
 	/**
-	 * Evaluate if the given array of {@link ValueDateTupel} is sorted in descending
-	 * order, i.e., if the value at position 0 has the highest {@link LocalDateTime}
-	 * value (implicit check) and all subsequent {@link ValueDateTupel} each have a
-	 * {@link LocalDateTime} before
-	 * ({@link LocalDateTime#isBefore(ChronoLocalDateTime)}) the previous one.
+	 * Evaluate if the given array of {@link ValueDateTupel} is sorted in
+	 * descending order, i.e., if the value at position 0 has the highest
+	 * {@link LocalDateTime} value (implicit check) and all subsequent
+	 * {@link ValueDateTupel} each have a {@link LocalDateTime} before
+	 * ({@link LocalDateTime#isBefore(ChronoLocalDateTime)}) the previous
+	 * one.
 	 * <p>
-	 * If two values have the same {@link LocalDateTime} false will be returned.
+	 * If two values have the same {@link LocalDateTime} false will be
+	 * returned.
 	 * 
 	 * @param valueDateTupels {@code ValueDateTupel[]} array of
-	 *                        {@link ValueDateTupel} to be checked for descending
-	 *                        order.
-	 * @return {@code boolean} False, if any date is not chronologically before its
-	 *         predecessor, true if otherwise.
+	 *                        {@link ValueDateTupel} to be checked for
+	 *                        descending order.
+	 * @return {@code boolean} False, if any date is not chronologically
+	 *         before its predecessor, true if otherwise.
 	 * @throws IllegalArgumentException If the given array is null.
-	 * @throws IllegalArgumentException If the given array contains null values.
+	 * @throws IllegalArgumentException If the given array contains null
+	 *                                  values.
 	 */
 	public static boolean isSortedDescending(
 			ValueDateTupel[] valueDateTupels) {
@@ -640,26 +668,29 @@ public class ValueDateTupel {
 	 * 
 	 * @param valueDateTupels {@code ValueDateTupel[]} An array of
 	 *                        {@link ValueDateTupel} to be enhanced.
-	 * @return {@code ValueDateTupel[]} The same array of {@link ValueDateTupel} but
-	 *         with real values instead of Double.NaN.
+	 * @return {@code ValueDateTupel[]} The same array of
+	 *         {@link ValueDateTupel} but with real values instead of
+	 *         Double.NaN.
 	 */
 	private static ValueDateTupel[] replaceNansByValues(
 			ValueDateTupel[] valueDateTupels) {
 		/*
-		 * Loop over all dateTimes for each row to assess if they are Double.NaN.
+		 * Loop over all dateTimes for each row to assess if they are
+		 * Double.NaN.
 		 */
 		for (int fieldIndex = 0; fieldIndex < valueDateTupels.length; fieldIndex++) {
 			/*
-			 * If the ValueDateTupel contains a value other than Double.NaN continue with
-			 * the next iteration.
+			 * If the ValueDateTupel contains a value other than Double.NaN
+			 * continue with the next iteration.
 			 */
 			if (!Double.isNaN(valueDateTupels[fieldIndex].getValue()))
 				continue;
 
 			/*
-			 * If the first valueDateTupel contains Double.NaN, its value will be set to
-			 * match the next non-NaN-value. If the following values are also Double.NaN,
-			 * iterate through the array until a value != Double.NaN is found.
+			 * If the first valueDateTupel contains Double.NaN, its value will be
+			 * set to match the next non-NaN-value. If the following values are
+			 * also Double.NaN, iterate through the array until a value !=
+			 * Double.NaN is found.
 			 */
 			if (fieldIndex == 0) {
 				valueDateTupels = fillStartingValues(valueDateTupels);
@@ -667,15 +698,15 @@ public class ValueDateTupel {
 			}
 
 			/*
-			 * The missing value will be set to average the values of its direct predecessor
-			 * and successor.
+			 * The missing value will be set to average the values of its direct
+			 * predecessor and successor.
 			 * 
-			 * If there are multiple values missing in a row, all of those will get the
-			 * average value of the last position before and the first position after all
-			 * missing values.
+			 * If there are multiple values missing in a row, all of those will
+			 * get the average value of the last position before and the first
+			 * position after all missing values.
 			 * 
-			 * If all values until the last one are missing, all consecutive NaN values will
-			 * be set to the last position before all NaNs.
+			 * If all values until the last one are missing, all consecutive NaN
+			 * values will be set to the last position before all NaNs.
 			 */
 			int limitIndex = fieldIndex;
 
@@ -684,8 +715,8 @@ public class ValueDateTupel {
 			while (Double.isNaN(valueDateTupels[limitIndex].getValue())) {
 				limitIndex++;
 				/*
-				 * If there are no values in the remaining array set all values to be the last
-				 * non-NaN, which is at fieldIndex-1.
+				 * If there are no values in the remaining array set all values to
+				 * be the last non-NaN, which is at fieldIndex-1.
 				 */
 				if (limitIndex == valueDateTupels.length) {
 					limitIndex--;
@@ -696,9 +727,10 @@ public class ValueDateTupel {
 			}
 
 			/*
-			 * If the value to be set has already been calculated then there is NaNs left in
-			 * the array, no more real values, until the very last position. All remaining
-			 * values can be set to this value then. After that the loop can be left.
+			 * If the value to be set has already been calculated then there is
+			 * NaNs left in the array, no more real values, until the very last
+			 * position. All remaining values can be set to this value then.
+			 * After that the loop can be left.
 			 */
 			if (!Double.isNaN(valueToBeSet)) {
 				int localIndex = fieldIndex;

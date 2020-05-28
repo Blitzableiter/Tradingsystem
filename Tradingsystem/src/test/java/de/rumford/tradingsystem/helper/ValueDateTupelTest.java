@@ -99,7 +99,8 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending() {
@@ -111,7 +112,8 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending_notInOrder() {
@@ -123,7 +125,8 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending_twoEqualDates() {
@@ -135,7 +138,8 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending_arrayNull() {
@@ -150,7 +154,8 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedAscending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedAscending_arrayContainsNull() {
@@ -166,7 +171,8 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending() {
@@ -178,7 +184,8 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending_notInOrder() {
@@ -190,7 +197,8 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending_twoEqualDates() {
@@ -202,7 +210,8 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending_arrayNull() {
@@ -217,7 +226,8 @@ class ValueDateTupelTest {
 	}
 
 	/**
-	 * Test method for {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
+	 * Test method for
+	 * {@link ValueDateTupel#isSortedDescending(ValueDateTupel[])}.
 	 */
 	@Test
 	void testIsSortedDescending_arrayContainsNull() {

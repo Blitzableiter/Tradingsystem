@@ -196,7 +196,8 @@ class VolatilityDifferenceTest {
 	}
 
 	/**
-	 * Test method for {@link VolatilityDifference#validateLookbackWindow(int)}.
+	 * Test method for
+	 * {@link VolatilityDifference#validateLookbackWindow(int)}.
 	 */
 	@Test
 	void testValidateLookbackWindow_lookbackWindow_1() {
@@ -472,13 +473,15 @@ class VolatilityDifferenceTest {
 	}
 
 	/**
-	 * Test method for {@link VolatilityDifference#calculateRawForecast(double)}.
+	 * Test method for
+	 * {@link VolatilityDifference#calculateRawForecast(double)}.
 	 */
 	@Test
 	void testCalculateRawForecast() {
 		baseValue = BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME);
 		double expectedValue = -0.5604475969404489; /*
-																								 * Excel: -0.560447596940449
+																								 * Excel:
+																								 * -0.560447596940449
 																								 */
 
 		VolatilityDifference volDif = new VolatilityDifference(baseValue, null,

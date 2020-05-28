@@ -12,12 +12,12 @@ import de.rumford.tradingsystem.helper.Validator;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
- * The SubSystem is the most parental Structure in this library and contains
- * (directly or indirectly) all other (non-static) classes. It combines rules
- * and base values and is thus the only point to calculate positions and perform
- * backtesting of performance. By containing a {@link DiversificationMultiplier}
- * it copes with the diversity between its rules and thus meets volatility
- * target and scale.
+ * The SubSystem is the most parental Structure in this library and
+ * contains (directly or indirectly) all other (non-static) classes. It
+ * combines rules and base values and is thus the only point to calculate
+ * positions and perform backtesting of performance. By containing a
+ * {@link DiversificationMultiplier} it copes with the diversity between
+ * its rules and thus meets volatility target and scale.
  * 
  * @author Max Rumford
  *
@@ -25,8 +25,8 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
 public class SubSystem {
 
 	/*
-	 * The value to which the product prices shall be scaled to. Effect rises if
-	 * higher and capital goes lower.
+	 * The value to which the product prices shall be scaled to. Effect rises
+	 * if higher and capital goes lower.
 	 */
 	private static final double PRICE_FACTOR_BASE_SCALE = 1;
 
@@ -49,16 +49,16 @@ public class SubSystem {
 	/**
 	 * Constructor for the SubSystem class.
 	 * 
-	 * @param baseValue {@link BaseValue} The base value to be used for all the
-	 *                  given rules' calculations. See
+	 * @param baseValue {@link BaseValue} The base value to be used for all
+	 *                  the given rules' calculations. See
 	 *                  {@link #validateInput(BaseValue, Rule[], double, double)}
 	 *                  for limitations.
-	 * @param rules     {@code Rule[]} Array of {@link Rule} to be used for forecast
-	 *                  calculations in this SubSystem. See
+	 * @param rules     {@code Rule[]} Array of {@link Rule} to be used for
+	 *                  forecast calculations in this SubSystem. See
 	 *                  {@link #validateInput(BaseValue, Rule[], double, double)}
 	 *                  for limitations.
-	 * @param capital   {@code double} The capital to be managed by this SubSystem.
-	 *                  See
+	 * @param capital   {@code double} The capital to be managed by this
+	 *                  SubSystem. See
 	 *                  {@link #validateInput(BaseValue, Rule[], double, double)}
 	 *                  for limitations.
 	 * @param baseScale {@code double} The base scale for this SubSystem's
@@ -85,25 +85,25 @@ public class SubSystem {
 	/**
 	 * Performs a backtest for the given parameters. Utilizes
 	 * {@link #calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], double, double)}
-	 * for actual performance calculation and returns performance value for the last
-	 * day.
+	 * for actual performance calculation and returns performance value for
+	 * the last day.
 	 * 
 	 * @see SubSystem#calculatePerformanceValues(BaseValue, LocalDateTime,
 	 *      LocalDateTime, ValueDateTupel[], double, double)
 	 * 
 	 * @param baseValue         {@link BaseValue} The base value to be tested
 	 *                          against.
-	 * @param startOfTestWindow {@link LocalDateTime} First time interval of test
-	 *                          window.
-	 * @param endOfTestWindow   {@link LocalDateTime} Last time interval of test
-	 *                          window.
-	 * @param combinedForecasts {@code ValueDateTupel[]} The forecasts to be used
-	 *                          for performance calculation.
-	 * @param baseScale         {@code double} The value to which to scale the
-	 *                          forecasts to.
+	 * @param startOfTestWindow {@link LocalDateTime} First time interval of
+	 *                          test window.
+	 * @param endOfTestWindow   {@link LocalDateTime} Last time interval of
+	 *                          test window.
+	 * @param combinedForecasts {@code ValueDateTupel[]} The forecasts to be
+	 *                          used for performance calculation.
+	 * @param baseScale         {@code double} The value to which to scale
+	 *                          the forecasts to.
 	 * @param capital           {@code double} The starting capital.
-	 * @return {@code double} The performance value on the last day of the given
-	 *         test window.
+	 * @return {@code double} The performance value on the last day of the
+	 *         given test window.
 	 */
 	public static double backtest(BaseValue baseValue,
 			LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow,
@@ -122,10 +122,10 @@ public class SubSystem {
 	 * {@link #calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], double, double)}
 	 * with instance properties.
 	 * 
-	 * @param startOfTestWindow {@link LocalDateTime} First time interval of test
-	 *                          window.
-	 * @param endOfTestWindow   {@link LocalDateTime} Last time interval of test
-	 *                          window.
+	 * @param startOfTestWindow {@link LocalDateTime} First time interval of
+	 *                          test window.
+	 * @param endOfTestWindow   {@link LocalDateTime} Last time interval of
+	 *                          test window.
 	 * @return {@code double} by way of
 	 *         {@link #backtest(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], double, double)}.
 	 */
@@ -137,24 +137,25 @@ public class SubSystem {
 	}
 
 	/**
-	 * Calculates the performance values for the given time frame, based on the
-	 * given baseValue, forecasts, baseScale and capital.
+	 * Calculates the performance values for the given time frame, based on
+	 * the given baseValue, forecasts, baseScale and capital.
 	 * 
-	 * @param baseValue         {@link BaseValue} The base value upon which the
-	 *                          products' prices are to be based.
+	 * @param baseValue         {@link BaseValue} The base value upon which
+	 *                          the products' prices are to be based.
 	 * @param startOfTestWindow {@link LocalDateTime} First time interval for
 	 *                          testing.
 	 * @param endOfTestWindow   {@link LocalDateTime} Last time interval for
 	 *                          testing.
 	 * @param combinedForecasts {@code ValueDateTupel[]} Array of
-	 *                          {@link ValueDateTupel} containing the forecasts for
-	 *                          this performance calculation.
-	 * @param baseScale         {@code double} The scale the given forecasts are
-	 *                          based upon.
+	 *                          {@link ValueDateTupel} containing the
+	 *                          forecasts for this performance calculation.
+	 * @param baseScale         {@code double} The scale the given forecasts
+	 *                          are based upon.
 	 * @param capital           {@code double} The starting capital.
 	 * @return {@code ValueDateTupel[]} An array of {@link ValueDateTupel}
-	 *         containing the value of all held assets + cash for each time interval
-	 *         between the given startOfTestWindow and endOfTestWindow.
+	 *         containing the value of all held assets + cash for each time
+	 *         interval between the given startOfTestWindow and
+	 *         endOfTestWindow.
 	 */
 	public static ValueDateTupel[] calculatePerformanceValues(
 			BaseValue baseValue, LocalDateTime startOfTestWindow,
@@ -166,8 +167,9 @@ public class SubSystem {
 					baseValue.getValues());
 		} catch (IllegalArgumentException e) {
 			/*
-			 * If the message contains "values" the message references an error in the given
-			 * base values in combination with the given test window.
+			 * If the message contains "values" the message references an error
+			 * in the given base values in combination with the given test
+			 * window.
 			 */
 			if (e.getMessage().contains("values"))
 				throw new IllegalArgumentException(
@@ -181,9 +183,9 @@ public class SubSystem {
 					combinedForecasts);
 		} catch (IllegalArgumentException e) {
 			/*
-			 * The general checks of the test window would have thrown Exceptions in the
-			 * previous try-catch, so here we only have to deal with combinedForecasts
-			 * specific Exceptions.
+			 * The general checks of the test window would have thrown Exceptions
+			 * in the previous try-catch, so here we only have to deal with
+			 * combinedForecasts specific Exceptions.
 			 */
 			throw new IllegalArgumentException(
 					"Given forecasts and test window do not fit.", e);
@@ -194,21 +196,24 @@ public class SubSystem {
 				baseValue.getValues(), startOfTestWindow, endOfTestWindow);
 
 		/*
-		 * Get the product price factor to calculate long and short product prices
+		 * Get the product price factor to calculate long and short product
+		 * prices
 		 */
 		double productPriceFactor = calculateProductPriceFactor(
 				ValueDateTupel.getValues(relevantBaseValues));
 
 		/*
-		 * Calculate the product prices based on the base value for each interval inside
-		 * the testing timespan and the calculated productPriceFactor
+		 * Calculate the product prices based on the base value for each
+		 * interval inside the testing timespan and the calculated
+		 * productPriceFactor
 		 */
 		ValueDateTupel[] productPrices = calculateProductPrices(
 				relevantBaseValues, productPriceFactor);
 
 		/*
-		 * Calculate the short product prices based on the base value for each interval
-		 * inside the testing timespan and the calculated productPriceFactor
+		 * Calculate the short product prices based on the base value for each
+		 * interval inside the testing timespan and the calculated
+		 * productPriceFactor
 		 */
 		ValueDateTupel[] relevantShortIndexValues = ValueDateTupel.getElements(
 				baseValue.getShortIndexValues(), startOfTestWindow,
@@ -228,8 +233,9 @@ public class SubSystem {
 		for (int i = 0; i < relevantCombinedForecasts.length; i++) {
 
 			/*
-			 * Calculate the capital available for this time interval by "selling" off all
-			 * currently held positions at the this time interval's prices.
+			 * Calculate the capital available for this time interval by
+			 * "selling" off all currently held positions at the this time
+			 * interval's prices.
 			 */
 			capital += longProductsCount * productPrices[i].getValue();
 			capital += shortProductsCount * shortProductPrices[i].getValue();
@@ -239,8 +245,8 @@ public class SubSystem {
 			longProductsCount = 0;
 
 			/*
-			 * Add this capital as performance value, as the overall value of cash + assets
-			 * held will not change during buying.
+			 * Add this capital as performance value, as the overall value of
+			 * cash + assets held will not change during buying.
 			 */
 			ValueDateTupel performanceValue = new ValueDateTupel(
 					relevantCombinedForecasts[i].getDate(), capital);
@@ -254,7 +260,8 @@ public class SubSystem {
 						relevantCombinedForecasts[i].getValue(), baseScale);
 
 				/*
-				 * "Buy" the calculated count of products and thus reduce the cash capital
+				 * "Buy" the calculated count of products and thus reduce the cash
+				 * capital
 				 */
 				capital -= longProductsCount * productPrices[i].getValue();
 
@@ -265,13 +272,14 @@ public class SubSystem {
 						relevantCombinedForecasts[i].getValue(), baseScale);
 
 				/*
-				 * "Buy" the calculated count of products and thus reduce the cash capital
+				 * "Buy" the calculated count of products and thus reduce the cash
+				 * capital
 				 */
 				capital -= shortProductsCount * shortProductPrices[i].getValue();
 			} else {
 				/*
-				 * If forecast was 0 nothing would be bought so no default-else branch is
-				 * needed.
+				 * If forecast was 0 nothing would be bought so no default-else
+				 * branch is needed.
 				 */
 			}
 
@@ -302,13 +310,14 @@ public class SubSystem {
 	 * Calculates the combined forecasts for all rules of this Sub System.
 	 * 
 	 * @return {@code ValueDateTupel[]} The combined forecasts for all rules,
-	 *         multiplied by {@link DiversificationMultiplier#getValue()} of this
-	 *         Sub System.
+	 *         multiplied by {@link DiversificationMultiplier#getValue()} of
+	 *         this Sub System.
 	 */
 	private ValueDateTupel[] calculateCombinedForecasts() {
 		Rule[] instanceRules = this.getRules();
 		/*
-		 * Calculate the weight by which all rules' forecasts shall be multiplied by
+		 * Calculate the weight by which all rules' forecasts shall be
+		 * multiplied by
 		 */
 		double rulesWeight = 1d / instanceRules.length;
 
@@ -324,7 +333,8 @@ public class SubSystem {
 
 				if (rulesIndex == 0) {
 					/*
-					 * Combined forecasts must be filled with values on first go-through
+					 * Combined forecasts must be filled with values on first
+					 * go-through
 					 */
 					ValueDateTupel vdtToAdd = new ValueDateTupel(
 							forecasts[fcIndex].getDate(),
@@ -333,8 +343,8 @@ public class SubSystem {
 							.add(calculatedCombinedForecasts, vdtToAdd);
 				} else {
 					/*
-					 * If this is not the first go-through add the weighted forecasts of the current
-					 * rule
+					 * If this is not the first go-through add the weighted forecasts
+					 * of the current rule
 					 */
 					ValueDateTupel vdtToAdd = new ValueDateTupel(
 							calculatedCombinedForecasts[fcIndex].getDate(),
@@ -346,8 +356,8 @@ public class SubSystem {
 		}
 
 		/*
-		 * Apply Diversification Multiplier to all forecast values. Cut off Forecast
-		 * values at 2 x base scale or -2 x base scale respectively
+		 * Apply Diversification Multiplier to all forecast values. Cut off
+		 * Forecast values at 2 x base scale or -2 x base scale respectively
 		 */
 		final double instanceBaseScale = this.getBaseScale();
 		final double diversificationMultiplierValue = this
@@ -370,8 +380,8 @@ public class SubSystem {
 	}
 
 	/**
-	 * Call {@link SubSystem#calculateProductPriceFactor(double[], double)} passing
-	 * PRICE_FACTOR_BASE_SCALE as param.
+	 * Call {@link SubSystem#calculateProductPriceFactor(double[], double)}
+	 * passing PRICE_FACTOR_BASE_SCALE as param.
 	 * 
 	 * @see SubSystem#calculateProductPriceFactor(double[], double)
 	 * @param values {@code double[]} An Array of values the factor is to be
@@ -384,13 +394,14 @@ public class SubSystem {
 	}
 
 	/**
-	 * Calculate the factor by which all of the given values must be multiplied so
-	 * their products have an average of priceFactorBaseScale. <br>
-	 * The factor is calculated by inverting the average of the given values divided
-	 * by the given priceFactorBaseScale.
+	 * Calculate the factor by which all of the given values must be
+	 * multiplied so their products have an average of priceFactorBaseScale.
+	 * <br>
+	 * The factor is calculated by inverting the average of the given values
+	 * divided by the given priceFactorBaseScale.
 	 * 
-	 * @param values               {@code double[]} An Array of values the factor is
-	 *                             to be calculated for
+	 * @param values               {@code double[]} An Array of values the
+	 *                             factor is to be calculated for
 	 * @param priceFactorBaseScale {@code double} The base scale to use.
 	 * @return {@code double} The calculated factor.
 	 */
@@ -402,15 +413,15 @@ public class SubSystem {
 	}
 
 	/**
-	 * Calculate product prices based on the given array of values and a given
-	 * product price factor.
+	 * Calculate product prices based on the given array of values and a
+	 * given product price factor.
 	 * 
-	 * @param baseValues         {@code ValueDateTupel[]} The values the prices are
-	 *                           to be based on.
-	 * @param productPriceFactor {@code double} The factor used to calculate the
-	 *                           product prices.
-	 * @return {@code ValueDateTupel[]} An array of prices using the dates of the
-	 *         given baseValues.
+	 * @param baseValues         {@code ValueDateTupel[]} The values the
+	 *                           prices are to be based on.
+	 * @param productPriceFactor {@code double} The factor used to calculate
+	 *                           the product prices.
+	 * @return {@code ValueDateTupel[]} An array of prices using the dates of
+	 *         the given baseValues.
 	 */
 	private static ValueDateTupel[] calculateProductPrices(
 			ValueDateTupel[] baseValues, double productPriceFactor) {
@@ -425,14 +436,16 @@ public class SubSystem {
 	}
 
 	/**
-	 * Calculates the products to buy during a trading period according to the given
-	 * price and given forecast.
+	 * Calculates the products to buy during a trading period according to
+	 * the given price and given forecast.
 	 * 
 	 * @param capital   {@code double} The capital available for trading.
-	 * @param price     {@code double} The price at which a product can be bought.
-	 * @param forecast  {@code double} The forecast for the current trading period.
-	 * @param baseScale {@code double} The base scale by which the given forecast is
-	 *                  scaled.
+	 * @param price     {@code double} The price at which a product can be
+	 *                  bought.
+	 * @param forecast  {@code double} The forecast for the current trading
+	 *                  period.
+	 * @param baseScale {@code double} The base scale by which the given
+	 *                  forecast is scaled.
 	 * @return {@code int} The number of products to buy.
 	 */
 	private static long calculateProductsCount(double capital, double price,
@@ -444,14 +457,15 @@ public class SubSystem {
 		double fcOneProductsCounts = maxProductsCount / (baseScale * 2);
 
 		/*
-		 * Invert current forecast if it's negative to always generate a positive number
-		 * of products
+		 * Invert current forecast if it's negative to always generate a
+		 * positive number of products
 		 */
 		if (forecast < 0)
 			forecast *= -1;
 
 		/*
-		 * Number of products for actual forecast. Accept rounding inaccuracies.
+		 * Number of products for actual forecast. Accept rounding
+		 * inaccuracies.
 		 */
 		return (long) (fcOneProductsCounts * forecast);
 	}
@@ -459,19 +473,21 @@ public class SubSystem {
 	/**
 	 * Validate the given input parameters.
 	 * 
-	 * @param baseValue {@link BaseValue} The baseValue to validate. Must pass
-	 *                  {@link Validator#validateBaseValue(BaseValue)}.
+	 * @param baseValue {@link BaseValue} The baseValue to validate. Must
+	 *                  pass {@link Validator#validateBaseValue(BaseValue)}.
 	 * @param rules     {@code Rule[]} The rules to validate.
 	 *                  <ul>
-	 *                  <li>Must pass {@link Validator#validateRules(Rule[])}</li>
-	 *                  <li>Each rule's base value must be same as the given base
-	 *                  value.</li>
+	 *                  <li>Must pass
+	 *                  {@link Validator#validateRules(Rule[])}</li>
+	 *                  <li>Each rule's base value must be same as the given
+	 *                  base value.</li>
 	 *                  </ul>
 	 * @param capital   {@code double} The capital to validate. Must pass
 	 *                  {@link Validator#validatePositiveDouble(double)}.
 	 * @param baseScale {@code double} The base scale to validate. Must pass
 	 *                  {@link Validator#validatePositiveDouble(double)}.
-	 * @throws IllegalArgumentException if any of the above criteria is not met.
+	 * @throws IllegalArgumentException if any of the above criteria is not
+	 *                                  met.
 	 */
 	private static void validateInput(BaseValue baseValue, Rule[] rules,
 			double capital, double baseScale) {
