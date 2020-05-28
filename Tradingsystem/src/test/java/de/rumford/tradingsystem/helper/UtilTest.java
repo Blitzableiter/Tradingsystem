@@ -415,8 +415,7 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link Util#calculateWeightsForThreeCorrelations(double[])}.
+	 * Test method for {@link Util#calculateWeightsForThreeCorrelations(double[])}.
 	 */
 	@Test
 	void testCalculateWeightsForThreeCorrelations() {
@@ -432,8 +431,7 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link Util#calculateWeightsForThreeCorrelations(double[])}.
+	 * Test method for {@link Util#calculateWeightsForThreeCorrelations(double[])}.
 	 */
 	@Test
 	void testCalculateWeightsForThreeCorrelations_negativeCorrelations() {
@@ -450,8 +448,7 @@ class UtilTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link Util#calculateWeightsForThreeCorrelations(double[])}.
+	 * Test method for {@link Util#calculateWeightsForThreeCorrelations(double[])}.
 	 */
 	@Test
 	void testCalculateWeightsForThreeCorrelations_threeEqualWeights() {

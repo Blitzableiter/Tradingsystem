@@ -28,8 +28,7 @@ public final class Util {
 	}
 
 	/**
-	 * Check if the given rules are unique by utilizing
-	 * {@link Rule#equals(Object)}
+	 * Check if the given rules are unique by utilizing {@link Rule#equals(Object)}
 	 * 
 	 * @param rules {@code Rule} An array of rules to be check for uniqueness.
 	 * @return {@code boolean} True, if the rules are unique. False otherwise.
@@ -57,10 +56,9 @@ public final class Util {
 	 * Adjusts a given value for the given standard deviation
 	 * 
 	 * @param value             {@code double} value to be adjusted
-	 * @param standardDeviation {@code double} standard deviation to be adjusted
-	 *                          for
-	 * @return {@code double} standard deviation adjusted value. Double.NaN, if
-	 *         the given standard deviation is zero.
+	 * @param standardDeviation {@code double} standard deviation to be adjusted for
+	 * @return {@code double} standard deviation adjusted value. Double.NaN, if the
+	 *         given standard deviation is zero.
 	 */
 	public static double adjustForStandardDeviation(double value,
 			double standardDeviation) {
@@ -95,22 +93,22 @@ public final class Util {
 	 * @return {@code double[]} The correlations between the given rows as by
 	 *         {@link PearsonsCorrelation#getCorrelationMatrix()}.
 	 * @throws IllegalArgumentException if the given array is null.
-	 * @throws IllegalArgumentException if the given array does not contain
-	 *                                  exactly 3 values.
+	 * @throws IllegalArgumentException if the given array does not contain exactly
+	 *                                  3 values.
 	 * @throws IllegalArgumentException if the given array contains null.
 	 * @throws IllegalArgumentException if the given array contains arrays
 	 *                                  containing null.
 	 * @throws IllegalArgumentException if the given array contains arrays
 	 *                                  containing Double.NaN.
-	 * @throws IllegalArgumentException if the given array contains arrays not
-	 *                                  of the same length.
+	 * @throws IllegalArgumentException if the given array contains arrays not of
+	 *                                  the same length.
 	 * 
 	 */
-	public static double[] calculateCorrelationOfRows(double[][] valuesMatrix) {
+	public static double[] calculateCorrelationOfRows(
+			double[][] valuesMatrix) {
 		/*
-		 * If one of the rows contains all identical values no correlation can
-		 * be calculated, as a division by zero will occur in correlations
-		 * calculation.
+		 * If one of the rows contains all identical values no correlation can be
+		 * calculated, as a division by zero will occur in correlations calculation.
 		 */
 		for (int i = 0; i < valuesMatrix.length; i++) {
 			double[] noDuplicates = DoubleStream.of(valuesMatrix[i]).distinct()
@@ -150,8 +148,7 @@ public final class Util {
 	 * Scales the forecast based on the given scalar
 	 * 
 	 * @param unscaledForecast {@code double} unscaled forecast to be scaled
-	 * @param scalar           {@code double} scalar to scale the unscaled
-	 *                         forecast
+	 * @param scalar           {@code double} scalar to scale the unscaled forecast
 	 * @return {@code double} the scaled forecast
 	 */
 	public static double calculateForecast(double unscaledForecast,
@@ -160,22 +157,20 @@ public final class Util {
 	}
 
 	/**
-	 * Calculates the forecast scalar for the given array of values in the scale
-	 * of the given base scale.
+	 * Calculates the forecast scalar for the given array of values in the scale of
+	 * the given base scale.
 	 * 
 	 * Formula: F = baseScale / [ sum( |fc| ) / n ]
 	 * 
 	 * Base scale divided by the average of absolutes.
 	 * 
-	 * @param values    {@code double[]} values to be scaled by the forecast
-	 *                  scalar
-	 * @param baseScale {@code double} base scale for scaling of the forecast
-	 *                  scalar
-	 * @return {@code double} forecast scalar to scale the given values to fit
-	 *         the given scalar base. Returns Double.NaN if the average of
-	 *         absolute values is 0
-	 * @throws IllegalArgumentException if the average of the absolutes of the
-	 *                                  given values is zero
+	 * @param values    {@code double[]} values to be scaled by the forecast scalar
+	 * @param baseScale {@code double} base scale for scaling of the forecast scalar
+	 * @return {@code double} forecast scalar to scale the given values to fit the
+	 *         given scalar base. Returns Double.NaN if the average of absolute
+	 *         values is 0
+	 * @throws IllegalArgumentException if the average of the absolutes of the given
+	 *                                  values is zero
 	 * @throws IllegalArgumentException if the given baseScale is zero
 	 */
 	public static double calculateForecastScalar(double[] values,
@@ -210,16 +205,16 @@ public final class Util {
 	}
 
 	/**
-	 * Calculates the difference between two values in percentage points of
-	 * change as seen from the former value
+	 * Calculates the difference between two values in percentage points of change
+	 * as seen from the former value
 	 * 
-	 * @param formerValue {@code double} value the value of the difference is
-	 *                    based on
+	 * @param formerValue {@code double} value the value of the difference is based
+	 *                    on
 	 * @param latterValue {@code double} "new" value which represents a changed
 	 *                    value in comparison to formerValue
 	 * @return {@code double} difference between formerValue and latterValue
-	 *         represented in percentage points. Double.NaN if the given
-	 *         formerValue is zero.
+	 *         represented in percentage points. Double.NaN if the given formerValue
+	 *         is zero.
 	 */
 	public static double calculateReturn(double formerValue,
 			double latterValue) {
@@ -229,15 +224,15 @@ public final class Util {
 	}
 
 	/**
-	 * Calculate the weights that should be given to the rows of values making
-	 * up the given correlations. Expects an array of length 3, where position 0
-	 * holds the correlation of rows A and B, position 1 holds the correlation
-	 * for rows A and C, and position 2 holds the correlation for rows B and C.
+	 * Calculate the weights that should be given to the rows of values making up
+	 * the given correlations. Expects an array of length 3, where position 0 holds
+	 * the correlation of rows A and B, position 1 holds the correlation for rows A
+	 * and C, and position 2 holds the correlation for rows B and C.
 	 * 
 	 * @param correlations {@code double[]} Three values representing the
-	 *                     correlations between the rows A, B and C. The
-	 *                     expected array is constructed as follows: { corr_AB,
-	 *                     corr_AC, corr_BC }. See
+	 *                     correlations between the rows A, B and C. The expected
+	 *                     array is constructed as follows: { corr_AB, corr_AC,
+	 *                     corr_BC }. See
 	 *                     {@link Validator#validateCorrelations(double[])} for
 	 *                     limitations.
 	 * @return {@code double[]} The calculated weights { w_A, w_B, w_C }.
@@ -248,8 +243,7 @@ public final class Util {
 
 		for (int i = 0; i < correlations.length; i++) {
 			/*
-			 * Floor negative correlations at 0 (See Carver:
-			 * "Systematic Trading", p. 79)
+			 * Floor negative correlations at 0 (See Carver: "Systematic Trading", p. 79)
 			 */
 			if (correlations[i] < 0)
 				correlations[i] = 0;
@@ -257,8 +251,8 @@ public final class Util {
 
 		double[] weights = {};
 		/*
-		 * Catch three equal correlations. Three correlations of 1 each would
-		 * break further calculation.
+		 * Catch three equal correlations. Three correlations of 1 each would break
+		 * further calculation.
 		 */
 		if (correlations[0] == correlations[1]
 				&& correlations[0] == correlations[2]) {
@@ -270,12 +264,12 @@ public final class Util {
 		}
 
 		/* Get the average correlation each row of values has */
-		double averageCorrelationRowA = (correlations[0] + correlations[1]) / 2;
-		double averageCorrelationRowB = (correlations[0] + correlations[2]) / 2;
-		double averageCorrelationRowC = (correlations[1] + correlations[2]) / 2;
+		double averageCorrRowA = (correlations[0] + correlations[1]) / 2;
+		double averageCorrRowB = (correlations[0] + correlations[2]) / 2;
+		double averageCorrRowC = (correlations[1] + correlations[2]) / 2;
 
-		double[] averageCorrelations = { averageCorrelationRowA,
-				averageCorrelationRowB, averageCorrelationRowC };
+		double[] averageCorrelations = { averageCorrRowA, averageCorrRowB,
+				averageCorrRowC };
 
 		/*
 		 * Subtract each average correlation from 1 to get an inverse-ish value
@@ -288,8 +282,8 @@ public final class Util {
 				.sum();
 
 		/*
-		 * Normalize the average correlations so they sum up to 1. These
-		 * normalized values are the weights.
+		 * Normalize the average correlations so they sum up to 1. These normalized
+		 * values are the weights.
 		 */
 		for (int i = 0; i < averageCorrelations.length; i++)
 			weights = ArrayUtils.add(weights,

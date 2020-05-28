@@ -32,8 +32,8 @@ public class EWMA {
 	/**
 	 * Constructor for the {@link EWMA} class
 	 *
-	 * @param baseValues {@code ValueDateTupel[]} The values this EWMA shall is
-	 *                   to be based on.
+	 * @param baseValues {@code ValueDateTupel[]} The values this EWMA shall is to
+	 *                   be based on.
 	 * @param horizon    {@code int} horizon this EWMA is to be over
 	 */
 	public EWMA(ValueDateTupel[] baseValues, int horizon) {
@@ -77,7 +77,8 @@ public class EWMA {
 	 *                   asset.
 	 * @return {@code ValueDateTupel[]} An array of calculated EWMA values.
 	 */
-	private ValueDateTupel[] calculateEwmaValues(ValueDateTupel[] baseValues) {
+	private ValueDateTupel[] calculateEwmaValues(
+			ValueDateTupel[] baseValues) {
 		ValueDateTupel[] newEwmaValues = ValueDateTupel.createEmptyArray();
 		double previousEwma = 0;
 		/* Calculate all EWMA-Values */
@@ -88,8 +89,7 @@ public class EWMA {
 				previousEwma = 0;
 			} else {
 				/* Calculate the new values */
-				newValue = this.calculateEWMA(previousEwma,
-						baseValue.getValue());
+				newValue = this.calculateEWMA(previousEwma, baseValue.getValue());
 				previousEwma = newValue;
 			}
 			/* Add the new value to the array of EWMA values */
@@ -102,8 +102,8 @@ public class EWMA {
 	/**
 	 * Validates the given base values.
 	 * 
-	 * @param baseValues {@code ValueDateTupel[]} the base values the EWMA is to
-	 *                   be calculated on. Must pass
+	 * @param baseValues {@code ValueDateTupel[]} the base values the EWMA is to be
+	 *                   calculated on. Must pass
 	 *                   {@link Validator#validateValues(ValueDateTupel[])} and
 	 *                   {@link Validator#validateDates(ValueDateTupel[])}.
 	 * @throws IllegalArgumentException if the above specifications are not met.

@@ -45,16 +45,15 @@ public class VolatilityDifference extends Rule {
 	 * @param baseValue              Same as in
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 * @param variations             {@code VolatilityDifference[]} An array of
-	 *                               three or less rules. Represents the
-	 *                               variations of this rule. Same limitations
-	 *                               as in
+	 *                               three or less rules. Represents the variations
+	 *                               of this rule. Same limitations as in
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 * @param startOfReferenceWindow Same as in
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 * @param endOfReferenceWindow   Same as in
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
-	 * @param lookbackWindow         {@code int} The lookback window to be used
-	 *                               for this VolatilityDifference. See
+	 * @param lookbackWindow         {@code int} The lookback window to be used for
+	 *                               this VolatilityDifference. See
 	 *                               {@link #validateLookbackWindow(int)} for
 	 *                               limitations.
 	 * @param baseScale              Same as in
@@ -89,22 +88,21 @@ public class VolatilityDifference extends Rule {
 	 * @param baseValue              Same as in
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 * @param variations             {@code VolatilityDifference[]} An array of
-	 *                               three or less rules. Represents the
-	 *                               variations of this rule. Same limitations
-	 *                               as in
+	 *                               three or less rules. Represents the variations
+	 *                               of this rule. Same limitations as in
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 * @param startOfReferenceWindow Same as in
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
 	 * @param endOfReferenceWindow   Same as in
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
-	 * @param lookbackWindow         {@code int} The lookback window to be used
-	 *                               for this VolatilityDifference. See
+	 * @param lookbackWindow         {@code int} The lookback window to be used for
+	 *                               this VolatilityDifference. See
 	 *                               {@link #validateLookbackWindow(int)} for
 	 *                               limitations.
 	 * @param baseScale              Same as in
 	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
-	 * @param volatilityIndices      {@code ValueDateTupel[]} The volatility
-	 *                               indices used for forecast calculations. See
+	 * @param volatilityIndices      {@code ValueDateTupel[]} The volatility indices
+	 *                               used for forecast calculations. See
 	 *                               {@link #validateVolatilityIndices(ValueDateTupel[])}
 	 *                               for limitations.
 	 */
@@ -129,8 +127,8 @@ public class VolatilityDifference extends Rule {
 
 	/**
 	 * Calculates the raw forecast by subtracting the forecast for the given
-	 * LocalDateTIme from the average volatility at that same given point in
-	 * time. Positive results result in a positive forecast.
+	 * LocalDateTIme from the average volatility at that same given point in time.
+	 * Positive results result in a positive forecast.
 	 */
 	@Override
 	double calculateRawForecast(LocalDateTime forecastDateTime) {
@@ -141,18 +139,17 @@ public class VolatilityDifference extends Rule {
 	}
 
 	/**
-	 * Calculate the volatility index values for this VolatilityDifference. If
-	 * the lookback window is longer than there are base values, an empty
+	 * Calculate the volatility index values for this VolatilityDifference. If the
+	 * lookback window is longer than there are base values, an empty
 	 * {@code ValueDateTupel[]} is returned.
 	 * 
-	 * @return {@code ValueDateTupel[]} calculated volatility indices. If the
-	 *         number of values in the instance base value is smaller than the
-	 *         lookback window the returned array only contains
-	 *         {@code Double.NaN}. Else, all values until the lookback window is
-	 *         reached contain {@code Double.NaN}, the rest contains real
-	 *         volatility index values.
-	 * @throws IllegalArgumentException if the number of base values is smaller
-	 *                                  than the given lookback window.
+	 * @return {@code ValueDateTupel[]} calculated volatility indices. If the number
+	 *         of values in the instance base value is smaller than the lookback
+	 *         window the returned array only contains {@code Double.NaN}. Else, all
+	 *         values until the lookback window is reached contain
+	 *         {@code Double.NaN}, the rest contains real volatility index values.
+	 * @throws IllegalArgumentException if the number of base values is smaller than
+	 *                                  the given lookback window.
 	 */
 	private static ValueDateTupel[] calculateVolatilityIndices(
 			BaseValue baseValue, int lookbackWindow) {
@@ -161,15 +158,15 @@ public class VolatilityDifference extends Rule {
 		ValueDateTupel[] volatilityIndices = null;
 
 		/**
-		 * If there are less base values than the lookback window is long no
-		 * volatility values can be calculated. The volatility values only have
-		 * any true meaning, when the lookback window is used in its entirety.
+		 * If there are less base values than the lookback window is long no volatility
+		 * values can be calculated. The volatility values only have any true meaning,
+		 * when the lookback window is used in its entirety.
 		 */
 		if (baseValues.length < lookbackWindow)
 			throw new IllegalArgumentException(
 					"The amount of base values must not be smaller than the lookback window. Number of base values: "
-							+ baseValues.length + ", lookback window: "
-							+ lookbackWindow + ".");
+							+ baseValues.length + ", lookback window: " + lookbackWindow
+							+ ".");
 
 		/**
 		 * Fill the spaces before reaching lookbackWindow with NaN
@@ -182,9 +179,9 @@ public class VolatilityDifference extends Rule {
 		}
 
 		/**
-		 * Start calculation with first adequate time value (after lookback
-		 * window is reached), e.g. lookbackWindow = 4, start with index 2 (4th
-		 * element), as the returns of each day will be needed.
+		 * Start calculation with first adequate time value (after lookback window is
+		 * reached), e.g. lookbackWindow = 4, start with index 2 (4th element), as the
+		 * returns of each day will be needed.
 		 */
 		for (int i = lookbackWindow; i < baseValues.length; i++) {
 			/* Copy the relevant values into a temporary array */
@@ -192,9 +189,8 @@ public class VolatilityDifference extends Rule {
 					.createEmptyArray(lookbackWindow + 1);
 			System.arraycopy(baseValues, /* source array */
 					i - (lookbackWindow), /*
-											 * source array position (starting
-											 * position for copy)
-											 */
+																 * source array position (starting position for copy)
+																 */
 					tempBaseValues, /* destination array */
 					0, /* destination position (starting position for paste) */
 					lookbackWindow + 1/* length (number of values to copy */
@@ -206,8 +202,7 @@ public class VolatilityDifference extends Rule {
 				double returnForDayI = Util.calculateReturn(
 						tempBaseValues[j - 1].getValue(),
 						tempBaseValues[j].getValue());
-				tempDoubleValues = ArrayUtils.add(tempDoubleValues,
-						returnForDayI);
+				tempDoubleValues = ArrayUtils.add(tempDoubleValues, returnForDayI);
 			}
 
 			/* Calculate standard deviation and save into local variable */
@@ -236,16 +231,15 @@ public class VolatilityDifference extends Rule {
 	private double calculateAverageVolatility(
 			LocalDateTime dateToBeCalculatedFor) {
 		/*
-		 * Starting point is the first DateTime that exceeds the lookback
-		 * window.
+		 * Starting point is the first DateTime that exceeds the lookback window.
 		 */
 		LocalDateTime startingDateTime = this.getVolatilityIndices()[this
 				.getLookbackWindow()].getDate();
 
 		/* Get all relevant volatility index values */
-		ValueDateTupel[] relevantVolatilityIndices = ValueDateTupel.getElements(
-				this.getVolatilityIndices(), startingDateTime,
-				dateToBeCalculatedFor);
+		ValueDateTupel[] relevantVolatilityIndices = ValueDateTupel
+				.getElements(this.getVolatilityIndices(), startingDateTime,
+						dateToBeCalculatedFor);
 
 		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();
 		/* Extract all relevant values into statistics object */
@@ -257,12 +251,12 @@ public class VolatilityDifference extends Rule {
 	}
 
 	/**
-	 * Validates the given lookback window. The lookback window must be greater
-	 * than or equal to 1.
+	 * Validates the given lookback window. The lookback window must be greater than
+	 * or equal to 1.
 	 * 
 	 * @param lookbackWindow {@code int} The lookback window to be validated.
-	 * @throws IllegalArgumentException if the given lookbackWindow does not
-	 *                                  meet specifications
+	 * @throws IllegalArgumentException if the given lookbackWindow does not meet
+	 *                                  specifications
 	 */
 	public static void validateLookbackWindow(int lookbackWindow) {
 		if (lookbackWindow <= 1)
@@ -287,10 +281,11 @@ public class VolatilityDifference extends Rule {
 	 *                          value's values. See
 	 *                          {@link ValueDateTupel#alignDates(ValueDateTupel[][])}.</li>
 	 *                          </ul>
-	 * @throws IllegalArgumentException if the given volatility indices do not
-	 *                                  meet specifications.
+	 * @throws IllegalArgumentException if the given volatility indices do not meet
+	 *                                  specifications.
 	 */
-	private void validateVolatilityIndices(ValueDateTupel[] volatilityIndices) {
+	private void validateVolatilityIndices(
+			ValueDateTupel[] volatilityIndices) {
 		/* Check if passed volatility indices are null */
 		if (volatilityIndices == null)
 			throw new IllegalArgumentException(
@@ -302,8 +297,8 @@ public class VolatilityDifference extends Rule {
 					"Volatility indices must not be an empty array");
 
 		/*
-		 * The values cannot be used if they are not in ascending order or if
-		 * they contain duplicate LocalDateTimes.
+		 * The values cannot be used if they are not in ascending order or if they
+		 * contain duplicate LocalDateTimes.
 		 */
 		if (!ValueDateTupel.isSortedAscending(volatilityIndices))
 			throw new IllegalArgumentException(
@@ -321,8 +316,8 @@ public class VolatilityDifference extends Rule {
 		 * The given volatility indices value must not contain NaNs in the area
 		 * delimited by startOfReferenceWindow and endOfReferenceWindow.
 		 */
-		int startOfReferencePosition = ValueDateTupel.getPosition(
-				volatilityIndices, this.getStartOfReferenceWindow());
+		int startOfReferencePosition = ValueDateTupel
+				.getPosition(volatilityIndices, this.getStartOfReferenceWindow());
 		int endOfReferencePosition = ValueDateTupel
 				.getPosition(volatilityIndices, this.getEndOfReferenceWindow());
 
@@ -333,23 +328,21 @@ public class VolatilityDifference extends Rule {
 		}
 
 		/*
-		 * Extract dates out of the base value's values array and add it to a
-		 * HashSet
+		 * Extract dates out of the base value's values array and add it to a HashSet
 		 */
 		Set<LocalDateTime> baseValueSet = new HashSet<>();
 		for (ValueDateTupel value : this.getBaseValue().getValues())
 			baseValueSet.add(value.getDate());
 		/*
-		 * Extract dates out of the volatility indices values array and add them
-		 * to to a copy of the same HashSet
+		 * Extract dates out of the volatility indices values array and add them to to a
+		 * copy of the same HashSet
 		 */
 		Set<LocalDateTime> volatilityIndicesSet = new HashSet<>(baseValueSet);
 		for (ValueDateTupel value : volatilityIndices)
 			volatilityIndicesSet.add(value.getDate());
 		/*
 		 * If the Sets differ in length, the volatility indices added unique
-		 * LocalDateTimes to the set. Therefore, the both are not properly
-		 * aligned.
+		 * LocalDateTimes to the set. Therefore, the both are not properly aligned.
 		 */
 		if (baseValueSet.size() != volatilityIndicesSet.size())
 			throw new IllegalArgumentException(
@@ -377,8 +370,7 @@ public class VolatilityDifference extends Rule {
 	}
 
 	/**
-	 * Checks if this VolatilityDifference is equal to another
-	 * VolatilityDifference.
+	 * Checks if this VolatilityDifference is equal to another VolatilityDifference.
 	 */
 	@GeneratedCode
 	@Override
@@ -431,8 +423,8 @@ public class VolatilityDifference extends Rule {
 	/**
 	 * Set the volatilityIndices
 	 * 
-	 * @param volatilityIndices {@code ValueDateTupel[]} the volatilityIndices
-	 *                          to set
+	 * @param volatilityIndices {@code ValueDateTupel[]} the volatilityIndices to
+	 *                          set
 	 */
 	private void setVolatilityIndices(ValueDateTupel[] volatilityIndices) {
 		this.volatilityIndices = volatilityIndices;

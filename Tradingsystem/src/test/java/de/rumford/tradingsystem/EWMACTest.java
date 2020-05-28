@@ -137,8 +137,7 @@ class EWMACTest {
 		shortHorizon = 2;
 		longHorizon = 8;
 		ewmac = new EWMAC(baseValue, null, localDateTimeJan08220000,
-				localDateTimeJan10220000, longHorizon, shortHorizon,
-				BASE_SCALE);
+				localDateTimeJan10220000, longHorizon, shortHorizon, BASE_SCALE);
 	}
 
 	/**
@@ -148,8 +147,7 @@ class EWMACTest {
 	@Test
 	void testEWMAC() {
 		EWMAC ewmac2 = new EWMAC(baseValue, null, localDateTimeJan08220000,
-				localDateTimeJan10220000, longHorizon, shortHorizon,
-				BASE_SCALE);
+				localDateTimeJan10220000, longHorizon, shortHorizon, BASE_SCALE);
 
 		assertEquals(ewmac, ewmac2, "Two identical instances do not equal");
 	}
@@ -165,8 +163,8 @@ class EWMACTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new EWMAC(baseValue, null, localDateTimeJan08220000,
-						localDateTimeJan10220000, longHorizonValue,
-						shortHorizonValue, BASE_SCALE),
+						localDateTimeJan10220000, longHorizonValue, shortHorizonValue,
+						BASE_SCALE),
 				"Short horizon greater than long horizon is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(),
@@ -186,8 +184,8 @@ class EWMACTest {
 
 		assertTrue(
 				new EWMAC(baseValue, variations, localDateTimeJan08220000,
-						localDateTimeJan10220000, longHorizonValue,
-						shortHorizonValue, BASE_SCALE) instanceof EWMAC,
+						localDateTimeJan10220000, longHorizonValue, shortHorizonValue,
+						BASE_SCALE) instanceof EWMAC,
 				"horizon values are not properly ignored when rule has variations");
 	}
 
@@ -202,8 +200,8 @@ class EWMACTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new EWMAC(baseValue, null, localDateTimeJan08220000,
-						localDateTimeJan10220000, longHorizonValue,
-						shortHorizonValue, BASE_SCALE),
+						localDateTimeJan10220000, longHorizonValue, shortHorizonValue,
+						BASE_SCALE),
 				"Short horizon equal to long horizon is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(),
@@ -221,8 +219,8 @@ class EWMACTest {
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> new EWMAC(baseValue, null, localDateTimeJan08220000,
-						localDateTimeJan10220000, longHorizonValue,
-						shortHorizonValue, BASE_SCALE),
+						localDateTimeJan10220000, longHorizonValue, shortHorizonValue,
+						BASE_SCALE),
 				"Short horizon < 2 is not properly handled");
 
 		assertEquals(expectedMessage, thrown.getMessage(),
@@ -242,8 +240,8 @@ class EWMACTest {
 
 		assertTrue(
 				new EWMAC(baseValue, variations, localDateTimeJan08220000,
-						localDateTimeJan10220000, longHorizonValue,
-						shortHorizonValue, BASE_SCALE) instanceof EWMAC,
+						localDateTimeJan10220000, longHorizonValue, shortHorizonValue,
+						BASE_SCALE) instanceof EWMAC,
 				"horizon values are not properly ignored when rule has variations");
 	}
 

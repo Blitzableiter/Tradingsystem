@@ -28,8 +28,7 @@ class DataSourceTest {
 	final static int FOLDER_NAME_LENGTH = FILE_NAME_LENGTH;
 
 	/*
-	 * Have all temporary created files inside a folder inside
-	 * src/test/resources
+	 * Have all temporary created files inside a folder inside src/test/resources
 	 */
 	private static String workingDir = Path
 			.of("src", "test", "resources",
@@ -186,7 +185,8 @@ class DataSourceTest {
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_headings);
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_four_columns);
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_day_non_integer);
-		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_month_non_integer);
+		bufferedWriters = ArrayUtils.add(bufferedWriters,
+				bw_month_non_integer);
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_year_non_integer);
 		bufferedWriters = ArrayUtils.add(bufferedWriters, bw_hour_non_integer);
 		bufferedWriters = ArrayUtils.add(bufferedWriters,
@@ -461,8 +461,7 @@ class DataSourceTest {
 	void testGetDataFromCsv_directory() {
 		String expectedValue = "Given source path does not point to a file";
 		Exception thrown = assertThrows(IOException.class,
-				() -> DataSource.getDataFromCsv(FILE_NAME_DIRECTORY,
-						CsvFormat.US),
+				() -> DataSource.getDataFromCsv(FILE_NAME_DIRECTORY, CsvFormat.US),
 				"Directory as file name is not properly handled");
 		assertEquals(expectedValue, thrown.getMessage(),
 				"Incorrect Exception message");
@@ -486,9 +485,9 @@ class DataSourceTest {
 			fail("File could not be written");
 		}
 
-		assertThrows(Exception.class,
-				() -> DataSource.getDataFromCsv(FILE_NAME_FILE_HAS_HEADINGS,
-						CsvFormat.US),
+		assertThrows(
+				Exception.class, () -> DataSource
+						.getDataFromCsv(FILE_NAME_FILE_HAS_HEADINGS, CsvFormat.US),
 				"Headings in CSV are not properly handled");
 	}
 
@@ -508,9 +507,9 @@ class DataSourceTest {
 			fail("File could not be written");
 		}
 
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> DataSource.getDataFromCsv(FILE_NAME_FOUR_COLUMNS,
-						CsvFormat.US),
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> DataSource
+						.getDataFromCsv(FILE_NAME_FOUR_COLUMNS, CsvFormat.US),
 				"Headings in CSV are not properly handled");
 		assertEquals(expectedValue, thrown.getMessage(),
 				"Incorrect Exception message");
@@ -677,8 +676,8 @@ class DataSourceTest {
 		}
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> DataSource.getDataFromCsv(
-						FILE_NAME_DATE_VALUE_OUT_OF_RANGE, CsvFormat.US),
+				() -> DataSource.getDataFromCsv(FILE_NAME_DATE_VALUE_OUT_OF_RANGE,
+						CsvFormat.US),
 				"Out of range date is not properly handled");
 		assertEquals(expectedValue, thrown.getMessage(),
 				"Incorrect Exception message");
@@ -700,9 +699,9 @@ class DataSourceTest {
 			fail("File could not be written");
 		}
 
-		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> DataSource.getDataFromCsv(FILE_NAME_COURSE_VALUE_INVALID,
-						CsvFormat.US),
+		Exception thrown = assertThrows(
+				IllegalArgumentException.class, () -> DataSource
+						.getDataFromCsv(FILE_NAME_COURSE_VALUE_INVALID, CsvFormat.US),
 				"Out of range date is not properly handled");
 		assertEquals(expectedValue, thrown.getMessage(),
 				"Incorrect Exception message");
