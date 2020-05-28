@@ -28,23 +28,26 @@ public class RuleTest {
 		private double variator;
 
 		public RealRule(BaseValue baseValue, Rule[] variations,
-				LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow,
-				double baseScale, double variator) {
-			super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
+				LocalDateTime startOfReferenceWindow,
+				LocalDateTime endOfReferenceWindow, double baseScale,
+				double variator) {
+			super(baseValue, variations, startOfReferenceWindow,
+					endOfReferenceWindow, baseScale);
 			this.variator = variator;
 		}
 
 		public static RealRule from(BaseValue baseValue, Rule[] variations,
-				LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow,
-				double baseScale, double variator) {
-			return new RealRule(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow,
-					baseScale, variator);
+				LocalDateTime startOfReferenceWindow,
+				LocalDateTime endOfReferenceWindow, double baseScale,
+				double variator) {
+			return new RealRule(baseValue, variations, startOfReferenceWindow,
+					endOfReferenceWindow, baseScale, variator);
 		}
 
 		@Override
 		double calculateRawForecast(LocalDateTime forecastDateTime) {
-			return ValueDateTupel.getElement(this.getBaseValue().getValues(), forecastDateTime)
-					.getValue() + this.variator * 100;
+			return ValueDateTupel.getElement(this.getBaseValue().getValues(),
+					forecastDateTime).getValue() + this.variator * 100;
 		}
 
 		@GeneratedCode
@@ -71,7 +74,8 @@ public class RuleTest {
 			if (getClass() != obj.getClass())
 				return false;
 			RealRule other = (RealRule) obj;
-			if (Double.doubleToLongBits(variator) != Double.doubleToLongBits(other.variator))
+			if (Double.doubleToLongBits(variator) != Double
+					.doubleToLongBits(other.variator))
 				return false;
 			return true;
 		}
@@ -109,19 +113,28 @@ public class RuleTest {
 	static void setUpBeforeClass() {
 		baseValue = BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME);
 
-		localDateTime2019Dec31220000 = LocalDateTime.of(LocalDate.of(2019, 12, 31),
+		localDateTime2019Dec31220000 = LocalDateTime
+				.of(LocalDate.of(2019, 12, 31), LocalTime.of(22, 0));
+		localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1),
 				LocalTime.of(22, 0));
-		localDateTimeJan01220000 = LocalDateTime.of(LocalDate.of(2020, 1, 1), LocalTime.of(22, 0));
-		localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2), LocalTime.of(22, 0));
-		localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3), LocalTime.of(22, 0));
-		localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4), LocalTime.of(22, 0));
-		localDateTimeJan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5), LocalTime.of(22, 0));
-		localDateTimeJan07220000 = LocalDateTime.of(LocalDate.of(2020, 1, 7), LocalTime.of(22, 0));
-		localDateTimeJan10220000 = LocalDateTime.of(LocalDate.of(2020, 1, 10), LocalTime.of(22, 0));
-		localDateTimeJan12220000 = LocalDateTime.of(LocalDate.of(2020, 1, 12), LocalTime.of(22, 0));
-		localDateTimeFeb05220000 = LocalDateTime.of(LocalDate.of(2020, 2, 5), LocalTime.of(22, 0));
-		localDateTime2020Dec31220000 = LocalDateTime.of(LocalDate.of(2020, 12, 31),
+		localDateTimeJan02220000 = LocalDateTime.of(LocalDate.of(2020, 1, 2),
 				LocalTime.of(22, 0));
+		localDateTimeJan03220000 = LocalDateTime.of(LocalDate.of(2020, 1, 3),
+				LocalTime.of(22, 0));
+		localDateTimeJan04220000 = LocalDateTime.of(LocalDate.of(2020, 1, 4),
+				LocalTime.of(22, 0));
+		localDateTimeJan05220000 = LocalDateTime.of(LocalDate.of(2020, 1, 5),
+				LocalTime.of(22, 0));
+		localDateTimeJan07220000 = LocalDateTime.of(LocalDate.of(2020, 1, 7),
+				LocalTime.of(22, 0));
+		localDateTimeJan10220000 = LocalDateTime.of(LocalDate.of(2020, 1, 10),
+				LocalTime.of(22, 0));
+		localDateTimeJan12220000 = LocalDateTime.of(LocalDate.of(2020, 1, 12),
+				LocalTime.of(22, 0));
+		localDateTimeFeb05220000 = LocalDateTime.of(LocalDate.of(2020, 2, 5),
+				LocalTime.of(22, 0));
+		localDateTime2020Dec31220000 = LocalDateTime
+				.of(LocalDate.of(2020, 12, 31), LocalTime.of(22, 0));
 	}
 
 	@BeforeEach
@@ -140,7 +153,8 @@ public class RuleTest {
 
 		double actualValue = realRule.getForecastScalar();
 
-		assertEquals(expectedValue, actualValue, "Forecast scalar is not correctly calculated");
+		assertEquals(expectedValue, actualValue,
+				"Forecast scalar is not correctly calculated");
 	}
 
 	/**
@@ -152,14 +166,17 @@ public class RuleTest {
 
 		double variator = -1d;
 		realRule = RealRule.from(
-				BaseValueFactory.jan1Jan5calcShort_sameValuesOn2To5(BASE_VALUE_NAME), null,
-				localDateTimeJan02220000, localDateTimeJan05220000, BASE_SCALE, variator);
+				BaseValueFactory.jan1Jan5calcShort_sameValuesOn2To5(
+						BASE_VALUE_NAME),
+				null, localDateTimeJan02220000, localDateTimeJan05220000,
+				BASE_SCALE, variator);
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
 				() -> realRule.getForecastScalar(),
 				"Illegal values in reference window are not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -170,9 +187,11 @@ public class RuleTest {
 		double expectedValue = 12.66459427439483; // Excel: 12.6645942743948
 
 		double actualValue = ValueDateTupel
-				.getElement(realRule.getForecasts(), localDateTimeJan10220000).getValue();
+				.getElement(realRule.getForecasts(), localDateTimeJan10220000)
+				.getValue();
 
-		assertEquals(expectedValue, actualValue, "Forecasts are not correctly calculated");
+		assertEquals(expectedValue, actualValue,
+				"Forecasts are not correctly calculated");
 	}
 
 	/**
@@ -182,11 +201,15 @@ public class RuleTest {
 	void testCalculateForecasts_unchangedOverTime() {
 		double expectedValue = 12.66459427439483; // Excel: 12.6645942743948
 
-		ValueDateTupel.getElement(realRule.getForecasts(), localDateTimeJan10220000).getValue();
+		ValueDateTupel
+				.getElement(realRule.getForecasts(), localDateTimeJan10220000)
+				.getValue();
 		double actualValue = ValueDateTupel
-				.getElement(realRule.getForecasts(), localDateTimeJan10220000).getValue();
+				.getElement(realRule.getForecasts(), localDateTimeJan10220000)
+				.getValue();
 
-		assertEquals(expectedValue, actualValue, "Forecasts are not correctly calculated");
+		assertEquals(expectedValue, actualValue,
+				"Forecasts are not correctly calculated");
 	}
 
 	/**
@@ -196,14 +219,20 @@ public class RuleTest {
 	void testCalculateScaledForecast_FcNegative20() {
 		double expectedValue = -20d;
 		variator = -0.1d;
-		realRule = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		realRule = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
 
-		ValueDateTupel.getElement(realRule.getForecasts(), localDateTimeFeb05220000).getValue();
+		ValueDateTupel
+				.getElement(realRule.getForecasts(), localDateTimeFeb05220000)
+				.getValue();
 		double actualValue = ValueDateTupel
-				.getElement(realRule.getForecasts(), localDateTimeFeb05220000).getValue();
+				.getElement(realRule.getForecasts(), localDateTimeFeb05220000)
+				.getValue();
 
-		assertEquals(expectedValue, actualValue, "Forecasts < -20 are not correctly calculated");
+		assertEquals(expectedValue, actualValue,
+				"Forecasts < -20 are not correctly calculated");
 	}
 
 	/**
@@ -216,11 +245,13 @@ public class RuleTest {
 		String expectedMessage = "Base value must not be null";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> RealRule.from(nullBaseValue, null, localDateTimeJan10220000,
-						localDateTimeJan12220000, BASE_SCALE, variator),
+				() -> RealRule.from(nullBaseValue, null,
+						localDateTimeJan10220000, localDateTimeJan12220000,
+						BASE_SCALE, variator),
 				"Base value of null is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -232,12 +263,13 @@ public class RuleTest {
 		String expectedMessage = "The given reference window does not meet specifications.";
 		String expectedCause = "Start of time window value must not be null";
 
-		Exception thrown = assertThrows(
-				IllegalArgumentException.class, () -> RealRule.from(baseValue, null, null,
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> RealRule.from(baseValue, null, null,
 						localDateTimeJan12220000, BASE_SCALE, variator),
 				"startOfReferenceWindow of null is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 		assertEquals(expectedCause, thrown.getCause().getMessage(),
 				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -251,12 +283,13 @@ public class RuleTest {
 		String expectedMessage = "The given reference window does not meet specifications.";
 		String expectedCause = "End of time window value must not be null";
 
-		Exception thrown = assertThrows(
-				IllegalArgumentException.class, () -> RealRule.from(baseValue, null,
-						localDateTimeJan10220000, null, BASE_SCALE, variator),
+		Exception thrown = assertThrows(IllegalArgumentException.class,
+				() -> RealRule.from(baseValue, null, localDateTimeJan10220000,
+						null, BASE_SCALE, variator),
 				"endOfReferenceWindow of null is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 		assertEquals(expectedCause, thrown.getCause().getMessage(),
 				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -276,7 +309,8 @@ public class RuleTest {
 						localDateTimeJan12220000, zeroBaseScale, variator),
 				"baseScale of zero is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 		assertEquals(expectedCause, thrown.getCause().getMessage(),
 				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -296,7 +330,8 @@ public class RuleTest {
 						localDateTimeJan12220000, subZeroBaseScale, variator),
 				"baseScale of less than zero is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 		assertEquals(expectedCause, thrown.getCause().getMessage(),
 				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -315,7 +350,8 @@ public class RuleTest {
 						localDateTimeJan10220000, BASE_SCALE, variator),
 				"endOfReferenceWindow before startOfReferenceWindow is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 		assertEquals(expectedCause, thrown.getCause().getMessage(),
 				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -330,11 +366,13 @@ public class RuleTest {
 		String expectedCause = "Given values do not include given start value for time window";
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> RealRule.from(baseValue, null, localDateTime2019Dec31220000,
-						localDateTimeJan12220000, BASE_SCALE, variator),
+				() -> RealRule.from(baseValue, null,
+						localDateTime2019Dec31220000, localDateTimeJan12220000,
+						BASE_SCALE, variator),
 				"Not included startOfReferenceWindow is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 		assertEquals(expectedCause, thrown.getCause().getMessage(),
 				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -353,7 +391,8 @@ public class RuleTest {
 						localDateTime2020Dec31220000, BASE_SCALE, variator),
 				"Not included endOfReferenceWindow is not correctly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 		assertEquals(expectedCause, thrown.getCause().getMessage(),
 				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -365,23 +404,33 @@ public class RuleTest {
 	@Test
 	void testValidateInputs_moreThan3Variations() {
 		String expectedMessage = "A rule must not contain more than 3 variations.";
-		RealRule var1 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
-		RealRule var2 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
-		RealRule var3 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
-		RealRule var4 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var1 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
+		RealRule var2 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
+		RealRule var3 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
+		RealRule var4 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
 		RealRule[] variations = { var1, var2, var3, var4 };
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
-						variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
-						variator),
+				() -> RealRule.from(
+						BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
+						variations, localDateTimeJan10220000,
+						localDateTimeJan12220000, BASE_SCALE, variator),
 				"> 3 variations is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -394,12 +443,14 @@ public class RuleTest {
 		RealRule[] variations = {};
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
-						variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
-						variator),
+				() -> RealRule.from(
+						BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
+						variations, localDateTimeJan10220000,
+						localDateTimeJan12220000, BASE_SCALE, variator),
 				"Empty variations array is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -409,20 +460,26 @@ public class RuleTest {
 	@Test
 	void testValidateInputs_variationIsNull() {
 		String expectedMessage = "The variation at position 2 in the given variations array is null.";
-		RealRule var1 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
-		RealRule var2 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var1 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
+		RealRule var2 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
 		RealRule var3 = null;
 		RealRule[] variations = { var1, var2, var3 };
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
-						variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
-						variator),
+				() -> RealRule.from(
+						BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
+						variations, localDateTimeJan10220000,
+						localDateTimeJan12220000, BASE_SCALE, variator),
 				"Variation = null is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -432,21 +489,29 @@ public class RuleTest {
 	@Test
 	void testValidateInputs_variationsStartOfReferenceWindowDoesNotMatchRules() {
 		String expectedMessage = "The given reference window does not match the variation's at position 1. The given start of reference window is different.";
-		RealRule var1 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
-		RealRule var2 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan07220000, localDateTimeJan12220000, BASE_SCALE, variator);
-		RealRule var3 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var1 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
+		RealRule var2 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan07220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
+		RealRule var3 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
 		RealRule[] variations = { var1, var2, var3 };
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
-						variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
-						variator),
+				() -> RealRule.from(
+						BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
+						variations, localDateTimeJan10220000,
+						localDateTimeJan12220000, BASE_SCALE, variator),
 				"Unmatched start of reference window is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -456,21 +521,29 @@ public class RuleTest {
 	@Test
 	void testValidateInputs_variationsEndOfReferenceWindowDoesNotMatchRules() {
 		String expectedMessage = "The given reference window does not match the variation's at position 1. The given end of reference window is different.";
-		RealRule var1 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
-		RealRule var2 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeFeb05220000, BASE_SCALE, variator);
-		RealRule var3 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var1 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
+		RealRule var2 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeFeb05220000, BASE_SCALE,
+				variator);
+		RealRule var3 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
 		RealRule[] variations = { var1, var2, var3 };
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
-						variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
-						variator),
+				() -> RealRule.from(
+						BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
+						variations, localDateTimeJan10220000,
+						localDateTimeJan12220000, BASE_SCALE, variator),
 				"Unmatched end of reference window is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -481,17 +554,21 @@ public class RuleTest {
 	void testValidateInputs_variationsDoNotHaveRulesBaseValues() {
 		String expectedMessage = "The given variations do not meet specifications.";
 		String expectedCause = "The base value of all rules must be equal to given base value but the rule at position 0 does not comply.";
-		RealRule var1 = RealRule.from(BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var1 = RealRule.from(
+				BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
 		RealRule[] variations = { var1 };
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
-						variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
-						variator),
+				() -> RealRule.from(
+						BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
+						variations, localDateTimeJan10220000,
+						localDateTimeJan12220000, BASE_SCALE, variator),
 				"Incorrect BaseValue in variations is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 		assertEquals(expectedCause, thrown.getCause().getMessage(),
 				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
@@ -502,13 +579,16 @@ public class RuleTest {
 	@Test
 	void testWeighVariations_1Variation() {
 		double expectedValue = 1;
-		RealRule var1 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var1 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
 		RealRule[] variations = { var1 };
 
-		RealRule realRule = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
-				variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
-				variator);
+		RealRule realRule = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
+				variations, localDateTimeJan10220000, localDateTimeJan12220000,
+				BASE_SCALE, variator);
 		double actualValue = realRule.getVariations()[0].getWeight();
 
 		assertEquals(expectedValue, actualValue,
@@ -521,15 +601,20 @@ public class RuleTest {
 	@Test
 	void testWeighVariations_2Variations() {
 		double[] expectedValue = { 0.5, 0.5 };
-		RealRule var1 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
-		RealRule var2 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var1 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
+		RealRule var2 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
 		RealRule[] variations = { var1, var2 };
 
-		RealRule realRule = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
-				variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
-				variator);
+		RealRule realRule = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
+				variations, localDateTimeJan10220000, localDateTimeJan12220000,
+				BASE_SCALE, variator);
 		double[] actualValue = { realRule.getVariations()[0].getWeight(),
 				realRule.getVariations()[1].getWeight() };
 
@@ -543,19 +628,27 @@ public class RuleTest {
 	@Test
 	void testWeighVariations_3EqualVariations() {
 		double[] expectedValue = { 1d / 3d, 1d / 3d, 1d / 3d };
-		RealRule var1 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
-		RealRule var2 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
-		RealRule var3 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator);
+		RealRule var1 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
+		RealRule var2 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
+		RealRule var3 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator);
 		RealRule[] variations = { var1, var2, var3 };
 
-		RealRule realRule = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
-				variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
-				variator);
+		RealRule realRule = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
+				variations, localDateTimeJan10220000, localDateTimeJan12220000,
+				BASE_SCALE, variator);
 		double[] actualValue = { realRule.getVariations()[0].getWeight(),
-				realRule.getVariations()[1].getWeight(), realRule.getVariations()[2].getWeight() };
+				realRule.getVariations()[1].getWeight(),
+				realRule.getVariations()[2].getWeight() };
 
 		assertArrayEquals(expectedValue, actualValue,
 				"Weights for 3 equal variations are not correctly calculated");
@@ -574,19 +667,27 @@ public class RuleTest {
 		double variator1 = 1;
 		double variator2 = 3.19;
 		double variator3 = -0.1;
-		RealRule var1 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator1);
-		RealRule var2 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator2);
-		RealRule var3 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator3);
+		RealRule var1 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator1);
+		RealRule var2 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator2);
+		RealRule var3 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator3);
 		RealRule[] variations = { var1, var2, var3 };
 
-		RealRule realRule = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
-				variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
-				variator);
+		RealRule realRule = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
+				variations, localDateTimeJan10220000, localDateTimeJan12220000,
+				BASE_SCALE, variator);
 		double[] actualValue = { realRule.getVariations()[0].getWeight(),
-				realRule.getVariations()[1].getWeight(), realRule.getVariations()[2].getWeight() };
+				realRule.getVariations()[1].getWeight(),
+				realRule.getVariations()[2].getWeight() };
 
 		assertArrayEquals(expectedValue, actualValue,
 				"Weights for 3 inequal variations are not correctly calculated");
@@ -601,11 +702,14 @@ public class RuleTest {
 		double variator3 = 1;
 
 		Exception thrown = assertThrows(IllegalArgumentException.class,
-				() -> RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-						localDateTimeJan01220000, localDateTimeJan03220000, BASE_SCALE, variator3),
+				() -> RealRule.from(
+						BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
+						null, localDateTimeJan01220000,
+						localDateTimeJan03220000, BASE_SCALE, variator3),
 				"Illegal start of reference window is not properly handled.");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -621,19 +725,27 @@ public class RuleTest {
 		double variator1 = -1;
 		double variator2 = 0.5;
 		double variator3 = 1;
-		RealRule var1 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator1);
-		RealRule var2 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator2);
-		RealRule var3 = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
-				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE, variator3);
+		RealRule var1 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator1);
+		RealRule var2 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator2);
+		RealRule var3 = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
+				localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
+				variator3);
 		RealRule[] variations = { var1, var2, var3 };
 
-		RealRule realRule = RealRule.from(BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
-				variations, localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
-				variator);
+		RealRule realRule = RealRule.from(
+				BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME),
+				variations, localDateTimeJan10220000, localDateTimeJan12220000,
+				BASE_SCALE, variator);
 		double[] actualValue = { realRule.getVariations()[0].getWeight(),
-				realRule.getVariations()[1].getWeight(), realRule.getVariations()[2].getWeight() };
+				realRule.getVariations()[1].getWeight(),
+				realRule.getVariations()[2].getWeight() };
 
 		assertArrayEquals(expectedValue, actualValue,
 				"Weights for variations with negative correlations are not correctly calculated");

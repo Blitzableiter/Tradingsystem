@@ -27,7 +27,8 @@ class ValidatorTest {
 				() -> Validator.validateCorrelations(correlations),
 				"Array of null is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -42,7 +43,8 @@ class ValidatorTest {
 				() -> Validator.validateCorrelations(correlations),
 				"Array of length != 3 is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -57,7 +59,8 @@ class ValidatorTest {
 				() -> Validator.validateCorrelations(correlations),
 				"Array containing Double.NaN is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -72,7 +75,8 @@ class ValidatorTest {
 				() -> Validator.validateCorrelations(correlations),
 				"Array containing values greater than 1 is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 	/**
@@ -87,7 +91,8 @@ class ValidatorTest {
 				() -> Validator.validateCorrelations(correlations),
 				"Array containing values less than -1 is not properly handled");
 
-		assertEquals(expectedMessage, thrown.getMessage(), MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
+		assertEquals(expectedMessage, thrown.getMessage(),
+				MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
 	}
 
 }
