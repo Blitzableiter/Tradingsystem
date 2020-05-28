@@ -244,7 +244,6 @@ public final class Util {
 	 */
 	public static double[] calculateWeightsForThreeCorrelations(
 			double[] correlations) {
-
 		Validator.validateCorrelations(correlations);
 
 		for (int i = 0; i < correlations.length; i++) {
@@ -271,17 +270,12 @@ public final class Util {
 		}
 
 		/* Get the average correlation each row of values has */
-		double averageCorrelationA = (correlations[0] + correlations[1]) / 2;
-		double averageCorrelationB = (correlations[0] + correlations[2]) / 2;
-		double averageCorrelationC = (correlations[1] + correlations[2]) / 2;
+		double averageCorrelationRowA = (correlations[0] + correlations[1]) / 2;
+		double averageCorrelationRowB = (correlations[0] + correlations[2]) / 2;
+		double averageCorrelationRowC = (correlations[1] + correlations[2]) / 2;
 
-		double[] averageCorrelations = {};
-		averageCorrelations = ArrayUtils.add(averageCorrelations,
-				averageCorrelationA);
-		averageCorrelations = ArrayUtils.add(averageCorrelations,
-				averageCorrelationB);
-		averageCorrelations = ArrayUtils.add(averageCorrelations,
-				averageCorrelationC);
+		double[] averageCorrelations = { averageCorrelationRowA,
+				averageCorrelationRowB, averageCorrelationRowC };
 
 		/*
 		 * Subtract each average correlation from 1 to get an inverse-ish value
@@ -289,7 +283,7 @@ public final class Util {
 		for (int i = 0; i < averageCorrelations.length; i++)
 			averageCorrelations[i] = 1 - averageCorrelations[i];
 
-		/* Calculate the sum of average calculations. */
+		/* Calculate the sum of average correlations. */
 		double sumOfAverageCorrelations = DoubleStream.of(averageCorrelations)
 				.sum();
 
