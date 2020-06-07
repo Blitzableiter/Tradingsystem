@@ -10,7 +10,7 @@ This reposity is the project accompanying my Master's thesis in IT-Management. T
 
 # Requirements
 
-- Java Development Kit 11
+- Java Development Kit 8
 
 # Installing
 
