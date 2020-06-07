@@ -333,7 +333,6 @@ public class Validator {
       throw new IllegalArgumentException(
           "The given variations do not meet specifications.", e);
     }
-
   }
 
   /**
@@ -362,6 +361,15 @@ public class Validator {
         throw new IllegalArgumentException(
             "Row contains only Double.NaN. Rows must contain at least one"
                 + " value != Double.NaN");
+    }
+  }
+
+  public static void validateRulesVsBaseScale(Rule[] rules,
+      double baseScale) {
+    if (rules != null) {
+      for (Rule rule : rules)
+        if (rule != null && rule.getBaseScale() != baseScale)
+          throw new IllegalArgumentException();
     }
   }
 }

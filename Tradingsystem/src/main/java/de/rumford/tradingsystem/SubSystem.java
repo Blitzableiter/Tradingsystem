@@ -510,6 +510,8 @@ public class SubSystem {
       throw new IllegalArgumentException(
           "Given base scale does not meet specifications.", e);
     }
+
+    Validator.validateRulesVsBaseScale(rules, baseScale);
   }
 
   /**

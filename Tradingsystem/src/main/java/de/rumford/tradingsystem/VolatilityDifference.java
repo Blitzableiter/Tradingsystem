@@ -67,17 +67,24 @@ public class VolatilityDifference extends Rule {
     super(baseValue, variations, startOfReferenceWindow,
         endOfReferenceWindow, baseScale);
 
-    /* Check if lookback window fulfills requirements. */
-    validateLookbackWindow(lookbackWindow);
-    this.setLookbackWindow(lookbackWindow);
+    if (variations == null) {
+      /*
+       * Lookback window and volatility indices are only needed when a rule
+       * has no variations.
+       */
+      /* Check if lookback window fulfills requirements. */
+      validateLookbackWindow(lookbackWindow);
+      this.setLookbackWindow(lookbackWindow);
 
-    /*
-     * Calculate volatility index values based on the base value and set it
-     */
-    ValueDateTupel[] calculatedVolatilityIndices = calculateVolatilityIndices(
-        baseValue, lookbackWindow);
-    this.validateVolatilityIndices(calculatedVolatilityIndices);
-    this.setVolatilityIndices(calculatedVolatilityIndices);
+      /*
+       * Calculate volatility index values based on the base value and set
+       * it
+       */
+      ValueDateTupel[] calculatedVolatilityIndices = calculateVolatilityIndices(
+          baseValue, lookbackWindow);
+      this.validateVolatilityIndices(calculatedVolatilityIndices);
+      this.setVolatilityIndices(calculatedVolatilityIndices);
+    }
   }
 
   /**
@@ -116,15 +123,22 @@ public class VolatilityDifference extends Rule {
     super(baseValue, variations, startOfReferenceWindow,
         endOfReferenceWindow, baseScale);
 
-    /* Check if lookback window fulfills requirements. */
-    validateLookbackWindow(lookbackWindow);
-    this.setLookbackWindow(lookbackWindow);
+    if (variations == null) {
+      /*
+       * Lookback window and volatility indices are only needed when a rule
+       * has no variations.
+       */
+      /* Check if lookback window fulfills requirements. */
+      validateLookbackWindow(lookbackWindow);
+      this.setLookbackWindow(lookbackWindow);
 
-    /*
-     * Calculate volatility index values based on the base value and set it
-     */
-    this.validateVolatilityIndices(volatilityIndices);
-    this.setVolatilityIndices(volatilityIndices);
+      /*
+       * Calculate volatility index values based on the base value and set
+       * it
+       */
+      this.validateVolatilityIndices(volatilityIndices);
+      this.setVolatilityIndices(volatilityIndices);
+    }
   }
 
   /**

@@ -70,27 +70,27 @@ public abstract class Rule {
    * 
    * @param baseValue              {@link BaseValue} The base value to be
    *                               used in this rule's calculations. See
-   *                               {@link #validateInputs(BaseValue, Rule[] , LocalDateTime, LocalDateTime, double)}
+   *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}
    *                               for limitations.
    * @param variations             {@code Rule[]} An array of up to 3 rules
    *                               (or null). See
-   *                               {@link #validateInputs(BaseValue, Rule[] , LocalDateTime, LocalDateTime, double)}
+   *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}
    *                               for limitations.
    * @param startOfReferenceWindow {@link LocalDateTime} The first
    *                               LocalDateTime to be considered in
    *                               calculations such as forecast scalar.
    *                               See
-   *                               {@link #validateInputs(BaseValue, Rule[] , LocalDateTime, LocalDateTime, double)}
+   *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}
    *                               for limitations.
    * @param endOfReferenceWindow   {@link LocalDateTime} The last
    *                               LocalDateTime to be considered in
    *                               calculations such as forecast scalar.
    *                               See
-   *                               {@link #validateInputs(BaseValue, Rule[] , LocalDateTime, LocalDateTime, double)}
+   *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}
    *                               for limitations.
    * @param baseScale              {@code double} How the forecasts shall
    *                               be scaled. See
-   *                               {@link #validateInputs(BaseValue, Rule[] , LocalDateTime, LocalDateTime, double)}
+   *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}
    *                               for limitations.
    */
   public Rule(BaseValue baseValue, Rule[] variations,
@@ -290,7 +290,7 @@ public abstract class Rule {
     if (Double.isNaN(calculatedForecastScalar))
       throw new IllegalArgumentException(
           "Illegal values in calulated forecast values."
-              + "Adjust reference window.");
+              + " Adjust reference window.");
 
     return calculatedForecastScalar;
   }
@@ -424,7 +424,7 @@ public abstract class Rule {
    * @param baseValue              {@link BaseValue} The base value to be
    *                               used in this rule's calculations. Must
    *                               pass
-   *                               {@link Validator# validateBaseValue(BaseValue)}.
+   *                               {@link Validator# validateBaseValue( BaseValue)}.
    *                               Its values must pass
    *                               {@link Validator#validateTimeWindow( LocalDateTime, LocalDateTime, ValueDateTupel[])}
    * @param variations             {@code Rule[]} Can be null. If not
@@ -515,36 +515,33 @@ public abstract class Rule {
     if (instanceVariations == null)
       return;
 
-    /* If there is only 1 variation then its weight is 100% */
     switch (instanceVariations.length) {
     case 1:
+      /* If there is only 1 variation then its weight is 100% */
       instanceVariations[0].setWeight(1d);
       break;
-    /* If there are 2 variations their weights are 50% each */
+
     case 2:
+      /* If there are 2 variations their weights are 50% each */
       instanceVariations[0].setWeight(0.5d);
       instanceVariations[1].setWeight(0.5d);
       break;
-    case 3:
-      ValueDateTupel[][] calculatedForecasts = {};
-      for (Rule variation : instanceVariations) {
-        ValueDateTupel[] fcs = variation.extractRelevantForecasts();
-        calculatedForecasts = ArrayUtils.add(calculatedForecasts, fcs);
-      }
 
+    case 3:
       /*
        * Extract the values from the forecasts array, as the Dates are not
        * needed for correlation calculation.
        */
       double[][] variationsForecasts = {};
-      for (ValueDateTupel[] forecast : calculatedForecasts) {
+      for (Rule variation : instanceVariations) {
+        ValueDateTupel[] fcs = variation.extractRelevantForecasts();
         variationsForecasts = ArrayUtils.add(variationsForecasts,
-            ValueDateTupel.getValues(forecast));
+            ValueDateTupel.getValues(fcs));
       }
 
       /* Find the correlations for the given variations. */
-      double[] correlations;
-      correlations = Util.calculateCorrelationOfRows(variationsForecasts);
+      double[] correlations = Util
+          .calculateCorrelationOfRows(variationsForecasts);
 
       if (ArrayUtils.contains(correlations, Double.NaN))
         throw new IllegalArgumentException(
@@ -560,6 +557,11 @@ public abstract class Rule {
         instanceVariations[i].setWeight(weights[i]);
       }
       break;
+
+    default:
+      throw new IllegalStateException(
+          "A rule should not have this many variations: "
+              + instanceVariations.length);
     }
   }
 
@@ -854,5 +856,4 @@ public abstract class Rule {
       ValueDateTupel[] sdAdjustedForecasts) {
     this.sdAdjustedForecasts = sdAdjustedForecasts;
   }
-
 }
