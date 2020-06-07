@@ -165,7 +165,7 @@ public class ValueDateTupel {
         Validator.validateRow(valueDateTupels[rowIndex]);
       } catch (IllegalArgumentException e) {
         throw new IllegalArgumentException(
-            "Row at position " + rowIndex + " is not valid.");
+            "Row at position " + rowIndex + " is not valid.", e);
       }
 
       /*

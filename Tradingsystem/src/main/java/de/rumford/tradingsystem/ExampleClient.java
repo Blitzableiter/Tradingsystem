@@ -24,11 +24,11 @@ public class ExampleClient {
       .toString();
 
   static final double CAPITAL = 10000;
-  static final String BASE_VALUE_NAME = "DAX";
-  static final String BASE_VALUE_FILE_NAME = Path
-      .of(WORKING_DIR, "DAX - mod.csv").toString();
-  static final String SHORT_INDEX_VALUE_FILE_NAME = Path
-      .of(WORKING_DIR, "DAX_short - mod.csv").toString();
+  static final String NAME = "DAX";
+  static final String FILE_NAME = Path.of(WORKING_DIR, "DAX.csv")
+      .toString();
+  static final String SHORT_FILE_NAME = Path
+      .of(WORKING_DIR, "DAX_short.csv").toString();
 
   static final LocalDateTime START_OF_REFERENCE_WINDOW = LocalDateTime
       .of(2014, 1, 2, 22, 0);
@@ -66,19 +66,21 @@ public class ExampleClient {
   }
 
   /**
-   * @param args
-   * @throws IOException
+   * Main method depicting how to all components of this system.
+   * 
+   * @param args Arguments. Empty.
+   * @throws IOException if the given filenames cannot be found.
    */
   public static void main(String[] args) throws IOException {
     ValueDateTupel[] shortIndexValues = DataSource
-        .getDataFromCsv(SHORT_INDEX_VALUE_FILE_NAME, CsvFormat.EU);
-    baseValue = new BaseValue(BASE_VALUE_NAME,
-        DataSource.getDataFromCsv(BASE_VALUE_FILE_NAME, CsvFormat.EU),
+        .getDataFromCsv(SHORT_FILE_NAME, CsvFormat.EU);
+    baseValue = new BaseValue(NAME,
+        DataSource.getDataFromCsv(FILE_NAME, CsvFormat.EU),
         shortIndexValues);
     logger.info("BaseValue " + baseValue.getName() + " created.");
 
-    volDif2 = new VolatilityDifference(baseValue, null,
-        START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW,
+    VolatilityDifference volDif2 = new VolatilityDifference(baseValue,
+        null, START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW,
         LOOKBACK_WINDOW_2, BASE_SCALE);
     logger.info(
         "VolatilityDifference with lookback window " + LOOKBACK_WINDOW_2
@@ -102,8 +104,9 @@ public class ExampleClient {
         volDif2, //
         volDif4, //
         volDif8 };
-    volDifTop = new VolatilityDifference(baseValue, volDifVariations,
-        START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW, 8, BASE_SCALE);
+    VolatilityDifference volDifTop = new VolatilityDifference(baseValue,
+        volDifVariations, START_OF_REFERENCE_WINDOW,
+        END_OF_REFERENCE_WINDOW, 0, BASE_SCALE);
     logger.info("Top level VolatilityDifference created.");
 
     ewmacShort = new EWMAC(baseValue, null, START_OF_REFERENCE_WINDOW,
@@ -140,7 +143,6 @@ public class ExampleClient {
     logger.info("Testing...");
     double performanceValue = subSystem.backtest(START_OF_TEST_WINDOW,
         END_OF_TEST_WINDOW);
-    logger.info("Done Testing. Value after backtest: " + performanceValue);
 
     double performancePercentage = Util.calculateReturn(CAPITAL,
         performanceValue) * 100;
@@ -148,13 +150,17 @@ public class ExampleClient {
     NumberFormat moneyFormatter = NumberFormat
         .getCurrencyInstance(Locale.GERMANY);
     String capitalString = moneyFormatter.format(CAPITAL);
+    String performanceValueString = moneyFormatter
+        .format(performanceValue);
 
     NumberFormat decimalFormatter = NumberFormat
         .getNumberInstance(Locale.GERMANY);
     String performancePercentageString = decimalFormatter
         .format(performancePercentage);
 
+    logger.info(
+        "Done Testing. Value after backtest: " + performanceValueString);
     logger.info("With your starting capital of " + capitalString
-        + " that's a net return of " + performancePercentageString + "%");
+        + " that's a net return of " + performancePercentageString + "%.");
   }
 }
