@@ -301,4 +301,23 @@ public final class Util {
 
     return weights;
   }
+
+  /**
+   * Returns the position literal for a given forecast.
+   * <ul>
+   * <li>"Long" for forecasts greater 0.</li>
+   * <li>"Short" for forecasts less than 0.</li>
+   * <li>"Hold" for forecasts of 0.</li>
+   * </ul>
+   * 
+   * @param forecast a forecast.
+   * @return The String literal for the given forecast.
+   */
+  public static String getPositionFromForecast(double forecast) {
+    if (forecast > 0)
+      return "Long";
+    if (forecast < 0)
+      return "Short";
+    return "Hold";
+  }
 }
