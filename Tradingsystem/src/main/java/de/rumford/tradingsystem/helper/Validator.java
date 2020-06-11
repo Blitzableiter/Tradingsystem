@@ -364,12 +364,23 @@ public class Validator {
     }
   }
 
+  /**
+   * Validates if the rules in the given array of {@link Rule} all share
+   * the given base scale.
+   * 
+   * @param rules     The array of {@link Rule} to be examined.
+   * @param baseScale The comparing base scale.
+   * @throws IllegalArgumentException if the given rules do not share the
+   *                                  given base scale.
+   */
   public static void validateRulesVsBaseScale(Rule[] rules,
       double baseScale) {
     if (rules != null) {
-      for (Rule rule : rules)
-        if (rule != null && rule.getBaseScale() != baseScale)
-          throw new IllegalArgumentException();
+      for (int i = 0; i < rules.length; i++)
+        if (rules[i] != null && rules[i].getBaseScale() != baseScale)
+          throw new IllegalArgumentException("The rule at index " + i
+              + " does not share the given base scale of " + baseScale
+              + ".");
     }
   }
 }

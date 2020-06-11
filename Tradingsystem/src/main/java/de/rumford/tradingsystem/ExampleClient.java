@@ -3,15 +3,13 @@ package de.rumford.tradingsystem;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.NumberFormat;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
 
-import de.rumford.tradingsystem.helper.CsvFormat;
-import de.rumford.tradingsystem.helper.DataSource;
-import de.rumford.tradingsystem.helper.Util;
-import de.rumford.tradingsystem.helper.ValueDateTupel;
+import de.rumford.tradingsystem.helper.*;
 
 /**
  * The ExampleClient is an example of how to use this library.
@@ -19,6 +17,7 @@ import de.rumford.tradingsystem.helper.ValueDateTupel;
  * @author Max Rumford
  *
  */
+@JacocoIgnoreGenerated
 public class ExampleClient {
   static final double CAPITAL = 100000;
 
@@ -48,17 +47,17 @@ public class ExampleClient {
       .of(WORKING_DIR, "S&P_VIX.csv").toString();
 
   static final LocalDateTime START_OF_REFERENCE_WINDOW = LocalDateTime
-      .of(2014, 1, 2, 22, 0);
+      .of(2015, 1, 2, 22, 0);
   static final LocalDateTime END_OF_REFERENCE_WINDOW = LocalDateTime
-      .of(2018, 12, 28, 22, 0);
+      .of(2019, 12, 30, 22, 0);
   static final double BASE_SCALE = 10;
 
   static final int LOOKBACK_WINDOW_8 = 8;
 
-  static final LocalDateTime START_OF_TEST_WINDOW = LocalDateTime.of(2019,
+  static final LocalDateTime START_OF_TEST_WINDOW = LocalDateTime.of(2020,
       1, 2, 22, 0);
-  static final LocalDateTime END_OF_TEST_WINDOW = LocalDateTime.of(2019,
-      12, 30, 22, 0);
+  static final LocalDateTime END_OF_TEST_WINDOW = LocalDateTime.of(2020, 3,
+      31, 22, 0);
 
   private static final Logger logger = Logger
       .getLogger(ExampleClient.class);
@@ -73,15 +72,48 @@ public class ExampleClient {
    * @throws IOException if the given filenames cannot be found.
    */
   public static void main(String[] args) throws IOException {
+    LocalDateTime startingTime = LocalDateTime.now();
+
+    exampleForThreeBaseValues();
+    // exampleForOneBaseValue();
+
+    logDuration(startingTime);
+  }
+
+  /**
+   * Performs all necessary constructions for one base values.
+   * 
+   * @throws IOException if any file handling goes wrong.
+   */
+  private static void exampleForOneBaseValue() throws IOException {
+
+    forOneBaseValueWithShort(STOXX, STOXX_FILE_NAME, STOXX_SHORT_FILE_NAME,
+        STOXX_VOLATILITY_FILE_NAME, CAPITAL);
+
+  }
+
+  /**
+   * Performs all necessary constructions for three base values.
+   * 
+   * @throws IOException if any file handling goes wrong.
+   */
+  private static void exampleForThreeBaseValues() throws IOException {
     double daxPerf = forOneBaseValueWithShort(DAX, DAX_FILE_NAME,
-        DAX_SHORT_FILE_NAME, DAX_VOLATILITY_FILE_NAME, CAPITAL * 0.2002);
+        // DAX_SHORT_FILE_NAME, DAX_VOLATILITY_FILE_NAME, CAPITAL *
+        // 0.2002); // 2014-2018, 2019
+        DAX_SHORT_FILE_NAME, DAX_VOLATILITY_FILE_NAME, CAPITAL * 0.2121); // 2015-2019,
+                                                                          // 202001-202003
 
     double stoxxPerf = forOneBaseValueWithShort(STOXX, STOXX_FILE_NAME,
         STOXX_SHORT_FILE_NAME, STOXX_VOLATILITY_FILE_NAME,
-        CAPITAL * 0.407);
+        // CAPITAL * 0.407); // 2014-2018, 2019
+        CAPITAL * 0.3674); // 2015-2019, 202001-202003
 
     double spPerf = forOneBaseValue(SP500, SP500_FILE_NAME,
-        SP500_VOLATILITY_FILE_NAME, CAPITAL * 0.3928);
+        // SP500_VOLATILITY_FILE_NAME, CAPITAL * 0.3928); // 2014-2018,
+        // 2019
+        SP500_VOLATILITY_FILE_NAME, CAPITAL * 0.4205); // 2015-2019,
+                                                       // 202001-202003
 
     formatPerformance(CAPITAL, daxPerf + stoxxPerf + spPerf);
   }
@@ -113,7 +145,7 @@ public class ExampleClient {
     volatilityIndexValues = aligned[1];
 
     BaseValue baseValue = new BaseValue(baseValueName, baseValues);
-    logger.info("BaseValue " + baseValue.getName() + " created.");
+    // logger.info("BaseValue " + baseValue.getName() + " created.");
 
     return instantiateAndBacktest(capital, volatilityIndexValues,
         baseValue);
@@ -151,53 +183,91 @@ public class ExampleClient {
 
     BaseValue baseValue = new BaseValue(baseValueName, baseValues,
         shortIndexValues);
-    logger.info("BaseValue " + baseValue.getName() + " created.");
+    // logger.info("BaseValue " + baseValue.getName() + " created.");
 
     return instantiateAndBacktest(capital, volatilityIndexValues,
         baseValue);
   }
 
+  /**
+   * Sets up the rules and runs a backtest for the set testing window.
+   * 
+   * @param capital               The capital to be invested upon the given
+   *                              base value.
+   * @param volatilityIndexValues The volatility index values to be used in
+   *                              the volatility difference rule.
+   * @param baseValue             The base value to be evaluated.
+   * @return The result as of
+   *         {@link SubSystem#backtest(LocalDateTime, LocalDateTime)}
+   */
   private static double instantiateAndBacktest(double capital,
       ValueDateTupel[] volatilityIndexValues, BaseValue baseValue) {
+
+    /* Create the rules for the given base value. */
     Rule[] rules = createRules(volatilityIndexValues, baseValue);
 
+    /* Create the subsystem. */
     SubSystem subSystem = new SubSystem(baseValue, rules, capital,
         BASE_SCALE);
-    logger.info("SubSystem created.");
 
+    /*
+     * Perform the backtest. Gets the available capital after the last
+     * trading period.
+     */
     double performanceValue = performBacktest(subSystem);
 
+    /* Formats and logs the realized returns. */
     formatPerformance(capital, performanceValue);
+
+    /*
+     * Extracts the last forecast given in the subsystem. Also depicts the
+     * position held after end of test window.
+     */
+    double lastForecast = subSystem
+        .getCombinedForecasts()[subSystem.getCombinedForecasts().length
+            - 1].getValue();
+    logger.info(
+        "Current position: " + Util.getPositionFromForecast(lastForecast)
+            + ", " + lastForecast);
 
     return performanceValue;
   }
 
-  private static Rule[] createRules(ValueDateTupel[] volatilityIndexValues,
-      BaseValue baseValue) {
-    VolatilityDifference volDif = volDif(volatilityIndexValues, baseValue);
-
-    EWMAC ewmacTop = ewmacs(baseValue);
-
-    return new Rule[] { volDif, ewmacTop };
-  }
-
+  /**
+   * Performs the backtest for for the given subsystem.
+   * 
+   * @param subSystem The subsystem to be tested.
+   * @return The result as of
+   *         {@link SubSystem#backtest(LocalDateTime, LocalDateTime)}
+   */
   private static double performBacktest(SubSystem subSystem) {
-    logger.info("Starting backtest for testing window "
+    logger.info("Starting backtest for BaseValue "
+        + subSystem.getBaseValue().getName() + " with testing window "
         + START_OF_TEST_WINDOW + " - " + END_OF_TEST_WINDOW);
-    logger.info("Testing...");
     return subSystem.backtest(START_OF_TEST_WINDOW, END_OF_TEST_WINDOW);
   }
 
+  /**
+   * Pretty print the given performance value in realtion to the given
+   * starting capital.
+   * 
+   * @param capital          The starting capital
+   * @param performanceValue The performance achieved.
+   */
   private static void formatPerformance(double capital,
       double performanceValue) {
+    /* Calculate the returns percentage achieved. */
     double performancePercentage = Util.calculateReturn(capital,
         performanceValue) * 100;
+
+    /* Pretty print given capital and performance value. */
     NumberFormat moneyFormatter = NumberFormat
         .getCurrencyInstance(Locale.GERMANY);
     String capitalString = moneyFormatter.format(capital);
     String performanceValueString = moneyFormatter
         .format(performanceValue);
 
+    /* Pretty print the returns percentage */
     NumberFormat decimalFormatter = NumberFormat
         .getNumberInstance(Locale.GERMANY);
     String performancePercentageString = decimalFormatter
@@ -209,46 +279,92 @@ public class ExampleClient {
         + " that's a net return of " + performancePercentageString + "%.");
   }
 
-  private static EWMAC ewmacs(BaseValue baseValue) {
-    EWMAC ewmacShort = new EWMAC(baseValue, null,
-        START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW, 8, 2,
-        BASE_SCALE);
-    logger.info("EWMAC with EWMAs of 2 and 8 for BaseValue "
-        + baseValue.getName() + " created.");
+  /**
+   * Creates the rules for the given base value.
+   * 
+   * @param volatilityIndexValues volatility index values to be used in the
+   *                              {@link VolatilityDifference}.
+   * @param baseValue             the base value to be used in the rules.
+   * @return An array of top level rules.
+   */
+  private static Rule[] createRules(ValueDateTupel[] volatilityIndexValues,
+      BaseValue baseValue) {
+    VolatilityDifference volDif = createOneVolatilityDifference(
+        volatilityIndexValues, baseValue);
 
-    EWMAC ewmacMiddle = new EWMAC(baseValue, null,
-        START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW, 16, 4,
-        BASE_SCALE);
-    logger.info("EWMAC with EWMAs of 4 and 16 for BaseValue "
-        + baseValue.getName() + " created.");
+    EWMAC ewmacTop = createEwmacs(baseValue);
 
-    EWMAC ewmacLong = new EWMAC(baseValue, null, START_OF_REFERENCE_WINDOW,
-        END_OF_REFERENCE_WINDOW, 32, 8, BASE_SCALE);
-    logger.info("EWMAC with EWMAs of 8 and 32 for BaseValue "
-        + baseValue.getName() + " created.");
+    return new Rule[] { volDif, ewmacTop };
+  }
+
+  /**
+   * Creates all {@link EWMAC}s for this example.
+   * 
+   * @param baseValue the {@link BaseValue} to be used in the
+   *                  {@link EWMAC}s.
+   * @return The top level {@link EWMAC}.
+   */
+  private static EWMAC createEwmacs(BaseValue baseValue) {
+    EWMAC ewmacShort = createOneEwmac(baseValue, null, 8, 2);
+
+    EWMAC ewmacMiddle = createOneEwmac(baseValue, null, 16, 4);
+
+    EWMAC ewmacLong = createOneEwmac(baseValue, null, 32, 8);
 
     EWMAC[] ewmacVariations = { //
         ewmacShort, //
         ewmacMiddle, //
         ewmacLong };
-    EWMAC ewmacTop = new EWMAC(baseValue, ewmacVariations,
-        START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW, 0, 0,
-        BASE_SCALE);
 
-    logger.info("Top level EWMAC created.");
-
-    return ewmacTop;
+    return createOneEwmac(baseValue, ewmacVariations, 0, 0);
   }
 
-  private static VolatilityDifference volDif(
+  /**
+   * Creates one {@link EWMAC} using the given parameters.
+   * 
+   * @param baseValue    the {@link BaseValue} to be used in the
+   *                     {@link EWMAC}.
+   * @param variations   The array of {@link EWMAC} to be given to the
+   *                     {@link EWMAC} as variations.
+   * @param longHorizon  The value for instantiation of the long horizon
+   *                     {@link EWMA}.
+   * @param shortHorizon The value for instantiation of the short horizon
+   *                     {@link EWMA}.
+   * @return The created {@link EWMAC}.
+   */
+  private static EWMAC createOneEwmac(BaseValue baseValue,
+      EWMAC[] variations, int longHorizon, int shortHorizon) {
+    return new EWMAC(baseValue, variations, START_OF_REFERENCE_WINDOW,
+        END_OF_REFERENCE_WINDOW, longHorizon, shortHorizon, BASE_SCALE);
+  }
+
+  /**
+   * Creates one {@link VolatilityDifference} for the given parameters.
+   * 
+   * @param volatilityIndexValues The volatility index values to be used in
+   *                              the new {@link VolatilityDifference}
+   * @param baseValue             The {@link BaseValue} ot be used for the
+   *                              new {@link VolatilityDifference}.
+   * @return The new {@link VolatilityDifference}.
+   */
+  private static VolatilityDifference createOneVolatilityDifference(
       ValueDateTupel[] volatilityIndexValues, BaseValue baseValue) {
 
-    VolatilityDifference volDif = new VolatilityDifference(baseValue, null,
+    return new VolatilityDifference(baseValue, null,
         START_OF_REFERENCE_WINDOW, END_OF_REFERENCE_WINDOW,
         LOOKBACK_WINDOW_8, BASE_SCALE, volatilityIndexValues);
-    logger.info("VolatilityDifference with lookback window "
-        + volDif.getLookbackWindow() + " for BaseValue "
-        + baseValue.getName() + " created.");
-    return volDif;
+  }
+
+  /**
+   * Log the time elapsed between the given starting time and
+   * {@link LocalDateTime#now()}
+   * 
+   * @param startingTime The {@link LocalDateTime} to be used for
+   *                     comparison.
+   */
+  private static void logDuration(LocalDateTime startingTime) {
+    Duration duration = Duration.between(startingTime,
+        LocalDateTime.now());
+    logger.info("Runtime: " + duration.toMillis() / 1000d + " seconds.");
   }
 }
