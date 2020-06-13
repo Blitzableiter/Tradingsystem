@@ -1,3 +1,7 @@
+[![Author](https://img.shields.io/badge/Author-Max%20Rumford-brightgreen.svg)](https://github.com/Blitzableiter)
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+[![Repo Link](https://img.shields.io/badge/Repo-Link-black.svg)](https://github.com/Blitzableiter/Tradingsystem)
+
 # This project
 
 This reposity is the project accompanying my Master's thesis in IT-Management. The goal of the thesis is to develop a library which can be used to predict the future development of certain base values, such as stock prices or comparable assets. The library should meet at least the requirements for insurance companies' simple adoption but exceeds this requirement by actually being applicable to all kind of investors, institutional or private.
