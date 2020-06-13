@@ -163,7 +163,8 @@ public class RuleTest {
    */
   @Test
   void testCalculateForecastScalar_FcScalarDiv0() {
-    String expectedMessage = "Illegal values in calulated forecast values. Adjust reference window.";
+    String expectedMessage = "Illegal values in calulated forecast values."
+        + " Adjust reference window.";
 
     double variator = -1d;
     realRule = RealRule.from(
@@ -260,7 +261,8 @@ public class RuleTest {
    */
   @Test
   void testValidateInputs_startOfReferenceWindow_null() {
-    String expectedMessage = "The given reference window does not meet specifications.";
+    String expectedMessage = "The given reference window does not meet "
+        + "specifications.";
     String expectedCause = "Start of time window value must not be null";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
@@ -280,7 +282,8 @@ public class RuleTest {
    */
   @Test
   void testValidateInputs_endOfReferenceWindow_null() {
-    String expectedMessage = "The given reference window does not meet specifications.";
+    String expectedMessage = "The given reference window does not meet "
+        + "specifications.";
     String expectedCause = "End of time window value must not be null";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
@@ -300,7 +303,8 @@ public class RuleTest {
    */
   @Test
   void testValidateInputs_baseScale_0() {
-    String expectedMessage = "The given base scale does not meet specifications.";
+    String expectedMessage = "The given base scale does not meet "
+        + "specifications.";
     String expectedCause = "Value must be a positive decimal";
     double zeroBaseScale = 0;
 
@@ -321,7 +325,8 @@ public class RuleTest {
    */
   @Test
   void testValidateInputs_baseScale_sub0() {
-    String expectedMessage = "The given base scale does not meet specifications.";
+    String expectedMessage = "The given base scale does not meet "
+        + "specifications.";
     String expectedCause = "Value must be a positive decimal";
     double subZeroBaseScale = -1;
 
@@ -341,14 +346,17 @@ public class RuleTest {
    * LocalDateTime, double}.
    */
   @Test
-  void testValidateInputs_endOfReferenceWindow_before_startOfReferenceWindow() {
-    String expectedMessage = "The given reference window does not meet specifications.";
-    String expectedCause = "End of time window value must be after start of time window value";
+  void testValidateInputs_endOfRefWindow_before_startOfRefWindow() {
+    String expectedMessage = "The given reference window does not meet "
+        + "specifications.";
+    String expectedCause = "End of time window value must be after start "
+        + "of time window value";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
         () -> RealRule.from(baseValue, null, localDateTimeJan12220000,
             localDateTimeJan10220000, BASE_SCALE, variator),
-        "endOfReferenceWindow before startOfReferenceWindow is not correctly handled");
+        "endOfReferenceWindow before startOfReferenceWindow is not "
+            + "correctly handled");
 
     assertEquals(expectedMessage, thrown.getMessage(),
         MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
@@ -362,8 +370,10 @@ public class RuleTest {
    */
   @Test
   void testValidateInputs_illegalStartOfReferenceWindow() {
-    String expectedMessage = "Given base value and reference window do not fit.";
-    String expectedCause = "Given values do not include given start value for time window";
+    String expectedMessage = "Given base value and reference window do "
+        + "not fit.";
+    String expectedCause = "Given values do not include given start value "
+        + "for time window";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
         () -> RealRule.from(baseValue, null, localDateTime2019Dec31220000,
@@ -382,8 +392,10 @@ public class RuleTest {
    */
   @Test
   void testValidateInputs_illegalEndOfReferenceWindow() {
-    String expectedMessage = "Given base value and reference window do not fit.";
-    String expectedCause = "Given values do not include given end value for time window";
+    String expectedMessage = "Given base value and reference window do not"
+        + " fit.";
+    String expectedCause = "Given values do not include given end value "
+        + "for time window";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
         () -> RealRule.from(baseValue, null, localDateTimeJan10220000,
@@ -402,7 +414,8 @@ public class RuleTest {
    */
   @Test
   void testValidateInputs_moreThan3Variations() {
-    String expectedMessage = "A rule must not contain more than 3 variations.";
+    String expectedMessage = "A rule must not contain more than 3 "
+        + "variations.";
     RealRule var1 = RealRule.from(
         BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
         localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
@@ -438,7 +451,8 @@ public class RuleTest {
    */
   @Test
   void testValidateInputs_emptyVariationsArray() {
-    String expectedMessage = "The given variations array must not be empty.";
+    String expectedMessage = "The given variations array must not be "
+        + "empty.";
     RealRule[] variations = {};
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
@@ -458,7 +472,8 @@ public class RuleTest {
    */
   @Test
   void testValidateInputs_variationIsNull() {
-    String expectedMessage = "The variation at position 2 in the given variations array is null.";
+    String expectedMessage = "The variation at position 2 in the given "
+        + "variations array is null.";
     RealRule var1 = RealRule.from(
         BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
         localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
@@ -486,8 +501,10 @@ public class RuleTest {
    * {@link Rule#validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
    */
   @Test
-  void testValidateInputs_variationsStartOfReferenceWindowDoesNotMatchRules() {
-    String expectedMessage = "The given reference window does not match the variation's at position 1. The given start of reference window is different.";
+  void testValidateInputs_variationsStartOfRefWindowDoesNotMatchRules() {
+    String expectedMessage = "The given reference window does not match "
+        + "the variation's at position 1. The given start of reference "
+        + "window is different.";
     RealRule var1 = RealRule.from(
         BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
         localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
@@ -518,8 +535,10 @@ public class RuleTest {
    * {@link Rule#validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
    */
   @Test
-  void testValidateInputs_variationsEndOfReferenceWindowDoesNotMatchRules() {
-    String expectedMessage = "The given reference window does not match the variation's at position 1. The given end of reference window is different.";
+  void testValidateInputs_variationsEndOfRefWindowDoesNotMatchRules() {
+    String expectedMessage = "The given reference window does not match "
+        + "the variation's at position 1. The given end of reference "
+        + "window is different.";
     RealRule var1 = RealRule.from(
         BaseValueFactory.jan1Feb05calcShort(BASE_VALUE_NAME), null,
         localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
@@ -551,8 +570,10 @@ public class RuleTest {
    */
   @Test
   void testValidateInputs_variationsDoNotHaveRulesBaseValues() {
-    String expectedMessage = "The given variations do not meet specifications.";
-    String expectedCause = "The base value of all rules must be equal to given base value but the rule at position 0 does not comply.";
+    String expectedMessage = "The given variations do not meet "
+        + "specifications.";
+    String expectedCause = "The base value of all rules must be equal to "
+        + "given base value but the rule at position 0 does not comply.";
     RealRule var1 = RealRule.from(
         BaseValueFactory.jan1Jan31calcShort(BASE_VALUE_NAME), null,
         localDateTimeJan10220000, localDateTimeJan12220000, BASE_SCALE,
@@ -696,8 +717,9 @@ public class RuleTest {
    * Test method for {@link Rule#calculateForecastScalar()}.
    */
   @Test
-  void testCalculateForecastScalar_referenceWindowOnFirstDayOfBaseValues() {
-    String expectedMessage = "Reference window must not start on first time interval of base value data.";
+  void testCalculateForecastScalar_refWindowOnFirstDayOfBaseValues() {
+    String expectedMessage = "Reference window must not start on first "
+        + "time interval of base value data.";
     double variator3 = 1;
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
@@ -747,7 +769,8 @@ public class RuleTest {
         realRule.getVariations()[2].getWeight() };
 
     assertArrayEquals(expectedValue, actualValue,
-        "Weights for variations with negative correlations are not correctly calculated");
+        "Weights for variations with negative correlations are not "
+            + "correctly calculated");
   }
 
   /**

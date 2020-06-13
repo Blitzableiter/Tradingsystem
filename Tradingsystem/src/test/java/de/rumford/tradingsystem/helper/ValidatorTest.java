@@ -41,7 +41,8 @@ class ValidatorTest {
    */
   @Test
   void testValidateCorrelations_arrayOfLengthNotThree() {
-    String expectedMessage = "There must be exactly three correlation values in the given array";
+    String expectedMessage = "There must be exactly three correlation "
+        + "values in the given array";
     double[] correlations = { 0, 0 };
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
@@ -57,7 +58,8 @@ class ValidatorTest {
    */
   @Test
   void testValidateCorrelations_arrayContainsNan() {
-    String expectedMessage = "NaN-values are not allowed. Correlation at position 1 is NaN.";
+    String expectedMessage = "NaN-values are not allowed. Correlation at "
+        + "position 1 is NaN.";
     double[] correlations = { 0, Double.NaN, 0 };
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
@@ -152,7 +154,7 @@ class ValidatorTest {
 
   /**
    * Test method for
-   * {@link Validator#validateRulesVsBaseScale(de.rumford.tradingsystem.Rule[], double)}.
+   * {@link Validator#validateRulesVsBaseScale( de.rumford.tradingsystem.Rule[], double)}.
    */
   @Test
   void testValidateRulesVsBaseScale() {
@@ -173,7 +175,7 @@ class ValidatorTest {
 
   /**
    * Test method for
-   * {@link Validator#validateRulesVsBaseScale(de.rumford.tradingsystem.Rule[], double)}.
+   * {@link Validator#validateRulesVsBaseScale( de.rumford.tradingsystem.Rule[], double)}.
    */
   @Test
   void testValidateRulesVsBaseScale_rulesNull() {
@@ -185,7 +187,7 @@ class ValidatorTest {
 
   /**
    * Test method for
-   * {@link Validator#validateRulesVsBaseScale(de.rumford.tradingsystem.Rule[], double)}.
+   * {@link Validator#validateRulesVsBaseScale( de.rumford.tradingsystem.Rule[], double)}.
    */
   @Test
   void testValidateRulesVsBaseScale_individualRuleNull() {
@@ -205,7 +207,7 @@ class ValidatorTest {
 
   /**
    * Test method for
-   * {@link Validator#validateRulesVsBaseScale(de.rumford.tradingsystem.Rule[], double)}.
+   * {@link Validator#validateRulesVsBaseScale( de.rumford.tradingsystem.Rule[], double)}.
    */
   @Test
   void testValidateRulesVsBaseScale_wrongBaseScaleInRule() {
