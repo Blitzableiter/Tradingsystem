@@ -77,7 +77,7 @@ public class ValueDateTupel {
       throw new IllegalArgumentException(MESSAGE_VALUE_MUST_NOT_BE_NULL);
     if (position < 0)
       throw new IllegalArgumentException(
-          "Cannot not add a value at position < 0. Given position is "
+          "Cannot add a value at position < 0. Given position is "
               + position);
     if (position > valueDateTupels.length)
       throw new IllegalArgumentException(
