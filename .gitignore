@@ -1,6 +1,7 @@
 /.metadata/
 /.sonarlint/
 /libs/
+/csvs/
 /dictionary
 /Tradingsystem/.settings/
 /Tradingsystem/bin/
@@ -8,4 +9,4 @@
 /Tradingsystem/resources/
 /Tradingsystem/target/*
 !/Tradingsystem/target/Tradingsystem-*-javadoc.jar
-!/Tradingsystem/target/site/jacoco/
+!/Tradingsystem/target/site/

@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EWMA.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tradingsystem</a> &gt; <a href="index.source.html" class="el_package">de.rumford.tradingsystem</a> &gt; <span class="el_source">EWMA.java</span></div><h1>EWMA.java</h1><pre class="source lang-java linenums">package de.rumford.tradingsystem;
+
+import java.util.Arrays;
+
+import org.apache.commons.lang3.ArrayUtils;
+
+import de.rumford.tradingsystem.helper.GeneratedCode;
+import de.rumford.tradingsystem.helper.Validator;
+import de.rumford.tradingsystem.helper.ValueDateTupel;
+
+/**
+ * The EWMA class represents the mathematical concept of an exponentially
+ * weighted moving average. In an EWMA, the &quot;older&quot; a given base value is
+ * (in proportion to the &quot;current&quot; base value) the less it influences the
+ * current EWMA value. This influence deteriorates exponentially by the
+ * given horizon to the power of 2, thus the name.
+ * 
+ * @author Max Rumford
+ *
+ */
+public class EWMA {
+
+  /* The horizon this EWMA shall cover. */
+  private int horizon;
+  /*
+   * The decay factor for recent values calculated from the given horizon.
+   */
+  private double decay;
+  /* The values this EWMA shall be based upon. */
+  private ValueDateTupel[] baseValues;
+  /* The calculated EWMA values. */
+  private ValueDateTupel[] ewmaValues;
+
+  /**
+   * Constructor for the {@link EWMA} class
+   *
+   * @param baseValues {@code ValueDateTupel[]} The values this EWMA shall
+   *                   is to be based on.
+   * @param horizon    {@code int} horizon this EWMA is to be over
+   */
+<span class="fc" id="L41">  public EWMA(ValueDateTupel[] baseValues, int horizon) {</span>
+<span class="fc" id="L42">    validateBaseValues(baseValues);</span>
+<span class="fc" id="L43">    validateHorizon(horizon);</span>
+
+<span class="fc" id="L45">    this.setBaseValues(baseValues);</span>
+<span class="fc" id="L46">    this.setHorizon(horizon);</span>
+<span class="fc" id="L47">    this.setDecay(this.calculateDecay(this.getHorizon()));</span>
+<span class="fc" id="L48">    this.setEwmaValues(this.calculateEwmaValues(this.getBaseValues()));</span>
+<span class="fc" id="L49">  }</span>
+
+  /**
+   * Calculate the decay value based on the given horizon.
+   * 
+   * @param horizon {@code int} Horizon of this EWMA.
+   * @return {@code double} the decay used to calculate the importance of
+   *         the previous EWMA.
+   */
+  private double calculateDecay(int horizon) {
+<span class="fc" id="L59">    return 2d / (horizon + 1d);</span>
+  }
+
+  /**
+   * Calculate the EWMA-value for given previous value and base value
+   * 
+   * @param previousEWMA {@code double} EWMA of the previous time period
+   * @param baseValue    {@code double} base value of the current time
+   *                     period
+   * @return {@code double} EWMA for the current time period
+   */
+  public double calculateEWMA(double previousEWMA, double baseValue) {
+    /* E_t = A * P_t + [E_t-1 * ( 1 - A ) ] */
+<span class="fc" id="L72">    return this.getDecay() * baseValue</span>
+<span class="fc" id="L73">        + (previousEWMA * (1d - this.getDecay()));</span>
+  }
+
+  /**
+   * Calculate the EWMA values based on the given base values.
+   * 
+   * @param baseValues {@code ValueDateTupel[]} The base values of the
+   *                   given asset.
+   * @return {@code ValueDateTupel[]} An array of calculated EWMA values.
+   */
+  private ValueDateTupel[] calculateEwmaValues(
+      ValueDateTupel[] baseValues) {
+<span class="fc" id="L85">    ValueDateTupel[] newEwmaValues = ValueDateTupel.createEmptyArray();</span>
+<span class="fc" id="L86">    double previousEwma = 0;</span>
+    /* Calculate all EWMA-Values */
+<span class="fc bfc" id="L88" title="All 2 branches covered.">    for (ValueDateTupel baseValue : baseValues) {</span>
+<span class="fc" id="L89">      double newValue = 0;</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">      if (Double.isNaN(baseValue.getValue())) {</span>
+<span class="nc" id="L91">        newValue = Double.NaN;</span>
+<span class="nc" id="L92">        previousEwma = 0;</span>
+      } else {
+        /* Calculate the new values */
+<span class="fc" id="L95">        newValue = this.calculateEWMA(previousEwma, baseValue.getValue());</span>
+<span class="fc" id="L96">        previousEwma = newValue;</span>
+      }
+      /* Add the new value to the array of EWMA values */
+<span class="fc" id="L99">      newEwmaValues = ArrayUtils.add(newEwmaValues,</span>
+<span class="fc" id="L100">          new ValueDateTupel(baseValue.getDate(), newValue));</span>
+    }
+<span class="fc" id="L102">    return newEwmaValues;</span>
+  }
+
+  /**
+   * Validates the given base values.
+   * 
+   * @param baseValues {@code ValueDateTupel[]} the base values the EWMA is
+   *                   to be calculated on. Must pass
+   *                   {@link Validator#validateValues(ValueDateTupel[])}
+   *                   and
+   *                   {@link Validator#validateDates(ValueDateTupel[])}.
+   * @throws IllegalArgumentException if the above specifications are not
+   *                                  met.
+   */
+  private static void validateBaseValues(ValueDateTupel[] baseValues) {
+    try {
+<span class="fc" id="L118">      Validator.validateValues(baseValues);</span>
+<span class="fc" id="L119">      Validator.validateDates(baseValues);</span>
+<span class="fc" id="L120">    } catch (IllegalArgumentException e) {</span>
+<span class="fc" id="L121">      throw new IllegalArgumentException(</span>
+          &quot;The given values do not meet the specifications.&quot;, e);
+<span class="fc" id="L123">    }</span>
+<span class="fc" id="L124">  }</span>
+
+  /**
+   * Validates the given horizon.
+   * 
+   * @param horizon {@code int} the horizon to be validated.
+   * @throws IllegalArgumentException if the given horizon is &lt; 2.
+   */
+  private static void validateHorizon(int horizon) {
+<span class="fc bfc" id="L133" title="All 2 branches covered.">    if (horizon &lt; 2)</span>
+<span class="fc" id="L134">      throw new IllegalArgumentException(&quot;The horizon must not be &lt; 2&quot;);</span>
+<span class="fc" id="L135">  }</span>
+
+  /**
+   * ======================================================================
+   * OVERRIDES
+   * ======================================================================
+   */
+
+  /**
+   * A hash code for this EWMA.
+   */
+  @GeneratedCode
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + horizon;
+    return result;
+  }
+
+  /**
+   * Checks if this EWMA is equal to another EWMA.
+   */
+  @GeneratedCode
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    EWMA other = (EWMA) obj;
+    if (horizon != other.horizon)
+      return false;
+    return true;
+  }
+
+  /**
+   * Outputs the fields of this EWMA as a {@code String}.
+   */
+  @GeneratedCode
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append(&quot;EWMA [horizon=&quot;);
+    builder.append(horizon);
+    builder.append(&quot;, decay=&quot;);
+    builder.append(decay);
+    builder.append(&quot;, baseValues=&quot;);
+    builder.append(Arrays.toString(baseValues));
+    builder.append(&quot;, ewmaValues=&quot;);
+    builder.append(Arrays.toString(ewmaValues));
+    builder.append(&quot;]&quot;);
+    return builder.toString();
+  }
+
+  /**
+   * ======================================================================
+   * GETTERS AND SETTERS
+   * ======================================================================
+   */
+
+  /**
+   * Get the horizon of this EWMA.
+   * 
+   * @return {@code int} horizon of the EWMA
+   */
+  public int getHorizon() {
+<span class="fc" id="L204">    return horizon;</span>
+  }
+
+  /**
+   * Set the horizon of this EWMA.
+   * 
+   * @param horizon {@code int} horizon to be set
+   */
+  public void setHorizon(int horizon) {
+<span class="fc" id="L213">    this.horizon = horizon;</span>
+<span class="fc" id="L214">  }</span>
+
+  /**
+   * Get the decay of this EWMA.
+   * 
+   * @return {@code double} decay of the EWMA
+   */
+  public double getDecay() {
+<span class="fc" id="L222">    return this.decay;</span>
+  }
+
+  /**
+   * Set the decay of this EWMA.
+   * 
+   * @param horizon {@code int} horizon on which the decay is derived from
+   */
+  private void setDecay(double decay) {
+<span class="fc" id="L231">    this.decay = decay;</span>
+<span class="fc" id="L232">  }</span>
+
+  /**
+   * Get the base values of this EWMA.
+   * 
+   * @return baseValues EWMA
+   */
+  public ValueDateTupel[] getBaseValues() {
+<span class="fc" id="L240">    return baseValues;</span>
+  }
+
+  /**
+   * Set the base values of this EWMA.
+   * 
+   * @param baseValues the baseValues to set
+   */
+  private void setBaseValues(ValueDateTupel[] baseValues) {
+<span class="fc" id="L249">    this.baseValues = baseValues;</span>
+<span class="fc" id="L250">  }</span>
+
+  /**
+   * Get the EWMA values of this EWMA.
+   * 
+   * @return ewmaValues EWMA
+   */
+  public ValueDateTupel[] getEwmaValues() {
+<span class="fc" id="L258">    return ewmaValues;</span>
+  }
+
+  /**
+   * Set the EWMA values of this EWMA.
+   * 
+   * @param ewmaValues the ewmaValues to set
+   */
+  private void setEwmaValues(ValueDateTupel[] ewmaValues) {
+<span class="fc" id="L267">    this.ewmaValues = ewmaValues;</span>
+<span class="fc" id="L268">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

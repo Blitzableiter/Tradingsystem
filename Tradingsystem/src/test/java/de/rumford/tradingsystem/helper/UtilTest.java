@@ -233,7 +233,8 @@ class UtilTest {
     double actualValue = Util.calculateAverage(values);
 
     assertEquals(expectedValue, actualValue,
-        "Average value of values containing negatives is not properly calculated");
+        "Average value of values containing negatives is not properly "
+            + "calculated");
   }
 
   /**
@@ -281,7 +282,8 @@ class UtilTest {
     double actualValue = Util.calculateForecastScalar(values, baseScale);
 
     assertEquals(expectedValue, actualValue,
-        "Forecast scalar is not correctly calculated when average of absolute values is zero");
+        "Forecast scalar is not correctly calculated when average of "
+            + "absolute values is zero");
   }
 
   /**
@@ -308,7 +310,8 @@ class UtilTest {
    */
   @Test
   void testCalculateForecastScalar_baseScale0() {
-    String expectedMessage = "Given base scale does not meet specifications.";
+    String expectedMessage = "Given base scale does not meet "
+        + "specifications.";
     String expectedCause = "Value must be a positive decimal";
     double[] values = { 10d, 4d, -1d, 6d, -4d };
     double baseScale = 0;
@@ -391,7 +394,7 @@ class UtilTest {
    * Test method for {@link Util#calculateCorrelationOfRows(double[][])}.
    */
   @Test
-  void testCalculateCorrelationsOfThreeRows_valuesContainsArrayContainingNan() {
+  void testCalculateCorrelationsOfThreeRows_valuesContainsArrWithNan() {
     double[][] values = { { 0, 4 }, { 2, Double.NaN }, { 1, 0.2 } };
     double[] expectedCorrelations = { Double.NaN, -1, Double.NaN };
 
@@ -410,7 +413,8 @@ class UtilTest {
     double[] row2 = { 2, 3, 4 };
     double[] row3 = { 3, 3, 5 };
     double[][] values = { row1, row2, row3 };
-    String expectedmessage = "Correlations cannot be calculated caused by all identical values in row at position 0.";
+    String expectedmessage = "Correlations cannot be calculated caused by "
+        + "all identical values in row at position 0.";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
         () -> Util.calculateCorrelationOfRows(values),
@@ -491,5 +495,4 @@ class UtilTest {
     assertEquals(HOLD, actualValueHold,
         "Position literal for forecasts of 0 is not inferred.");
   }
-
 }

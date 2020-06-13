@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DiversificationMultiplier.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tradingsystem</a> &gt; <a href="index.source.html" class="el_package">de.rumford.tradingsystem</a> &gt; <span class="el_source">DiversificationMultiplier.java</span></div><h1>DiversificationMultiplier.java</h1><pre class="source lang-java linenums">package de.rumford.tradingsystem;
+
+import java.util.Arrays;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.math3.linear.BlockRealMatrix;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+
+import de.rumford.tradingsystem.helper.GeneratedCode;
+import de.rumford.tradingsystem.helper.Validator;
+
+/**
+ * The DiversificationMultiplier negates the fact that using multiple rules
+ * upon a single base value flattens the forecast curve.
+ * &lt;p&gt;
+ * &quot;The only free real estate in capital investment is diversification&quot;. By
+ * diversifying between assets the risk of an investment shall be reduced.
+ * &lt;p&gt;
+ * By diversifying forecast calculation (e.g. taking more rules into
+ * account when predicting a base value's future development) a similar
+ * effect takes place: Their respective predictions tend to reduce the risk
+ * taken when combined, so their combined forecasts are less volatile than
+ * each rule's forecasts is (Robert Carver, Systematic Trading (2015), pp.
+ * 129 f.).
+ * &lt;p&gt;
+ * Therefore a factor is needed to ensure the desired volatility target is
+ * met and to also ensure that the combined forecasts move around the
+ * desired base scale (as defined in the {@link SubSystem} owning this
+ * DiversificationMultiplier).
+ * 
+ * @author Max Rumford
+ *
+ */
+public class DiversificationMultiplier {
+
+  /* The value of this diversification multiplier. */
+<span class="fc" id="L37">  private double value = 0d;</span>
+  /* The weights of the given rules. */
+  private double[] weights;
+  /* The relevant forecasts of the given rules. */
+  private double[][] relevantForecasts;
+  /* The correaltions of the given rules. */
+  private double[][] correlations;
+
+  /**
+   * Constructor for the class DiversificationMultiplier (DM). A DM is
+   * always only valid for a given set of rules (which should be, but don't
+   * have to be, unique). There rules must be known upon instantiation of a
+   * new DM. Based on the given rules the DM value is calculated, using the
+   * relative weights of all given rules (relative based on their placing
+   * inside the rules tree).
+   * &lt;p&gt;
+   * There can be as many rules in the given array as desired, though the
+   * desired ratio between rules (and their respective weights, which
+   * shrink with each new layer) and their significance to the whole system
+   * should be accounted for and is at the user's discretion.
+   * 
+   * @param rules {@code Rule[]} An array of {@link Rule}s to be accounted
+   *              for in this DM. Must pass
+   *              {@link Validator#validateRules(Rule[])}.
+   */
+<span class="fc" id="L62">  public DiversificationMultiplier(Rule[] rules) {</span>
+<span class="fc" id="L63">    validateInput(rules);</span>
+
+<span class="fc" id="L65">    WeightsAndForecasts weightsAndForecasts = getWeightsAndForecastsFromRules(</span>
+        rules);
+<span class="fc" id="L67">    this.setWeights(weightsAndForecasts.weights);</span>
+<span class="fc" id="L68">    this.setRelevantForecasts(weightsAndForecasts.forecasts);</span>
+
+<span class="fc" id="L70">    this.setCorrelations(</span>
+<span class="fc" id="L71">        getCorrelationsFromForecasts(this.getRelevantForecasts()));</span>
+
+<span class="fc" id="L73">    this.setValue(this.calculateDiversificiationMultiplierValue());</span>
+<span class="fc" id="L74">  }</span>
+
+  /**
+   * Private class for extraction of weights and forecasts from the given
+   * rules.
+   */
+  private class WeightsAndForecasts {
+    public double[] weights;
+    public double[][] forecasts;
+
+    public WeightsAndForecasts(double[] weights,
+<span class="fc" id="L85">        double[][] relevantForecasts) {</span>
+<span class="fc" id="L86">      this.weights = weights;</span>
+<span class="fc" id="L87">      this.forecasts = relevantForecasts;</span>
+<span class="fc" id="L88">    }</span>
+
+  }
+
+  /**
+   * Calculate the diversification multiplier for the weights and
+   * correlations set with this class. Represents this formula with c =
+   * matrix of correlations, w = list of weights, i,j = indices:
+   * 
+   * 1 / sqrt[ SUM( c_i,j * w_i * w_j ) ]
+   * 
+   * @return {@code double} diversification multiplier for set weights and
+   *         correlations
+   * @throws IllegalArgumentException if correlations or weights do not
+   *                                  meet criteria: non-empty, same number
+   *                                  of values, correlations: same amount
+   *                                  of rows and columns
+   */
+  private double calculateDiversificiationMultiplierValue() {
+<span class="fc" id="L107">    double[][] instanceCorrelations = this.getCorrelations();</span>
+<span class="fc" id="L108">    double[] instanceWeights = this.getWeights();</span>
+
+    /* local field to hold sum of correlations multiplied with weights */
+<span class="fc" id="L111">    double sumOfCorrelationsWeights = 0f;</span>
+
+    /*
+     * Get the sum of all correlations multiplier with both corresponding
+     * weights...
+     */
+<span class="fc bfc" id="L117" title="All 2 branches covered.">    for (int row = 0; row &lt; instanceCorrelations.length; row++) {</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">      for (int col = 0; col &lt; instanceCorrelations.length; col++) {</span>
+        /*
+         * ... by multiplying the correlation with both corresponding
+         * weights
+         */
+<span class="fc" id="L123">        sumOfCorrelationsWeights += instanceCorrelations[row][col]</span>
+            * instanceWeights[row] * instanceWeights[col];
+      }
+    }
+
+    /*
+     * sumOfCorrelationsWeights is always &gt; 0 as there is always at least
+     * one weight &gt; 0 and at least on correlation &gt; 0 (self correlation)
+     */
+<span class="fc" id="L132">    return 1 / Math.sqrt(sumOfCorrelationsWeights);</span>
+  }
+
+  /**
+   * Calculate the correlations from the given array of forecast arrays.
+   * 
+   * @param forecasts {@code double[][]} The forecasts to be used for
+   *                  calculation.
+   * @return {@code double[][]} A matrix of correlations, as by
+   *         {@link PearsonsCorrelation#getCorrelationMatrix()}.
+   */
+  private static double[][] getCorrelationsFromForecasts(
+      double[][] forecasts) {
+    /*
+     * If there is only one row of data return a 1x1 self correlation
+     * matrix
+     */
+<span class="fc bfc" id="L149" title="All 2 branches covered.">    if (forecasts.length == 1) {</span>
+<span class="fc" id="L150">      return new double[][] { { 1 } };</span>
+    }
+
+    /* Load the given values into rows of a matrix */
+<span class="fc" id="L154">    BlockRealMatrix matrix = new BlockRealMatrix(forecasts);</span>
+    /* Transpose the values into columns to get the correct correlations */
+<span class="fc" id="L156">    matrix = matrix.transpose();</span>
+
+    /* Get the correlations of the passed value arrays */
+<span class="fc" id="L159">    PearsonsCorrelation pearsonsCorrelations = new PearsonsCorrelation(</span>
+        matrix);
+<span class="fc" id="L161">    return pearsonsCorrelations.getCorrelationMatrix().getData();</span>
+  }
+
+  /**
+   * Recursively get the weights and forecasts from the given array of
+   * Rules.
+   * 
+   * @param rules {@code Rule[]} The array of rules to be searched.
+   * @return {@link WeightsAndForecasts} The extracted weights and
+   *         forecasts from the given array of Rules.
+   */
+  private WeightsAndForecasts getWeightsAndForecastsFromRules(
+      Rule[] rules) {
+<span class="fc" id="L174">    double[] weightsFromRules = {};</span>
+<span class="fc" id="L175">    double[][] relevantForecastsFromRules = {};</span>
+
+    /* Iterate over the given rules */
+<span class="fc bfc" id="L178" title="All 2 branches covered.">    for (Rule rule : rules) {</span>
+
+      /* If a rule has variations get their weights and forecasts */
+<span class="fc bfc" id="L181" title="All 2 branches covered.">      if (rule.hasVariations()) {</span>
+<span class="fc" id="L182">        WeightsAndForecasts wafToAdd = getWeightsAndForecastsFromRules(</span>
+<span class="fc" id="L183">            rule.getVariations());</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">        for (double weight : wafToAdd.weights)</span>
+<span class="fc" id="L185">          weightsFromRules = ArrayUtils.add(weightsFromRules,</span>
+<span class="fc" id="L186">              weight * rule.getWeight());</span>
+
+<span class="fc bfc" id="L188" title="All 2 branches covered.">        for (double[] forecasts : wafToAdd.forecasts)</span>
+<span class="fc" id="L189">          relevantForecastsFromRules = ArrayUtils</span>
+<span class="fc" id="L190">              .add(relevantForecastsFromRules, forecasts);</span>
+
+<span class="fc" id="L192">      } else {</span>
+<span class="fc" id="L193">        double weight = rule.getWeight();</span>
+        /*
+         * If a top level rule has no variations its weight has not been
+         * set. Manually set its weight to be 1/numberOfTopeLevelRules
+         */
+<span class="fc bfc" id="L198" title="All 2 branches covered.">        if (weight == 0)</span>
+<span class="fc" id="L199">          weight = 1d / rules.length;</span>
+<span class="fc" id="L200">        weightsFromRules = ArrayUtils.add(weightsFromRules, weight);</span>
+
+<span class="fc" id="L202">        relevantForecastsFromRules = ArrayUtils.add(</span>
+            relevantForecastsFromRules,
+<span class="fc" id="L204">            rule.extractRelevantForecastValues());</span>
+      }
+    }
+<span class="fc" id="L207">    return new WeightsAndForecasts(weightsFromRules,</span>
+        relevantForecastsFromRules);
+  }
+
+  /**
+   * Validates the given input values.
+   * 
+   * @param rules {@code Rule[]} Must pass
+   *              {@link Validator#validateRules(Rule[])}.
+   */
+  private static void validateInput(Rule[] rules) {
+<span class="fc" id="L218">    Validator.validateRules(rules);</span>
+<span class="fc" id="L219">  }</span>
+
+  /**
+   * ======================================================================
+   * OVERRIDES
+   * ======================================================================
+   */
+
+  /**
+   * A hash code for this diversification multiplier.
+   */
+  @GeneratedCode
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + Arrays.deepHashCode(correlations);
+    result = prime * result + Arrays.deepHashCode(relevantForecasts);
+    long temp;
+    temp = Double.doubleToLongBits(value);
+    result = prime * result + (int) (temp ^ (temp &gt;&gt;&gt; 32));
+    result = prime * result + Arrays.hashCode(weights);
+    return result;
+  }
+
+  /**
+   * Checks if this diversification multiplier is equal to another
+   * diversification multiplier.
+   */
+  @GeneratedCode
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    DiversificationMultiplier other = (DiversificationMultiplier) obj;
+    if (!Arrays.deepEquals(correlations, other.correlations))
+      return false;
+    if (!Arrays.deepEquals(relevantForecasts, other.relevantForecasts))
+      return false;
+    if (Double.doubleToLongBits(value) != Double
+        .doubleToLongBits(other.value))
+      return false;
+    if (!Arrays.equals(weights, other.weights))
+      return false;
+    return true;
+  }
+
+  /**
+   * Outputs the fields of this diversification multiplier as a
+   * {@code String}.
+   */
+  @GeneratedCode
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append(&quot;DiversificationMultiplier [value=&quot;);
+    builder.append(value);
+    builder.append(&quot;, weights=&quot;);
+    builder.append(Arrays.toString(weights));
+    builder.append(&quot;, relevantForecasts=&quot;);
+    builder.append(Arrays.toString(relevantForecasts));
+    builder.append(&quot;, correlations=&quot;);
+    builder.append(Arrays.toString(correlations));
+    builder.append(&quot;]&quot;);
+    return builder.toString();
+  }
+
+  /**
+   * ======================================================================
+   * GETTERS AND SETTERS
+   * ======================================================================
+   */
+
+  /**
+   * Get value of this {@link DiversificationMultiplier}
+   * 
+   * @return {@code double} value of this {@link DiversificationMultiplier}
+   */
+  public double getValue() {
+<span class="fc" id="L302">    return value;</span>
+  }
+
+  /**
+   * Set the value in this {@link DiversificationMultiplier}
+   * 
+   * @param value the value to set
+   */
+  private void setValue(double value) {
+<span class="fc" id="L311">    this.value = value;</span>
+<span class="fc" id="L312">  }</span>
+
+  /**
+   * Get the weights considered in this {@link DiversificationMultiplier}
+   * 
+   * @return {@code double[]} Weights in this
+   *         {@link DiversificationMultiplier}
+   */
+  public double[] getWeights() {
+<span class="fc" id="L321">    return weights;</span>
+  }
+
+  /**
+   * Set the Weights in this {@link DiversificationMultiplier}
+   * 
+   * @param {@code double[]} the weights to set
+   */
+  private void setWeights(double[] weights) {
+<span class="fc" id="L330">    this.weights = weights;</span>
+<span class="fc" id="L331">  }</span>
+
+  /**
+   * Get the relevant forecasts in this {@link DiversificationMultiplier}
+   * 
+   * @return relevantForecasts DiversificationMultiplier
+   */
+  public double[][] getRelevantForecasts() {
+<span class="fc" id="L339">    return relevantForecasts;</span>
+  }
+
+  /**
+   * Set the relevant forecasts in this {@link DiversificationMultiplier}
+   * 
+   * @param relevantForecasts the relevantForecasts to set
+   */
+  private void setRelevantForecasts(double[][] relevantForecasts) {
+<span class="fc" id="L348">    this.relevantForecasts = relevantForecasts;</span>
+<span class="fc" id="L349">  }</span>
+
+  /**
+   * Get the correlations in this {@link DiversificationMultiplier}
+   * 
+   * @return {@code double[][]} The correlations in this
+   *         {@link DiversificationMultiplier}
+   */
+  public double[][] getCorrelations() {
+<span class="fc" id="L358">    return correlations;</span>
+  }
+
+  /**
+   * Set the correlations to be used in this
+   * {@link DiversificationMultiplier}
+   * 
+   * @param {@code double[][]} the correlations to be used in this
+   * {@link DiversificationMultiplier}
+   */
+  private void setCorrelations(double[][] correlations) {
+<span class="fc" id="L369">    this.correlations = correlations;</span>
+<span class="fc" id="L370">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

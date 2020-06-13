@@ -106,7 +106,8 @@ class SubSystemTest {
         localDateTimeJan12220000, BASE_SCALE, VARIATOR);
     Rule[] rules = { r1, r2 };
 
-    String expectedMessage = "The given rules are not unique. Only unique rules can be used.";
+    String expectedMessage = "The given rules are not unique. Only unique "
+        + "rules can be used.";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
         () -> new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE),
@@ -124,7 +125,8 @@ class SubSystemTest {
     r2 = RealRule.from(baseValue, null, localDateTimeJan09220000,
         localDateTimeJan12220000, BASE_SCALE, 2);
     Rule[] rules = { r1, r2 };
-    String expectedMessage = "All rules need to have the same reference window but rules at position 0 and 1 differ.";
+    String expectedMessage = "All rules need to have the same reference "
+        + "window but rules at position 0 and 1 differ.";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
         () -> new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE),
@@ -142,7 +144,8 @@ class SubSystemTest {
     r2 = RealRule.from(baseValue, null, localDateTimeJan10220000,
         localDateTimeJan11220000, BASE_SCALE, 2);
     Rule[] rules = { r1, r2 };
-    String expectedMessage = "All rules need to have the same reference window but rules at position 0 and 1 differ.";
+    String expectedMessage = "All rules need to have the same reference "
+        + "window but rules at position 0 and 1 differ.";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
         () -> new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE),
@@ -215,7 +218,8 @@ class SubSystemTest {
     Rule[] rules = {
         new RealRule(newBaseValue, null, localDateTimeJan10220000,
             localDateTimeJan12220000, BASE_SCALE, VARIATOR) };
-    String expectedMessage = "The base value of all rules must be equal to given base value but the rule at position 0 does not comply.";
+    String expectedMessage = "The base value of all rules must be equal to"
+        + " given base value but the rule at position 0 does not comply.";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
         () -> new SubSystem(baseValue, rules, CAPITAL, BASE_SCALE),
@@ -281,7 +285,8 @@ class SubSystemTest {
   @Test
   void testValidateInput_baseScaleNaN() {
     double baseScaleNaN = Double.NaN;
-    String expectedMessage = "Given base scale does not meet specifications.";
+    String expectedMessage = "Given base scale does not meet "
+        + "specifications.";
     String expectedCause = "Value must not be Double.NaN";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
@@ -302,7 +307,8 @@ class SubSystemTest {
   void testValidateInput_baseScaleZeroOrLess() {
     double baseScaleZero = 0;
     double baseScaleSubZero = -1;
-    String expectedMessage = "Given base scale does not meet specifications.";
+    String expectedMessage = "Given base scale does not meet "
+        + "specifications.";
     String expectedCause = "Value must be a positive decimal";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
@@ -384,7 +390,8 @@ class SubSystemTest {
    */
   @Test
   void testBacktest_startOfTestWindow_null() {
-    String expectedMessage = "The given test window does not meet specifications.";
+    String expectedMessage = "The given test window does not meet "
+        + "specifications.";
     String expectedCause = "Start of time window value must not be null";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
@@ -403,7 +410,8 @@ class SubSystemTest {
    */
   @Test
   void testBacktest_endOfTestWindow_null() {
-    String expectedMessage = "The given test window does not meet specifications.";
+    String expectedMessage = "The given test window does not meet "
+        + "specifications.";
     String expectedCause = "End of time window value must not be null";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
@@ -422,13 +430,16 @@ class SubSystemTest {
    */
   @Test
   void testBacktest_endOfTestWindow_not_after_startOfTestWindow() {
-    String expectedMessage = "The given test window does not meet specifications.";
-    String expectedCause = "End of time window value must be after start of time window value";
+    String expectedMessage = "The given test window does not meet "
+        + "specifications.";
+    String expectedCause = "End of time window value must be after start "
+        + "of time window value";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
         () -> subSystem.backtest(localDateTimeJan10220000,
             localDateTimeJan10220000),
-        "End of test window not after start of test window is not properly handled");
+        "End of test window not after start of test window is not properly"
+            + " handled");
 
     assertEquals(expectedMessage, thrown.getMessage(),
         MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
@@ -533,7 +544,8 @@ class SubSystemTest {
    */
   @Test
   void testCalculatePerformanceValues_startOfTestWindowNull() {
-    String expectedMessage = "The given test window does not meet specifications.";
+    String expectedMessage = "The given test window does not meet "
+        + "specifications.";
     String expectedCause = "Start of time window value must not be null";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
@@ -555,7 +567,8 @@ class SubSystemTest {
    */
   @Test
   void testCalculatePerformanceValues_endOfTestWindowNull() {
-    String expectedMessage = "The given test window does not meet specifications.";
+    String expectedMessage = "The given test window does not meet "
+        + "specifications.";
     String expectedCause = "End of time window value must not be null";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
@@ -576,16 +589,19 @@ class SubSystemTest {
    * {@link SubSystem#calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, de.rumford.tradingsystem.helper.ValueDateTupel[], double, double)}.
    */
   @Test
-  void testCalculatePerformanceValues_endOfTestWindow_not_after_startOfTestWindow() {
-    String expectedMessage = "The given test window does not meet specifications.";
-    String expectedCause = "End of time window value must be after start of time window value";
+  void testCalculatePerformanceValues_endOfTest_not_after_startOfTest() {
+    String expectedMessage = "The given test window does not meet "
+        + "specifications.";
+    String expectedCause = "End of time window value must be after start "
+        + "of time window value";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
         () -> SubSystem.calculatePerformanceValues(
             subSystem.getBaseValue(), localDateTimeJan10220000,
             localDateTimeJan10220000, subSystem.getCombinedForecasts(),
             subSystem.getBaseScale(), subSystem.getCapital()),
-        "End of test window not after start of test window is not properly handled");
+        "End of test window not after start of test window is not properly"
+            + " handled");
 
     assertEquals(expectedMessage, thrown.getMessage(),
         MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
@@ -598,9 +614,11 @@ class SubSystemTest {
    * {@link SubSystem#calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, de.rumford.tradingsystem.helper.ValueDateTupel[], double, double)}.
    */
   @Test
-  void testCalculatePerformanceValues_startOfTestWindow_not_in_baseValue() {
-    String expectedMessage = "Given base value and test window do not fit.";
-    String expectedCause = "Given values do not include given start value for time window";
+  void testCalculatePerformanceValues_startOfTest_not_in_baseValue() {
+    String expectedMessage = "Given base value and test window do not "
+        + "fit.";
+    String expectedCause = "Given values do not include given start value "
+        + "for time window";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
         () -> SubSystem.calculatePerformanceValues(
@@ -621,8 +639,10 @@ class SubSystemTest {
    */
   @Test
   void testCalculatePerformanceValues_endOfTestWindow_not_in_baseValue() {
-    String expectedMessage = "Given base value and test window do not fit.";
-    String expectedCause = "Given values do not include given end value for time window";
+    String expectedMessage = "Given base value and test window do not "
+        + "fit.";
+    String expectedCause = "Given values do not include given end value "
+        + "for time window";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
         () -> SubSystem.calculatePerformanceValues(
@@ -642,9 +662,10 @@ class SubSystemTest {
    * {@link SubSystem#calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, de.rumford.tradingsystem.helper.ValueDateTupel[], double, double)}.
    */
   @Test
-  void testCalculatePerformanceValues_startOfTestWindow_not_in_forecasts() {
+  void testCalculatePerformanceValues_startOfTest_not_in_forecasts() {
     String expectedMessage = "Given forecasts and test window do not fit.";
-    String expectedCause = "Given values do not include given start value for time window";
+    String expectedCause = "Given values do not include given start value "
+        + "for time window";
 
     Exception thrown = assertThrows(IllegalArgumentException.class,
         () -> SubSystem.calculatePerformanceValues(
@@ -658,5 +679,4 @@ class SubSystemTest {
     assertEquals(expectedCause, thrown.getCause().getMessage(),
         MESSAGE_INCORRECT_EXCEPTION_MESSAGE);
   }
-
 }
