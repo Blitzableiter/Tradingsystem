@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DataSource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tradingsystem</a> &gt; <a href="index.source.html" class="el_package">de.rumford.tradingsystem.helper</a> &gt; <span class="el_source">DataSource.java</span></div><h1>DataSource.java</h1><pre class="source lang-java linenums">package de.rumford.tradingsystem.helper;
+
+import java.io.*;
+import java.time.LocalDateTime;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.ArrayUtils;
+
+/**
+ * The DataSource provides course value data from a given data source.
+ * 
+ * @author Max Rumford
+ *
+ */
+public class DataSource {
+
+  /**
+   * Don't let anyone instantiate this class.
+   */
+  private DataSource() {
+  }
+
+  /**
+   * Reads the data from a given CSV path. Assumes the following &quot;columns&quot;:
+   * Date, Time, value. Depending on the formatting of the CSV file the
+   * corresponding {@link CsvFormat} has to be passed. The underlying
+   * enumeration is not final and can be altered to suit the user's needs.
+   * &lt;p&gt;
+   * The CSV file to be parsed is expected not to have column headings. If
+   * so, the values of the first row might not be parsed and an
+   * IllegalArgumentException as explained below might be thrown. If the
+   * row can be parsed it will most likely not contain any useful
+   * information and might result in incorrect calculation results. The CSV
+   * file should always be cleared of headings.
+   * 
+   * @param sourcePath {@code String} The path to the CSV file to be read.
+   * @param format     {@link CsvFormat} The format of the CSV file.
+   * @return {@code ValueDateTupel[]} An array of {@link ValueDateTupel}
+   *         representing the read data.
+   * @throws FileNotFoundException    if the FileReader can not find a file
+   *                                  for the given {@code sourcePath}.
+   * @throws IOException              if the given {@code sourcePath}
+   *                                  cannot be properly resolved to an
+   *                                  actual file.
+   * @throws IllegalArgumentException if the given path is invalid.
+   * @throws IllegalArgumentException if any of the rows in the read CSV
+   *                                  file does not contain exactly 3
+   *                                  columns.
+   */
+  public static ValueDateTupel[] getDataFromCsv(String sourcePath,
+      CsvFormat format) throws IOException {
+    File file;
+    try {
+<span class="fc" id="L54">      file = new File(sourcePath);</span>
+<span class="fc" id="L55">    } catch (Exception e) {</span>
+<span class="fc" id="L56">      throw new IllegalArgumentException(</span>
+          &quot;The given path cannot be processed&quot;);
+<span class="fc" id="L58">    }</span>
+
+<span class="fc bfc" id="L60" title="All 2 branches covered.">    if (!file.exists())</span>
+<span class="fc" id="L61">      throw new IOException(</span>
+          &quot;Given source path does not point to an existing destination&quot;);
+<span class="fc bfc" id="L63" title="All 2 branches covered.">    if (!file.isFile())</span>
+<span class="fc" id="L64">      throw new IOException(&quot;Given source path does not point to a file&quot;);</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">    if (!file.canRead())</span>
+<span class="nc" id="L66">      throw new IOException(&quot;Given file path cannot be read&quot;);</span>
+
+<span class="fc" id="L68">    try (BufferedReader br = new BufferedReader(new FileReader(file))) {</span>
+      String line;
+
+<span class="fc" id="L71">      ValueDateTupel[] returnValues = ValueDateTupel.createEmptyArray();</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">      while ((line = br.readLine()) != null) {</span>
+        /* Extract the fields into separate Strings */
+<span class="fc" id="L74">        String[] columns = line</span>
+<span class="fc" id="L75">            .split(Pattern.quote(format.getFieldSeparator()));</span>
+
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if (columns.length != 3) {</span>
+<span class="fc" id="L78">          throw new IllegalArgumentException(</span>
+              &quot;The passed CSV does not have an appropriate number of&quot;
+                  + &quot; columns&quot;);
+        }
+
+        /*
+         * Parse the first and second field (date, time) into a
+         * LocalDateTime instance
+         */
+<span class="fc" id="L87">        String[] dateAndTimeStrings = new String[2];</span>
+<span class="fc" id="L88">        System.arraycopy(columns, 0, dateAndTimeStrings, 0, 2);</span>
+        LocalDateTime localDateTime;
+        double value;
+<span class="fc" id="L91">        localDateTime = parseLocalDateTime(dateAndTimeStrings, format);</span>
+
+        /* Pass the third field (course value) into a double */
+<span class="fc" id="L94">        String[] valueStrings = new String[1];</span>
+<span class="fc" id="L95">        System.arraycopy(columns, 2, valueStrings, 0, 1);</span>
+<span class="fc" id="L96">        value = parseCourseValue(valueStrings, format);</span>
+
+<span class="fc" id="L98">        ValueDateTupel newElement = new ValueDateTupel(localDateTime,</span>
+            value);
+
+<span class="fc" id="L101">        returnValues = ArrayUtils.add(returnValues, newElement);</span>
+<span class="fc" id="L102">      }</span>
+<span class="fc" id="L103">      return returnValues;</span>
+    }
+  }
+
+  /**
+   * Parse the given columns {date, time} into a {@link LocalDateTime}
+   * instance. Expects an array of Strings of length 2.
+   * 
+   * @param columns {@code String[]} The columns containing the String
+   *                representing date and time.
+   * @param format  {@link CsvFormat} The {@link CsvFormat} representing
+   *                the given CSV file.
+   * @return {@link LocalDateTime} representation of the passed {date,
+   *         time} columns.
+   * @throws IllegalArgumentException If there are not exactly two columns
+   *                                  in the passed {@code String[]}.
+   * @throws IllegalArgumentException If the date pattern could not be
+   *                                  recognized in subroutine
+   *                                  {@link #evaluateDatePattern( CsvFormat)}.
+   * @throws IllegalArgumentException If the given date values cannot be
+   *                                  parsed to Integers.
+   * @throws IllegalArgumentException If the given time values cannot be
+   *                                  parsed to Integers.
+   * @throws IllegalArgumentException If the given date and time values
+   *                                  cannot be parsed to
+   *                                  {@link LocalDateTime}}.
+   */
+  private static LocalDateTime parseLocalDateTime(String[] columns,
+      CsvFormat format) {
+    /* Extract the relevant date values */
+<span class="fc" id="L133">    String[] date = columns[0]</span>
+<span class="fc" id="L134">        .split(Pattern.quote(format.getDateSeparator()));</span>
+
+    /* Evaluate the date pattern */
+<span class="fc" id="L137">    int[] datePositions = evaluateDatePattern(format);</span>
+
+    int dayOfMonth;
+    int month;
+    int year;
+    try {
+<span class="fc" id="L143">      dayOfMonth = Integer.parseInt(date[datePositions[0]]);</span>
+<span class="fc" id="L144">      month = Integer.parseInt(date[datePositions[1]]);</span>
+<span class="fc" id="L145">      year = Integer.parseInt(date[datePositions[2]]);</span>
+<span class="fc" id="L146">    } catch (NumberFormatException e) {</span>
+<span class="fc" id="L147">      throw new IllegalArgumentException(</span>
+          &quot;The date values of the read CSV file cannot be parsed into&quot;
+              + &quot; numbers. Failing value &gt;&quot; + columns[0] + &quot;&lt;&quot;);
+    }
+    /*
+     * Catch Exception so BufferedReader can be closed (in calling method)
+     * on unknown Exceptions to avoid memory leakage.
+     */
+<span class="fc" id="L155">    catch (Exception e) {</span>
+<span class="fc" id="L156">      throw e;</span>
+<span class="fc" id="L157">    }</span>
+
+    /* Extract the relevant time values */
+<span class="fc" id="L160">    String[] time = columns[1].split(format.getTimeSeparator());</span>
+    int hour;
+    int minute;
+    int second;
+    try {
+<span class="fc" id="L165">      hour = Integer.parseInt(time[0]);</span>
+<span class="fc" id="L166">      minute = Integer.parseInt(time[1]);</span>
+<span class="fc" id="L167">      second = Integer.parseInt(time[2]);</span>
+<span class="fc" id="L168">    } catch (NumberFormatException e) {</span>
+<span class="fc" id="L169">      throw new IllegalArgumentException(</span>
+          &quot;The time values of the read CSV file cannot be parsed into&quot;
+              + &quot; numbers. Failing value &gt;&quot; + columns[1] + &quot;&lt;&quot;);
+<span class="fc" id="L172">    }</span>
+
+    LocalDateTime localDateTime;
+    try {
+<span class="fc" id="L176">      localDateTime = LocalDateTime.of(year, month, dayOfMonth, hour,</span>
+          minute, second);
+<span class="fc" id="L178">    } catch (Exception e) {</span>
+<span class="fc" id="L179">      throw new IllegalArgumentException(</span>
+          &quot;The date or time values of the read CSV file cannot be parsed&quot;
+              + &quot; into a LocalDateTime instance. Failing values &gt;&quot;
+              + columns[0] + &quot;&lt; and &gt;&quot; + columns[1] + &quot;&lt;.&quot;);
+<span class="fc" id="L183">    }</span>
+<span class="fc" id="L184">    return localDateTime;</span>
+  }
+
+  /**
+   * Evaluate the date pattern from the given {@link CsvFormat}. If
+   * {@link CsvFormat} is extended this method has to be overridden, else
+   * an {@link IllegalArgumentException} will be thrown due to an unknown
+   * format.
+   * 
+   * @param format {@link CsvFormat} Format of the CSV file to be parsed.
+   * @return {@code int[]} containing the position of {day, month, year}
+   *         values inside the date field of the given CSV.
+   * @throws IllegalArgumentException if the date given date pattern is not
+   *                                  recognized.
+   */
+  public static int[] evaluateDatePattern(CsvFormat format) {
+    int monthPosition;
+    int dayPosition;
+    int yearPosition;
+<span class="fc bfc" id="L203" title="All 2 branches covered.">    if (format.getMonthDayOrder() == DateOrder.DAY_MONTH_YEAR) {</span>
+<span class="fc" id="L204">      dayPosition = 0;</span>
+<span class="fc" id="L205">      monthPosition = 1;</span>
+<span class="fc" id="L206">      yearPosition = 2;</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">    } else if (format.getMonthDayOrder() == DateOrder.MONTH_DAY_YEAR) {</span>
+<span class="fc" id="L208">      dayPosition = 1;</span>
+<span class="fc" id="L209">      monthPosition = 0;</span>
+<span class="fc" id="L210">      yearPosition = 2;</span>
+    } else {
+<span class="fc" id="L212">      dayPosition = 2;</span>
+<span class="fc" id="L213">      monthPosition = 1;</span>
+<span class="fc" id="L214">      yearPosition = 0;</span>
+    }
+
+<span class="fc" id="L217">    int[] returnArray = { dayPosition, monthPosition, yearPosition };</span>
+
+<span class="fc" id="L219">    return returnArray;</span>
+  }
+
+  /**
+   * Parse the course value String into a {@code double} representing its
+   * values.
+   * 
+   * @param columns {@code String[]} The String representation of the CSV
+   *                column containing the value.
+   * @param format  {@link CsvFormat} Format the CSV file is in.
+   * @return {@code double} The parsed value.
+   * @throws IllegalArgumentException if the passed String cannot be
+   *                                  properly parsed
+   */
+  private static double parseCourseValue(String[] columns,
+      CsvFormat format) {
+<span class="fc" id="L235">    String valueString = columns[0];</span>
+    /* Eliminate thousands separator from String */
+<span class="fc bfc" id="L237" title="All 2 branches covered.">    if (valueString.contains(format.getThousandsSeparator())) {</span>
+<span class="fc" id="L238">      valueString = valueString</span>
+<span class="fc" id="L239">          .replaceAll(Pattern.quote(format.getThousandsSeparator()), &quot;&quot;);</span>
+    }
+    /* Replace non-US decimal points with US decimal points */
+<span class="fc bfc" id="L242" title="All 2 branches covered.">    if (!format.getDecimalPoint().equals(CsvFormat.US.getDecimalPoint())) {</span>
+<span class="fc" id="L243">      valueString = valueString.replace(format.getDecimalPoint(),</span>
+<span class="fc" id="L244">          CsvFormat.US.getDecimalPoint());</span>
+    }
+
+    double value;
+    /*
+     * At this point all hindering sings have been eradicated from the
+     * String
+     */
+    try {
+<span class="fc" id="L253">      value = Double.parseDouble(valueString);</span>
+<span class="fc" id="L254">    } catch (NumberFormatException e) {</span>
+<span class="fc" id="L255">      throw new IllegalArgumentException(</span>
+          &quot;The course value &gt;&quot; + columns[0] + &quot;&lt; cannot be parsed&quot;);
+<span class="nc" id="L257">    } catch (Exception e) {</span>
+<span class="nc" id="L258">      throw e;</span>
+<span class="fc" id="L259">    }</span>
+
+<span class="fc" id="L261">    return value;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,5 +1,6 @@
 package de.rumford.tradingsystem;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.NumberFormat;
@@ -21,30 +22,22 @@ import de.rumford.tradingsystem.helper.*;
 public class ExampleClient {
   static final double CAPITAL = 100000;
 
-  static final String WORKING_DIR = Path.of("src", "test", "resources")
+  static String workingDir = Path.of("src", "test", "resources")
       .toString();
 
   static final String DAX = "DAX";
-  static final String DAX_FILE_NAME = Path.of(WORKING_DIR, "DAX.csv")
-      .toString();
-  static final String DAX_SHORT_FILE_NAME = Path
-      .of(WORKING_DIR, "DAX_short.csv").toString();
-  static final String DAX_VOLATILITY_FILE_NAME = Path
-      .of(WORKING_DIR, "DAX_VDAX.csv").toString();
+  static String daxFileName = "DAX.csv";
+  static String daxShortFileName = "DAX_short.csv";
+  static String daxVolatilityFileName = "DAX_VDAX.csv";
 
   static final String STOXX = "EURO STOXX 50";
-  static final String STOXX_FILE_NAME = Path.of(WORKING_DIR, "STOXX.csv")
-      .toString();
-  static final String STOXX_SHORT_FILE_NAME = Path
-      .of(WORKING_DIR, "STOXX-Short.csv").toString();
-  static final String STOXX_VOLATILITY_FILE_NAME = Path
-      .of(WORKING_DIR, "STOXX-VSTOXX.csv").toString();
+  static String stoxxFileName = "STOXX.csv";
+  static String stoxxShortFileName = "STOXX-Short.csv";
+  static String stoxxVolatilityFileName = "STOXX-VSTOXX.csv";
 
   static final String SP500 = "S&P 500";
-  static final String SP500_FILE_NAME = Path.of(WORKING_DIR, "S&P.csv")
-      .toString();
-  static final String SP500_VOLATILITY_FILE_NAME = Path
-      .of(WORKING_DIR, "S&P_VIX.csv").toString();
+  static String sp500FileName = "S&P.csv";
+  static String sp500VolatilityFileName = "S&P_VIX.csv";
 
   static final LocalDateTime START_OF_REFERENCE_WINDOW = LocalDateTime
       .of(2015, 1, 2, 22, 0);
@@ -72,12 +65,66 @@ public class ExampleClient {
    * @throws IOException if the given filenames cannot be found.
    */
   public static void main(String[] args) throws IOException {
+    String basePath = null;
+    if (args.length != 0) {
+      basePath = args[0];
+    }
+    setPathNames(basePath);
+
     LocalDateTime startingTime = LocalDateTime.now();
 
-    exampleForThreeBaseValues();
-    // exampleForOneBaseValue();
+    if (args.length > 1) {
+      switch (args[1]) {
+      case "1":
+        exampleForOneBaseValue();
+        break;
+      case "3":
+        exampleForThreeBaseValues();
+        break;
+      default:
+        logger.info(String.format(
+            "No fitting routing found for argument %s. Running default.",
+            args[1]));
+        exampleForThreeBaseValues();
+        break;
+      }
+    } else {
+      logger.info("Running default.");
+      exampleForThreeBaseValues();
+    }
 
     logDuration(startingTime);
+  }
+
+  private static void setPathNames(String basePath) throws IOException {
+    if (basePath != null) {
+      File f = Path.of(basePath).toFile();
+      if (!f.exists()) {
+        logger.warn(String.format(
+            "Given path %s does not exist. Using default path %s.",
+            f.getCanonicalPath(),
+            Path.of(workingDir).toFile().getCanonicalPath()));
+      } else {
+        workingDir = basePath;
+      }
+    }
+    daxFileName = getPathAsStringByFileName(daxFileName);
+    daxShortFileName = getPathAsStringByFileName(daxShortFileName);
+    daxVolatilityFileName = getPathAsStringByFileName(
+        daxVolatilityFileName);
+
+    stoxxFileName = getPathAsStringByFileName(stoxxFileName);
+    stoxxShortFileName = getPathAsStringByFileName(stoxxShortFileName);
+    stoxxVolatilityFileName = getPathAsStringByFileName(
+        stoxxVolatilityFileName);
+
+    sp500FileName = getPathAsStringByFileName(sp500FileName);
+    sp500VolatilityFileName = getPathAsStringByFileName(
+        sp500VolatilityFileName);
+  }
+
+  private static String getPathAsStringByFileName(String fileName) {
+    return Path.of(workingDir, fileName).toString();
   }
 
   /**
@@ -87,8 +134,8 @@ public class ExampleClient {
    */
   private static void exampleForOneBaseValue() throws IOException {
 
-    forOneBaseValueWithShort(STOXX, STOXX_FILE_NAME, STOXX_SHORT_FILE_NAME,
-        STOXX_VOLATILITY_FILE_NAME, CAPITAL);
+    forOneBaseValueWithShort(STOXX, stoxxFileName, stoxxShortFileName,
+        stoxxVolatilityFileName, CAPITAL);
 
   }
 
@@ -98,22 +145,22 @@ public class ExampleClient {
    * @throws IOException if any file handling goes wrong.
    */
   private static void exampleForThreeBaseValues() throws IOException {
-    double daxPerf = forOneBaseValueWithShort(DAX, DAX_FILE_NAME,
-        // DAX_SHORT_FILE_NAME, DAX_VOLATILITY_FILE_NAME, CAPITAL *
+    double daxPerf = forOneBaseValueWithShort(DAX, daxFileName,
+        // daxShortFileName, daxVolatilityFileName, CAPITAL *
         // 0.2002); // 2014-2018, 2019
-        DAX_SHORT_FILE_NAME, DAX_VOLATILITY_FILE_NAME, CAPITAL * 0.2121); // 2015-2019,
-                                                                          // 202001-202003
+        daxShortFileName, daxVolatilityFileName, CAPITAL * 0.2121); // 2015-2019,
+                                                                    // 202001-202003
 
-    double stoxxPerf = forOneBaseValueWithShort(STOXX, STOXX_FILE_NAME,
-        STOXX_SHORT_FILE_NAME, STOXX_VOLATILITY_FILE_NAME,
+    double stoxxPerf = forOneBaseValueWithShort(STOXX, stoxxFileName,
+        stoxxShortFileName, stoxxVolatilityFileName,
         // CAPITAL * 0.407); // 2014-2018, 2019
         CAPITAL * 0.3674); // 2015-2019, 202001-202003
 
-    double spPerf = forOneBaseValue(SP500, SP500_FILE_NAME,
-        // SP500_VOLATILITY_FILE_NAME, CAPITAL * 0.3928); // 2014-2018,
+    double spPerf = forOneBaseValue(SP500, sp500FileName,
+        // sp500VolatilityFileName, CAPITAL * 0.3928); // 2014-2018,
         // 2019
-        SP500_VOLATILITY_FILE_NAME, CAPITAL * 0.4205); // 2015-2019,
-                                                       // 202001-202003
+        sp500VolatilityFileName, CAPITAL * 0.4205); // 2015-2019,
+                                                    // 202001-202003
 
     formatPerformance(CAPITAL, daxPerf + stoxxPerf + spPerf);
   }

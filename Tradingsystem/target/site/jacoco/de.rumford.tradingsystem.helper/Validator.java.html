@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Validator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tradingsystem</a> &gt; <a href="index.source.html" class="el_package">de.rumford.tradingsystem.helper</a> &gt; <span class="el_source">Validator.java</span></div><h1>Validator.java</h1><pre class="source lang-java linenums">package de.rumford.tradingsystem.helper;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+import de.rumford.tradingsystem.BaseValue;
+import de.rumford.tradingsystem.Rule;
+
+/**
+ * Validator class as used throughout the library containing solely of
+ * static methods representing validation of input values.
+ * 
+ * @author Max Rumford
+ *
+ */
+public class Validator {
+
+  /**
+   * Constructor for the {@link Validator} class&lt;br/&gt;
+   * Only supports static methods, hence no instance shall be created,
+   * hence a private constructor
+   */
+  private Validator() {
+  }
+
+  /**
+   * Validates the given array of arrays.
+   * &lt;ul&gt;
+   * &lt;li&gt;Must not be null.&lt;/li&gt;
+   * &lt;/ul&gt;
+   * 
+   * @param values {@code double[]} The array to be validated.
+   * @throws IllegalArgumentException if any of the above specifications
+   *                                  are not met.
+   */
+  public static void validateArrayOfDoubles(double[] values) {
+<span class="fc bfc" id="L38" title="All 2 branches covered.">    if (values == null)</span>
+<span class="fc" id="L39">      throw new IllegalArgumentException(&quot;Given array must not be null&quot;);</span>
+<span class="fc" id="L40">  }</span>
+
+  /**
+   * Validates the given {@link BaseValue}.
+   * &lt;ul&gt;
+   * &lt;li&gt;Must not be null.&lt;/li&gt;
+   * &lt;/ul&gt;
+   * 
+   * @param baseValue {@link BaseValue} The base value to be validated.
+   */
+  public static void validateBaseValue(BaseValue baseValue) {
+<span class="fc bfc" id="L51" title="All 2 branches covered.">    if (baseValue == null)</span>
+<span class="fc" id="L52">      throw new IllegalArgumentException(&quot;Base value must not be null&quot;);</span>
+<span class="fc" id="L53">  }</span>
+
+  /**
+   * Validates the given correlations.
+   * 
+   * @param correlations {@code double[]} Correlations to be validated.
+   *                     Must not be null. Must have a length of 3. Must
+   *                     only contain values {@code !Double.NaN} and
+   *                     {@code -1 &lt;= value &lt;= 1}.
+   * @throws IllegalArgumentException if the above specifications are not
+   *                                  met.
+   */
+  public static void validateCorrelations(double[] correlations) {
+    /* Check if the given array is null */
+<span class="fc bfc" id="L67" title="All 2 branches covered.">    if (correlations == null)</span>
+<span class="fc" id="L68">      throw new IllegalArgumentException(</span>
+          &quot;Correlations array must not be null&quot;);
+    /* Check if the given array contains exactly three elements. */
+<span class="fc bfc" id="L71" title="All 2 branches covered.">    if (correlations.length != 3)</span>
+<span class="fc" id="L72">      throw new IllegalArgumentException(</span>
+          &quot;There must be exactly three correlation values in the given&quot;
+              + &quot; array&quot;);
+
+    /* Check all given values inside the array */
+<span class="fc bfc" id="L77" title="All 2 branches covered.">    for (int i = 0; i &lt; correlations.length; i++) {</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">      if (Double.isNaN(correlations[i]))</span>
+<span class="fc" id="L79">        throw new IllegalArgumentException(</span>
+            &quot;NaN-values are not allowed. Correlation at position &quot; + i
+                + &quot; is NaN.&quot;);
+<span class="fc bfc" id="L82" title="All 2 branches covered.">      if (correlations[i] &gt; 1)</span>
+<span class="fc" id="L83">        throw new IllegalArgumentException(</span>
+            &quot;Correlation at position &quot; + i + &quot; is greater than 1&quot;);
+<span class="fc bfc" id="L85" title="All 2 branches covered.">      if (correlations[i] &lt; -1)</span>
+<span class="fc" id="L86">        throw new IllegalArgumentException(</span>
+            &quot;Correlation at position &quot; + i + &quot; is less than -1&quot;);
+    }
+<span class="fc" id="L89">  }</span>
+
+  /**
+   * Validates if the given array of ValueDateTupel is sorted in an
+   * ascending order.
+   * 
+   * @param values {@code ValueDateTupel[]} The given array of values.
+   * @throws IllegalArgumentException if the specifications above are not
+   *                                  met.
+   */
+  public static void validateDates(ValueDateTupel[] values) {
+    /*
+     * The values cannot be used if they are not in ascending order.
+     */
+<span class="fc bfc" id="L103" title="All 2 branches covered.">    if (!ValueDateTupel.isSortedAscending(values))</span>
+<span class="fc" id="L104">      throw new IllegalArgumentException(</span>
+          &quot;Given values are not properly sorted or there are non-unique&quot;
+              + &quot; values.&quot;);
+<span class="fc" id="L107">  }</span>
+
+  /**
+   * Validates the given double value. The value must meet the following
+   * specifications:
+   * &lt;ul&gt;
+   * &lt;li&gt;Must not be Double.NaN.&lt;/li&gt;
+   * &lt;li&gt;Must be a positive decimal.&lt;/li&gt;
+   * &lt;/ul&gt;
+   * 
+   * @param value {@code double} The value to validate.
+   * @throws IllegalArgumentException if the above specifications are not
+   *                                  met.
+   */
+  public static void validatePositiveDouble(double value) {
+<span class="fc bfc" id="L122" title="All 2 branches covered.">    if (Double.isNaN(value))</span>
+<span class="fc" id="L123">      throw new IllegalArgumentException(&quot;Value must not be Double.NaN&quot;);</span>
+
+<span class="fc bfc" id="L125" title="All 2 branches covered.">    if (value &lt;= 0)</span>
+<span class="fc" id="L126">      throw new IllegalArgumentException(</span>
+          &quot;Value must be a positive decimal&quot;);
+
+<span class="fc" id="L129">  }</span>
+
+  /**
+   * Validates the given Array of {@link Rule}. Must meet the following
+   * specifications:
+   * &lt;ul&gt;
+   * &lt;li&gt;Must not be null.&lt;/li&gt;
+   * &lt;li&gt;Must not be an empty array.&lt;/li&gt;
+   * &lt;/ul&gt;
+   * 
+   * @param rules {@code Rule[]} The Array of {@link Rule} to be validated.
+   * @throws IllegalArgumentException if the above specifications are not
+   *                                  met.
+   */
+  public static void validateRules(Rule[] rules) {
+<span class="fc bfc" id="L144" title="All 2 branches covered.">    if (rules == null)</span>
+<span class="fc" id="L145">      throw new IllegalArgumentException(&quot;Rules must not be null&quot;);</span>
+
+<span class="fc bfc" id="L147" title="All 2 branches covered.">    if (rules.length == 0)</span>
+<span class="fc" id="L148">      throw new IllegalArgumentException(</span>
+          &quot;Rules must not be an empty array&quot;);
+<span class="fc" id="L150">  }</span>
+
+  /**
+   * Validates the given array of {@link Rule} against the given
+   * {@link BaseValue}.
+   * &lt;ul&gt;
+   * &lt;li&gt;All rules must have the given {@link BaseValue} as their own
+   * {@link BaseValue}.&lt;/li&gt;
+   * &lt;/ul&gt;
+   * 
+   * @param rules     {@code Rule[]} The array of {@link Rule} to be
+   *                  validated.
+   * @param baseValue {@link BaseValue} The {@link BaseValue} to be
+   *                  validated.
+   * @throws IllegalArgumentException if any of the above specifications
+   *                                  are not met.
+   */
+  public static void validateRulesVsBaseValue(Rule[] rules,
+      BaseValue baseValue) {
+<span class="fc bfc" id="L169" title="All 2 branches covered.">    for (int i = 0; i &lt; rules.length; i++)</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">      if (!rules[i].getBaseValue().equals(baseValue))</span>
+<span class="fc" id="L171">        throw new IllegalArgumentException(</span>
+            &quot;The base value of all rules must be equal to given base value&quot;
+                + &quot; but the rule at position &quot; + i + &quot; does not comply.&quot;);
+<span class="fc" id="L174">  }</span>
+
+  /**
+   * Validates the given time window values. Values are needed for checking
+   * of containment. Must meet the following specifications:
+   * &lt;ul&gt;
+   * &lt;li&gt;startOfTimeWindow must not be null.&lt;/li&gt;
+   * &lt;li&gt;endOfTimeWindow must not be null.&lt;/li&gt;
+   * &lt;li&gt;endOfTimeWindow must be after startOfTimeWindow. See
+   * {@link LocalDateTime#isAfter(java.time.chrono.ChronoLocalDateTime)}.
+   * &lt;/li&gt;
+   * &lt;li&gt;values must contain startOfTimeWindow.&lt;/li&gt;
+   * &lt;li&gt;values must contain endOfTimeWindow.&lt;/li&gt;
+   * &lt;/ul&gt;
+   * 
+   * @param startOfTimeWindow {@link LocalDateTime} The start of Time
+   *                          window to be checked.
+   * @param endOfTimeWindow   {@link LocalDateTime} The end of Time window
+   *                          to be checked.
+   * @param values            {@code ValueDateTupel[]} The array of
+   *                          {@link ValueDateTupel} to be checked.
+   * @throws IllegalArgumentException if any of the above specifications
+   *                                  are not met.
+   */
+  public static void validateTimeWindow(LocalDateTime startOfTimeWindow,
+      LocalDateTime endOfTimeWindow, ValueDateTupel[] values) {
+    /* Check if LocalDateTimes are null */
+<span class="fc bfc" id="L201" title="All 2 branches covered.">    if (startOfTimeWindow == null)</span>
+<span class="fc" id="L202">      throw new IllegalArgumentException(</span>
+          &quot;Start of time window value must not be null&quot;);
+<span class="fc bfc" id="L204" title="All 2 branches covered.">    if (endOfTimeWindow == null)</span>
+<span class="fc" id="L205">      throw new IllegalArgumentException(</span>
+          &quot;End of time window value must not be null&quot;);
+    /* Check if time window is properly defined: end must be after start */
+<span class="fc bfc" id="L208" title="All 2 branches covered.">    if (!endOfTimeWindow.isAfter(startOfTimeWindow))</span>
+<span class="fc" id="L209">      throw new IllegalArgumentException(</span>
+          &quot;End of time window value must be after start of time window&quot;
+              + &quot; value&quot;);
+
+    /*
+     * The given startOfTimeWindow must be included in the given base
+     * values.
+     */
+<span class="fc bfc" id="L217" title="All 2 branches covered.">    if (!ValueDateTupel.containsDate(values, startOfTimeWindow))</span>
+<span class="fc" id="L218">      throw new IllegalArgumentException(</span>
+          &quot;Given values do not include given start value for time window&quot;);
+    /*
+     * The given endOfTimeWindow must be included in the given base values.
+     */
+<span class="fc bfc" id="L223" title="All 2 branches covered.">    if (!ValueDateTupel.containsDate(values, endOfTimeWindow))</span>
+<span class="fc" id="L224">      throw new IllegalArgumentException(</span>
+          &quot;Given values do not include given end value for time window&quot;);
+<span class="fc" id="L226">  }</span>
+
+  /**
+   * Validates the given array of ValueDateTupel. The given array must
+   * fulfill the following specifications:
+   * &lt;ul&gt;
+   * &lt;li&gt;Must not be null&lt;/li&gt;
+   * &lt;li&gt;Must be of length greater than 0&lt;/li&gt;
+   * &lt;li&gt;Must not contain null&lt;/li&gt;
+   * &lt;li&gt;Must not contain NaNs as values&lt;/li&gt;
+   * &lt;/ul&gt;
+   * 
+   * @param values {@code ValueDateTupel[]} The values to be validated.
+   * @throws IllegalArgumentException if the given array does not meet the
+   *                                  above specifications.
+   */
+  public static void validateValues(ValueDateTupel[] values) {
+    /* Check if passed values array is null */
+<span class="fc bfc" id="L244" title="All 2 branches covered.">    if (values == null)</span>
+<span class="fc" id="L245">      throw new IllegalArgumentException(</span>
+          &quot;The given values array must not be null&quot;);
+    /* Check if passed values array contains elements */
+<span class="fc bfc" id="L248" title="All 2 branches covered.">    if (values.length == 0)</span>
+<span class="fc" id="L249">      throw new IllegalArgumentException(</span>
+          &quot;Values must not be an empty array&quot;);
+
+<span class="fc bfc" id="L252" title="All 2 branches covered.">    for (ValueDateTupel value : values) {</span>
+      /* Validate if there are null values in the given values array. */
+<span class="fc bfc" id="L254" title="All 2 branches covered.">      if (value == null)</span>
+<span class="fc" id="L255">        throw new IllegalArgumentException(</span>
+            &quot;Given values must not contain null.&quot;);
+
+      /* Validate if there are NaN values in the given values array. */
+<span class="fc bfc" id="L259" title="All 2 branches covered.">      if (Double.isNaN(value.getValue()))</span>
+<span class="fc" id="L260">        throw new IllegalArgumentException(</span>
+            &quot;Given values must not contain NaN.&quot;);
+    }
+<span class="fc" id="L263">  }</span>
+
+  /**
+   * Validates the given variations array of {@link Rule} against the given
+   * {@link LocalDateTime} values for startOfReferenceWindow and
+   * endOfReferenceWindow and the given {@link BaseValue}. Must fulfill the
+   * following specifications:
+   * &lt;ul&gt;
+   * &lt;li&gt;Must not be of length greater than 3.&lt;/li&gt;
+   * &lt;li&gt;Must not be of length 0.&lt;/li&gt;
+   * &lt;li&gt;Elements must not be null.&lt;/li&gt;
+   * &lt;li&gt;Elements' {@link Rule#getStartOfReferenceWindow()} must equal the
+   * given startOfReferenceWindow.&lt;/li&gt;
+   * &lt;li&gt;Elements' {@link Rule#getEndOfReferenceWindow()} must equal the
+   * given endOfReferenceWindow.&lt;/li&gt;
+   * &lt;li&gt;Must pass
+   * {@link #validateRulesVsBaseValue(Rule[], BaseValue)}.&lt;/li&gt;
+   * &lt;/ul&gt;
+   * 
+   * @param variations             {@code Rule[]} An array of {@link Rule}
+   *                               representing a rules' variations.
+   * @param startOfReferenceWindow {@link LocalDateTime} The start of
+   *                               reference window of the {@link Rule}
+   *                               containing the given variations.
+   * @param endOfReferenceWindow   {@link LocalDateTime} The end of
+   *                               reference window of the {@link Rule}
+   *                               containing the given variations.
+   * @param baseValue              {@link BaseValue} The base value of the
+   *                               {@link Rule} containing the given
+   *                               variations.
+   */
+  public static void validateVariations(Rule[] variations,
+      LocalDateTime startOfReferenceWindow,
+      LocalDateTime endOfReferenceWindow, BaseValue baseValue) {
+    /* Check if there are too many variations for this rule */
+<span class="fc bfc" id="L298" title="All 2 branches covered.">    if (variations.length &gt; 3)</span>
+<span class="fc" id="L299">      throw new IllegalArgumentException(</span>
+          &quot;A rule must not contain more than 3 variations.&quot;);
+
+    /* Check if the given variations array is empty. */
+<span class="fc bfc" id="L303" title="All 2 branches covered.">    if (variations.length == 0)</span>
+<span class="fc" id="L304">      throw new IllegalArgumentException(</span>
+          &quot;The given variations array must not be empty.&quot;);
+
+<span class="fc bfc" id="L307" title="All 2 branches covered.">    for (int i = 0; i &lt; variations.length; i++) {</span>
+      /* Check if the given variations array contains nulls. */
+<span class="fc bfc" id="L309" title="All 2 branches covered.">      if (variations[i] == null)</span>
+<span class="fc" id="L310">        throw new IllegalArgumentException(&quot;The variation at position &quot; + i</span>
+            + &quot; in the given variations array is null.&quot;);
+
+      /* Check if main rule and variations share reference window. */
+<span class="fc" id="L314">      if (!variations[i].getStartOfReferenceWindow()</span>
+<span class="fc bfc" id="L315" title="All 2 branches covered.">          .equals(startOfReferenceWindow)) {</span>
+<span class="fc" id="L316">        throw new IllegalArgumentException(</span>
+            &quot;The given reference window does not match the variation's at&quot;
+                + &quot; position &quot; + i
+                + &quot;. The given start of reference window is different.&quot;);
+      }
+<span class="fc" id="L321">      if (!variations[i].getEndOfReferenceWindow()</span>
+<span class="fc bfc" id="L322" title="All 2 branches covered.">          .equals(endOfReferenceWindow)) {</span>
+<span class="fc" id="L323">        throw new IllegalArgumentException(</span>
+            &quot;The given reference window does not match the variation's at&quot;
+                + &quot; position &quot; + i
+                + &quot;. The given end of reference window is different.&quot;);
+      }
+    }
+
+    try {
+<span class="fc" id="L331">      Validator.validateRulesVsBaseValue(variations, baseValue);</span>
+<span class="fc" id="L332">    } catch (IllegalArgumentException e) {</span>
+<span class="fc" id="L333">      throw new IllegalArgumentException(</span>
+          &quot;The given variations do not meet specifications.&quot;, e);
+<span class="fc" id="L335">    }</span>
+<span class="fc" id="L336">  }</span>
+
+  /**
+   * Validates the given row of values. The row has to have at least 1
+   * value not Double.NaN.
+   * 
+   * @param valueDateTupels {@code ValueDateTupel[]} The array of
+   *                        {@link ValueDateTupel} to be validated.
+   * @throws IllegalArgumentException if the given row contains only
+   *                                  Double.NaN.
+   */
+  public static void validateRow(ValueDateTupel[] valueDateTupels) {
+<span class="fc" id="L348">    double[] values = ValueDateTupel.getValues(valueDateTupels);</span>
+    /* If the first value is NaN, check if the array only contains NaN. */
+<span class="fc bfc" id="L350" title="All 2 branches covered.">    if (Double.isNaN(values[0])) {</span>
+<span class="fc" id="L351">      Set&lt;Double&gt; uniqueValues = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L352" title="All 2 branches covered.">      for (double value : values)</span>
+<span class="fc" id="L353">        uniqueValues.add(value);</span>
+
+      /*
+       * If the size of a set of all values is 1 then it contains only this
+       * one value in all elements. If this value is Double.NaN, no values
+       * were set but Double.NaN.
+       */
+<span class="fc bfc" id="L360" title="All 2 branches covered.">      if (uniqueValues.size() == 1)</span>
+<span class="fc" id="L361">        throw new IllegalArgumentException(</span>
+            &quot;Row contains only Double.NaN. Rows must contain at least one&quot;
+                + &quot; value != Double.NaN&quot;);
+    }
+<span class="fc" id="L365">  }</span>
+
+  /**
+   * Validates if the rules in the given array of {@link Rule} all share
+   * the given base scale.
+   * 
+   * @param rules     The array of {@link Rule} to be examined.
+   * @param baseScale The comparing base scale.
+   * @throws IllegalArgumentException if the given rules do not share the
+   *                                  given base scale.
+   */
+  public static void validateRulesVsBaseScale(Rule[] rules,
+      double baseScale) {
+<span class="fc bfc" id="L378" title="All 2 branches covered.">    if (rules != null) {</span>
+<span class="fc bfc" id="L379" title="All 2 branches covered.">      for (int i = 0; i &lt; rules.length; i++)</span>
+<span class="fc bfc" id="L380" title="All 4 branches covered.">        if (rules[i] != null &amp;&amp; rules[i].getBaseScale() != baseScale)</span>
+<span class="fc" id="L381">          throw new IllegalArgumentException(&quot;The rule at index &quot; + i</span>
+              + &quot; does not share the given base scale of &quot; + baseScale
+              + &quot;.&quot;);
+    }
+<span class="fc" id="L385">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

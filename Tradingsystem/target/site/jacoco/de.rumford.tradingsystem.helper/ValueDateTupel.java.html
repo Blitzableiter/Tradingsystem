@@ -1,0 +1,852 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ValueDateTupel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tradingsystem</a> &gt; <a href="index.source.html" class="el_package">de.rumford.tradingsystem.helper</a> &gt; <span class="el_source">ValueDateTupel.java</span></div><h1>ValueDateTupel.java</h1><pre class="source lang-java linenums">package de.rumford.tradingsystem.helper;
+
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TreeSet;
+
+import org.apache.commons.lang3.ArrayUtils;
+
+import de.rumford.tradingsystem.BaseValue;
+
+/**
+ * A ValueDateTupel represents a decimal value at a given point in time.
+ * &lt;p&gt;
+ * The ValueDateTupel is the most used helper class in this library. It
+ * consists of a LocalDateTime value representing a point in time, and of a
+ * double, representing any kind of decimal value associated with the
+ * aforementioned point in time. By using LocalDateTime (an not just a
+ * class representing Date values) intraday usage is possible.
+ * &lt;p&gt;
+ * The ValueDateTupel brings a lot of static method used throughout the
+ * entire library. Most of these methods deal with arrays or larger
+ * structures of ValueDateTupel, as the instance of ValueDateTupel by
+ * itself does not have many limitations.
+ * 
+ * @author Max Rumford
+ *
+ */
+public class ValueDateTupel {
+
+  /* The value to be represented. */
+  private double value;
+  /* The datetime to be represented. */
+  private LocalDateTime date;
+
+  static final String MESSAGE_ARRAY_MUST_NOT_BE_NULL = &quot;Given array must not be null&quot;;
+  static final String MESSAGE_VALUE_MUST_NOT_BE_NULL = &quot;Given value must not be null&quot;;
+
+  /**
+   * Creates a new {@link ValueDateTupel} instance using the given
+   * LocaDateTime and double.
+   * 
+   * @param date  {@link LocalDateTime} The dateTime to be set for this
+   *              {@link ValueDateTupel}
+   * @param value {@code double} The value to be set for this
+   *              {@link ValueDateTupel}
+   */
+<span class="fc" id="L50">  public ValueDateTupel(LocalDateTime date, double value) {</span>
+<span class="fc" id="L51">    this.setDate(date);</span>
+<span class="fc" id="L52">    this.setValue(value);</span>
+<span class="fc" id="L53">  }</span>
+
+  /**
+   * Adds a given {@link ValueDateTupel} to the given array of
+   * {@link ValueDateTupel} at the given position. Returns the given array
+   * extended with the given single value.
+   * 
+   * @param valueDateTupels {@code ValueDateTupel[]} Array to be extended.
+   * @param vdtToBeAdded    {@link ValueDateTupel} Value to be added.
+   * @param position        {@code int} Position the given value shall be
+   *                        put into.
+   * @return {@code ValueDateTupel[]} The extended array.
+   * @throws IllegalArgumentException If the given array is null.
+   * @throws IllegalArgumentException If the given value to be added is
+   *                                  null.
+   * @throws IllegalArgumentException If the position is negative.
+   * @throws IllegalArgumentException If the given position is greater than
+   *                                  the length of the given array.
+   */
+  public static ValueDateTupel[] addOneAt(ValueDateTupel[] valueDateTupels,
+      ValueDateTupel vdtToBeAdded, int position) {
+<span class="fc bfc" id="L74" title="All 2 branches covered.">    if (valueDateTupels == null)</span>
+<span class="fc" id="L75">      throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">    if (vdtToBeAdded == null)</span>
+<span class="fc" id="L77">      throw new IllegalArgumentException(MESSAGE_VALUE_MUST_NOT_BE_NULL);</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">    if (position &lt; 0)</span>
+<span class="fc" id="L79">      throw new IllegalArgumentException(</span>
+          &quot;Cannot add a value at position &lt; 0. Given position is &quot;
+              + position);
+<span class="fc bfc" id="L82" title="All 2 branches covered.">    if (position &gt; valueDateTupels.length)</span>
+<span class="fc" id="L83">      throw new IllegalArgumentException(</span>
+          &quot;Cannot add a value at position &gt; &quot; + valueDateTupels.length
+              + &quot;. Given position is &quot; + position + &quot;.&quot;);
+
+<span class="fc" id="L87">    ValueDateTupel[] extendedArray = ValueDateTupel</span>
+<span class="fc" id="L88">        .createEmptyArray(valueDateTupels.length + 1);</span>
+
+    /* Add new ValueDateTupel at the beginning of the given array. */
+<span class="fc bfc" id="L91" title="All 2 branches covered.">    if (position == 0) {</span>
+<span class="fc" id="L92">      extendedArray[position] = vdtToBeAdded;</span>
+<span class="fc" id="L93">      System.arraycopy(valueDateTupels, 0, extendedArray, 1,</span>
+          valueDateTupels.length);
+<span class="fc" id="L95">      return extendedArray;</span>
+    }
+    /* Add new ValueDateTupel at the end of the given array. */
+<span class="fc bfc" id="L98" title="All 2 branches covered.">    if (position == valueDateTupels.length) {</span>
+<span class="fc" id="L99">      System.arraycopy(valueDateTupels, 0, extendedArray, 0,</span>
+          valueDateTupels.length);
+<span class="fc" id="L101">      extendedArray[position] = vdtToBeAdded;</span>
+<span class="fc" id="L102">      return extendedArray;</span>
+    }
+    /*
+     * This code is only reached, when the new ValueDateTupel shall not be
+     * added at end or at beginning.
+     */
+    /* Add all values prior to the new ValueDateTupel */
+<span class="fc" id="L109">    System.arraycopy(valueDateTupels, 0, extendedArray, 0, position);</span>
+    /* Add new ValueDateTupel at the given position. */
+<span class="fc" id="L111">    extendedArray[position] = vdtToBeAdded;</span>
+    /* Add all values subsequent to the new ValueDateTupel */
+<span class="fc" id="L113">    System.arraycopy(valueDateTupels, position, extendedArray,</span>
+        position + 1, valueDateTupels.length - position);
+<span class="fc" id="L115">    return extendedArray;</span>
+  }
+
+  /**
+   * Add missing {@link LocalDateTime} values to all given
+   * {@code ValueDateTupel[]}. The corresponding value will be set to
+   * average the values of its direct predecessor and successor.
+   * &lt;p&gt;
+   * If there are multiple {@link LocalDateTime} missing in a row, all of
+   * those will get the average value of the last position before and the
+   * first position after all missing values.
+   * &lt;p&gt;
+   * If the missing {@link LocalDateTime} would be the first value in the
+   * new array, its value will be set to match the previously first one.
+   * &lt;p&gt;
+   * If the missing {@link LocalDateTime} would be the last value in the
+   * new array, its value will be set to match the previously last one.
+   * 
+   * @param valueDateTupels {@code ValueDateTupel[][]} Array of arrays of
+   *                        {@link ValueDateTupel} whose
+   *                        {@link LocalDateTime} shall be aligned.
+   * @return {@code ValueDateTupel[][]} Array of arrays of
+   *         {@link ValueDateTupel} with now aligned {@link LocalDateTime}
+   *         values.
+   * @throws IllegalArgumentException If the given array of arrays is null.
+   * @throws IllegalArgumentException If the given array of arrays contains
+   *                                  null.
+   * @throws IllegalArgumentException If any array of the given array of
+   *                                  arrays contains null.
+   * @throws IllegalArgumentException If the given array contains an array
+   *                                  of {@link ValueDateTupel} not sorted
+   *                                  in ascending order.
+   * @throws IllegalArgumentException If the one of the given arrays
+   *                                  contains only {@link Double#NaN}.
+   */
+  public static ValueDateTupel[][] alignDates(
+      ValueDateTupel[][] valueDateTupels) {
+<span class="fc bfc" id="L152" title="All 2 branches covered.">    if (valueDateTupels == null)</span>
+<span class="fc" id="L153">      throw new IllegalArgumentException(</span>
+          &quot;Given array of arrays must not be null&quot;);
+
+    /* TreeSet (unique and sorted) of all dates in all valueDateTupel[] */
+<span class="fc" id="L157">    TreeSet&lt;LocalDateTime&gt; uniqueSortedDates = getUniqueDates(</span>
+        valueDateTupels);
+
+    /* Loop over all rows */
+<span class="fc bfc" id="L161" title="All 2 branches covered.">    for (int rowIndex = 0; rowIndex &lt; valueDateTupels.length; rowIndex++) {</span>
+
+      try {
+        /* Validate if the row contains at least one suitable value. */
+<span class="fc" id="L165">        Validator.validateRow(valueDateTupels[rowIndex]);</span>
+<span class="nc" id="L166">      } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L167">        throw new IllegalArgumentException(</span>
+            &quot;Row at position &quot; + rowIndex + &quot; is not valid.&quot;, e);
+<span class="fc" id="L169">      }</span>
+
+      /*
+       * If the row's length equals the length of uniqueSortedDates no
+       * Value has to be added as it already contains all dateTimes.
+       */
+<span class="fc bfc" id="L175" title="All 2 branches covered.">      if (valueDateTupels[rowIndex].length == uniqueSortedDates.size())</span>
+<span class="fc" id="L176">        continue;</span>
+
+      /* Enhance current row by missing LocalDateTime values. */
+<span class="fc" id="L179">      valueDateTupels[rowIndex] = enhanceRowByNaNs(</span>
+          valueDateTupels[rowIndex], uniqueSortedDates);
+
+      /* Replace all values of Double.NaN by real values. */
+<span class="fc" id="L183">      valueDateTupels[rowIndex] = replaceNansByValues(</span>
+          valueDateTupels[rowIndex]);
+
+    }
+<span class="fc" id="L187">    return valueDateTupels;</span>
+  }
+
+  /**
+   * Finds all {@link LocalDateTime} present in uniqueSortedDates but not
+   * in valueDateTupels and add them to the latter with a value of
+   * Double.NaN.
+   * 
+   * @param valueDateTupels   {@code ValueDateTupel[]} The array of
+   *                          {@link ValueDateTupel} to be enhanced.
+   * @param uniqueSortedDates {@code TreeSet&lt;LocalDateTime&gt;} A
+   *                          {@link TreeSet} of {@link LocalDateTime}
+   *                          containing all unique LocalDateTimes.
+   * @return {@code ValueDateTupel[]} valueDateTupels + all LocalDateTime
+   *         additionally given by uniqueSortedDates. Array is sorted as by
+   *         {@link #isSortedAscending(ValueDateTupel[])}.
+   */
+  private static ValueDateTupel[] enhanceRowByNaNs(
+      ValueDateTupel[] valueDateTupels,
+      TreeSet&lt;LocalDateTime&gt; uniqueSortedDates) {
+
+    /*
+     * Load unique sorted dates into an ArrayList to have access to an
+     * index.
+     */
+<span class="fc" id="L212">    List&lt;LocalDateTime&gt; uniqueSortedDatesList = new ArrayList&lt;&gt;(</span>
+        uniqueSortedDates);
+
+    /*
+     * Loop over all unique dateTimes to assess if they are in the current
+     * row. If not, missing dateTimes are added into the original arrays.
+     * Their value is set to Double.NaN
+     */
+<span class="fc" id="L220">    for (int fieldIndex = 0; fieldIndex &lt; uniqueSortedDates</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        .size(); fieldIndex++) {</span>
+<span class="fc" id="L222">      ValueDateTupel valueDateTupelToBeAdded = new ValueDateTupel(</span>
+<span class="fc" id="L223">          uniqueSortedDatesList.get(fieldIndex), Double.NaN);</span>
+
+<span class="fc bfc" id="L225" title="All 2 branches covered.">      if (fieldIndex &lt; valueDateTupels.length</span>
+<span class="fc" id="L226">          &amp;&amp; uniqueSortedDatesList.get(fieldIndex)</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">              .isEqual(valueDateTupels[fieldIndex].getDate())) {</span>
+
+        /*
+         * Nothing has to be done, as we're not at the end of the list and
+         * the current LocalDateTime out of the list of unique values is
+         * already in the given row.
+         */
+<span class="fc" id="L234">        continue;</span>
+      }
+
+<span class="fc" id="L237">      valueDateTupels = ValueDateTupel.addOneAt(valueDateTupels,</span>
+          valueDateTupelToBeAdded, fieldIndex);
+    }
+
+<span class="fc" id="L241">    return valueDateTupels;</span>
+  }
+
+  /**
+   * Fills up a gap of NaN-values in a given array of
+   * {@link ValueDateTupel} with the average of the previously last and
+   * first next available non-NaN-value.
+   * 
+   * @param valueDateTupels   {@code ValueDateTupel} Array of
+   *                          {@link ValueDateTupel} holding the values.
+   * @param previousAvailable {@code int} Index of the last available
+   *                          non-NaN-value before the gap to be filled.
+   * @param nextAvailable     {@code int} Index of the first available
+   *                          non-NaN-value after the gap to be filled.
+   * @return {@code ValueDateTupel} Array of {@link ValueDateTupel} with
+   *         the gap filled.
+   */
+  private static ValueDateTupel[] fillCenterValues(
+      ValueDateTupel[] valueDateTupels, int previousAvailable,
+      int nextAvailable) {
+    /*
+     * The value to be set to all missing values is the average of the last
+     * non-NaN before the NaNs and the first non-NaN after the NaNs. This
+     * is the case when the missing NaNs are not at the beginning or the
+     * end of the given array.
+     */
+<span class="fc" id="L267">    double valueToBeSet = (valueDateTupels[previousAvailable].getValue()</span>
+<span class="fc" id="L268">        + valueDateTupels[nextAvailable].getValue()) / 2;</span>
+
+<span class="fc" id="L270">    int localIndex = previousAvailable + 1;</span>
+    /* Fill all values up to the next NaN with the calculated value. */
+<span class="fc bfc" id="L272" title="All 2 branches covered.">    while (localIndex &lt; nextAvailable) {</span>
+<span class="fc" id="L273">      valueDateTupels[localIndex].setValue(valueToBeSet);</span>
+<span class="fc" id="L274">      localIndex++;</span>
+    }
+<span class="fc" id="L276">    return valueDateTupels;</span>
+  }
+
+  /**
+   * Fills the values at the beginning of the array. If the first
+   * valueDateTupel contains Double.NaN, its value will be set to match the
+   * next non-NaN-value. If the following values are also Double.NaN,
+   * iterate through the array until a value != Double.NaN is found.
+   *
+   * @param valueDateTupels {@code ValueDateTupel[]} An array of
+   *                        {@link ValueDateTupel} to be filled.
+   * @return {@code ValueDateTupel[]} The same array of
+   *         {@link ValueDateTupel} but with starting values filled.
+   * @throws IllegalArgumentException if the row only contains Double.NaN.
+   */
+  private static ValueDateTupel[] fillStartingValues(
+      ValueDateTupel[] valueDateTupels) {
+<span class="fc" id="L293">    int localFieldIndex = 1;</span>
+    /* Iterate through the array until a value != Double.NaN is found */
+<span class="fc bfc" id="L295" title="All 2 branches covered.">    while (Double.isNaN(valueDateTupels[localFieldIndex].getValue())) {</span>
+<span class="fc" id="L296">      localFieldIndex++;</span>
+    }
+
+    /*
+     * If only one value has to be set execution can continue with the next
+     * loop iteration
+     */
+<span class="fc bfc" id="L303" title="All 2 branches covered.">    if (localFieldIndex == 1) {</span>
+<span class="fc" id="L304">      valueDateTupels[localFieldIndex - 1]</span>
+<span class="fc" id="L305">          .setValue(valueDateTupels[localFieldIndex].getValue());</span>
+    }
+
+    /*
+     * If multiple values have to be set iterate over them an fill them
+     * subsequently, starting from the last NaN before the first valid
+     * value.
+     */
+<span class="fc bfc" id="L313" title="All 2 branches covered.">    while (localFieldIndex &gt;= 1) {</span>
+<span class="fc" id="L314">      valueDateTupels[localFieldIndex - 1]</span>
+<span class="fc" id="L315">          .setValue(valueDateTupels[localFieldIndex].getValue());</span>
+<span class="fc" id="L316">      localFieldIndex--;</span>
+    }
+
+<span class="fc" id="L319">    return valueDateTupels;</span>
+  }
+
+  /**
+   * Get unique dates from an array of arrays of {@link ValueDateTupel}.
+   * 
+   * @param valueDateTupels {@code ValueDateTupel[][]} The array of arrays
+   *                        of {@link ValueDateTupel} the get all unique
+   *                        dates from.
+   * @return {@code TreeSet&lt;LocalDateTime&gt;} A TreeSet of all unique dates.
+   */
+  private static TreeSet&lt;LocalDateTime&gt; getUniqueDates(
+      ValueDateTupel[][] valueDateTupels) {
+<span class="fc" id="L332">    TreeSet&lt;LocalDateTime&gt; uniqueSortedDates = new TreeSet&lt;&gt;();</span>
+
+    /* For each array in ValueDateTupels ... */
+<span class="fc bfc" id="L335" title="All 2 branches covered.">    for (int rowIndex = 0; rowIndex &lt; valueDateTupels.length; rowIndex++) {</span>
+
+      try {
+<span class="fc" id="L338">        Validator.validateValues(valueDateTupels[rowIndex]);</span>
+<span class="fc" id="L339">        Validator.validateDates(valueDateTupels[rowIndex]);</span>
+<span class="fc" id="L340">      } catch (IllegalArgumentException e) {</span>
+<span class="fc" id="L341">        throw new IllegalArgumentException(&quot;The array at position &quot;</span>
+            + rowIndex + &quot; does not meet specifications.&quot;, e);
+<span class="fc" id="L343">      }</span>
+
+      /* ... add all values into uniqueSortedDates */
+<span class="fc" id="L346">      uniqueSortedDates.addAll(Arrays</span>
+<span class="fc" id="L347">          .asList(ValueDateTupel.getDates(valueDateTupels[rowIndex])));</span>
+    }
+<span class="fc" id="L349">    return uniqueSortedDates;</span>
+  }
+
+  /**
+   * Check if the given {@link ValueDateTupel} can be found in the given
+   * array of {@link ValueDateTupel}. Will only find exact matches.
+   * 
+   * @param valueDateTupels {@code ValueDateTupel[]} Array to be searched
+   *                        in.
+   * @param vdtToBeFound    {@link ValueDateTupel} Value to be searched
+   *                        for.
+   * @return {@code boolean} True, if the given value can be found in the
+   *         given array, false otherwise.
+   */
+  public static boolean contains(ValueDateTupel[] valueDateTupels,
+      ValueDateTupel vdtToBeFound) {
+<span class="fc bfc" id="L365" title="All 2 branches covered.">    if (valueDateTupels == null)</span>
+<span class="fc" id="L366">      throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);</span>
+<span class="fc" id="L367">    List&lt;ValueDateTupel&gt; list = new ArrayList&lt;&gt;(</span>
+<span class="fc" id="L368">        Arrays.asList(valueDateTupels));</span>
+<span class="fc" id="L369">    return list.contains(vdtToBeFound);</span>
+  }
+
+  /**
+   * Check if the given array of {@link ValueDateTupel} contains the given
+   * {@link LocalDateTime}.
+   * 
+   * @param valueDateTupels {@code ValueDateTupel[]} Array to be searched
+   *                        in.
+   * @param dtToBeFound     {@link LocalDateTime} Value to be searched for.
+   * @return {@code boolean} True, if the given value can be found inside
+   *         the given array, false otherwise.
+   * @throws IllegalArgumentException If the given array of
+   *                                  {@link ValueDateTupel} is null.
+   * @throws IllegalArgumentException If the given {@link LocalDateTime} is
+   *                                  null.
+   * 
+   */
+  public static boolean containsDate(ValueDateTupel[] valueDateTupels,
+      LocalDateTime dtToBeFound) {
+<span class="fc bfc" id="L389" title="All 2 branches covered.">    if (valueDateTupels == null)</span>
+<span class="fc" id="L390">      throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);</span>
+<span class="fc bfc" id="L391" title="All 2 branches covered.">    if (dtToBeFound == null)</span>
+<span class="fc" id="L392">      throw new IllegalArgumentException(MESSAGE_VALUE_MUST_NOT_BE_NULL);</span>
+    /* Load all values from the given array into an ArrayList. */
+<span class="fc" id="L394">    List&lt;LocalDateTime&gt; list = new ArrayList&lt;&gt;(</span>
+<span class="fc" id="L395">        Arrays.asList(ValueDateTupel.getDates(valueDateTupels)));</span>
+    /* Utilize the generic contains method on ArrayList. */
+<span class="fc" id="L397">    return list.contains(dtToBeFound);</span>
+  }
+
+  /**
+   * Creates an empty array of {@link ValueDateTupel}.
+   * 
+   * @return {@code ValueDateTupel[]} An Empty array of
+   *         {@link ValueDateTupel}.
+   */
+  public static ValueDateTupel[] createEmptyArray() {
+<span class="fc" id="L407">    return ValueDateTupel.createEmptyArray(0);</span>
+  }
+
+  /**
+   * Creates an empty array of {@link ValueDateTupel} with the given
+   * length.
+   * 
+   * @param length {@code int} Length the new array should have.
+   * @return {@code ValueDateTupel[]} An Empty array of
+   *         {@link ValueDateTupel}.
+   */
+  public static ValueDateTupel[] createEmptyArray(int length) {
+<span class="fc" id="L419">    return new ValueDateTupel[length];</span>
+  }
+
+  /**
+   * Check if the {@link BaseValue} instance contains the given
+   * {@link LocalDateTime} in its values. Returns the containing
+   * {@link ValueDateTupel} if so, returns {@code null} otherwise.
+   * 
+   * @param valueDateTupels {@code ValueDateTupel[]} The array of
+   *                        {@link ValueDateTupel} to be searched through.
+   * @param dtToBeFound     {@link LocalDateTime} Value to be found inside
+   *                        the {@link BaseValue} values.
+   * @return {@link ValueDateTupel} containing the given
+   *         {@link LocalDateTime}. {@code null} if the given
+   *         {@link LocalDateTime} cannot be found.
+   */
+  public static ValueDateTupel getElement(ValueDateTupel[] valueDateTupels,
+      LocalDateTime dtToBeFound) {
+    /* Check if given array is null */
+<span class="fc bfc" id="L438" title="All 2 branches covered.">    if (valueDateTupels == null)</span>
+<span class="fc" id="L439">      throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);</span>
+
+<span class="fc bfc" id="L441" title="All 2 branches covered.">    if (dtToBeFound == null)</span>
+<span class="fc" id="L442">      throw new IllegalArgumentException(MESSAGE_VALUE_MUST_NOT_BE_NULL);</span>
+
+<span class="fc bfc" id="L444" title="All 2 branches covered.">    for (ValueDateTupel value : valueDateTupels) {</span>
+<span class="fc bfc" id="L445" title="All 2 branches covered.">      if (value.getDate().equals(dtToBeFound))</span>
+<span class="fc" id="L446">        return value;</span>
+    }
+<span class="fc" id="L448">    return null;</span>
+  }
+
+  /**
+   * Get all elements between two given DateTimes (inclusive) from the
+   * given array. If null is passed for either LocalDateTime, the
+   * representing border will be set to the boundaries of the given array.
+   * 
+   * @param valueDateTupels {@code ValueDateTupel[]} The base array.
+   * @param dtFrom          {@link LocalDateTime} The first DateTime to be
+   *                        included. If null, all values up until dtTo
+   *                        will be given.
+   * @param dtTo            {@link LocalDateTime} The last DateTime to be
+   *                        included. If null, all values starting from
+   *                        dtFrom will be given.
+   * @return {@code ValueDateTupel[]} The found elements. null, if dtFrom
+   *         or dtTo cannot be found in the given array.
+   */
+  public static ValueDateTupel[] getElements(
+      ValueDateTupel[] valueDateTupels, LocalDateTime dtFrom,
+      LocalDateTime dtTo) {
+    int positionFrom;
+    int positionTo;
+    /*
+     * Get the position indices of the given LocalDateTime values. If null
+     * is passed, set the positions to be the respective boundaries of the
+     * given array.
+     */
+<span class="fc bfc" id="L476" title="All 2 branches covered.">    if (dtFrom == null) {</span>
+<span class="fc" id="L477">      positionFrom = 0;</span>
+    } else {
+<span class="fc" id="L479">      positionFrom = ValueDateTupel.getPosition(valueDateTupels, dtFrom);</span>
+    }
+<span class="fc bfc" id="L481" title="All 2 branches covered.">    if (dtTo == null) {</span>
+<span class="fc" id="L482">      positionTo = valueDateTupels.length - 1;</span>
+    } else {
+<span class="fc" id="L484">      positionTo = ValueDateTupel.getPosition(valueDateTupels, dtTo);</span>
+    }
+
+    /*
+     * If the given LocalDateTime values cannot be found in the given array
+     * return null.
+     */
+<span class="fc bfc" id="L491" title="All 4 branches covered.">    if (positionFrom == Integer.MIN_VALUE</span>
+        || positionTo == Integer.MIN_VALUE)
+<span class="fc" id="L493">      return null;</span>
+
+<span class="fc" id="L495">    ValueDateTupel[] elements = {};</span>
+    /* Add all elements between the two found positions ... */
+<span class="fc bfc" id="L497" title="All 2 branches covered.">    for (int i = positionFrom; i &lt;= positionTo; i++) {</span>
+<span class="fc" id="L498">      elements = ArrayUtils.add(elements, valueDateTupels[i]);</span>
+    }
+    /* ... and return them. */
+<span class="fc" id="L501">    return elements;</span>
+  }
+
+  /**
+   * Get all {@link LocalDateTime} from an array of {@link ValueDateTupel}.
+   * 
+   * @param valueDateTupels {@code ValueDateTupel[]} An array of
+   *                        {@link ValueDateTupel}}.
+   * @return {@code LocalDateTime[]} An array of {@link LocalDateTime} of
+   *         the given {@code ValueDateTupel[]}. Returns an empty array if
+   *         the given array is empty.
+   * @throws IllegalArgumentException if the given array is null.
+   */
+  public static LocalDateTime[] getDates(
+      ValueDateTupel[] valueDateTupels) {
+<span class="fc bfc" id="L516" title="All 2 branches covered.">    if (valueDateTupels == null)</span>
+<span class="fc" id="L517">      throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);</span>
+
+<span class="fc" id="L519">    LocalDateTime[] values = {};</span>
+<span class="fc bfc" id="L520" title="All 2 branches covered.">    for (ValueDateTupel tupel : valueDateTupels) {</span>
+<span class="fc" id="L521">      values = ArrayUtils.add(values, tupel.getDate());</span>
+    }
+<span class="fc" id="L523">    return values;</span>
+  }
+
+  /**
+   * Finds the position of a given {@link LocalDateTime} in a given array
+   * of {@link ValueDateTupel}.
+   * 
+   * @param valueDateTupels {@code ValueDateTupel[]} The array to be
+   *                        searched.
+   * @param dtToBeFound     {@link LocalDateTime} The value to be found.
+   * @return {@code int} The position the given LocalDateTime was found. If
+   *         the given LocalDateTime cannot be found, Integer.MIN_VALUE is
+   *         returned. If the given array's length is 0 Integer.MIN_VALUE
+   *         is returned.
+   */
+  public static int getPosition(ValueDateTupel[] valueDateTupels,
+      LocalDateTime dtToBeFound) {
+<span class="fc" id="L540">    final int defaultReturnValue = Integer.MIN_VALUE;</span>
+
+    /* Check if given array is null */
+<span class="fc bfc" id="L543" title="All 2 branches covered.">    if (valueDateTupels == null)</span>
+<span class="fc" id="L544">      throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);</span>
+
+    /*
+     * If there are no values in the given array return the default return
+     * value.
+     */
+<span class="fc bfc" id="L550" title="All 2 branches covered.">    if (valueDateTupels.length == 0)</span>
+<span class="fc" id="L551">      return defaultReturnValue;</span>
+
+    /* Check if given LocalDateTime is null */
+<span class="fc bfc" id="L554" title="All 2 branches covered.">    if (dtToBeFound == null)</span>
+<span class="fc" id="L555">      throw new IllegalArgumentException(MESSAGE_VALUE_MUST_NOT_BE_NULL);</span>
+
+    /*
+     * if the given LocalDateTime is in the given array, return its
+     * position.
+     */
+<span class="fc bfc" id="L561" title="All 2 branches covered.">    for (int i = 0; i &lt; valueDateTupels.length; i++) {</span>
+<span class="fc bfc" id="L562" title="All 2 branches covered.">      if (valueDateTupels[i].getDate().equals(dtToBeFound))</span>
+<span class="fc" id="L563">        return i;</span>
+    }
+
+    /* Otherwise, return Integer.MIN_VALUE */
+<span class="fc" id="L567">    return defaultReturnValue;</span>
+  }
+
+  /**
+   * Get all values from an array of {@link ValueDateTupel}.
+   * 
+   * @param valueDateTupels {@code ValueDateTupel[]} An array of
+   *                        {@link ValueDateTupel}}.
+   * @return {@code double[]} An array of values of the given
+   *         {@code ValueDateTupel[]}. Returns an empty array if the given
+   *         array is empty.
+   * @throws IllegalArgumentException if the given array is null.
+   */
+  public static double[] getValues(ValueDateTupel[] valueDateTupels) {
+<span class="fc bfc" id="L581" title="All 2 branches covered.">    if (valueDateTupels == null)</span>
+<span class="fc" id="L582">      throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);</span>
+
+<span class="fc" id="L584">    double[] values = {};</span>
+<span class="fc bfc" id="L585" title="All 2 branches covered.">    for (ValueDateTupel tupel : valueDateTupels)</span>
+<span class="fc" id="L586">      values = ArrayUtils.add(values, tupel.getValue());</span>
+<span class="fc" id="L587">    return values;</span>
+  }
+
+  /**
+   * Evaluate if the given array of {@link ValueDateTupel} is sorted in
+   * ascending order, i.e., if the value at position 0 has the lowest
+   * {@link LocalDateTime} value (implicit check) and all subsequent
+   * {@link ValueDateTupel} each have a {@link LocalDateTime} after
+   * ({@link LocalDateTime#isAfter(ChronoLocalDateTime)}) the previous one.
+   * &lt;p&gt;
+   * If two values have the same {@link LocalDateTime} false will be
+   * returned.
+   * 
+   * @param valueDateTupels {@code ValueDateTupel[]} array of
+   *                        {@link ValueDateTupel} to be checked for
+   *                        ascending order.
+   * @return {@code boolean} False, if any date is not chronologically
+   *         after its predecessor, true if otherwise.
+   * @throws IllegalArgumentException If the given array is null.
+   * @throws IllegalArgumentException If the given array contains null
+   *                                  values.
+   */
+  public static boolean isSortedAscending(
+      ValueDateTupel[] valueDateTupels) {
+<span class="fc bfc" id="L611" title="All 2 branches covered.">    if (valueDateTupels == null)</span>
+<span class="fc" id="L612">      throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);</span>
+<span class="fc bfc" id="L613" title="All 2 branches covered.">    if (ValueDateTupel.contains(valueDateTupels, null))</span>
+<span class="fc" id="L614">      throw new IllegalArgumentException(</span>
+          &quot;The given array must not contain any nulls&quot;);
+
+<span class="fc bfc" id="L617" title="All 2 branches covered.">    for (int i = 1; i &lt; valueDateTupels.length; i++) {</span>
+<span class="fc" id="L618">      if (!valueDateTupels[i].getDate()</span>
+<span class="fc bfc" id="L619" title="All 2 branches covered.">          .isAfter(valueDateTupels[i - 1].getDate())) {</span>
+<span class="fc" id="L620">        return false;</span>
+      }
+    }
+<span class="fc" id="L623">    return true;</span>
+  }
+
+  /**
+   * Evaluate if the given array of {@link ValueDateTupel} is sorted in
+   * descending order, i.e., if the value at position 0 has the highest
+   * {@link LocalDateTime} value (implicit check) and all subsequent
+   * {@link ValueDateTupel} each have a {@link LocalDateTime} before
+   * ({@link LocalDateTime#isBefore(ChronoLocalDateTime)}) the previous
+   * one.
+   * &lt;p&gt;
+   * If two values have the same {@link LocalDateTime} false will be
+   * returned.
+   * 
+   * @param valueDateTupels {@code ValueDateTupel[]} array of
+   *                        {@link ValueDateTupel} to be checked for
+   *                        descending order.
+   * @return {@code boolean} False, if any date is not chronologically
+   *         before its predecessor, true if otherwise.
+   * @throws IllegalArgumentException If the given array is null.
+   * @throws IllegalArgumentException If the given array contains null
+   *                                  values.
+   */
+  public static boolean isSortedDescending(
+      ValueDateTupel[] valueDateTupels) {
+<span class="fc bfc" id="L648" title="All 2 branches covered.">    if (valueDateTupels == null)</span>
+<span class="fc" id="L649">      throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);</span>
+<span class="fc bfc" id="L650" title="All 2 branches covered.">    if (ValueDateTupel.contains(valueDateTupels, null))</span>
+<span class="fc" id="L651">      throw new IllegalArgumentException(</span>
+          &quot;The given array must not contain any null LocalDateTime&quot;);
+
+<span class="fc bfc" id="L654" title="All 2 branches covered.">    for (int i = 1; i &lt; valueDateTupels.length; i++) {</span>
+<span class="fc" id="L655">      if (!valueDateTupels[i].getDate()</span>
+<span class="fc bfc" id="L656" title="All 2 branches covered.">          .isBefore(valueDateTupels[i - 1].getDate())) {</span>
+<span class="fc" id="L657">        return false;</span>
+      }
+    }
+<span class="fc" id="L660">    return true;</span>
+  }
+
+  /**
+   * Replace Double.NaN in a given row by real values values.
+   * 
+   * @param valueDateTupels {@code ValueDateTupel[]} An array of
+   *                        {@link ValueDateTupel} to be enhanced.
+   * @return {@code ValueDateTupel[]} The same array of
+   *         {@link ValueDateTupel} but with real values instead of
+   *         Double.NaN.
+   */
+  private static ValueDateTupel[] replaceNansByValues(
+      ValueDateTupel[] valueDateTupels) {
+    /*
+     * Loop over all dateTimes for each row to assess if they are
+     * Double.NaN.
+     */
+<span class="fc bfc" id="L678" title="All 2 branches covered.">    for (int fieldIndex = 0; fieldIndex &lt; valueDateTupels.length; fieldIndex++) {</span>
+      /*
+       * If the ValueDateTupel contains a value other than Double.NaN
+       * continue with the next iteration.
+       */
+<span class="fc bfc" id="L683" title="All 2 branches covered.">      if (!Double.isNaN(valueDateTupels[fieldIndex].getValue()))</span>
+<span class="fc" id="L684">        continue;</span>
+
+      /*
+       * If the first valueDateTupel contains Double.NaN, its value will be
+       * set to match the next non-NaN-value. If the following values are
+       * also Double.NaN, iterate through the array until a value !=
+       * Double.NaN is found.
+       */
+<span class="fc bfc" id="L692" title="All 2 branches covered.">      if (fieldIndex == 0) {</span>
+<span class="fc" id="L693">        valueDateTupels = fillStartingValues(valueDateTupels);</span>
+<span class="fc" id="L694">        continue;</span>
+      }
+
+      /*
+       * The missing value will be set to average the values of its direct
+       * predecessor and successor.
+       * 
+       * If there are multiple values missing in a row, all of those will
+       * get the average value of the last position before and the first
+       * position after all missing values.
+       * 
+       * If all values until the last one are missing, all consecutive NaN
+       * values will be set to the last position before all NaNs.
+       */
+<span class="fc" id="L708">      int limitIndex = fieldIndex;</span>
+
+<span class="fc" id="L710">      double valueToBeSet = Double.NaN;</span>
+
+<span class="fc bfc" id="L712" title="All 2 branches covered.">      while (Double.isNaN(valueDateTupels[limitIndex].getValue())) {</span>
+<span class="fc" id="L713">        limitIndex++;</span>
+        /*
+         * If there are no values in the remaining array set all values to
+         * be the last non-NaN, which is at fieldIndex-1.
+         */
+<span class="fc bfc" id="L718" title="All 2 branches covered.">        if (limitIndex == valueDateTupels.length) {</span>
+<span class="fc" id="L719">          limitIndex--;</span>
+<span class="fc" id="L720">          valueToBeSet = valueDateTupels[fieldIndex - 1].getValue();</span>
+<span class="fc" id="L721">          break;</span>
+        }
+
+      }
+
+      /*
+       * If the value to be set has already been calculated then there is
+       * NaNs left in the array, no more real values, until the very last
+       * position. All remaining values can be set to this value then.
+       * After that the loop can be left.
+       */
+<span class="fc bfc" id="L732" title="All 2 branches covered.">      if (!Double.isNaN(valueToBeSet)) {</span>
+<span class="fc" id="L733">        int localIndex = fieldIndex;</span>
+<span class="fc bfc" id="L734" title="All 2 branches covered.">        while (localIndex &lt; valueDateTupels.length) {</span>
+<span class="fc" id="L735">          valueDateTupels[localIndex].setValue(valueToBeSet);</span>
+<span class="fc" id="L736">          localIndex++;</span>
+        }
+        break;
+      }
+
+      /* Fill in a &quot;gap&quot; of Double.NaN-values */
+<span class="fc" id="L742">      valueDateTupels = fillCenterValues(valueDateTupels, fieldIndex - 1,</span>
+          limitIndex);
+
+    }
+<span class="fc" id="L746">    return valueDateTupels;</span>
+  }
+
+  /**
+   * ======================================================================
+   * OVERRIDES
+   * ======================================================================
+   */
+
+  /**
+   * A hash code for this ValueDateTupel.
+   */
+  @GeneratedCode
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((date == null) ? 0 : date.hashCode());
+    long temp;
+    temp = Double.doubleToLongBits(value);
+    result = prime * result + (int) (temp ^ (temp &gt;&gt;&gt; 32));
+    return result;
+  }
+
+  /**
+   * Checks if this ValueDateTupel is equal to another ValueDateTupel.
+   */
+  @GeneratedCode
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    ValueDateTupel other = (ValueDateTupel) obj;
+    if (date == null) {
+      if (other.date != null)
+        return false;
+    } else if (!date.equals(other.date))
+      return false;
+    if (Double.doubleToLongBits(value) != Double
+        .doubleToLongBits(other.value))
+      return false;
+    return true;
+  }
+
+  /**
+   * Outputs the fields of this ValueDateTupel as a {@code String}.
+   */
+  @GeneratedCode
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append(&quot;ValueDateTupel [value=&quot;);
+    builder.append(value);
+    builder.append(&quot;, date=&quot;);
+    builder.append(date);
+    builder.append(&quot;]&quot;);
+    return builder.toString();
+  }
+
+  /**
+   * ======================================================================
+   * GETTERS AND SETTERS
+   * ======================================================================
+   */
+
+  /**
+   * Get the value of a {@link ValueDateTupel}
+   * 
+   * @return {@code double} value of the {@link ValueDateTupel}
+   */
+  public double getValue() {
+<span class="fc" id="L821">    return value;</span>
+  }
+
+  /**
+   * Set the value of a {@link ValueDateTupel}
+   * 
+   * @param value {@code double} value to be set
+   */
+  public void setValue(double value) {
+<span class="fc" id="L830">    this.value = value;</span>
+<span class="fc" id="L831">  }</span>
+
+  /**
+   * Get the date of a {@link ValueDateTupel}
+   * 
+   * @return {@link LocalDateTime} date for the {@link ValueDateTupel}
+   */
+  public LocalDateTime getDate() {
+<span class="fc" id="L839">    return date;</span>
+  }
+
+  /**
+   * Set the date for a {@link ValueDateTupel}
+   * 
+   * @param date {@link LocalDateTime} date to be set for the
+   *             {@link ValueDateTupel}
+   */
+  public void setDate(LocalDateTime date) {
+<span class="fc" id="L849">    this.date = date;</span>
+<span class="fc" id="L850">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

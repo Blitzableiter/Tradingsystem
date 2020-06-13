@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EWMAC.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tradingsystem</a> &gt; <a href="index.source.html" class="el_package">de.rumford.tradingsystem</a> &gt; <span class="el_source">EWMAC.java</span></div><h1>EWMAC.java</h1><pre class="source lang-java linenums">package de.rumford.tradingsystem;
+
+import java.time.LocalDateTime;
+
+import de.rumford.tradingsystem.helper.GeneratedCode;
+import de.rumford.tradingsystem.helper.ValueDateTupel;
+
+/**
+ * The EWMAC is a non-binary {@link Rule} utilizing the different horizons
+ * of its 2 underlying {@link EWMA}. When the shorter horizon EWMA raises
+ * above the longer horizon EWMA in value the underlying asset has been
+ * rising in the not-so-distant past and is thus expected to rise further,
+ * and vice-versa.
+ * 
+ * @author Max Rumford
+ *
+ */
+public class EWMAC extends Rule {
+
+  /* The longer horizon EWMA. */
+  private EWMA longHorizonEwma;
+  /* The shorter horizon EWMA. */
+  private EWMA shortHorizonEwma;
+
+  /**
+   * A rule based on the relation between two exponentially weighted moving
+   * averages - EWMAs. The EWMAC assumes that an asset is rising in value,
+   * if its short term values are greater than its long term values. If the
+   * short horizon EWMA is greater than the long horizon one, a positive
+   * forecast is given. Else, a negative forecast is produced.
+   * &lt;p&gt;
+   * This non-binary rule allows for a base value scale independent
+   * detailed forecast calculation. The greater the difference between the
+   * two EWMAs the greater in extent the forecast will be.
+   * 
+   * @param baseValue              Same as in
+   *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+   * @param variations             {@code EWMAC[]} An array of three or
+   *                               less rules. Represents the variations of
+   *                               this rule. Same limitations as in
+   *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+   * @param startOfReferenceWindow Same as in
+   *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+   * @param endOfReferenceWindow   Same as in
+   *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+   * @param longHorizon            {@code int} The horizon of the long
+   *                               horizon EWMA. Should be 4* shortHorizon,
+   *                               but can be anything greater than
+   *                               shortHorizon.
+   * @param shortHorizon           {@code int} The horizon of the short
+   *                               horizon EWMA. Must be greater or equal
+   *                               to 2;
+   * @param baseScale              Same as in
+   *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+   */
+  public EWMAC(BaseValue baseValue, EWMAC[] variations,
+      LocalDateTime startOfReferenceWindow,
+      LocalDateTime endOfReferenceWindow, int longHorizon,
+      int shortHorizon, double baseScale) {
+<span class="fc" id="L60">    super(baseValue, variations, startOfReferenceWindow,</span>
+        endOfReferenceWindow, baseScale);
+
+<span class="fc" id="L63">    this.validateHorizonValues(longHorizon, shortHorizon);</span>
+
+<span class="fc bfc" id="L65" title="All 2 branches covered.">    if (variations == null) {</span>
+<span class="fc" id="L66">      EWMA localLongHorizonEwma = new EWMA(this.getBaseValue().getValues(),</span>
+          longHorizon);
+<span class="fc" id="L68">      EWMA localShortHorizonEwma = new EWMA(</span>
+<span class="fc" id="L69">          this.getBaseValue().getValues(), shortHorizon);</span>
+<span class="fc" id="L70">      this.setLongHorizonEwma(localLongHorizonEwma);</span>
+<span class="fc" id="L71">      this.setShortHorizonEwma(localShortHorizonEwma);</span>
+    }
+<span class="fc" id="L73">  }</span>
+
+  /**
+   * Calculates the raw forecast for a given LocalDateTime by subtracting
+   * the long horizon EWMA value from the short horizon EWMA value for this
+   * LocalDateTime.
+   */
+  @Override
+  double calculateRawForecast(LocalDateTime forecastDateTime) {
+<span class="fc" id="L82">    double longHorizonEwmaValue = ValueDateTupel</span>
+<span class="fc" id="L83">        .getElement(this.getLongHorizonEwma().getEwmaValues(),</span>
+            forecastDateTime)
+<span class="fc" id="L85">        .getValue();</span>
+<span class="fc" id="L86">    double shortHorizonEwmaValue = ValueDateTupel</span>
+<span class="fc" id="L87">        .getElement(this.getShortHorizonEwma().getEwmaValues(),</span>
+            forecastDateTime)
+<span class="fc" id="L89">        .getValue();</span>
+
+<span class="fc" id="L91">    return shortHorizonEwmaValue - longHorizonEwmaValue;</span>
+  }
+
+  /**
+   * Validate the given longHorizon and shortHorizon values.
+   * 
+   * @param longHorizon  {@code int} The given long horizon. Must be &gt;
+   *                     shortHorizon.
+   * @param shortHorizon {@code int} The given short horizon. Must be &gt;= 2.
+   * @throws IllegalArgumentException if the above specifications are not
+   *                                  met.
+   */
+  private void validateHorizonValues(int longHorizon, int shortHorizon) {
+
+    /* The horizons are not used when this rule has variations. */
+<span class="fc bfc" id="L106" title="All 2 branches covered.">    if (this.getVariations() == null) {</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">      if (longHorizon &lt;= shortHorizon)</span>
+<span class="fc" id="L108">        throw new IllegalArgumentException(</span>
+            &quot;The long horizon must be greater than the short horizon&quot;);
+
+<span class="fc bfc" id="L111" title="All 2 branches covered.">      if (shortHorizon &lt; 2)</span>
+<span class="fc" id="L112">        throw new IllegalArgumentException(</span>
+            &quot;The short horizon must not be &lt; 2&quot;);
+    }
+<span class="fc" id="L115">  }</span>
+
+  /**
+   * ======================================================================
+   * OVERRIDES
+   * ======================================================================
+   */
+  /**
+   * A hash code for this EWMAC.
+   */
+  @GeneratedCode
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result
+        + ((longHorizonEwma == null) ? 0 : longHorizonEwma.hashCode());
+    result = prime * result
+        + ((shortHorizonEwma == null) ? 0 : shortHorizonEwma.hashCode());
+    return result;
+  }
+
+  /**
+   * Checks if this EWMAC is equal to another EWMAC.
+   */
+  @GeneratedCode
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (!super.equals(obj))
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    EWMAC other = (EWMAC) obj;
+    if (longHorizonEwma == null) {
+      if (other.longHorizonEwma != null)
+        return false;
+    } else if (!longHorizonEwma.equals(other.longHorizonEwma))
+      return false;
+    if (shortHorizonEwma == null) {
+      if (other.shortHorizonEwma != null)
+        return false;
+    } else if (!shortHorizonEwma.equals(other.shortHorizonEwma))
+      return false;
+    return true;
+  }
+
+  /**
+   * Outputs the fields of this EWMAC as a {@code String}.
+   */
+  @GeneratedCode
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append(&quot;EWMAC [longHorizonEwma=&quot;);
+    builder.append(longHorizonEwma);
+    builder.append(&quot;, shortHorizonEwma=&quot;);
+    builder.append(shortHorizonEwma);
+    builder.append(&quot;]&quot;);
+    return builder.toString();
+  }
+
+  /**
+   * ======================================================================
+   * GETTERS AND SETTERS
+   * ======================================================================
+   */
+
+  /**
+   * Get the long horizon {@link EWMA} for an {@link EWMAC}
+   * 
+   * @return long horizon {@link EWMA} for this {@link EWMAC}
+   */
+  public EWMA getLongHorizonEwma() {
+<span class="fc" id="L190">    return longHorizonEwma;</span>
+  }
+
+  /**
+   * Set the long horizon {@link EWMA} for an {@link EWMAC}
+   * 
+   * @param longHorizonEwma {@link EWMA} long horizon the be set for this
+   *                        {@link EWMAC}
+   */
+  private void setLongHorizonEwma(EWMA longHorizonEwma) {
+<span class="fc" id="L200">    this.longHorizonEwma = longHorizonEwma;</span>
+<span class="fc" id="L201">  }</span>
+
+  /**
+   * Get the short horizon {@link EWMA} for an {@link EWMAC}
+   * 
+   * @return short horizon {@link EWMA} for this {@link EWMAC}
+   */
+  public EWMA getShortHorizonEwma() {
+<span class="fc" id="L209">    return shortHorizonEwma;</span>
+  }
+
+  /**
+   * Set the short horizon {@link EWMA} for an {@link EWMAC}
+   * 
+   * @param shortHorizonEwma short horizon {@link EWMA} to be set for this
+   *                         {@link EWMAC}
+   */
+  private void setShortHorizonEwma(EWMA shortHorizonEwma) {
+<span class="fc" id="L219">    this.shortHorizonEwma = shortHorizonEwma;</span>
+<span class="fc" id="L220">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
