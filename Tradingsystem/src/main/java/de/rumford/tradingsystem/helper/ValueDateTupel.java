@@ -188,168 +188,6 @@ public class ValueDateTupel {
   }
 
   /**
-   * Finds all {@link LocalDateTime} present in uniqueSortedDates but not
-   * in valueDateTupels and add them to the latter with a value of
-   * Double.NaN.
-   * 
-   * @param valueDateTupels   {@code ValueDateTupel[]} The array of
-   *                          {@link ValueDateTupel} to be enhanced.
-   * @param uniqueSortedDates {@code TreeSet<LocalDateTime>} A
-   *                          {@link TreeSet} of {@link LocalDateTime}
-   *                          containing all unique LocalDateTimes.
-   * @return {@code ValueDateTupel[]} valueDateTupels + all LocalDateTime
-   *         additionally given by uniqueSortedDates. Array is sorted as by
-   *         {@link #isSortedAscending(ValueDateTupel[])}.
-   */
-  private static ValueDateTupel[] enhanceRowByNaNs(
-      ValueDateTupel[] valueDateTupels,
-      TreeSet<LocalDateTime> uniqueSortedDates) {
-
-    /*
-     * Load unique sorted dates into an ArrayList to have access to an
-     * index.
-     */
-    List<LocalDateTime> uniqueSortedDatesList = new ArrayList<>(
-        uniqueSortedDates);
-
-    /*
-     * Loop over all unique dateTimes to assess if they are in the current
-     * row. If not, missing dateTimes are added into the original arrays.
-     * Their value is set to Double.NaN
-     */
-    for (int fieldIndex = 0; fieldIndex < uniqueSortedDates
-        .size(); fieldIndex++) {
-      ValueDateTupel valueDateTupelToBeAdded = new ValueDateTupel(
-          uniqueSortedDatesList.get(fieldIndex), Double.NaN);
-
-      if (fieldIndex < valueDateTupels.length
-          && uniqueSortedDatesList.get(fieldIndex)
-              .isEqual(valueDateTupels[fieldIndex].getDate())) {
-
-        /*
-         * Nothing has to be done, as we're not at the end of the list and
-         * the current LocalDateTime out of the list of unique values is
-         * already in the given row.
-         */
-        continue;
-      }
-
-      valueDateTupels = ValueDateTupel.addOneAt(valueDateTupels,
-          valueDateTupelToBeAdded, fieldIndex);
-    }
-
-    return valueDateTupels;
-  }
-
-  /**
-   * Fills up a gap of NaN-values in a given array of
-   * {@link ValueDateTupel} with the average of the previously last and
-   * first next available non-NaN-value.
-   * 
-   * @param valueDateTupels   {@code ValueDateTupel} Array of
-   *                          {@link ValueDateTupel} holding the values.
-   * @param previousAvailable {@code int} Index of the last available
-   *                          non-NaN-value before the gap to be filled.
-   * @param nextAvailable     {@code int} Index of the first available
-   *                          non-NaN-value after the gap to be filled.
-   * @return {@code ValueDateTupel} Array of {@link ValueDateTupel} with
-   *         the gap filled.
-   */
-  private static ValueDateTupel[] fillCenterValues(
-      ValueDateTupel[] valueDateTupels, int previousAvailable,
-      int nextAvailable) {
-    /*
-     * The value to be set to all missing values is the average of the last
-     * non-NaN before the NaNs and the first non-NaN after the NaNs. This
-     * is the case when the missing NaNs are not at the beginning or the
-     * end of the given array.
-     */
-    double valueToBeSet = (valueDateTupels[previousAvailable].getValue()
-        + valueDateTupels[nextAvailable].getValue()) / 2;
-
-    int localIndex = previousAvailable + 1;
-    /* Fill all values up to the next NaN with the calculated value. */
-    while (localIndex < nextAvailable) {
-      valueDateTupels[localIndex].setValue(valueToBeSet);
-      localIndex++;
-    }
-    return valueDateTupels;
-  }
-
-  /**
-   * Fills the values at the beginning of the array. If the first
-   * valueDateTupel contains Double.NaN, its value will be set to match the
-   * next non-NaN-value. If the following values are also Double.NaN,
-   * iterate through the array until a value != Double.NaN is found.
-   *
-   * @param valueDateTupels {@code ValueDateTupel[]} An array of
-   *                        {@link ValueDateTupel} to be filled.
-   * @return {@code ValueDateTupel[]} The same array of
-   *         {@link ValueDateTupel} but with starting values filled.
-   * @throws IllegalArgumentException if the row only contains Double.NaN.
-   */
-  private static ValueDateTupel[] fillStartingValues(
-      ValueDateTupel[] valueDateTupels) {
-    int localFieldIndex = 1;
-    /* Iterate through the array until a value != Double.NaN is found */
-    while (Double.isNaN(valueDateTupels[localFieldIndex].getValue())) {
-      localFieldIndex++;
-    }
-
-    /*
-     * If only one value has to be set execution can continue with the next
-     * loop iteration
-     */
-    if (localFieldIndex == 1) {
-      valueDateTupels[localFieldIndex - 1]
-          .setValue(valueDateTupels[localFieldIndex].getValue());
-    }
-
-    /*
-     * If multiple values have to be set iterate over them an fill them
-     * subsequently, starting from the last NaN before the first valid
-     * value.
-     */
-    while (localFieldIndex >= 1) {
-      valueDateTupels[localFieldIndex - 1]
-          .setValue(valueDateTupels[localFieldIndex].getValue());
-      localFieldIndex--;
-    }
-
-    return valueDateTupels;
-  }
-
-  /**
-   * Get unique dates from an array of arrays of {@link ValueDateTupel}.
-   * 
-   * @param valueDateTupels {@code ValueDateTupel[][]} The array of arrays
-   *                        of {@link ValueDateTupel} the get all unique
-   *                        dates from.
-   * @return {@code TreeSet<LocalDateTime>} A TreeSet of all unique dates.
-   */
-  private static TreeSet<LocalDateTime> getUniqueDates(
-      ValueDateTupel[][] valueDateTupels) {
-    TreeSet<LocalDateTime> uniqueSortedDates = new TreeSet<>();
-
-    /* For each array in ValueDateTupels ... */
-    for (int rowIndex = 0; rowIndex < valueDateTupels.length; rowIndex++) {
-
-      try {
-        Validator.validateValues(valueDateTupels[rowIndex]);
-        Validator.validateDates(valueDateTupels[rowIndex]);
-      } catch (IllegalArgumentException e) {
-        throw new IllegalArgumentException("The array at position "
-            + rowIndex + " does not meet specifications.", e);
-      }
-
-      /* ... add all values into uniqueSortedDates */
-      uniqueSortedDates.addAll(Arrays
-          .asList(ValueDateTupel.getDates(valueDateTupels[rowIndex])));
-    }
-    return uniqueSortedDates;
-  }
-
-  /**
    * Check if the given {@link ValueDateTupel} can be found in the given
    * array of {@link ValueDateTupel}. Will only find exact matches.
    * 
@@ -658,6 +496,168 @@ public class ValueDateTupel {
       }
     }
     return true;
+  }
+
+  /**
+   * Finds all {@link LocalDateTime} present in uniqueSortedDates but not
+   * in valueDateTupels and add them to the latter with a value of
+   * Double.NaN.
+   * 
+   * @param valueDateTupels   {@code ValueDateTupel[]} The array of
+   *                          {@link ValueDateTupel} to be enhanced.
+   * @param uniqueSortedDates {@code TreeSet<LocalDateTime>} A
+   *                          {@link TreeSet} of {@link LocalDateTime}
+   *                          containing all unique LocalDateTimes.
+   * @return {@code ValueDateTupel[]} valueDateTupels + all LocalDateTime
+   *         additionally given by uniqueSortedDates. Array is sorted as by
+   *         {@link #isSortedAscending(ValueDateTupel[])}.
+   */
+  private static ValueDateTupel[] enhanceRowByNaNs(
+      ValueDateTupel[] valueDateTupels,
+      TreeSet<LocalDateTime> uniqueSortedDates) {
+
+    /*
+     * Load unique sorted dates into an ArrayList to have access to an
+     * index.
+     */
+    List<LocalDateTime> uniqueSortedDatesList = new ArrayList<>(
+        uniqueSortedDates);
+
+    /*
+     * Loop over all unique dateTimes to assess if they are in the current
+     * row. If not, missing dateTimes are added into the original arrays.
+     * Their value is set to Double.NaN
+     */
+    for (int fieldIndex = 0; fieldIndex < uniqueSortedDates
+        .size(); fieldIndex++) {
+      ValueDateTupel valueDateTupelToBeAdded = new ValueDateTupel(
+          uniqueSortedDatesList.get(fieldIndex), Double.NaN);
+
+      if (fieldIndex < valueDateTupels.length
+          && uniqueSortedDatesList.get(fieldIndex)
+              .isEqual(valueDateTupels[fieldIndex].getDate())) {
+
+        /*
+         * Nothing has to be done, as we're not at the end of the list and
+         * the current LocalDateTime out of the list of unique values is
+         * already in the given row.
+         */
+        continue;
+      }
+
+      valueDateTupels = ValueDateTupel.addOneAt(valueDateTupels,
+          valueDateTupelToBeAdded, fieldIndex);
+    }
+
+    return valueDateTupels;
+  }
+
+  /**
+   * Fills up a gap of NaN-values in a given array of
+   * {@link ValueDateTupel} with the average of the previously last and
+   * first next available non-NaN-value.
+   * 
+   * @param valueDateTupels   {@code ValueDateTupel} Array of
+   *                          {@link ValueDateTupel} holding the values.
+   * @param previousAvailable {@code int} Index of the last available
+   *                          non-NaN-value before the gap to be filled.
+   * @param nextAvailable     {@code int} Index of the first available
+   *                          non-NaN-value after the gap to be filled.
+   * @return {@code ValueDateTupel} Array of {@link ValueDateTupel} with
+   *         the gap filled.
+   */
+  private static ValueDateTupel[] fillCenterValues(
+      ValueDateTupel[] valueDateTupels, int previousAvailable,
+      int nextAvailable) {
+    /*
+     * The value to be set to all missing values is the average of the last
+     * non-NaN before the NaNs and the first non-NaN after the NaNs. This
+     * is the case when the missing NaNs are not at the beginning or the
+     * end of the given array.
+     */
+    double valueToBeSet = (valueDateTupels[previousAvailable].getValue()
+        + valueDateTupels[nextAvailable].getValue()) / 2;
+
+    int localIndex = previousAvailable + 1;
+    /* Fill all values up to the next NaN with the calculated value. */
+    while (localIndex < nextAvailable) {
+      valueDateTupels[localIndex].setValue(valueToBeSet);
+      localIndex++;
+    }
+    return valueDateTupels;
+  }
+
+  /**
+   * Fills the values at the beginning of the array. If the first
+   * valueDateTupel contains Double.NaN, its value will be set to match the
+   * next non-NaN-value. If the following values are also Double.NaN,
+   * iterate through the array until a value != Double.NaN is found.
+   *
+   * @param valueDateTupels {@code ValueDateTupel[]} An array of
+   *                        {@link ValueDateTupel} to be filled.
+   * @return {@code ValueDateTupel[]} The same array of
+   *         {@link ValueDateTupel} but with starting values filled.
+   * @throws IllegalArgumentException if the row only contains Double.NaN.
+   */
+  private static ValueDateTupel[] fillStartingValues(
+      ValueDateTupel[] valueDateTupels) {
+    int localFieldIndex = 1;
+    /* Iterate through the array until a value != Double.NaN is found */
+    while (Double.isNaN(valueDateTupels[localFieldIndex].getValue())) {
+      localFieldIndex++;
+    }
+
+    /*
+     * If only one value has to be set execution can continue with the next
+     * loop iteration
+     */
+    if (localFieldIndex == 1) {
+      valueDateTupels[localFieldIndex - 1]
+          .setValue(valueDateTupels[localFieldIndex].getValue());
+    }
+
+    /*
+     * If multiple values have to be set iterate over them an fill them
+     * subsequently, starting from the last NaN before the first valid
+     * value.
+     */
+    while (localFieldIndex >= 1) {
+      valueDateTupels[localFieldIndex - 1]
+          .setValue(valueDateTupels[localFieldIndex].getValue());
+      localFieldIndex--;
+    }
+
+    return valueDateTupels;
+  }
+
+  /**
+   * Get unique dates from an array of arrays of {@link ValueDateTupel}.
+   * 
+   * @param valueDateTupels {@code ValueDateTupel[][]} The array of arrays
+   *                        of {@link ValueDateTupel} the get all unique
+   *                        dates from.
+   * @return {@code TreeSet<LocalDateTime>} A TreeSet of all unique dates.
+   */
+  private static TreeSet<LocalDateTime> getUniqueDates(
+      ValueDateTupel[][] valueDateTupels) {
+    TreeSet<LocalDateTime> uniqueSortedDates = new TreeSet<>();
+
+    /* For each array in ValueDateTupels ... */
+    for (int rowIndex = 0; rowIndex < valueDateTupels.length; rowIndex++) {
+
+      try {
+        Validator.validateValues(valueDateTupels[rowIndex]);
+        Validator.validateDates(valueDateTupels[rowIndex]);
+      } catch (IllegalArgumentException e) {
+        throw new IllegalArgumentException("The array at position "
+            + rowIndex + " does not meet specifications.", e);
+      }
+
+      /* ... add all values into uniqueSortedDates */
+      uniqueSortedDates.addAll(Arrays
+          .asList(ValueDateTupel.getDates(valueDateTupels[rowIndex])));
+    }
+    return uniqueSortedDates;
   }
 
   /**

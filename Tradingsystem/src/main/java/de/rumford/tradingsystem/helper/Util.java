@@ -28,6 +28,22 @@ public final class Util {
   }
 
   /**
+   * Adjusts a given value for the given standard deviation
+   * 
+   * @param value             {@code double} value to be adjusted
+   * @param standardDeviation {@code double} standard deviation to be
+   *                          adjusted for
+   * @return {@code double} standard deviation adjusted value. Double.NaN,
+   *         if the given standard deviation is zero.
+   */
+  public static double adjustForStandardDeviation(double value,
+      double standardDeviation) {
+    if (standardDeviation == 0)
+      return Double.NaN;
+    return value / standardDeviation;
+  }
+
+  /**
    * Check if the given rules are unique by utilizing
    * {@link Rule#equals(Object)}
    * 
@@ -53,22 +69,6 @@ public final class Util {
       }
     }
     return true;
-  }
-
-  /**
-   * Adjusts a given value for the given standard deviation
-   * 
-   * @param value             {@code double} value to be adjusted
-   * @param standardDeviation {@code double} standard deviation to be
-   *                          adjusted for
-   * @return {@code double} standard deviation adjusted value. Double.NaN,
-   *         if the given standard deviation is zero.
-   */
-  public static double adjustForStandardDeviation(double value,
-      double standardDeviation) {
-    if (standardDeviation == 0)
-      return Double.NaN;
-    return value / standardDeviation;
   }
 
   /**

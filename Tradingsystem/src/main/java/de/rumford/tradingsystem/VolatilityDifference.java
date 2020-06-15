@@ -347,9 +347,9 @@ public class VolatilityDifference extends Rule {
     for (int i = startOfReferencePosition; i <= endOfReferencePosition; i++) {
       if (Double.isNaN(volatilityIndices[i].getValue())) {
         throw new IllegalArgumentException(
-            "There must not be NaN-Values in the given volatility indices"
-                + " values in the area delimited by startOfReferenceWindow and"
-                + " endOfReferenceWindow");
+            "There must not be NaN-Values in the given volatility indices "
+                + "values in the area delimited by startOfReferenceWindow"
+                + " and endOfReferenceWindow");
       }
     }
 

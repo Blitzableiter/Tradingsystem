@@ -86,7 +86,6 @@ public class DiversificationMultiplier {
       this.weights = weights;
       this.forecasts = relevantForecasts;
     }
-
   }
 
   /**

@@ -129,6 +129,35 @@ public class Validator {
   }
 
   /**
+   * Validates the given row of values. The row has to have at least 1
+   * value not Double.NaN.
+   * 
+   * @param valueDateTupels {@code ValueDateTupel[]} The array of
+   *                        {@link ValueDateTupel} to be validated.
+   * @throws IllegalArgumentException if the given row contains only
+   *                                  Double.NaN.
+   */
+  public static void validateRow(ValueDateTupel[] valueDateTupels) {
+    double[] values = ValueDateTupel.getValues(valueDateTupels);
+    /* If the first value is NaN, check if the array only contains NaN. */
+    if (Double.isNaN(values[0])) {
+      Set<Double> uniqueValues = new HashSet<>();
+      for (double value : values)
+        uniqueValues.add(value);
+
+      /*
+       * If the size of a set of all values is 1 then it contains only this
+       * one value in all elements. If this value is Double.NaN, no values
+       * were set but Double.NaN.
+       */
+      if (uniqueValues.size() == 1)
+        throw new IllegalArgumentException(
+            "Row contains only Double.NaN. Rows must contain at least one"
+                + " value != Double.NaN");
+    }
+  }
+
+  /**
    * Validates the given Array of {@link Rule}. Must meet the following
    * specifications:
    * <ul>
@@ -147,6 +176,26 @@ public class Validator {
     if (rules.length == 0)
       throw new IllegalArgumentException(
           "Rules must not be an empty array");
+  }
+
+  /**
+   * Validates if the rules in the given array of {@link Rule} all share
+   * the given base scale.
+   * 
+   * @param rules     The array of {@link Rule} to be examined.
+   * @param baseScale The comparing base scale.
+   * @throws IllegalArgumentException if the given rules do not share the
+   *                                  given base scale.
+   */
+  public static void validateRulesVsBaseScale(Rule[] rules,
+      double baseScale) {
+    if (rules != null) {
+      for (int i = 0; i < rules.length; i++)
+        if (rules[i] != null && rules[i].getBaseScale() != baseScale)
+          throw new IllegalArgumentException("The rule at index " + i
+              + " does not share the given base scale of " + baseScale
+              + ".");
+    }
   }
 
   /**
@@ -332,55 +381,6 @@ public class Validator {
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException(
           "The given variations do not meet specifications.", e);
-    }
-  }
-
-  /**
-   * Validates the given row of values. The row has to have at least 1
-   * value not Double.NaN.
-   * 
-   * @param valueDateTupels {@code ValueDateTupel[]} The array of
-   *                        {@link ValueDateTupel} to be validated.
-   * @throws IllegalArgumentException if the given row contains only
-   *                                  Double.NaN.
-   */
-  public static void validateRow(ValueDateTupel[] valueDateTupels) {
-    double[] values = ValueDateTupel.getValues(valueDateTupels);
-    /* If the first value is NaN, check if the array only contains NaN. */
-    if (Double.isNaN(values[0])) {
-      Set<Double> uniqueValues = new HashSet<>();
-      for (double value : values)
-        uniqueValues.add(value);
-
-      /*
-       * If the size of a set of all values is 1 then it contains only this
-       * one value in all elements. If this value is Double.NaN, no values
-       * were set but Double.NaN.
-       */
-      if (uniqueValues.size() == 1)
-        throw new IllegalArgumentException(
-            "Row contains only Double.NaN. Rows must contain at least one"
-                + " value != Double.NaN");
-    }
-  }
-
-  /**
-   * Validates if the rules in the given array of {@link Rule} all share
-   * the given base scale.
-   * 
-   * @param rules     The array of {@link Rule} to be examined.
-   * @param baseScale The comparing base scale.
-   * @throws IllegalArgumentException if the given rules do not share the
-   *                                  given base scale.
-   */
-  public static void validateRulesVsBaseScale(Rule[] rules,
-      double baseScale) {
-    if (rules != null) {
-      for (int i = 0; i < rules.length; i++)
-        if (rules[i] != null && rules[i].getBaseScale() != baseScale)
-          throw new IllegalArgumentException("The rule at index " + i
-              + " does not share the given base scale of " + baseScale
-              + ".");
     }
   }
 }
