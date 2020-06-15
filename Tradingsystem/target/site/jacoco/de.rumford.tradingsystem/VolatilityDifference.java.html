@@ -15,469 +15,390 @@ import de.rumford.tradingsystem.helper.Validator;
 import de.rumford.tradingsystem.helper.ValueDateTupel;
 
 /**
- * The VolatilityDifference is a {@link Rule} providing forecasts based on
- * historic and recent volatility of the base value.
+ * The VolatilityDifference is a {@link Rule} providing forecasts based on historic and recent volatility of the base
+ * value.
  * &lt;p&gt;
- * Historically, times of higher volatility in a asset tended to be
- * accompanied by falls in course value. This rule exploits this behavior
- * by comparing the current volatility of an asset with its historic
- * counterpart.
+ * Historically, times of higher volatility in a asset tended to be accompanied by falls in course value. This rule
+ * exploits this behavior by comparing the current volatility of an asset with its historic counterpart.
  * 
  * @author Max Rumford
- *
  */
 public class VolatilityDifference extends Rule {
 
-  /*
-   * An array of values representing volatility values for a given base
-   * value.
-   */
-  private ValueDateTupel[] volatilityIndices;
-  /* The lookback window used for volatility calculation. */
-  private int lookbackWindow;
+	/*
+	 * An array of values representing volatility values for a given base value.
+	 */
+	private ValueDateTupel[] volatilityIndices;
+	/* The lookback window used for volatility calculation. */
+	private int lookbackWindow;
 
-  /**
-   * Creates a new VolatilityDifference instance using the passed
-   * {@link BaseValue} to calculate the volatility indices and the average
-   * volatility.
-   * 
-   * @param baseValue              Same as in
-   *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
-   * @param variations             {@code VolatilityDifference[]} An array
-   *                               of three or less rules. Represents the
-   *                               variations of this rule. Same
-   *                               limitations as in
-   *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
-   * @param startOfReferenceWindow Same as in
-   *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
-   * @param endOfReferenceWindow   Same as in
-   *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
-   * @param lookbackWindow         {@code int} The lookback window to be
-   *                               used for this VolatilityDifference. See
-   *                               {@link #validateLookbackWindow(int)} for
-   *                               limitations.
-   * @param baseScale              Same as in
-   *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
-   */
-  public VolatilityDifference(BaseValue baseValue,
-      VolatilityDifference[] variations,
-      LocalDateTime startOfReferenceWindow,
-      LocalDateTime endOfReferenceWindow, int lookbackWindow,
-      double baseScale) {
-<span class="fc" id="L67">    super(baseValue, variations, startOfReferenceWindow,</span>
-        endOfReferenceWindow, baseScale);
+	/**
+	 * Creates a new VolatilityDifference instance using the passed {@link BaseValue} to calculate the volatility
+	 * indices and the average volatility.
+	 * 
+	 * @param baseValue              Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 * @param variations             {@code VolatilityDifference[]} An array of three or less rules. Represents the
+	 *                               variations of this rule. Same limitations as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 * @param startOfReferenceWindow Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 * @param endOfReferenceWindow   Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 * @param lookbackWindow         {@code int} The lookback window to be used for this VolatilityDifference. See
+	 *                               {@link #validateLookbackWindow(int)} for limitations.
+	 * @param baseScale              Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 */
+	public VolatilityDifference(BaseValue baseValue, VolatilityDifference[] variations,
+	        LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow, int lookbackWindow,
+	        double baseScale) {
+<span class="fc" id="L56">		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);</span>
 
-<span class="pc bpc" id="L70" title="1 of 2 branches missed.">    if (variations == null) {</span>
-      /*
-       * Lookback window and volatility indices are only needed when a rule
-       * has no variations.
-       */
-      /* Check if lookback window fulfills requirements. */
-<span class="fc" id="L76">      validateLookbackWindow(lookbackWindow);</span>
-<span class="fc" id="L77">      this.setLookbackWindow(lookbackWindow);</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">		if (variations == null) {</span>
+			/*
+			 * Lookback window and volatility indices are only needed when a rule has no variations.
+			 */
+			/* Check if lookback window fulfills requirements. */
+<span class="fc" id="L63">			validateLookbackWindow(lookbackWindow);</span>
+<span class="fc" id="L64">			this.setLookbackWindow(lookbackWindow);</span>
 
-      /*
-       * Calculate volatility index values based on the base value and set
-       * it
-       */
-<span class="fc" id="L83">      ValueDateTupel[] calculatedVolatilityIndices = calculateVolatilityIndices(</span>
-          baseValue, lookbackWindow);
-<span class="fc" id="L85">      this.validateVolatilityIndices(calculatedVolatilityIndices);</span>
-<span class="fc" id="L86">      this.setVolatilityIndices(calculatedVolatilityIndices);</span>
-    }
-<span class="fc" id="L88">  }</span>
+			/*
+			 * Calculate volatility index values based on the base value and set it
+			 */
+<span class="fc" id="L69">			ValueDateTupel[] calculatedVolatilityIndices = calculateVolatilityIndices(baseValue, lookbackWindow);</span>
+<span class="fc" id="L70">			this.validateVolatilityIndices(calculatedVolatilityIndices);</span>
+<span class="fc" id="L71">			this.setVolatilityIndices(calculatedVolatilityIndices);</span>
+		}
+<span class="fc" id="L73">	}</span>
 
-  /**
-   * Creates a new VolatilityDifference instance using the passed
-   * {@link BaseValue} to calculate the volatility indices and the average
-   * volatility.
-   * 
-   * @param baseValue              Same as in
-   *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
-   * @param variations             {@code VolatilityDifference[]} An array
-   *                               of three or less rules. Represents the
-   *                               variations of this rule. Same
-   *                               limitations as in
-   *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
-   * @param startOfReferenceWindow Same as in
-   *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
-   * @param endOfReferenceWindow   Same as in
-   *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
-   * @param lookbackWindow         {@code int} The lookback window to be
-   *                               used for this VolatilityDifference. See
-   *                               {@link #validateLookbackWindow(int)} for
-   *                               limitations.
-   * @param baseScale              Same as in
-   *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
-   * @param volatilityIndices      {@code ValueDateTupel[]} The volatility
-   *                               indices used for forecast calculations.
-   *                               See
-   *                               {@link #validateVolatilityIndices( ValueDateTupel[])}
-   *                               for limitations.
-   */
-  public VolatilityDifference(BaseValue baseValue,
-      VolatilityDifference[] variations,
-      LocalDateTime startOfReferenceWindow,
-      LocalDateTime endOfReferenceWindow, int lookbackWindow,
-      double baseScale, ValueDateTupel[] volatilityIndices) {
-<span class="fc" id="L123">    super(baseValue, variations, startOfReferenceWindow,</span>
-        endOfReferenceWindow, baseScale);
+	/**
+	 * Creates a new VolatilityDifference instance using the passed {@link BaseValue} to calculate the volatility
+	 * indices and the average volatility.
+	 * 
+	 * @param baseValue              Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 * @param variations             {@code VolatilityDifference[]} An array of three or less rules. Represents the
+	 *                               variations of this rule. Same limitations as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 * @param startOfReferenceWindow Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 * @param endOfReferenceWindow   Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 * @param lookbackWindow         {@code int} The lookback window to be used for this VolatilityDifference. See
+	 *                               {@link #validateLookbackWindow(int)} for limitations.
+	 * @param baseScale              Same as in
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 * @param volatilityIndices      {@code ValueDateTupel[]} The volatility indices used for forecast calculations. See
+	 *                               {@link #validateVolatilityIndices( ValueDateTupel[])} for limitations.
+	 */
+	public VolatilityDifference(BaseValue baseValue, VolatilityDifference[] variations,
+	        LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow, int lookbackWindow,
+	        double baseScale, ValueDateTupel[] volatilityIndices) {
+<span class="fc" id="L98">		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);</span>
 
-<span class="pc bpc" id="L126" title="1 of 2 branches missed.">    if (variations == null) {</span>
-      /*
-       * Lookback window and volatility indices are only needed when a rule
-       * has no variations.
-       */
-      /* Check if lookback window fulfills requirements. */
-<span class="fc" id="L132">      validateLookbackWindow(lookbackWindow);</span>
-<span class="fc" id="L133">      this.setLookbackWindow(lookbackWindow);</span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">		if (variations == null) {</span>
+			/*
+			 * Lookback window and volatility indices are only needed when a rule has no variations.
+			 */
+			/* Check if lookback window fulfills requirements. */
+<span class="fc" id="L105">			validateLookbackWindow(lookbackWindow);</span>
+<span class="fc" id="L106">			this.setLookbackWindow(lookbackWindow);</span>
 
-      /*
-       * Calculate volatility index values based on the base value and set
-       * it
-       */
-<span class="fc" id="L139">      this.validateVolatilityIndices(volatilityIndices);</span>
-<span class="fc" id="L140">      this.setVolatilityIndices(volatilityIndices);</span>
-    }
-<span class="fc" id="L142">  }</span>
+			/*
+			 * Calculate volatility index values based on the base value and set it
+			 */
+<span class="fc" id="L111">			this.validateVolatilityIndices(volatilityIndices);</span>
+<span class="fc" id="L112">			this.setVolatilityIndices(volatilityIndices);</span>
+		}
+<span class="fc" id="L114">	}</span>
 
-  /**
-   * Calculates the raw forecast by subtracting the forecast for the given
-   * LocalDateTIme from the average volatility at that same given point in
-   * time. Positive results result in a positive forecast.
-   */
-  @Override
-  double calculateRawForecast(LocalDateTime forecastDateTime) {
-<span class="fc" id="L151">    double currentVolatilty = ValueDateTupel</span>
-<span class="fc" id="L152">        .getElement(this.getVolatilityIndices(), forecastDateTime)</span>
-<span class="fc" id="L153">        .getValue();</span>
-<span class="fc" id="L154">    return calculateAverageVolatility(forecastDateTime) - currentVolatilty;</span>
-  }
+	/**
+	 * Calculates the raw forecast by subtracting the forecast for the given LocalDateTIme from the average volatility
+	 * at that same given point in time. Positive results result in a positive forecast.
+	 */
+	@Override
+	double calculateRawForecast(LocalDateTime forecastDateTime) {
+<span class="fc" id="L122">		double currentVolatilty = ValueDateTupel.getElement(this.getVolatilityIndices(), forecastDateTime).getValue();</span>
+<span class="fc" id="L123">		return calculateAverageVolatility(forecastDateTime) - currentVolatilty;</span>
+	}
 
-  /**
-   * Calculate the volatility index values for this VolatilityDifference.
-   * If the lookback window is longer than there are base values, an empty
-   * {@code ValueDateTupel[]} is returned.
-   * 
-   * @return {@code ValueDateTupel[]} calculated volatility indices. If the
-   *         number of values in the instance base value is smaller than
-   *         the lookback window the returned array only contains
-   *         {@code Double.NaN}. Else, all values until the lookback window
-   *         is reached contain {@code Double.NaN}, the rest contains real
-   *         volatility index values.
-   * @throws IllegalArgumentException if the number of base values is
-   *                                  smaller than the given lookback
-   *                                  window.
-   */
-  private static ValueDateTupel[] calculateVolatilityIndices(
-      BaseValue baseValue, int lookbackWindow) {
-<span class="fc" id="L174">    ValueDateTupel[] baseValues = baseValue.getValues();</span>
+	/**
+	 * Calculate the volatility index values for this VolatilityDifference. If the lookback window is longer than there
+	 * are base values, an empty {@code ValueDateTupel[]} is returned.
+	 * 
+	 * @return                          {@code ValueDateTupel[]} calculated volatility indices. If the number of values
+	 *                                  in the instance base value is smaller than the lookback window the returned
+	 *                                  array only contains {@code Double.NaN}. Else, all values until the lookback
+	 *                                  window is reached contain {@code Double.NaN}, the rest contains real volatility
+	 *                                  index values.
+	 * @throws IllegalArgumentException if the number of base values is smaller than the given lookback window.
+	 */
+	private static ValueDateTupel[] calculateVolatilityIndices(BaseValue baseValue, int lookbackWindow) {
+<span class="fc" id="L138">		ValueDateTupel[] baseValues = baseValue.getValues();</span>
 
-<span class="fc" id="L176">    ValueDateTupel[] volatilityIndices = null;</span>
+<span class="fc" id="L140">		ValueDateTupel[] volatilityIndices = null;</span>
 
-    /**
-     * If there are less base values than the lookback window is long no
-     * volatility values can be calculated. The volatility values only have
-     * any true meaning, when the lookback window is used in its entirety.
-     */
-<span class="fc bfc" id="L183" title="All 2 branches covered.">    if (baseValues.length &lt; lookbackWindow)</span>
-<span class="fc" id="L184">      throw new IllegalArgumentException(</span>
-          &quot;The amount of base values must not be smaller than the lookback&quot;
-              + &quot; window. Number of base values: &quot; + baseValues.length
-              + &quot;, lookback window: &quot; + lookbackWindow + &quot;.&quot;);
+		/**
+		 * If there are less base values than the lookback window is long no volatility values can be calculated. The
+		 * volatility values only have any true meaning, when the lookback window is used in its entirety.
+		 */
+<span class="fc bfc" id="L146" title="All 2 branches covered.">		if (baseValues.length &lt; lookbackWindow)</span>
+<span class="fc" id="L147">			throw new IllegalArgumentException(&quot;The amount of base values must not be smaller than the lookback&quot;</span>
+			        + &quot; window. Number of base values: &quot; + baseValues.length + &quot;, lookback window: &quot; + lookbackWindow
+			        + &quot;.&quot;);
 
-    /**
-     * Fill the spaces before reaching lookbackWindow with NaN
-     */
-<span class="fc bfc" id="L192" title="All 2 branches covered.">    for (int i = 0; i &lt; lookbackWindow; i++) {</span>
-<span class="fc" id="L193">      ValueDateTupel volatilityIndexNaN = new ValueDateTupel(</span>
-<span class="fc" id="L194">          baseValues[i].getDate(), Double.NaN);</span>
-<span class="fc" id="L195">      volatilityIndices = ArrayUtils.add(volatilityIndices,</span>
-          volatilityIndexNaN);
-    }
+		/**
+		 * Fill the spaces before reaching lookbackWindow with NaN
+		 */
+<span class="fc bfc" id="L154" title="All 2 branches covered.">		for (int i = 0; i &lt; lookbackWindow; i++) {</span>
+<span class="fc" id="L155">			ValueDateTupel volatilityIndexNaN = new ValueDateTupel(baseValues[i].getDate(), Double.NaN);</span>
+<span class="fc" id="L156">			volatilityIndices = ArrayUtils.add(volatilityIndices, volatilityIndexNaN);</span>
+		}
 
-    /**
-     * Start calculation with first adequate time value (after lookback
-     * window is reached), e.g. lookbackWindow = 4, start with index 2 (4th
-     * element), as the returns of each day will be needed.
-     */
-<span class="fc bfc" id="L204" title="All 2 branches covered.">    for (int i = lookbackWindow; i &lt; baseValues.length; i++) {</span>
-      /* Copy the relevant values into a temporary array */
-<span class="fc" id="L206">      ValueDateTupel[] tempBaseValues = ValueDateTupel</span>
-<span class="fc" id="L207">          .createEmptyArray(lookbackWindow + 1);</span>
-<span class="fc" id="L208">      System.arraycopy(baseValues, /* source array */</span>
-          i - (lookbackWindow), /*
-                                 * source array position (starting position
-                                 * for copy)
-                                 */
-          tempBaseValues, /* destination array */
-          0, /* destination position (starting position for paste) */
-          lookbackWindow + 1/* length (number of values to copy */
-      );
+		/**
+		 * Start calculation with first adequate time value (after lookback window is reached), e.g. lookbackWindow = 4,
+		 * start with index 2 (4th element), as the returns of each day will be needed.
+		 */
+<span class="fc bfc" id="L163" title="All 2 branches covered.">		for (int i = lookbackWindow; i &lt; baseValues.length; i++) {</span>
+			/* Copy the relevant values into a temporary array */
+<span class="fc" id="L165">			ValueDateTupel[] tempBaseValues = ValueDateTupel.createEmptyArray(lookbackWindow + 1);</span>
+<span class="fc" id="L166">			System.arraycopy(baseValues, /* source array */</span>
+			        i - (lookbackWindow), /*
+			                               * source array position (starting position for copy)
+			                               */
+			        tempBaseValues, /* destination array */
+			        0, /* destination position (starting position for paste) */
+			        lookbackWindow + 1/* length (number of values to copy */
+			);
 
-      /* Calculate relevant returns and store them into an array. */
-<span class="fc" id="L219">      double[] tempDoubleValues = {};</span>
-<span class="fc bfc" id="L220" title="All 2 branches covered.">      for (int j = 1; j &lt; tempBaseValues.length; j++) {</span>
-<span class="fc" id="L221">        double returnForDayI = Util.calculateReturn(</span>
-<span class="fc" id="L222">            tempBaseValues[j - 1].getValue(),</span>
-<span class="fc" id="L223">            tempBaseValues[j].getValue());</span>
-<span class="fc" id="L224">        tempDoubleValues = ArrayUtils.add(tempDoubleValues, returnForDayI);</span>
-      }
+			/* Calculate relevant returns and store them into an array. */
+<span class="fc" id="L176">			double[] tempDoubleValues = {};</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">			for (int j = 1; j &lt; tempBaseValues.length; j++) {</span>
+<span class="fc" id="L178">				double returnForDayI = Util.calculateReturn(tempBaseValues[j - 1].getValue(),</span>
+<span class="fc" id="L179">				        tempBaseValues[j].getValue());</span>
+<span class="fc" id="L180">				tempDoubleValues = ArrayUtils.add(tempDoubleValues, returnForDayI);</span>
+			}
 
-      /* Calculate standard deviation and save into local variable */
-<span class="fc" id="L228">      StandardDeviation sd = new StandardDeviation();</span>
-<span class="fc" id="L229">      double volatilityIndexValue = sd.evaluate(tempDoubleValues);</span>
+			/* Calculate standard deviation and save into local variable */
+<span class="fc" id="L184">			StandardDeviation sd = new StandardDeviation();</span>
+<span class="fc" id="L185">			double volatilityIndexValue = sd.evaluate(tempDoubleValues);</span>
 
-<span class="fc" id="L231">      ValueDateTupel volatilityIndexValueDateTupel = new ValueDateTupel(</span>
-<span class="fc" id="L232">          baseValues[i].getDate(), volatilityIndexValue);</span>
+<span class="fc" id="L187">			ValueDateTupel volatilityIndexValueDateTupel = new ValueDateTupel(baseValues[i].getDate(),</span>
+			        volatilityIndexValue);
 
-      /* Add calculated standard deviation to volatility indices */
-<span class="fc" id="L235">      volatilityIndices = ArrayUtils.add(volatilityIndices,</span>
-          volatilityIndexValueDateTupel);
-    }
+			/* Add calculated standard deviation to volatility indices */
+<span class="fc" id="L191">			volatilityIndices = ArrayUtils.add(volatilityIndices, volatilityIndexValueDateTupel);</span>
+		}
 
-<span class="fc" id="L239">    return volatilityIndices;</span>
-  }
+<span class="fc" id="L194">		return volatilityIndices;</span>
+	}
 
-  /**
-   * Calculate the average volatility for a given {@link LocalDateTime}.
-   * 
-   * @param dateToBeCalculatedFor {@link LocalDateTime} The LocalDateTime
-   *                              the average volatility is to be
-   *                              calculated for.
-   * @return {@code double} The average volatility up until the given
-   *         LocalDateTime.
-   */
-  private double calculateAverageVolatility(
-      LocalDateTime dateToBeCalculatedFor) {
-    /*
-     * Starting point is the first DateTime that exceeds the lookback
-     * window.
-     */
-<span class="fc" id="L257">    LocalDateTime startingDateTime = this.getVolatilityIndices()[this</span>
-<span class="fc" id="L258">        .getLookbackWindow()].getDate();</span>
+	/**
+	 * Calculate the average volatility for a given {@link LocalDateTime}.
+	 * 
+	 * @param  dateToBeCalculatedFor {@link LocalDateTime} The LocalDateTime the average volatility is to be calculated
+	 *                               for.
+	 * @return                       {@code double} The average volatility up until the given LocalDateTime.
+	 */
+	private double calculateAverageVolatility(LocalDateTime dateToBeCalculatedFor) {
+		/*
+		 * Starting point is the first DateTime that exceeds the lookback window.
+		 */
+<span class="fc" id="L208">		LocalDateTime startingDateTime = this.getVolatilityIndices()[this.getLookbackWindow()].getDate();</span>
 
-    /* Get all relevant volatility index values */
-<span class="fc" id="L261">    ValueDateTupel[] relevantVolatilityIndices = ValueDateTupel</span>
-<span class="fc" id="L262">        .getElements(this.getVolatilityIndices(), startingDateTime,</span>
-            dateToBeCalculatedFor);
+		/* Get all relevant volatility index values */
+<span class="fc" id="L211">		ValueDateTupel[] relevantVolatilityIndices = ValueDateTupel.getElements(this.getVolatilityIndices(),</span>
+		        startingDateTime, dateToBeCalculatedFor);
 
-<span class="fc" id="L265">    DoubleSummaryStatistics stats = new DoubleSummaryStatistics();</span>
-    /* Extract all relevant values into statistics object */
-<span class="fc bfc" id="L267" title="All 2 branches covered.">    for (ValueDateTupel volatilityIndex : relevantVolatilityIndices)</span>
-<span class="fc" id="L268">      stats.accept(volatilityIndex.getValue());</span>
+<span class="fc" id="L214">		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();</span>
+		/* Extract all relevant values into statistics object */
+<span class="fc bfc" id="L216" title="All 2 branches covered.">		for (ValueDateTupel volatilityIndex : relevantVolatilityIndices)</span>
+<span class="fc" id="L217">			stats.accept(volatilityIndex.getValue());</span>
 
-    /* Put average value of relevant values into class variable */
-<span class="fc" id="L271">    return stats.getAverage();</span>
-  }
+		/* Put average value of relevant values into class variable */
+<span class="fc" id="L220">		return stats.getAverage();</span>
+	}
 
-  /**
-   * Validates the given lookback window. The lookback window must be
-   * greater than or equal to 1.
-   * 
-   * @param lookbackWindow {@code int} The lookback window to be validated.
-   * @throws IllegalArgumentException if the given lookbackWindow does not
-   *                                  meet specifications
-   */
-  public static void validateLookbackWindow(int lookbackWindow) {
-<span class="fc bfc" id="L283" title="All 2 branches covered.">    if (lookbackWindow &lt;= 1)</span>
-<span class="fc" id="L284">      throw new IllegalArgumentException(</span>
-          &quot;Lookback window must be at least 2&quot;);
-<span class="fc" id="L286">  }</span>
+	/**
+	 * Validates the given lookback window. The lookback window must be greater than or equal to 1.
+	 * 
+	 * @param  lookbackWindow           {@code int} The lookback window to be validated.
+	 * @throws IllegalArgumentException if the given lookbackWindow does not meet specifications
+	 */
+	public static void validateLookbackWindow(int lookbackWindow) {
+<span class="fc bfc" id="L230" title="All 2 branches covered.">		if (lookbackWindow &lt;= 1)</span>
+<span class="fc" id="L231">			throw new IllegalArgumentException(&quot;Lookback window must be at least 2&quot;);</span>
+<span class="fc" id="L232">	}</span>
 
-  /**
-   * Validates the given volatility indices.
-   * 
-   * @param volatilityIndices {@code ValueDateTupel[]} the array of
-   *                          volatility indices to be validated. Must
-   *                          comply as follows:
-   *                          &lt;ul&gt;
-   *                          &lt;li&gt;Must not be null.&lt;/li&gt;
-   *                          &lt;li&gt;Must not be an empty array.&lt;/li&gt;
-   *                          &lt;li&gt;Must be sorted in ascending order.&lt;/li&gt;
-   *                          &lt;li&gt;Must contain this instances
-   *                          startOfReferenceWindow and
-   *                          endOfReferenceWindow.&lt;/li&gt;
-   *                          &lt;li&gt;Must not contain Double.NaN values&lt;/li&gt;
-   *                          &lt;li&gt;Must be aligned with this instance's base
-   *                          value's values. See
-   *                          {@link ValueDateTupel# alignDates(ValueDateTupel[][])}.&lt;/li&gt;
-   *                          &lt;/ul&gt;
-   * @throws IllegalArgumentException if the given volatility indices do
-   *                                  not meet specifications.
-   */
-  private void validateVolatilityIndices(
-      ValueDateTupel[] volatilityIndices) {
-    /* Check if passed volatility indices are null */
-<span class="fc bfc" id="L312" title="All 2 branches covered.">    if (volatilityIndices == null)</span>
-<span class="fc" id="L313">      throw new IllegalArgumentException(</span>
-          &quot;Volatility indices must not be null.&quot;);
+	/**
+	 * Validates the given volatility indices.
+	 * 
+	 * @param  volatilityIndices        {@code ValueDateTupel[]} the array of volatility indices to be validated. Must
+	 *                                  comply as follows:
+	 *                                  &lt;ul&gt;
+	 *                                  &lt;li&gt;Must not be null.&lt;/li&gt;
+	 *                                  &lt;li&gt;Must not be an empty array.&lt;/li&gt;
+	 *                                  &lt;li&gt;Must be sorted in ascending order.&lt;/li&gt;
+	 *                                  &lt;li&gt;Must contain this instances startOfReferenceWindow and
+	 *                                  endOfReferenceWindow.&lt;/li&gt;
+	 *                                  &lt;li&gt;Must not contain Double.NaN values&lt;/li&gt;
+	 *                                  &lt;li&gt;Must be aligned with this instance's base value's values. See
+	 *                                  {@link ValueDateTupel# alignDates(ValueDateTupel[][])}.&lt;/li&gt;
+	 *                                  &lt;/ul&gt;
+	 * @throws IllegalArgumentException if the given volatility indices do not meet specifications.
+	 */
+	private void validateVolatilityIndices(ValueDateTupel[] volatilityIndices) {
+		/* Check if passed volatility indices are null */
+<span class="fc bfc" id="L253" title="All 2 branches covered.">		if (volatilityIndices == null)</span>
+<span class="fc" id="L254">			throw new IllegalArgumentException(&quot;Volatility indices must not be null.&quot;);</span>
 
-    /* Check if passed values array contains elements */
-<span class="fc bfc" id="L317" title="All 2 branches covered.">    if (volatilityIndices.length == 0)</span>
-<span class="fc" id="L318">      throw new IllegalArgumentException(</span>
-          &quot;Volatility indices must not be an empty array&quot;);
+		/* Check if passed values array contains elements */
+<span class="fc bfc" id="L257" title="All 2 branches covered.">		if (volatilityIndices.length == 0)</span>
+<span class="fc" id="L258">			throw new IllegalArgumentException(&quot;Volatility indices must not be an empty array&quot;);</span>
 
-    /*
-     * The values cannot be used if they are not in ascending order or if
-     * they contain duplicate LocalDateTimes.
-     */
-<span class="fc bfc" id="L325" title="All 2 branches covered.">    if (!ValueDateTupel.isSortedAscending(volatilityIndices))</span>
-<span class="fc" id="L326">      throw new IllegalArgumentException(</span>
-          &quot;Given volatility indices are not properly sorted or there are&quot;
-              + &quot; duplicate LocalDateTime values&quot;);
+		/*
+		 * The values cannot be used if they are not in ascending order or if they contain duplicate LocalDateTimes.
+		 */
+<span class="fc bfc" id="L263" title="All 2 branches covered.">		if (!ValueDateTupel.isSortedAscending(volatilityIndices))</span>
+<span class="fc" id="L264">			throw new IllegalArgumentException(&quot;Given volatility indices are not properly sorted or there are&quot;</span>
+			        + &quot; duplicate LocalDateTime values&quot;);
 
-    try {
-<span class="fc" id="L331">      Validator.validateTimeWindow(this.getStartOfReferenceWindow(),</span>
-<span class="fc" id="L332">          this.getEndOfReferenceWindow(), volatilityIndices);</span>
-<span class="fc" id="L333">    } catch (IllegalArgumentException e) {</span>
-<span class="fc" id="L334">      throw new IllegalArgumentException(</span>
-          &quot;Giving volatility indices do not meet specificiation.&quot;, e);
-<span class="fc" id="L336">    }</span>
+		try {
+<span class="fc" id="L268">			Validator.validateTimeWindow(this.getStartOfReferenceWindow(), this.getEndOfReferenceWindow(),</span>
+			        volatilityIndices);
+<span class="fc" id="L270">		} catch (IllegalArgumentException e) {</span>
+<span class="fc" id="L271">			throw new IllegalArgumentException(&quot;Giving volatility indices do not meet specificiation.&quot;, e);</span>
+<span class="fc" id="L272">		}</span>
 
-    /*
-     * The given volatility indices value must not contain NaNs in the area
-     * delimited by startOfReferenceWindow and endOfReferenceWindow.
-     */
-<span class="fc" id="L342">    int startOfReferencePosition = ValueDateTupel</span>
-<span class="fc" id="L343">        .getPosition(volatilityIndices, this.getStartOfReferenceWindow());</span>
-<span class="fc" id="L344">    int endOfReferencePosition = ValueDateTupel</span>
-<span class="fc" id="L345">        .getPosition(volatilityIndices, this.getEndOfReferenceWindow());</span>
+		/*
+		 * The given volatility indices value must not contain NaNs in the area delimited by startOfReferenceWindow and
+		 * endOfReferenceWindow.
+		 */
+<span class="fc" id="L278">		int startOfReferencePosition = ValueDateTupel.getPosition(volatilityIndices, this.getStartOfReferenceWindow());</span>
+<span class="fc" id="L279">		int endOfReferencePosition = ValueDateTupel.getPosition(volatilityIndices, this.getEndOfReferenceWindow());</span>
 
-<span class="fc bfc" id="L347" title="All 2 branches covered.">    for (int i = startOfReferencePosition; i &lt;= endOfReferencePosition; i++) {</span>
-<span class="fc bfc" id="L348" title="All 2 branches covered.">      if (Double.isNaN(volatilityIndices[i].getValue())) {</span>
-<span class="fc" id="L349">        throw new IllegalArgumentException(</span>
-            &quot;There must not be NaN-Values in the given volatility indices&quot;
-                + &quot; values in the area delimited by startOfReferenceWindow and&quot;
-                + &quot; endOfReferenceWindow&quot;);
-      }
-    }
+<span class="fc bfc" id="L281" title="All 2 branches covered.">		for (int i = startOfReferencePosition; i &lt;= endOfReferencePosition; i++) {</span>
+<span class="fc bfc" id="L282" title="All 2 branches covered.">			if (Double.isNaN(volatilityIndices[i].getValue())) {</span>
+<span class="fc" id="L283">				throw new IllegalArgumentException(&quot;There must not be NaN-Values in the given volatility indices &quot;</span>
+				        + &quot;values in the area delimited by startOfReferenceWindow&quot; + &quot; and endOfReferenceWindow&quot;);
+			}
+		}
 
-    /*
-     * Extract dates out of the base value's values array and add it to a
-     * HashSet
-     */
-<span class="fc" id="L360">    Set&lt;LocalDateTime&gt; baseValueSet = new HashSet&lt;&gt;();</span>
-<span class="fc bfc" id="L361" title="All 2 branches covered.">    for (ValueDateTupel value : this.getBaseValue().getValues())</span>
-<span class="fc" id="L362">      baseValueSet.add(value.getDate());</span>
-    /*
-     * Extract dates out of the volatility indices values array and add
-     * them to to a copy of the same HashSet
-     */
-<span class="fc" id="L367">    Set&lt;LocalDateTime&gt; volatilityIndicesSet = new HashSet&lt;&gt;(baseValueSet);</span>
-<span class="fc bfc" id="L368" title="All 2 branches covered.">    for (ValueDateTupel value : volatilityIndices)</span>
-<span class="fc" id="L369">      volatilityIndicesSet.add(value.getDate());</span>
-    /*
-     * If the Sets differ in length, the volatility indices added unique
-     * LocalDateTimes to the set. Therefore, the both are not properly
-     * aligned.
-     */
-<span class="fc bfc" id="L375" title="All 2 branches covered.">    if (baseValueSet.size() != volatilityIndicesSet.size())</span>
-<span class="fc" id="L376">      throw new IllegalArgumentException(</span>
-          &quot;Base value and volatility index values are not properly&quot;
-              + &quot; aligned. Utilize&quot;
-              + &quot; ValueDateTupel.alignDates(ValueDateTupel[][])&quot;
-              + &quot; before creating a new VolatilityDifference.&quot;);
-<span class="fc" id="L381">  }</span>
+		/*
+		 * Extract dates out of the base value's values array and add it to a HashSet
+		 */
+<span class="fc" id="L291">		Set&lt;LocalDateTime&gt; baseValueSet = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L292" title="All 2 branches covered.">		for (ValueDateTupel value : this.getBaseValue().getValues())</span>
+<span class="fc" id="L293">			baseValueSet.add(value.getDate());</span>
+		/*
+		 * Extract dates out of the volatility indices values array and add them to to a copy of the same HashSet
+		 */
+<span class="fc" id="L297">		Set&lt;LocalDateTime&gt; volatilityIndicesSet = new HashSet&lt;&gt;(baseValueSet);</span>
+<span class="fc bfc" id="L298" title="All 2 branches covered.">		for (ValueDateTupel value : volatilityIndices)</span>
+<span class="fc" id="L299">			volatilityIndicesSet.add(value.getDate());</span>
+		/*
+		 * If the Sets differ in length, the volatility indices added unique LocalDateTimes to the set. Therefore, the
+		 * both are not properly aligned.
+		 */
+<span class="fc bfc" id="L304" title="All 2 branches covered.">		if (baseValueSet.size() != volatilityIndicesSet.size())</span>
+<span class="fc" id="L305">			throw new IllegalArgumentException(&quot;Base value and volatility index values are not properly&quot;</span>
+			        + &quot; aligned. Utilize&quot; + &quot; ValueDateTupel.alignDates(ValueDateTupel[][])&quot;
+			        + &quot; before creating a new VolatilityDifference.&quot;);
+<span class="fc" id="L308">	}</span>
 
-  /**
-   * ======================================================================
-   * OVERRIDES
-   * ======================================================================
-   */
+	/**
+	 * ====================================================================== OVERRIDES
+	 * ======================================================================
+	 */
 
-  /**
-   * A hash code for this VolatilityDifference.
-   */
-  @GeneratedCode
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = super.hashCode();
-    result = prime * result + lookbackWindow;
-    result = prime * result + Arrays.hashCode(volatilityIndices);
-    return result;
-  }
+	/**
+	 * A hash code for this VolatilityDifference.
+	 */
+	@GeneratedCode
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + lookbackWindow;
+		result = prime * result + Arrays.hashCode(volatilityIndices);
+		return result;
+	}
 
-  /**
-   * Checks if this VolatilityDifference is equal to another
-   * VolatilityDifference.
-   */
-  @GeneratedCode
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (!super.equals(obj))
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    VolatilityDifference other = (VolatilityDifference) obj;
-    if (lookbackWindow != other.lookbackWindow)
-      return false;
-    if (!Arrays.equals(volatilityIndices, other.volatilityIndices))
-      return false;
-    return true;
-  }
+	/**
+	 * Checks if this VolatilityDifference is equal to another VolatilityDifference.
+	 */
+	@GeneratedCode
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		VolatilityDifference other = (VolatilityDifference) obj;
+		if (lookbackWindow != other.lookbackWindow)
+			return false;
+		if (!Arrays.equals(volatilityIndices, other.volatilityIndices))
+			return false;
+		return true;
+	}
 
-  /**
-   * Outputs the fields of this VolatilityDifference as a {@code String}.
-   */
-  @GeneratedCode
-  @Override
-  public String toString() {
-    StringBuilder builder = new StringBuilder();
-    builder.append(&quot;VolatilityDifference [volatilityIndices=&quot;);
-    builder.append(Arrays.toString(volatilityIndices));
-    builder.append(&quot;, lookbackWindow=&quot;);
-    builder.append(lookbackWindow);
-    builder.append(&quot;]&quot;);
-    return builder.toString();
-  }
+	/**
+	 * Outputs the fields of this VolatilityDifference as a {@code String}.
+	 */
+	@GeneratedCode
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(&quot;VolatilityDifference [volatilityIndices=&quot;);
+		builder.append(Arrays.toString(volatilityIndices));
+		builder.append(&quot;, lookbackWindow=&quot;);
+		builder.append(lookbackWindow);
+		builder.append(&quot;]&quot;);
+		return builder.toString();
+	}
 
-  /**
-   * ======================================================================
-   * GETTERS AND SETTERS
-   * ======================================================================
-   */
+	/**
+	 * ====================================================================== GETTERS AND SETTERS
+	 * ======================================================================
+	 */
 
-  /**
-   * Get the volatility indices for this VolatilityDifference.
-   * 
-   * @return {@code ValueDateTupel[]} The volatility indices for this
-   *         VolatilityDifference
-   */
-  public ValueDateTupel[] getVolatilityIndices() {
-<span class="fc" id="L451">    return volatilityIndices;</span>
-  }
+	/**
+	 * Get the volatility indices for this VolatilityDifference.
+	 * 
+	 * @return {@code ValueDateTupel[]} The volatility indices for this VolatilityDifference
+	 */
+	public ValueDateTupel[] getVolatilityIndices() {
+<span class="fc" id="L374">		return volatilityIndices;</span>
+	}
 
-  /**
-   * Set the volatilityIndices
-   * 
-   * @param volatilityIndices {@code ValueDateTupel[]} the
-   *                          volatilityIndices to set
-   */
-  private void setVolatilityIndices(ValueDateTupel[] volatilityIndices) {
-<span class="fc" id="L461">    this.volatilityIndices = volatilityIndices;</span>
-<span class="fc" id="L462">  }</span>
+	/**
+	 * Set the volatilityIndices
+	 * 
+	 * @param volatilityIndices {@code ValueDateTupel[]} the volatilityIndices to set
+	 */
+	private void setVolatilityIndices(ValueDateTupel[] volatilityIndices) {
+<span class="fc" id="L383">		this.volatilityIndices = volatilityIndices;</span>
+<span class="fc" id="L384">	}</span>
 
-  /**
-   * Get the lookbackWindow for this VolatilityDifference.
-   * 
-   * @return {@code int} The lookback window for this VolatilityDifference
-   */
-  public int getLookbackWindow() {
-<span class="fc" id="L470">    return lookbackWindow;</span>
-  }
+	/**
+	 * Get the lookbackWindow for this VolatilityDifference.
+	 * 
+	 * @return {@code int} The lookback window for this VolatilityDifference
+	 */
+	public int getLookbackWindow() {
+<span class="fc" id="L392">		return lookbackWindow;</span>
+	}
 
-  /**
-   * Set the lookback window for this VolatilityDifference.
-   * 
-   * @param lookbackWindow {@code int} The lookback window to be set for
-   *                       this VolatilityDifference
-   */
-  private void setLookbackWindow(int lookbackWindow) {
-<span class="fc" id="L480">    this.lookbackWindow = lookbackWindow;</span>
-<span class="fc" id="L481">  }</span>
+	/**
+	 * Set the lookback window for this VolatilityDifference.
+	 * 
+	 * @param lookbackWindow {@code int} The lookback window to be set for this VolatilityDifference
+	 */
+	private void setLookbackWindow(int lookbackWindow) {
+<span class="fc" id="L401">		this.lookbackWindow = lookbackWindow;</span>
+<span class="fc" id="L402">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

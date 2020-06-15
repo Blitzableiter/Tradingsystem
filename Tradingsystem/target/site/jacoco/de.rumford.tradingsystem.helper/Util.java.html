@@ -11,314 +11,259 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import de.rumford.tradingsystem.Rule;
 
 /**
- * Utility class as used throughout the library containing solely of static
- * methods representing mainly mathematical calculations.
+ * Utility class as used throughout the library containing solely of static methods representing mainly mathematical
+ * calculations.
  * 
  * @author Max Rumford
- *
  */
 public final class Util {
 
-  /**
-   * Constructor for the {@link Util} class&lt;br/&gt;
-   * Only supports static methods, hence no instance shall be created,
-   * hence a private constructor
-   */
-  private Util() {
-  }
+	/**
+	 * Constructor for the {@link Util} class&lt;br/&gt;
+	 * Only supports static methods, hence no instance shall be created, hence a private constructor
+	 */
+	private Util() {
+	}
 
-  /**
-   * Check if the given rules are unique by utilizing
-   * {@link Rule#equals(Object)}
-   * 
-   * @param rules {@code Rule} An array of rules to be check for
-   *              uniqueness.
-   * @return {@code boolean} True, if the rules are unique. False
-   *         otherwise.
-   */
-  public static boolean areRulesUnique(Rule[] rules) {
-<span class="fc bfc" id="L40" title="All 2 branches covered.">    if (rules == null)</span>
-<span class="fc" id="L41">      throw new IllegalArgumentException(</span>
-          &quot;The given rules must not be null&quot;);
-<span class="fc bfc" id="L43" title="All 2 branches covered.">    if (ArrayUtils.contains(rules, null))</span>
-<span class="fc" id="L44">      throw new IllegalArgumentException(</span>
-          &quot;The given array must not contain nulls&quot;);
-<span class="fc bfc" id="L46" title="All 2 branches covered.">    if (rules.length == 0)</span>
-<span class="fc" id="L47">      throw new IllegalArgumentException(</span>
-          &quot;The given array of rules must not be empty.&quot;);
+	/**
+	 * Adjusts a given value for the given standard deviation
+	 * 
+	 * @param  value             {@code double} value to be adjusted
+	 * @param  standardDeviation {@code double} standard deviation to be adjusted for
+	 * @return                   {@code double} standard deviation adjusted value. Double.NaN, if the given standard
+	 *                           deviation is zero.
+	 */
+	public static double adjustForStandardDeviation(double value, double standardDeviation) {
+<span class="fc bfc" id="L37" title="All 2 branches covered.">		if (standardDeviation == 0)</span>
+<span class="fc" id="L38">			return Double.NaN;</span>
+<span class="fc" id="L39">		return value / standardDeviation;</span>
+	}
 
-<span class="fc bfc" id="L50" title="All 2 branches covered.">    for (int i = 0; i &lt; rules.length - 1; i++) {</span>
-<span class="fc bfc" id="L51" title="All 2 branches covered.">      if (rules[i].equals(rules[i + 1])) {</span>
-<span class="fc" id="L52">        return false;</span>
-      }
-    }
-<span class="fc" id="L55">    return true;</span>
-  }
+	/**
+	 * Check if the given rules are unique by utilizing {@link Rule#equals(Object)}
+	 * 
+	 * @param  rules {@code Rule} An array of rules to be check for uniqueness.
+	 * @return       {@code boolean} True, if the rules are unique. False otherwise.
+	 */
+	public static boolean areRulesUnique(Rule[] rules) {
+<span class="fc bfc" id="L49" title="All 2 branches covered.">		if (rules == null)</span>
+<span class="fc" id="L50">			throw new IllegalArgumentException(&quot;The given rules must not be null&quot;);</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">		if (ArrayUtils.contains(rules, null))</span>
+<span class="fc" id="L52">			throw new IllegalArgumentException(&quot;The given array must not contain nulls&quot;);</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">		if (rules.length == 0)</span>
+<span class="fc" id="L54">			throw new IllegalArgumentException(&quot;The given array of rules must not be empty.&quot;);</span>
 
-  /**
-   * Adjusts a given value for the given standard deviation
-   * 
-   * @param value             {@code double} value to be adjusted
-   * @param standardDeviation {@code double} standard deviation to be
-   *                          adjusted for
-   * @return {@code double} standard deviation adjusted value. Double.NaN,
-   *         if the given standard deviation is zero.
-   */
-  public static double adjustForStandardDeviation(double value,
-      double standardDeviation) {
-<span class="fc bfc" id="L69" title="All 2 branches covered.">    if (standardDeviation == 0)</span>
-<span class="fc" id="L70">      return Double.NaN;</span>
-<span class="fc" id="L71">    return value / standardDeviation;</span>
-  }
+<span class="fc bfc" id="L56" title="All 2 branches covered.">		for (int i = 0; i &lt; rules.length - 1; i++) {</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">			if (rules[i].equals(rules[i + 1])) {</span>
+<span class="fc" id="L58">				return false;</span>
+			}
+		}
+<span class="fc" id="L61">		return true;</span>
+	}
 
-  /**
-   * Calculates the average value of the given array of values.
-   * 
-   * @param values {@code double[]} An array of values.
-   * @return {@code double} The average value of the given values.
-   * @throws IllegalArgumentException if the given array is null.
-   */
-  public static double calculateAverage(double[] values) {
-<span class="fc" id="L82">    Validator.validateArrayOfDoubles(values);</span>
+	/**
+	 * Calculates the average value of the given array of values.
+	 * 
+	 * @param  values                   {@code double[]} An array of values.
+	 * @return                          {@code double} The average value of the given values.
+	 * @throws IllegalArgumentException if the given array is null.
+	 */
+	public static double calculateAverage(double[] values) {
+<span class="fc" id="L72">		Validator.validateArrayOfDoubles(values);</span>
 
-    /* Calculate the average of absolute values */
-<span class="fc" id="L85">    DoubleSummaryStatistics stats = new DoubleSummaryStatistics();</span>
-    /* Load absolute values into stats */
-<span class="fc bfc" id="L87" title="All 2 branches covered.">    for (double value : values)</span>
-<span class="fc" id="L88">      stats.accept(value);</span>
-    /* Get average of all values */
-<span class="fc" id="L90">    return stats.getAverage();</span>
-  }
+		/* Calculate the average of absolute values */
+<span class="fc" id="L75">		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();</span>
+		/* Load absolute values into stats */
+<span class="fc bfc" id="L77" title="All 2 branches covered.">		for (double value : values)</span>
+<span class="fc" id="L78">			stats.accept(value);</span>
+		/* Get average of all values */
+<span class="fc" id="L80">		return stats.getAverage();</span>
+	}
 
-  /**
-   * Calculate the correlations between the given array of value arrays.
-   * 
-   * @param valuesMatrix {@code double[][]} An array of n arrays of values.
-   * @return {@code double[]} The correlations between the given rows as by
-   *         {@link PearsonsCorrelation#getCorrelationMatrix()}.
-   * @throws IllegalArgumentException if the given array is null.
-   * @throws IllegalArgumentException if the given array does not contain
-   *                                  exactly 3 values.
-   * @throws IllegalArgumentException if the given array contains null.
-   * @throws IllegalArgumentException if the given array contains arrays
-   *                                  containing null.
-   * @throws IllegalArgumentException if the given array contains arrays
-   *                                  containing Double.NaN.
-   * @throws IllegalArgumentException if the given array contains arrays
-   *                                  not of the same length.
-   * 
-   */
-  public static double[] calculateCorrelationOfRows(
-      double[][] valuesMatrix) {
-    /*
-     * If one of the rows contains all identical values no correlation can
-     * be calculated, as a division by zero will occur in correlations
-     * calculation.
-     */
-<span class="fc bfc" id="L118" title="All 2 branches covered.">    for (int i = 0; i &lt; valuesMatrix.length; i++) {</span>
-<span class="fc" id="L119">      double[] noDuplicates = DoubleStream.of(valuesMatrix[i]).distinct()</span>
-<span class="fc" id="L120">          .toArray();</span>
-<span class="fc bfc" id="L121" title="All 2 branches covered.">      if (noDuplicates.length == 1) {</span>
-<span class="fc" id="L122">        throw new IllegalArgumentException(</span>
-            &quot;Correlations cannot be calculated caused by all identical &quot;
-                + &quot;values in row at position &quot; + i + &quot;.&quot;);
-      }
-    }
+	/**
+	 * Calculate the correlations between the given array of value arrays.
+	 * 
+	 * @param  valuesMatrix             {@code double[][]} An array of n arrays of values.
+	 * @return                          {@code double[]} The correlations between the given rows as by
+	 *                                  {@link PearsonsCorrelation#getCorrelationMatrix()}.
+	 * @throws IllegalArgumentException if the given array is null.
+	 * @throws IllegalArgumentException if the given array does not contain exactly 3 values.
+	 * @throws IllegalArgumentException if the given array contains null.
+	 * @throws IllegalArgumentException if the given array contains arrays containing null.
+	 * @throws IllegalArgumentException if the given array contains arrays containing Double.NaN.
+	 * @throws IllegalArgumentException if the given array contains arrays not of the same length.
+	 */
+	public static double[] calculateCorrelationOfRows(double[][] valuesMatrix) {
+		/*
+		 * If one of the rows contains all identical values no correlation can be calculated, as a division by zero will
+		 * occur in correlations calculation.
+		 */
+<span class="fc bfc" id="L101" title="All 2 branches covered.">		for (int i = 0; i &lt; valuesMatrix.length; i++) {</span>
+<span class="fc" id="L102">			double[] noDuplicates = DoubleStream.of(valuesMatrix[i]).distinct().toArray();</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">			if (noDuplicates.length == 1) {</span>
+<span class="fc" id="L104">				throw new IllegalArgumentException(&quot;Correlations cannot be calculated caused by all identical &quot;</span>
+				        + &quot;values in row at position &quot; + i + &quot;.&quot;);
+			}
+		}
 
-    /* Load the given values into rows of a matrix */
-<span class="fc" id="L129">    RealMatrix matrix = new BlockRealMatrix(valuesMatrix);</span>
-    /* Transpose the values into columns to get the correct correlations */
-<span class="fc" id="L131">    matrix = matrix.transpose();</span>
+		/* Load the given values into rows of a matrix */
+<span class="fc" id="L110">		RealMatrix matrix = new BlockRealMatrix(valuesMatrix);</span>
+		/* Transpose the values into columns to get the correct correlations */
+<span class="fc" id="L112">		matrix = matrix.transpose();</span>
 
-    /* Get the correlations of the passed value arrays */
-<span class="fc" id="L134">    PearsonsCorrelation pearsonsCorrelations = new PearsonsCorrelation(</span>
-        matrix);
-<span class="fc" id="L136">    RealMatrix correlationMatrix = pearsonsCorrelations</span>
-<span class="fc" id="L137">        .getCorrelationMatrix();</span>
+		/* Get the correlations of the passed value arrays */
+<span class="fc" id="L115">		PearsonsCorrelation pearsonsCorrelations = new PearsonsCorrelation(matrix);</span>
+<span class="fc" id="L116">		RealMatrix correlationMatrix = pearsonsCorrelations.getCorrelationMatrix();</span>
 
-<span class="fc" id="L139">    double[] correlations = {};</span>
-<span class="fc" id="L140">    for (int rowIndex = 0; rowIndex &lt; correlationMatrix</span>
-<span class="fc bfc" id="L141" title="All 2 branches covered.">        .getRowDimension(); rowIndex++) {</span>
-<span class="fc" id="L142">      for (int columnIndex = 0; columnIndex &lt; correlationMatrix</span>
-<span class="fc bfc" id="L143" title="All 2 branches covered.">          .getColumnDimension(); columnIndex++) {</span>
-<span class="fc bfc" id="L144" title="All 2 branches covered.">        if (columnIndex &lt; rowIndex)</span>
-<span class="fc" id="L145">          correlations = ArrayUtils.add(correlations,</span>
-<span class="fc" id="L146">              correlationMatrix.getEntry(rowIndex, columnIndex));</span>
-      }
-    }
-<span class="fc" id="L149">    return correlations;</span>
-  }
+<span class="fc" id="L118">		double[] correlations = {};</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">		for (int rowIndex = 0; rowIndex &lt; correlationMatrix.getRowDimension(); rowIndex++) {</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">			for (int columnIndex = 0; columnIndex &lt; correlationMatrix.getColumnDimension(); columnIndex++) {</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">				if (columnIndex &lt; rowIndex)</span>
+<span class="fc" id="L122">					correlations = ArrayUtils.add(correlations, correlationMatrix.getEntry(rowIndex, columnIndex));</span>
+			}
+		}
+<span class="fc" id="L125">		return correlations;</span>
+	}
 
-  /**
-   * Scales the forecast based on the given scalar
-   * 
-   * @param unscaledForecast {@code double} unscaled forecast to be scaled
-   * @param scalar           {@code double} scalar to scale the unscaled
-   *                         forecast
-   * @return {@code double} the scaled forecast
-   */
-  public static double calculateForecast(double unscaledForecast,
-      double scalar) {
-<span class="fc" id="L162">    return unscaledForecast * scalar;</span>
-  }
+	/**
+	 * Scales the forecast based on the given scalar
+	 * 
+	 * @param  unscaledForecast {@code double} unscaled forecast to be scaled
+	 * @param  scalar           {@code double} scalar to scale the unscaled forecast
+	 * @return                  {@code double} the scaled forecast
+	 */
+	public static double calculateForecast(double unscaledForecast, double scalar) {
+<span class="fc" id="L136">		return unscaledForecast * scalar;</span>
+	}
 
-  /**
-   * Calculates the forecast scalar for the given array of values in the
-   * scale of the given base scale.
-   * 
-   * Formula: F = baseScale / [ sum( |fc| ) / n ]
-   * 
-   * Base scale divided by the average of absolutes.
-   * 
-   * @param values    {@code double[]} values to be scaled by the forecast
-   *                  scalar
-   * @param baseScale {@code double} base scale for scaling of the forecast
-   *                  scalar
-   * @return {@code double} forecast scalar to scale the given values to
-   *         fit the given scalar base. Returns Double.NaN if the average
-   *         of absolute values is 0
-   * @throws IllegalArgumentException if the average of the absolutes of
-   *                                  the given values is zero
-   * @throws IllegalArgumentException if the given baseScale is zero
-   */
-  public static double calculateForecastScalar(double[] values,
-      double baseScale) {
+	/**
+	 * Calculates the forecast scalar for the given array of values in the scale of the given base scale. Formula: F =
+	 * baseScale / [ sum( |fc| ) / n ] Base scale divided by the average of absolutes.
+	 * 
+	 * @param  values                   {@code double[]} values to be scaled by the forecast scalar
+	 * @param  baseScale                {@code double} base scale for scaling of the forecast scalar
+	 * @return                          {@code double} forecast scalar to scale the given values to fit the given scalar
+	 *                                  base. Returns Double.NaN if the average of absolute values is 0
+	 * @throws IllegalArgumentException if the average of the absolutes of the given values is zero
+	 * @throws IllegalArgumentException if the given baseScale is zero
+	 */
+	public static double calculateForecastScalar(double[] values, double baseScale) {
 
-<span class="fc" id="L187">    Validator.validateArrayOfDoubles(values);</span>
-<span class="fc bfc" id="L188" title="All 2 branches covered.">    if (values.length == 0)</span>
-<span class="fc" id="L189">      throw new IllegalArgumentException(</span>
-          &quot;Given array of values must not be empty&quot;);
+<span class="fc" id="L152">		Validator.validateArrayOfDoubles(values);</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">		if (values.length == 0)</span>
+<span class="fc" id="L154">			throw new IllegalArgumentException(&quot;Given array of values must not be empty&quot;);</span>
 
-    try {
-<span class="fc" id="L193">      Validator.validatePositiveDouble(baseScale);</span>
-<span class="fc" id="L194">    } catch (IllegalArgumentException e) {</span>
-<span class="fc" id="L195">      throw new IllegalArgumentException(</span>
-          &quot;Given base scale does not meet specifications.&quot;, e);
-<span class="fc" id="L197">    }</span>
+		try {
+<span class="fc" id="L157">			Validator.validatePositiveDouble(baseScale);</span>
+<span class="fc" id="L158">		} catch (IllegalArgumentException e) {</span>
+<span class="fc" id="L159">			throw new IllegalArgumentException(&quot;Given base scale does not meet specifications.&quot;, e);</span>
+<span class="fc" id="L160">		}</span>
 
-    /* helper array */
-<span class="fc" id="L200">    double[] absoluteValues = new double[values.length];</span>
+		/* helper array */
+<span class="fc" id="L163">		double[] absoluteValues = new double[values.length];</span>
 
-    /* Calculate the absolute values for all values in the given array */
-<span class="fc bfc" id="L203" title="All 2 branches covered.">    for (int i = 0; i &lt; values.length; i++)</span>
-<span class="fc" id="L204">      absoluteValues[i] = Math.abs(values[i]);</span>
+		/* Calculate the absolute values for all values in the given array */
+<span class="fc bfc" id="L166" title="All 2 branches covered.">		for (int i = 0; i &lt; values.length; i++)</span>
+<span class="fc" id="L167">			absoluteValues[i] = Math.abs(values[i]);</span>
 
-    /* Get average of all values */
-<span class="fc" id="L207">    double averageOfAbsolutes = Util.calculateAverage(absoluteValues);</span>
+		/* Get average of all values */
+<span class="fc" id="L170">		double averageOfAbsolutes = Util.calculateAverage(absoluteValues);</span>
 
-<span class="fc bfc" id="L209" title="All 2 branches covered.">    if (averageOfAbsolutes == 0)</span>
-<span class="fc" id="L210">      return Double.NaN;</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">		if (averageOfAbsolutes == 0)</span>
+<span class="fc" id="L173">			return Double.NaN;</span>
 
-<span class="fc" id="L212">    return baseScale / averageOfAbsolutes;</span>
-  }
+<span class="fc" id="L175">		return baseScale / averageOfAbsolutes;</span>
+	}
 
-  /**
-   * Calculates the difference between two values in percentage points of
-   * change as seen from the former value
-   * 
-   * @param formerValue {@code double} value the value of the difference is
-   *                    based on
-   * @param latterValue {@code double} &quot;new&quot; value which represents a
-   *                    changed value in comparison to formerValue
-   * @return {@code double} difference between formerValue and latterValue
-   *         represented in percentage points. Double.NaN if the given
-   *         formerValue is zero.
-   */
-  public static double calculateReturn(double formerValue,
-      double latterValue) {
-<span class="fc bfc" id="L229" title="All 2 branches covered.">    if (formerValue == 0)</span>
-<span class="fc" id="L230">      return Double.NaN;</span>
-<span class="fc" id="L231">    return latterValue / formerValue - 1d;</span>
-  }
+	/**
+	 * Calculates the difference between two values in percentage points of change as seen from the former value
+	 * 
+	 * @param  formerValue {@code double} value the value of the difference is based on
+	 * @param  latterValue {@code double} &quot;new&quot; value which represents a changed value in comparison to formerValue
+	 * @return             {@code double} difference between formerValue and latterValue represented in percentage
+	 *                     points. Double.NaN if the given formerValue is zero.
+	 */
+	public static double calculateReturn(double formerValue, double latterValue) {
+<span class="fc bfc" id="L187" title="All 2 branches covered.">		if (formerValue == 0)</span>
+<span class="fc" id="L188">			return Double.NaN;</span>
+<span class="fc" id="L189">		return latterValue / formerValue - 1d;</span>
+	}
 
-  /**
-   * Calculate the weights that should be given to the rows of values
-   * making up the given correlations. Expects an array of length 3, where
-   * position 0 holds the correlation of rows A and B, position 1 holds the
-   * correlation for rows A and C, and position 2 holds the correlation for
-   * rows B and C.
-   * 
-   * @param correlations {@code double[]} Three values representing the
-   *                     correlations between the rows A, B and C. The
-   *                     expected array is constructed as follows: {
-   *                     corr_AB, corr_AC, corr_BC }. See
-   *                     {@link Validator#validateCorrelations(double[])}
-   *                     for limitations.
-   * @return {@code double[]} The calculated weights { w_A, w_B, w_C }.
-   */
-  public static double[] calculateWeightsForThreeCorrelations(
-      double[] correlations) {
-<span class="fc" id="L251">    Validator.validateCorrelations(correlations);</span>
+	/**
+	 * Calculate the weights that should be given to the rows of values making up the given correlations. Expects an
+	 * array of length 3, where position 0 holds the correlation of rows A and B, position 1 holds the correlation for
+	 * rows A and C, and position 2 holds the correlation for rows B and C.
+	 * 
+	 * @param  correlations {@code double[]} Three values representing the correlations between the rows A, B and C. The
+	 *                      expected array is constructed as follows: { corr_AB, corr_AC, corr_BC }. See
+	 *                      {@link Validator#validateCorrelations(double[])} for limitations.
+	 * @return              {@code double[]} The calculated weights { w_A, w_B, w_C }.
+	 */
+	public static double[] calculateWeightsForThreeCorrelations(double[] correlations) {
+<span class="fc" id="L203">		Validator.validateCorrelations(correlations);</span>
 
-<span class="fc bfc" id="L253" title="All 2 branches covered.">    for (int i = 0; i &lt; correlations.length; i++) {</span>
-      /*
-       * Floor negative correlations at 0 (See Carver:
-       * &quot;Systematic Trading&quot;, p. 79)
-       */
-<span class="fc bfc" id="L258" title="All 2 branches covered.">      if (correlations[i] &lt; 0)</span>
-<span class="fc" id="L259">        correlations[i] = 0;</span>
-    }
+<span class="fc bfc" id="L205" title="All 2 branches covered.">		for (int i = 0; i &lt; correlations.length; i++) {</span>
+			/*
+			 * Floor negative correlations at 0 (See Carver: &quot;Systematic Trading&quot;, p. 79)
+			 */
+<span class="fc bfc" id="L209" title="All 2 branches covered.">			if (correlations[i] &lt; 0)</span>
+<span class="fc" id="L210">				correlations[i] = 0;</span>
+		}
 
-<span class="fc" id="L262">    double[] weights = {};</span>
-    /*
-     * Catch three equal correlations. Three correlations of 1 each would
-     * break further calculation.
-     */
-<span class="fc bfc" id="L267" title="All 4 branches covered.">    if (correlations[0] == correlations[1]</span>
-        &amp;&amp; correlations[0] == correlations[2]) {
-<span class="fc" id="L269">      double correlationOfOneThird = 1d / 3d;</span>
-<span class="fc" id="L270">      weights = ArrayUtils.add(weights, correlationOfOneThird);</span>
-<span class="fc" id="L271">      weights = ArrayUtils.add(weights, correlationOfOneThird);</span>
-<span class="fc" id="L272">      weights = ArrayUtils.add(weights, correlationOfOneThird);</span>
-<span class="fc" id="L273">      return weights;</span>
-    }
+<span class="fc" id="L213">		double[] weights = {};</span>
+		/*
+		 * Catch three equal correlations. Three correlations of 1 each would break further calculation.
+		 */
+<span class="fc bfc" id="L217" title="All 4 branches covered.">		if (correlations[0] == correlations[1] &amp;&amp; correlations[0] == correlations[2]) {</span>
+<span class="fc" id="L218">			double correlationOfOneThird = 1d / 3d;</span>
+<span class="fc" id="L219">			weights = ArrayUtils.add(weights, correlationOfOneThird);</span>
+<span class="fc" id="L220">			weights = ArrayUtils.add(weights, correlationOfOneThird);</span>
+<span class="fc" id="L221">			weights = ArrayUtils.add(weights, correlationOfOneThird);</span>
+<span class="fc" id="L222">			return weights;</span>
+		}
 
-    /* Get the average correlation each row of values has */
-<span class="fc" id="L277">    double averageCorrRowA = (correlations[0] + correlations[1]) / 2;</span>
-<span class="fc" id="L278">    double averageCorrRowB = (correlations[0] + correlations[2]) / 2;</span>
-<span class="fc" id="L279">    double averageCorrRowC = (correlations[1] + correlations[2]) / 2;</span>
+		/* Get the average correlation each row of values has */
+<span class="fc" id="L226">		double averageCorrRowA = (correlations[0] + correlations[1]) / 2;</span>
+<span class="fc" id="L227">		double averageCorrRowB = (correlations[0] + correlations[2]) / 2;</span>
+<span class="fc" id="L228">		double averageCorrRowC = (correlations[1] + correlations[2]) / 2;</span>
 
-<span class="fc" id="L281">    double[] averageCorrelations = { averageCorrRowA, averageCorrRowB,</span>
-        averageCorrRowC };
+<span class="fc" id="L230">		double[] averageCorrelations = { averageCorrRowA, averageCorrRowB, averageCorrRowC };</span>
 
-    /*
-     * Subtract each average correlation from 1 to get an inverse-ish value
-     */
-<span class="fc bfc" id="L287" title="All 2 branches covered.">    for (int i = 0; i &lt; averageCorrelations.length; i++)</span>
-<span class="fc" id="L288">      averageCorrelations[i] = 1 - averageCorrelations[i];</span>
+		/*
+		 * Subtract each average correlation from 1 to get an inverse-ish value
+		 */
+<span class="fc bfc" id="L235" title="All 2 branches covered.">		for (int i = 0; i &lt; averageCorrelations.length; i++)</span>
+<span class="fc" id="L236">			averageCorrelations[i] = 1 - averageCorrelations[i];</span>
 
-    /* Calculate the sum of average correlations. */
-<span class="fc" id="L291">    double sumOfAverageCorrelations = DoubleStream.of(averageCorrelations)</span>
-<span class="fc" id="L292">        .sum();</span>
+		/* Calculate the sum of average correlations. */
+<span class="fc" id="L239">		double sumOfAverageCorrelations = DoubleStream.of(averageCorrelations).sum();</span>
 
-    /*
-     * Normalize the average correlations so they sum up to 1. These
-     * normalized values are the weights.
-     */
-<span class="fc bfc" id="L298" title="All 2 branches covered.">    for (int i = 0; i &lt; averageCorrelations.length; i++)</span>
-<span class="fc" id="L299">      weights = ArrayUtils.add(weights,</span>
-          averageCorrelations[i] / sumOfAverageCorrelations);
+		/*
+		 * Normalize the average correlations so they sum up to 1. These normalized values are the weights.
+		 */
+<span class="fc bfc" id="L244" title="All 2 branches covered.">		for (int i = 0; i &lt; averageCorrelations.length; i++)</span>
+<span class="fc" id="L245">			weights = ArrayUtils.add(weights, averageCorrelations[i] / sumOfAverageCorrelations);</span>
 
-<span class="fc" id="L302">    return weights;</span>
-  }
+<span class="fc" id="L247">		return weights;</span>
+	}
 
-  /**
-   * Returns the position literal for a given forecast.
-   * &lt;ul&gt;
-   * &lt;li&gt;&quot;Long&quot; for forecasts greater 0.&lt;/li&gt;
-   * &lt;li&gt;&quot;Short&quot; for forecasts less than 0.&lt;/li&gt;
-   * &lt;li&gt;&quot;Hold&quot; for forecasts of 0.&lt;/li&gt;
-   * &lt;/ul&gt;
-   * 
-   * @param forecast a forecast.
-   * @return The String literal for the given forecast.
-   */
-  public static String getPositionFromForecast(double forecast) {
-<span class="fc bfc" id="L317" title="All 2 branches covered.">    if (forecast &gt; 0)</span>
-<span class="fc" id="L318">      return &quot;Long&quot;;</span>
-<span class="fc bfc" id="L319" title="All 2 branches covered.">    if (forecast &lt; 0)</span>
-<span class="fc" id="L320">      return &quot;Short&quot;;</span>
-<span class="fc" id="L321">    return &quot;Hold&quot;;</span>
-  }
+	/**
+	 * Returns the position literal for a given forecast.
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&quot;Long&quot; for forecasts greater 0.&lt;/li&gt;
+	 * &lt;li&gt;&quot;Short&quot; for forecasts less than 0.&lt;/li&gt;
+	 * &lt;li&gt;&quot;Hold&quot; for forecasts of 0.&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @param  forecast a forecast.
+	 * @return          The String literal for the given forecast.
+	 */
+	public static String getPositionFromForecast(double forecast) {
+<span class="fc bfc" id="L262" title="All 2 branches covered.">		if (forecast &gt; 0)</span>
+<span class="fc" id="L263">			return &quot;Long&quot;;</span>
+<span class="fc bfc" id="L264" title="All 2 branches covered.">		if (forecast &lt; 0)</span>
+<span class="fc" id="L265">			return &quot;Short&quot;;</span>
+<span class="fc" id="L266">		return &quot;Hold&quot;;</span>
+	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
