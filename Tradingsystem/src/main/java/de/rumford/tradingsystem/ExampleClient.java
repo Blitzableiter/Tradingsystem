@@ -40,17 +40,17 @@ public class ExampleClient {
   static String sp500VolatilityFileName = "S&P_VIX.csv";
 
   static final LocalDateTime START_OF_REFERENCE_WINDOW = LocalDateTime
-      .of(2015, 1, 2, 22, 0);
+      .of(2014, 1, 2, 22, 0);
   static final LocalDateTime END_OF_REFERENCE_WINDOW = LocalDateTime
-      .of(2019, 12, 30, 22, 0);
+      .of(2018, 12, 28, 22, 0);
   static final double BASE_SCALE = 10;
 
   static final int LOOKBACK_WINDOW_8 = 8;
 
-  static final LocalDateTime START_OF_TEST_WINDOW = LocalDateTime.of(2020,
+  static final LocalDateTime START_OF_TEST_WINDOW = LocalDateTime.of(2019,
       1, 2, 22, 0);
-  static final LocalDateTime END_OF_TEST_WINDOW = LocalDateTime.of(2020, 3,
-      31, 22, 0);
+  static final LocalDateTime END_OF_TEST_WINDOW = LocalDateTime.of(2019,
+      12, 30, 22, 0);
 
   private static final Logger logger = Logger
       .getLogger(ExampleClient.class);
@@ -146,21 +146,13 @@ public class ExampleClient {
    */
   private static void exampleForThreeBaseValues() throws IOException {
     double daxPerf = forOneBaseValueWithShort(DAX, daxFileName,
-        // daxShortFileName, daxVolatilityFileName, CAPITAL *
-        // 0.2002); // 2014-2018, 2019
-        daxShortFileName, daxVolatilityFileName, CAPITAL * 0.2121); // 2015-2019,
-                                                                    // 202001-202003
+        daxShortFileName, daxVolatilityFileName, CAPITAL * 0.2002);
 
     double stoxxPerf = forOneBaseValueWithShort(STOXX, stoxxFileName,
-        stoxxShortFileName, stoxxVolatilityFileName,
-        // CAPITAL * 0.407); // 2014-2018, 2019
-        CAPITAL * 0.3674); // 2015-2019, 202001-202003
+        stoxxShortFileName, stoxxVolatilityFileName, CAPITAL * 0.407);
 
     double spPerf = forOneBaseValue(SP500, sp500FileName,
-        // sp500VolatilityFileName, CAPITAL * 0.3928); // 2014-2018,
-        // 2019
-        sp500VolatilityFileName, CAPITAL * 0.4205); // 2015-2019,
-                                                    // 202001-202003
+        sp500VolatilityFileName, CAPITAL * 0.3928);
 
     formatPerformance(CAPITAL, daxPerf + stoxxPerf + spPerf);
   }
