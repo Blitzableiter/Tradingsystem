@@ -8,7 +8,7 @@ This reposity is the project accompanying my Master's thesis in IT-Management. T
 
 # Project structure
 
-![project structure](./misc/Klassendiagramm-Structure.png)
+![main components](./misc/main components.png)
 
 [Full class diagram](https://app.diagrams.net/?lightbox=1&highlight=0000FF&edit=_blank&layers=1&nav=1#G1tA72QX0PsenfbbcztCDftiMQY1XcAloq)
 
