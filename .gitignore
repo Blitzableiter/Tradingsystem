@@ -8,5 +8,3 @@
 /Tradingsystem/lib/
 /Tradingsystem/resources/
 /Tradingsystem/target/*
-!/Tradingsystem/target/Tradingsystem-*-javadoc.jar
-!/Tradingsystem/target/site/
