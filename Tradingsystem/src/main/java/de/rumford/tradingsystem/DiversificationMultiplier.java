@@ -1,5 +1,7 @@
 package de.rumford.tradingsystem;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -30,13 +32,13 @@ import de.rumford.tradingsystem.helper.Validator;
 public class DiversificationMultiplier {
 
 	/* The value of this diversification multiplier. */
-	private double value = 0d;
+	private BigDecimal value = BigDecimal.valueOf(0d);
 	/* The weights of the given rules. */
-	private double[] weights;
+	private BigDecimal[] weights;
 	/* The relevant forecasts of the given rules. */
-	private double[][] relevantForecasts;
+	private BigDecimal[][] relevantForecasts;
 	/* The correaltions of the given rules. */
-	private double[][] correlations;
+	private BigDecimal[][] correlations;
 
 	/**
 	 * Constructor for the class DiversificationMultiplier (DM). A DM is always only valid for a given set of rules
@@ -67,10 +69,10 @@ public class DiversificationMultiplier {
 	 * Private class for extraction of weights and forecasts from the given rules.
 	 */
 	private class WeightsAndForecasts {
-		public double[] weights;
-		public double[][] forecasts;
+		public BigDecimal[] weights;
+		public BigDecimal[][] forecasts;
 
-		public WeightsAndForecasts(double[] weights, double[][] relevantForecasts) {
+		public WeightsAndForecasts(BigDecimal[] weights, BigDecimal[][] relevantForecasts) {
 			this.weights = weights;
 			this.forecasts = relevantForecasts;
 		}
@@ -80,16 +82,16 @@ public class DiversificationMultiplier {
 	 * Calculate the diversification multiplier for the weights and correlations set with this class. Represents this
 	 * formula with c = matrix of correlations, w = list of weights, i,j = indices: 1 / sqrt[ SUM( c_i,j * w_i * w_j ) ]
 	 * 
-	 * @return                          {@code double} diversification multiplier for set weights and correlations
+	 * @return                          {@code BigDecimal} diversification multiplier for set weights and correlations
 	 * @throws IllegalArgumentException if correlations or weights do not meet criteria: non-empty, same number of
 	 *                                  values, correlations: same amount of rows and columns
 	 */
-	private double calculateDiversificiationMultiplierValue() {
-		double[][] instanceCorrelations = this.getCorrelations();
-		double[] instanceWeights = this.getWeights();
+	private BigDecimal calculateDiversificiationMultiplierValue() {
+		BigDecimal[][] instanceCorrelations = this.getCorrelations();
+		BigDecimal[] instanceWeights = this.getWeights();
 
 		/* local field to hold sum of correlations multiplied with weights */
-		double sumOfCorrelationsWeights = 0f;
+		BigDecimal sumOfCorrelationsWeights = BigDecimal.valueOf(0d);
 
 		/*
 		 * Get the sum of all correlations multiplier with both corresponding weights...
@@ -99,8 +101,10 @@ public class DiversificationMultiplier {
 				/*
 				 * ... by multiplying the correlation with both corresponding weights
 				 */
-				sumOfCorrelationsWeights += instanceCorrelations[row][col] * instanceWeights[row]
-				        * instanceWeights[col];
+				sumOfCorrelationsWeights = sumOfCorrelationsWeights.add( //
+				        instanceCorrelations[row][col] //
+				                .multiply(instanceWeights[row]) //
+				                .multiply(instanceWeights[col]));
 			}
 		}
 
@@ -108,22 +112,22 @@ public class DiversificationMultiplier {
 		 * sumOfCorrelationsWeights is always > 0 as there is always at least one weight > 0 and at least on correlation
 		 * > 0 (self correlation)
 		 */
-		return 1 / Math.sqrt(sumOfCorrelationsWeights);
+		return BigDecimal.valueOf(1d).divide(sumOfCorrelationsWeights.sqrt(new MathContext(0)));
 	}
 
 	/**
 	 * Calculate the correlations from the given array of forecast arrays.
 	 * 
-	 * @param  forecasts {@code double[][]} The forecasts to be used for calculation.
-	 * @return           {@code double[][]} A matrix of correlations, as by
+	 * @param  forecasts {@code BigDecimal[][]} The forecasts to be used for calculation.
+	 * @return           {@code BigDecimal[][]} A matrix of correlations, as by
 	 *                   {@link PearsonsCorrelation#getCorrelationMatrix()}.
 	 */
-	private static double[][] getCorrelationsFromForecasts(double[][] forecasts) {
+	private static BigDecimal[][] getCorrelationsFromForecasts(BigDecimal[][] forecasts) {
 		/*
 		 * If there is only one row of data return a 1x1 self correlation matrix
 		 */
 		if (forecasts.length == 1) {
-			return new double[][] { { 1 } };
+			return new BigDecimal[][] { { BigDecimal.valueOf(1d) } };
 		}
 
 		/* Load the given values into rows of a matrix */
@@ -143,8 +147,8 @@ public class DiversificationMultiplier {
 	 * @return       {@link WeightsAndForecasts} The extracted weights and forecasts from the given array of Rules.
 	 */
 	private WeightsAndForecasts getWeightsAndForecastsFromRules(Rule[] rules) {
-		double[] weightsFromRules = {};
-		double[][] relevantForecastsFromRules = {};
+		BigDecimal[] weightsFromRules = {};
+		BigDecimal[][] relevantForecastsFromRules = {};
 
 		/* Iterate over the given rules */
 		for (Rule rule : rules) {
@@ -152,20 +156,20 @@ public class DiversificationMultiplier {
 			/* If a rule has variations get their weights and forecasts */
 			if (rule.hasVariations()) {
 				WeightsAndForecasts wafToAdd = getWeightsAndForecastsFromRules(rule.getVariations());
-				for (double weight : wafToAdd.weights)
-					weightsFromRules = ArrayUtils.add(weightsFromRules, weight * rule.getWeight());
+				for (BigDecimal weight : wafToAdd.weights)
+					weightsFromRules = ArrayUtils.add(weightsFromRules, weight.multiply(rule.getWeight()));
 
-				for (double[] forecasts : wafToAdd.forecasts)
+				for (BigDecimal[] forecasts : wafToAdd.forecasts)
 					relevantForecastsFromRules = ArrayUtils.add(relevantForecastsFromRules, forecasts);
 
 			} else {
-				double weight = rule.getWeight();
+				BigDecimal weight = rule.getWeight();
 				/*
 				 * If a top level rule has no variations its weight has not been set. Manually set its weight to be
 				 * 1/numberOfTopeLevelRules
 				 */
-				if (weight == 0)
-					weight = 1d / rules.length;
+				if (weight.compareTo(BigDecimal.valueOf(0d)) == 0)
+					weight = BigDecimal.valueOf(1d).divide(BigDecimal.valueOf(rules.length));
 				weightsFromRules = ArrayUtils.add(weightsFromRules, weight);
 
 				relevantForecastsFromRules = ArrayUtils.add(relevantForecastsFromRules,
@@ -199,9 +203,7 @@ public class DiversificationMultiplier {
 		int result = 1;
 		result = prime * result + Arrays.deepHashCode(correlations);
 		result = prime * result + Arrays.deepHashCode(relevantForecasts);
-		long temp;
-		temp = Double.doubleToLongBits(value);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		result = prime * result + Arrays.hashCode(weights);
 		return result;
 	}
@@ -223,7 +225,10 @@ public class DiversificationMultiplier {
 			return false;
 		if (!Arrays.deepEquals(relevantForecasts, other.relevantForecasts))
 			return false;
-		if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value))
+		if (value == null) {
+			if (other.value != null)
+				return false;
+		} else if (!value.equals(other.value))
 			return false;
 		if (!Arrays.equals(weights, other.weights))
 			return false;
@@ -257,9 +262,9 @@ public class DiversificationMultiplier {
 	/**
 	 * Get value of this {@link DiversificationMultiplier}
 	 * 
-	 * @return {@code double} value of this {@link DiversificationMultiplier}
+	 * @return {@code BigDecimal} value of this {@link DiversificationMultiplier}
 	 */
-	public double getValue() {
+	public BigDecimal getValue() {
 		return value;
 	}
 
@@ -268,25 +273,25 @@ public class DiversificationMultiplier {
 	 * 
 	 * @param value the value to set
 	 */
-	private void setValue(double value) {
+	private void setValue(BigDecimal value) {
 		this.value = value;
 	}
 
 	/**
 	 * Get the weights considered in this {@link DiversificationMultiplier}
 	 * 
-	 * @return {@code double[]} Weights in this {@link DiversificationMultiplier}
+	 * @return {@code BigDecimal[]} Weights in this {@link DiversificationMultiplier}
 	 */
-	public double[] getWeights() {
+	public BigDecimal[] getWeights() {
 		return weights;
 	}
 
 	/**
 	 * Set the Weights in this {@link DiversificationMultiplier}
 	 * 
-	 * @param {@code double[]} the weights to set
+	 * @param {@code BigDecimal[]} the weights to set
 	 */
-	private void setWeights(double[] weights) {
+	private void setWeights(BigDecimal[] weights) {
 		this.weights = weights;
 	}
 
@@ -295,7 +300,7 @@ public class DiversificationMultiplier {
 	 * 
 	 * @return relevantForecasts DiversificationMultiplier
 	 */
-	public double[][] getRelevantForecasts() {
+	public BigDecimal[][] getRelevantForecasts() {
 		return relevantForecasts;
 	}
 
@@ -304,25 +309,25 @@ public class DiversificationMultiplier {
 	 * 
 	 * @param relevantForecasts the relevantForecasts to set
 	 */
-	private void setRelevantForecasts(double[][] relevantForecasts) {
+	private void setRelevantForecasts(BigDecimal[][] relevantForecasts) {
 		this.relevantForecasts = relevantForecasts;
 	}
 
 	/**
 	 * Get the correlations in this {@link DiversificationMultiplier}
 	 * 
-	 * @return {@code double[][]} The correlations in this {@link DiversificationMultiplier}
+	 * @return {@code BigDecimal[][]} The correlations in this {@link DiversificationMultiplier}
 	 */
-	public double[][] getCorrelations() {
+	public BigDecimal[][] getCorrelations() {
 		return correlations;
 	}
 
 	/**
 	 * Set the correlations to be used in this {@link DiversificationMultiplier}
 	 * 
-	 * @param {@code double[][]} the correlations to be used in this {@link DiversificationMultiplier}
+	 * @param {@code BigDecimal[][]} the correlations to be used in this {@link DiversificationMultiplier}
 	 */
-	private void setCorrelations(double[][] correlations) {
+	private void setCorrelations(BigDecimal[][] correlations) {
 		this.correlations = correlations;
 	}
 }

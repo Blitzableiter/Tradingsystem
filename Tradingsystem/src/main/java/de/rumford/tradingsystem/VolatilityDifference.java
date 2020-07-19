@@ -1,5 +1,6 @@
 package de.rumford.tradingsystem;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
@@ -37,22 +38,22 @@ public class VolatilityDifference extends Rule {
 	 * indices and the average volatility.
 	 * 
 	 * @param baseValue              Same as in
-	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}.
 	 * @param variations             {@code VolatilityDifference[]} An array of three or less rules. Represents the
 	 *                               variations of this rule. Same limitations as in
-	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}.
 	 * @param startOfReferenceWindow Same as in
-	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}.
 	 * @param endOfReferenceWindow   Same as in
-	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}.
 	 * @param lookbackWindow         {@code int} The lookback window to be used for this VolatilityDifference. See
 	 *                               {@link #validateLookbackWindow(int)} for limitations.
 	 * @param baseScale              Same as in
-	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}.
 	 */
 	public VolatilityDifference(BaseValue baseValue, VolatilityDifference[] variations,
 	        LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow, int lookbackWindow,
-	        double baseScale) {
+	        BigDecimal baseScale) {
 		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
 
 		if (variations == null) {
@@ -77,24 +78,24 @@ public class VolatilityDifference extends Rule {
 	 * indices and the average volatility.
 	 * 
 	 * @param baseValue              Same as in
-	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}.
 	 * @param variations             {@code VolatilityDifference[]} An array of three or less rules. Represents the
 	 *                               variations of this rule. Same limitations as in
-	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}.
 	 * @param startOfReferenceWindow Same as in
-	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}.
 	 * @param endOfReferenceWindow   Same as in
-	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}.
 	 * @param lookbackWindow         {@code int} The lookback window to be used for this VolatilityDifference. See
 	 *                               {@link #validateLookbackWindow(int)} for limitations.
 	 * @param baseScale              Same as in
-	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}.
 	 * @param volatilityIndices      {@code ValueDateTupel[]} The volatility indices used for forecast calculations. See
 	 *                               {@link #validateVolatilityIndices( ValueDateTupel[])} for limitations.
 	 */
 	public VolatilityDifference(BaseValue baseValue, VolatilityDifference[] variations,
 	        LocalDateTime startOfReferenceWindow, LocalDateTime endOfReferenceWindow, int lookbackWindow,
-	        double baseScale, ValueDateTupel[] volatilityIndices) {
+	        BigDecimal baseScale, ValueDateTupel[] volatilityIndices) {
 		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
 
 		if (variations == null) {
@@ -118,9 +119,10 @@ public class VolatilityDifference extends Rule {
 	 * at that same given point in time. Positive results result in a positive forecast.
 	 */
 	@Override
-	double calculateRawForecast(LocalDateTime forecastDateTime) {
-		double currentVolatilty = ValueDateTupel.getElement(this.getVolatilityIndices(), forecastDateTime).getValue();
-		return calculateAverageVolatility(forecastDateTime) - currentVolatilty;
+	BigDecimal calculateRawForecast(LocalDateTime forecastDateTime) {
+		BigDecimal currentVolatilty = ValueDateTupel.getElement(this.getVolatilityIndices(), forecastDateTime)
+		        .getValue();
+		return calculateAverageVolatility(forecastDateTime).subtract(currentVolatilty);
 	}
 
 	/**
@@ -152,7 +154,8 @@ public class VolatilityDifference extends Rule {
 		 * Fill the spaces before reaching lookbackWindow with NaN
 		 */
 		for (int i = 0; i < lookbackWindow; i++) {
-			ValueDateTupel volatilityIndexNaN = new ValueDateTupel(baseValues[i].getDate(), Double.NaN);
+			ValueDateTupel volatilityIndexNaN = new ValueDateTupel(baseValues[i].getDate(),
+			        BigDecimal.valueOf(Double.NaN));
 			volatilityIndices = ArrayUtils.add(volatilityIndices, volatilityIndexNaN);
 		}
 
@@ -173,16 +176,16 @@ public class VolatilityDifference extends Rule {
 			);
 
 			/* Calculate relevant returns and store them into an array. */
-			double[] tempDoubleValues = {};
+			BigDecimal[] tempDoubleValues = {};
 			for (int j = 1; j < tempBaseValues.length; j++) {
-				double returnForDayI = Util.calculateReturn(tempBaseValues[j - 1].getValue(),
+				BigDecimal returnForDayI = Util.calculateReturn(tempBaseValues[j - 1].getValue(),
 				        tempBaseValues[j].getValue());
 				tempDoubleValues = ArrayUtils.add(tempDoubleValues, returnForDayI);
 			}
 
 			/* Calculate standard deviation and save into local variable */
 			StandardDeviation sd = new StandardDeviation();
-			double volatilityIndexValue = sd.evaluate(tempDoubleValues);
+			BigDecimal volatilityIndexValue = sd.evaluate(tempDoubleValues);
 
 			ValueDateTupel volatilityIndexValueDateTupel = new ValueDateTupel(baseValues[i].getDate(),
 			        volatilityIndexValue);
@@ -199,9 +202,9 @@ public class VolatilityDifference extends Rule {
 	 * 
 	 * @param  dateToBeCalculatedFor {@link LocalDateTime} The LocalDateTime the average volatility is to be calculated
 	 *                               for.
-	 * @return                       {@code double} The average volatility up until the given LocalDateTime.
+	 * @return                       {@code BigDecimal} The average volatility up until the given LocalDateTime.
 	 */
-	private double calculateAverageVolatility(LocalDateTime dateToBeCalculatedFor) {
+	private BigDecimal calculateAverageVolatility(LocalDateTime dateToBeCalculatedFor) {
 		/*
 		 * Starting point is the first DateTime that exceeds the lookback window.
 		 */
@@ -279,7 +282,7 @@ public class VolatilityDifference extends Rule {
 		int endOfReferencePosition = ValueDateTupel.getPosition(volatilityIndices, this.getEndOfReferenceWindow());
 
 		for (int i = startOfReferencePosition; i <= endOfReferencePosition; i++) {
-			if (Double.isNaN(volatilityIndices[i].getValue())) {
+			if (Double.isNaN(volatilityIndices[i].getValue().doubleValue())) {
 				throw new IllegalArgumentException("There must not be NaN-Values in the given volatility indices "
 				        + "values in the area delimited by startOfReferenceWindow" + " and endOfReferenceWindow");
 			}

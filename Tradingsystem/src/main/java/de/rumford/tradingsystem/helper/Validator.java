@@ -1,5 +1,6 @@
 package de.rumford.tradingsystem.helper;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,7 +32,7 @@ public class Validator {
 	 * @param  values                   {@code double[]} The array to be validated.
 	 * @throws IllegalArgumentException if any of the above specifications are not met.
 	 */
-	public static void validateArrayOfDoubles(double[] values) {
+	public static void validateArrayOfBigDecimals(BigDecimal[] values) {
 		if (values == null)
 			throw new IllegalArgumentException("Given array must not be null");
 	}
@@ -57,7 +58,7 @@ public class Validator {
 	 *                                  {@code -1 <= value <= 1}.
 	 * @throws IllegalArgumentException if the above specifications are not met.
 	 */
-	public static void validateCorrelations(double[] correlations) {
+	public static void validateCorrelations(BigDecimal[] correlations) {
 		/* Check if the given array is null */
 		if (correlations == null)
 			throw new IllegalArgumentException("Correlations array must not be null");
@@ -68,12 +69,12 @@ public class Validator {
 
 		/* Check all given values inside the array */
 		for (int i = 0; i < correlations.length; i++) {
-			if (Double.isNaN(correlations[i]))
+			if (Double.isNaN(correlations[i].doubleValue()))
 				throw new IllegalArgumentException(
 				        "NaN-values are not allowed. Correlation at position " + i + " is NaN.");
-			if (correlations[i] > 1)
+			if (correlations[i].compareTo(BigDecimal.valueOf(1d)) > 0)
 				throw new IllegalArgumentException("Correlation at position " + i + " is greater than 1");
-			if (correlations[i] < -1)
+			if (correlations[i].compareTo(BigDecimal.valueOf(-1d)) < 0)
 				throw new IllegalArgumentException("Correlation at position " + i + " is less than -1");
 		}
 	}
@@ -103,11 +104,11 @@ public class Validator {
 	 * @param  value                    {@code double} The value to validate.
 	 * @throws IllegalArgumentException if the above specifications are not met.
 	 */
-	public static void validatePositiveDouble(double value) {
-		if (Double.isNaN(value))
+	public static void validatePositiveDouble(BigDecimal value) {
+		if (Double.isNaN(value.doubleValue()))
 			throw new IllegalArgumentException("Value must not be Double.NaN");
 
-		if (value <= 0)
+		if (value.compareTo(BigDecimal.valueOf(0d)) <= 0)
 			throw new IllegalArgumentException("Value must be a positive decimal");
 
 	}
@@ -119,11 +120,11 @@ public class Validator {
 	 * @throws IllegalArgumentException if the given row contains only Double.NaN.
 	 */
 	public static void validateRow(ValueDateTupel[] valueDateTupels) {
-		double[] values = ValueDateTupel.getValues(valueDateTupels);
+		BigDecimal[] values = ValueDateTupel.getValues(valueDateTupels);
 		/* If the first value is NaN, check if the array only contains NaN. */
-		if (Double.isNaN(values[0])) {
-			Set<Double> uniqueValues = new HashSet<>();
-			for (double value : values)
+		if (Double.isNaN(values[0].doubleValue())) {
+			Set<BigDecimal> uniqueValues = new HashSet<>();
+			for (BigDecimal value : values)
 				uniqueValues.add(value);
 
 			/*
@@ -161,10 +162,10 @@ public class Validator {
 	 * @param  baseScale                The comparing base scale.
 	 * @throws IllegalArgumentException if the given rules do not share the given base scale.
 	 */
-	public static void validateRulesVsBaseScale(Rule[] rules, double baseScale) {
+	public static void validateRulesVsBaseScale(Rule[] rules, BigDecimal baseScale) {
 		if (rules != null) {
 			for (int i = 0; i < rules.length; i++)
-				if (rules[i] != null && rules[i].getBaseScale() != baseScale)
+				if (rules[i] != null && rules[i].getBaseScale().compareTo(baseScale) != 0)
 					throw new IllegalArgumentException(
 					        "The rule at index " + i + " does not share the given base scale of " + baseScale + ".");
 		}
@@ -254,7 +255,7 @@ public class Validator {
 				throw new IllegalArgumentException("Given values must not contain null.");
 
 			/* Validate if there are NaN values in the given values array. */
-			if (Double.isNaN(value.getValue()))
+			if (Double.isNaN(value.getValue().doubleValue()))
 				throw new IllegalArgumentException("Given values must not contain NaN.");
 		}
 	}

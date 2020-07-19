@@ -1,5 +1,6 @@
 package de.rumford.tradingsystem.helper;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ import de.rumford.tradingsystem.BaseValue;
 public class ValueDateTupel {
 
 	/* The value to be represented. */
-	private double value;
+	private BigDecimal value;
 	/* The datetime to be represented. */
 	private LocalDateTime date;
 
@@ -40,7 +41,7 @@ public class ValueDateTupel {
 	 * @param date  {@link LocalDateTime} The dateTime to be set for this {@link ValueDateTupel}
 	 * @param value {@code double} The value to be set for this {@link ValueDateTupel}
 	 */
-	public ValueDateTupel(LocalDateTime date, double value) {
+	public ValueDateTupel(LocalDateTime date, BigDecimal value) {
 		this.setDate(date);
 		this.setValue(value);
 	}
@@ -345,11 +346,11 @@ public class ValueDateTupel {
 	 *                                  Returns an empty array if the given array is empty.
 	 * @throws IllegalArgumentException if the given array is null.
 	 */
-	public static double[] getValues(ValueDateTupel[] valueDateTupels) {
+	public static BigDecimal[] getValues(ValueDateTupel[] valueDateTupels) {
 		if (valueDateTupels == null)
 			throw new IllegalArgumentException(MESSAGE_ARRAY_MUST_NOT_BE_NULL);
 
-		double[] values = {};
+		BigDecimal[] values = {};
 		for (ValueDateTupel tupel : valueDateTupels)
 			values = ArrayUtils.add(values, tupel.getValue());
 		return values;
@@ -435,7 +436,7 @@ public class ValueDateTupel {
 		 */
 		for (int fieldIndex = 0; fieldIndex < uniqueSortedDates.size(); fieldIndex++) {
 			ValueDateTupel valueDateTupelToBeAdded = new ValueDateTupel(uniqueSortedDatesList.get(fieldIndex),
-			        Double.NaN);
+			        BigDecimal.valueOf(Double.NaN));
 
 			if (fieldIndex < valueDateTupels.length
 			        && uniqueSortedDatesList.get(fieldIndex).isEqual(valueDateTupels[fieldIndex].getDate())) {
@@ -469,8 +470,9 @@ public class ValueDateTupel {
 		 * non-NaN after the NaNs. This is the case when the missing NaNs are not at the beginning or the end of the
 		 * given array.
 		 */
-		double valueToBeSet = (valueDateTupels[previousAvailable].getValue()
-		        + valueDateTupels[nextAvailable].getValue()) / 2;
+		BigDecimal valueToBeSet = (valueDateTupels[previousAvailable].getValue() //
+		        .add(valueDateTupels[nextAvailable].getValue())) //
+		                .divide(BigDecimal.valueOf(2));
 
 		int localIndex = previousAvailable + 1;
 		/* Fill all values up to the next NaN with the calculated value. */
@@ -494,7 +496,7 @@ public class ValueDateTupel {
 	private static ValueDateTupel[] fillStartingValues(ValueDateTupel[] valueDateTupels) {
 		int localFieldIndex = 1;
 		/* Iterate through the array until a value != Double.NaN is found */
-		while (Double.isNaN(valueDateTupels[localFieldIndex].getValue())) {
+		while (Double.isNaN(valueDateTupels[localFieldIndex].getValue().doubleValue())) {
 			localFieldIndex++;
 		}
 
@@ -559,7 +561,7 @@ public class ValueDateTupel {
 			/*
 			 * If the ValueDateTupel contains a value other than Double.NaN continue with the next iteration.
 			 */
-			if (!Double.isNaN(valueDateTupels[fieldIndex].getValue()))
+			if (!Double.isNaN(valueDateTupels[fieldIndex].getValue().doubleValue()))
 				continue;
 
 			/*
@@ -583,9 +585,9 @@ public class ValueDateTupel {
 			 */
 			int limitIndex = fieldIndex;
 
-			double valueToBeSet = Double.NaN;
+			BigDecimal valueToBeSet = BigDecimal.valueOf(Double.NaN);
 
-			while (Double.isNaN(valueDateTupels[limitIndex].getValue())) {
+			while (Double.isNaN(valueDateTupels[limitIndex].getValue().doubleValue())) {
 				limitIndex++;
 				/*
 				 * If there are no values in the remaining array set all values to be the last non-NaN, which is at
@@ -604,7 +606,7 @@ public class ValueDateTupel {
 			 * values, until the very last position. All remaining values can be set to this value then. After that the
 			 * loop can be left.
 			 */
-			if (!Double.isNaN(valueToBeSet)) {
+			if (!Double.isNaN(valueToBeSet.doubleValue())) {
 				int localIndex = fieldIndex;
 				while (localIndex < valueDateTupels.length) {
 					valueDateTupels[localIndex].setValue(valueToBeSet);
@@ -626,6 +628,21 @@ public class ValueDateTupel {
 	 */
 
 	/**
+	 * Outputs the fields of this ValueDateTupel as a {@code String}.
+	 */
+	@GeneratedCode
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ValueDateTupel [value=");
+		builder.append(value);
+		builder.append(", date=");
+		builder.append(date);
+		builder.append("]");
+		return builder.toString();
+	}
+
+	/**
 	 * A hash code for this ValueDateTupel.
 	 */
 	@GeneratedCode
@@ -634,9 +651,7 @@ public class ValueDateTupel {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
-		long temp;
-		temp = Double.doubleToLongBits(value);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
 	}
 
@@ -658,24 +673,12 @@ public class ValueDateTupel {
 				return false;
 		} else if (!date.equals(other.date))
 			return false;
-		if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value))
+		if (value == null) {
+			if (other.value != null)
+				return false;
+		} else if (!value.equals(other.value))
 			return false;
 		return true;
-	}
-
-	/**
-	 * Outputs the fields of this ValueDateTupel as a {@code String}.
-	 */
-	@GeneratedCode
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("ValueDateTupel [value=");
-		builder.append(value);
-		builder.append(", date=");
-		builder.append(date);
-		builder.append("]");
-		return builder.toString();
 	}
 
 	/**
@@ -688,7 +691,7 @@ public class ValueDateTupel {
 	 * 
 	 * @return {@code double} value of the {@link ValueDateTupel}
 	 */
-	public double getValue() {
+	public BigDecimal getValue() {
 		return value;
 	}
 
@@ -697,7 +700,7 @@ public class ValueDateTupel {
 	 * 
 	 * @param value {@code double} value to be set
 	 */
-	public void setValue(double value) {
+	public void setValue(BigDecimal value) {
 		this.value = value;
 	}
 

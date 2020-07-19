@@ -1,7 +1,8 @@
 package de.rumford.tradingsystem.helper;
 
-import java.util.DoubleSummaryStatistics;
-import java.util.stream.DoubleStream;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.linear.BlockRealMatrix;
@@ -33,10 +34,10 @@ public final class Util {
 	 * @return                   {@code double} standard deviation adjusted value. Double.NaN, if the given standard
 	 *                           deviation is zero.
 	 */
-	public static double adjustForStandardDeviation(double value, double standardDeviation) {
-		if (standardDeviation == 0)
-			return Double.NaN;
-		return value / standardDeviation;
+	public static BigDecimal adjustForStandardDeviation(BigDecimal value, BigDecimal standardDeviation) {
+		if (standardDeviation.compareTo(BigDecimal.valueOf(0)) == 0)
+			return BigDecimal.valueOf(Double.NaN);
+		return value.divide(standardDeviation);
 	}
 
 	/**
@@ -68,16 +69,16 @@ public final class Util {
 	 * @return                          {@code double} The average value of the given values.
 	 * @throws IllegalArgumentException if the given array is null.
 	 */
-	public static double calculateAverage(double[] values) {
-		Validator.validateArrayOfDoubles(values);
+	public static BigDecimal calculateAverage(BigDecimal[] values) {
+		Validator.validateArrayOfBigDecimals(values);
 
-		/* Calculate the average of absolute values */
-		DoubleSummaryStatistics stats = new DoubleSummaryStatistics();
-		/* Load absolute values into stats */
-		for (double value : values)
-			stats.accept(value);
+		BigDecimal sum = BigDecimal.valueOf(0);
+
+		/* Add up all values */
+		for (BigDecimal value : values)
+			sum.add(value);
 		/* Get average of all values */
-		return stats.getAverage();
+		return sum.divide(BigDecimal.valueOf(values.length));
 	}
 
 	/**
@@ -93,14 +94,14 @@ public final class Util {
 	 * @throws IllegalArgumentException if the given array contains arrays containing Double.NaN.
 	 * @throws IllegalArgumentException if the given array contains arrays not of the same length.
 	 */
-	public static double[] calculateCorrelationOfRows(double[][] valuesMatrix) {
+	public static BigDecimal[] calculateCorrelationOfRows(BigDecimal[][] valuesMatrix) {
 		/*
 		 * If one of the rows contains all identical values no correlation can be calculated, as a division by zero will
 		 * occur in correlations calculation.
 		 */
 		for (int i = 0; i < valuesMatrix.length; i++) {
-			double[] noDuplicates = DoubleStream.of(valuesMatrix[i]).distinct().toArray();
-			if (noDuplicates.length == 1) {
+			HashSet<BigDecimal> hashSetOfValues = new HashSet<>(Arrays.asList(valuesMatrix[i]));
+			if (hashSetOfValues.size() == 1) {
 				throw new IllegalArgumentException("Correlations cannot be calculated caused by all identical "
 				        + "values in row at position " + i + ".");
 			}
@@ -132,8 +133,8 @@ public final class Util {
 	 * @param  scalar           {@code double} scalar to scale the unscaled forecast
 	 * @return                  {@code double} the scaled forecast
 	 */
-	public static double calculateForecast(double unscaledForecast, double scalar) {
-		return unscaledForecast * scalar;
+	public static BigDecimal calculateForecast(BigDecimal unscaledForecast, BigDecimal scalar) {
+		return unscaledForecast.multiply(scalar);
 	}
 
 	/**
@@ -147,9 +148,9 @@ public final class Util {
 	 * @throws IllegalArgumentException if the average of the absolutes of the given values is zero
 	 * @throws IllegalArgumentException if the given baseScale is zero
 	 */
-	public static double calculateForecastScalar(double[] values, double baseScale) {
+	public static BigDecimal calculateForecastScalar(BigDecimal[] values, BigDecimal baseScale) {
 
-		Validator.validateArrayOfDoubles(values);
+		Validator.validateArrayOfBigDecimals(values);
 		if (values.length == 0)
 			throw new IllegalArgumentException("Given array of values must not be empty");
 
@@ -160,19 +161,19 @@ public final class Util {
 		}
 
 		/* helper array */
-		double[] absoluteValues = new double[values.length];
+		BigDecimal[] absoluteValues = new BigDecimal[values.length];
 
 		/* Calculate the absolute values for all values in the given array */
 		for (int i = 0; i < values.length; i++)
-			absoluteValues[i] = Math.abs(values[i]);
+			absoluteValues[i] = values[i].abs();
 
 		/* Get average of all values */
-		double averageOfAbsolutes = Util.calculateAverage(absoluteValues);
+		BigDecimal averageOfAbsolutes = Util.calculateAverage(absoluteValues);
 
-		if (averageOfAbsolutes == 0)
-			return Double.NaN;
+		if (averageOfAbsolutes.compareTo(BigDecimal.valueOf(0)) == 0)
+			return BigDecimal.valueOf(Double.NaN);
 
-		return baseScale / averageOfAbsolutes;
+		return baseScale.divide(averageOfAbsolutes);
 	}
 
 	/**
@@ -183,10 +184,12 @@ public final class Util {
 	 * @return             {@code double} difference between formerValue and latterValue represented in percentage
 	 *                     points. Double.NaN if the given formerValue is zero.
 	 */
-	public static double calculateReturn(double formerValue, double latterValue) {
-		if (formerValue == 0)
-			return Double.NaN;
-		return latterValue / formerValue - 1d;
+	public static BigDecimal calculateReturn(BigDecimal formerValue, BigDecimal latterValue) {
+		if (formerValue.compareTo(BigDecimal.valueOf(0)) == 0)
+			return BigDecimal.valueOf(Double.NaN);
+		return latterValue //
+		        .divide(formerValue) //
+		        .subtract(BigDecimal.valueOf(1d));
 	}
 
 	/**
@@ -199,23 +202,23 @@ public final class Util {
 	 *                      {@link Validator#validateCorrelations(double[])} for limitations.
 	 * @return              {@code double[]} The calculated weights { w_A, w_B, w_C }.
 	 */
-	public static double[] calculateWeightsForThreeCorrelations(double[] correlations) {
+	public static BigDecimal[] calculateWeightsForThreeCorrelations(BigDecimal[] correlations) {
 		Validator.validateCorrelations(correlations);
 
 		for (int i = 0; i < correlations.length; i++) {
 			/*
 			 * Floor negative correlations at 0 (See Carver: "Systematic Trading", p. 79)
 			 */
-			if (correlations[i] < 0)
-				correlations[i] = 0;
+			if (correlations[i].compareTo(BigDecimal.valueOf(0d)) < 0)
+				correlations[i] = BigDecimal.valueOf(0d);
 		}
 
-		double[] weights = {};
+		BigDecimal[] weights = {};
 		/*
 		 * Catch three equal correlations. Three correlations of 1 each would break further calculation.
 		 */
-		if (correlations[0] == correlations[1] && correlations[0] == correlations[2]) {
-			double correlationOfOneThird = 1d / 3d;
+		if (correlations[0].compareTo(correlations[1]) == 0 && correlations[0].compareTo(correlations[2]) == 0) {
+			BigDecimal correlationOfOneThird = BigDecimal.valueOf(1d / 3d);
 			weights = ArrayUtils.add(weights, correlationOfOneThird);
 			weights = ArrayUtils.add(weights, correlationOfOneThird);
 			weights = ArrayUtils.add(weights, correlationOfOneThird);
@@ -223,26 +226,28 @@ public final class Util {
 		}
 
 		/* Get the average correlation each row of values has */
-		double averageCorrRowA = (correlations[0] + correlations[1]) / 2;
-		double averageCorrRowB = (correlations[0] + correlations[2]) / 2;
-		double averageCorrRowC = (correlations[1] + correlations[2]) / 2;
+		BigDecimal averageCorrRowA = correlations[0].add(correlations[1]).divide(BigDecimal.valueOf(2d));
+		BigDecimal averageCorrRowB = correlations[0].add(correlations[2]).divide(BigDecimal.valueOf(2d));
+		BigDecimal averageCorrRowC = correlations[1].add(correlations[2]).divide(BigDecimal.valueOf(2d));
 
-		double[] averageCorrelations = { averageCorrRowA, averageCorrRowB, averageCorrRowC };
+		BigDecimal[] averageCorrelations = { averageCorrRowA, averageCorrRowB, averageCorrRowC };
 
 		/*
 		 * Subtract each average correlation from 1 to get an inverse-ish value
 		 */
 		for (int i = 0; i < averageCorrelations.length; i++)
-			averageCorrelations[i] = 1 - averageCorrelations[i];
+			averageCorrelations[i] = BigDecimal.valueOf(1d).subtract(averageCorrelations[i]);
 
 		/* Calculate the sum of average correlations. */
-		double sumOfAverageCorrelations = DoubleStream.of(averageCorrelations).sum();
+		BigDecimal sumOfAverageCorrelations = BigDecimal.valueOf(0d);
+		for (BigDecimal avgCorrelation : averageCorrelations)
+			sumOfAverageCorrelations = sumOfAverageCorrelations.add(avgCorrelation);
 
 		/*
 		 * Normalize the average correlations so they sum up to 1. These normalized values are the weights.
 		 */
 		for (int i = 0; i < averageCorrelations.length; i++)
-			weights = ArrayUtils.add(weights, averageCorrelations[i] / sumOfAverageCorrelations);
+			weights = ArrayUtils.add(weights, averageCorrelations[i].divide(sumOfAverageCorrelations));
 
 		return weights;
 	}
@@ -258,10 +263,10 @@ public final class Util {
 	 * @param  forecast a forecast.
 	 * @return          The String literal for the given forecast.
 	 */
-	public static String getPositionFromForecast(double forecast) {
-		if (forecast > 0)
+	public static String getPositionFromForecast(BigDecimal forecast) {
+		if (forecast.compareTo(BigDecimal.valueOf(0d)) > 0)
 			return "Long";
-		if (forecast < 0)
+		if (forecast.compareTo(BigDecimal.valueOf(0d)) < 0)
 			return "Short";
 		return "Hold";
 	}

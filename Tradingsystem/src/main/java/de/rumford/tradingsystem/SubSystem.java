@@ -1,5 +1,6 @@
 package de.rumford.tradingsystem;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDateTime;
 import java.util.Arrays;
@@ -24,7 +25,7 @@ public class SubSystem {
 	/*
 	 * The value to which the product prices shall be scaled to. Effect rises if higher and capital goes lower.
 	 */
-	private static final double PRICE_FACTOR_BASE_SCALE = 1;
+	private static final BigDecimal PRICE_FACTOR_BASE_SCALE = BigDecimal.valueOf(1d);
 
 	/* An Exception message. */
 	private static final String MESSAGE_ILLEGAL_TEST_WINDOW = "The given test window does not meet specifications.";
@@ -36,25 +37,25 @@ public class SubSystem {
 	/* The diversification multiplier for this subsystem. */
 	private DiversificationMultiplier diversificationMultiplier;
 	/* The starting capital used for performance calculation. */
-	private double capital;
+	private BigDecimal capital;
 	/* The combined forecasts of all rules. */
 	private ValueDateTupel[] combinedForecasts;
 	/* The value all forecasts shall be scaled to. */
-	private double baseScale;
+	private BigDecimal baseScale;
 
 	/**
 	 * Constructor for the SubSystem class.
 	 * 
 	 * @param baseValue {@link BaseValue} The base value to be used for all the given rules' calculations. See
-	 *                  {@link #validateInput( BaseValue, Rule[], double, double)} for limitations.
+	 *                  {@link #validateInput( BaseValue, Rule[], BigDecimal, BigDecimal)} for limitations.
 	 * @param rules     {@code Rule[]} Array of {@link Rule} to be used for forecast calculations in this SubSystem. See
-	 *                  {@link #validateInput( BaseValue, Rule[], double, double)} for limitations.
-	 * @param capital   {@code double} The capital to be managed by this SubSystem. See
-	 *                  {@link #validateInput( BaseValue, Rule[], double, double)} for limitations.
-	 * @param baseScale {@code double} The base scale for this SubSystem's forecasts. See
-	 *                  {@link #validateInput( BaseValue, Rule[], double, double)} for limitations.
+	 *                  {@link #validateInput( BaseValue, Rule[], BigDecimal, BigDecimal)} for limitations.
+	 * @param capital   {@code BigDecimal} The capital to be managed by this SubSystem. See
+	 *                  {@link #validateInput( BaseValue, Rule[], BigDecimal, BigDecimal)} for limitations.
+	 * @param baseScale {@code BigDecimal} The base scale for this SubSystem's forecasts. See
+	 *                  {@link #validateInput( BaseValue, Rule[], BigDecimal, BigDecimal)} for limitations.
 	 */
-	public SubSystem(BaseValue baseValue, Rule[] rules, double capital, double baseScale) {
+	public SubSystem(BaseValue baseValue, Rule[] rules, BigDecimal capital, BigDecimal baseScale) {
 
 		validateInput(baseValue, rules, capital, baseScale);
 
@@ -70,21 +71,22 @@ public class SubSystem {
 
 	/**
 	 * Performs a backtest for the given parameters. Utilizes
-	 * {@link #calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], double, double)}
+	 * {@link #calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], BigDecimal, BigDecimal)}
 	 * for actual performance calculation and returns performance value for the last day.
 	 * 
 	 * @see                      SubSystem#calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime,
-	 *                           ValueDateTupel[], double, double)
+	 *                           ValueDateTupel[], BigDecimal, BigDecimal)
 	 * @param  baseValue         {@link BaseValue} The base value to be tested against.
 	 * @param  startOfTestWindow {@link LocalDateTime} First time interval of test window.
 	 * @param  endOfTestWindow   {@link LocalDateTime} Last time interval of test window.
 	 * @param  combinedForecasts {@code ValueDateTupel[]} The forecasts to be used for performance calculation.
-	 * @param  baseScale         {@code double} The value to which to scale the forecasts to.
-	 * @param  capital           {@code double} The starting capital.
-	 * @return                   {@code double} The performance value on the last day of the given test window.
+	 * @param  baseScale         {@code BigDecimal} The value to which to scale the forecasts to.
+	 * @param  capital           {@code BigDecimal} The starting capital.
+	 * @return                   {@code BigDecimal} The performance value on the last day of the given test window.
 	 */
-	public static double backtest(BaseValue baseValue, LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow,
-	        ValueDateTupel[] combinedForecasts, double baseScale, double capital) {
+	public static BigDecimal backtest(BaseValue baseValue, LocalDateTime startOfTestWindow,
+	        LocalDateTime endOfTestWindow, ValueDateTupel[] combinedForecasts, BigDecimal baseScale,
+	        BigDecimal capital) {
 
 		ValueDateTupel[] performanceValues = calculatePerformanceValues(baseValue, startOfTestWindow, endOfTestWindow,
 		        combinedForecasts, baseScale, capital);
@@ -94,15 +96,15 @@ public class SubSystem {
 
 	/**
 	 * Calls
-	 * {@link #calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], double, double)}
+	 * {@link #calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], BigDecimal, BigDecimal)}
 	 * with instance properties.
 	 * 
 	 * @param  startOfTestWindow {@link LocalDateTime} First time interval of test window.
 	 * @param  endOfTestWindow   {@link LocalDateTime} Last time interval of test window.
-	 * @return                   {@code double} by way of
-	 *                           {@link #backtest(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], double, double)}.
+	 * @return                   {@code BigDecimal} by way of
+	 *                           {@link #backtest(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], BigDecimal, BigDecimal)}.
 	 */
-	public double backtest(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow) {
+	public BigDecimal backtest(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow) {
 		return SubSystem.backtest(this.getBaseValue(), startOfTestWindow, endOfTestWindow, this.getCombinedForecasts(),
 		        this.getBaseScale(), this.getCapital());
 	}
@@ -116,14 +118,15 @@ public class SubSystem {
 	 * @param  endOfTestWindow   {@link LocalDateTime} Last time interval for testing.
 	 * @param  combinedForecasts {@code ValueDateTupel[]} Array of {@link ValueDateTupel} containing the forecasts for
 	 *                           this performance calculation.
-	 * @param  baseScale         {@code double} The scale the given forecasts are based upon.
-	 * @param  capital           {@code double} The starting capital.
+	 * @param  baseScale         {@code BigDecimal} The scale the given forecasts are based upon.
+	 * @param  capital           {@code BigDecimal} The starting capital.
 	 * @return                   {@code ValueDateTupel[]} An array of {@link ValueDateTupel} containing the value of all
 	 *                           held assets + cash for each time interval between the given startOfTestWindow and
 	 *                           endOfTestWindow.
 	 */
 	public static ValueDateTupel[] calculatePerformanceValues(BaseValue baseValue, LocalDateTime startOfTestWindow,
-	        LocalDateTime endOfTestWindow, ValueDateTupel[] combinedForecasts, double baseScale, double capital) {
+	        LocalDateTime endOfTestWindow, ValueDateTupel[] combinedForecasts, BigDecimal baseScale,
+	        BigDecimal capital) {
 
 		try {
 			Validator.validateTimeWindow(startOfTestWindow, endOfTestWindow, baseValue.getValues());
@@ -155,7 +158,7 @@ public class SubSystem {
 		/*
 		 * Get the product price factor to calculate long and short product prices
 		 */
-		double productPriceFactor = calculateProductPriceFactor(ValueDateTupel.getValues(relevantBaseValues));
+		BigDecimal productPriceFactor = calculateProductPriceFactor(ValueDateTupel.getValues(relevantBaseValues));
 
 		/*
 		 * Calculate the product prices based on the base value for each interval inside the testing timespan and the
@@ -185,8 +188,8 @@ public class SubSystem {
 			 * Calculate the capital available for this time interval by "selling" off all currently held positions at
 			 * the this time interval's prices.
 			 */
-			capital += longProductsCount * productPrices[i].getValue();
-			capital += shortProductsCount * shortProductPrices[i].getValue();
+			capital = capital.add(productPrices[i].getValue().multiply(BigDecimal.valueOf(longProductsCount)));
+			capital = capital.add(shortProductPrices[i].getValue().multiply(BigDecimal.valueOf(shortProductsCount)));
 
 			/* Reset the products count as they were sold off */
 			shortProductsCount = 0;
@@ -199,7 +202,7 @@ public class SubSystem {
 			ValueDateTupel performanceValue = new ValueDateTupel(relevantCombinedForecasts[i].getDate(), capital);
 			performanceValues = ArrayUtils.add(performanceValues, performanceValue);
 
-			if (relevantCombinedForecasts[i].getValue() > 0) {
+			if (relevantCombinedForecasts[i].getValue().compareTo(BigDecimal.valueOf(0d)) > 0) {
 				/* Long position */
 				longProductsCount = calculateProductsCount(capital, productPrices[i].getValue(),
 				        relevantCombinedForecasts[i].getValue(), baseScale);
@@ -207,9 +210,9 @@ public class SubSystem {
 				/*
 				 * "Buy" the calculated count of products and thus reduce the cash capital
 				 */
-				capital -= longProductsCount * productPrices[i].getValue();
+				capital = capital.subtract(productPrices[i].getValue().multiply(BigDecimal.valueOf(longProductsCount)));
 
-			} else if (relevantCombinedForecasts[i].getValue() < 0) {
+			} else if (relevantCombinedForecasts[i].getValue().compareTo(BigDecimal.valueOf(0d)) < 0) {
 				/* short position */
 				shortProductsCount = calculateProductsCount(capital, shortProductPrices[i].getValue(),
 				        relevantCombinedForecasts[i].getValue(), baseScale);
@@ -217,7 +220,8 @@ public class SubSystem {
 				/*
 				 * "Buy" the calculated count of products and thus reduce the cash capital
 				 */
-				capital -= shortProductsCount * shortProductPrices[i].getValue();
+				capital = capital
+				        .subtract(shortProductPrices[i].getValue().multiply(BigDecimal.valueOf(shortProductsCount)));
 			} else {
 				/*
 				 * If forecast was 0 nothing would be bought so no default-else branch is needed.
@@ -230,13 +234,13 @@ public class SubSystem {
 
 	/**
 	 * Calls
-	 * {@link #calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], double, double)}
+	 * {@link #calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], BigDecimal, BigDecimal)}
 	 * with instance properties.
 	 * 
 	 * @param  startOfTestWindow {@link LocalDateTime} First time interval for testing.
 	 * @param  endOfTestWindow   {@link LocalDateTime} Last time interval for testing.
 	 * @return                   {@code ValueDateTupel[]} by way of
-	 *                           {@link #calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], double, double)}.
+	 *                           {@link #calculatePerformanceValues(BaseValue, LocalDateTime, LocalDateTime, ValueDateTupel[], BigDecimal, BigDecimal)}.
 	 */
 	public ValueDateTupel[] calculatePerformanceValues(LocalDateTime startOfTestWindow, LocalDateTime endOfTestWindow) {
 		return SubSystem.calculatePerformanceValues(this.getBaseValue(), startOfTestWindow, endOfTestWindow,
@@ -254,7 +258,7 @@ public class SubSystem {
 		/*
 		 * Calculate the weight by which all rules' forecasts shall be multiplied by
 		 */
-		double rulesWeight = 1d / instanceRules.length;
+		BigDecimal rulesWeight = BigDecimal.valueOf(1d).divide(BigDecimal.valueOf(instanceRules.length));
 
 		ValueDateTupel[] calculatedCombinedForecasts = {};
 
@@ -270,15 +274,17 @@ public class SubSystem {
 					 * Combined forecasts must be filled with values on first go-through
 					 */
 					ValueDateTupel vdtToAdd = new ValueDateTupel(forecasts[fcIndex].getDate(),
-					        forecasts[fcIndex].getValue() * rulesWeight);
+					        forecasts[fcIndex].getValue().multiply(rulesWeight));
 					calculatedCombinedForecasts = ArrayUtils.add(calculatedCombinedForecasts, vdtToAdd);
 				} else {
 					/*
 					 * If this is not the first go-through add the weighted forecasts of the current rule
 					 */
 					ValueDateTupel vdtToAdd = new ValueDateTupel(calculatedCombinedForecasts[fcIndex].getDate(),
-					        calculatedCombinedForecasts[fcIndex].getValue()
-					                + forecasts[fcIndex].getValue() * rulesWeight);
+					        calculatedCombinedForecasts[fcIndex].getValue() //
+					                .add( //
+					                        forecasts[fcIndex].getValue().multiply(rulesWeight) //
+									));
 					calculatedCombinedForecasts[fcIndex] = vdtToAdd;
 				}
 			}
@@ -288,16 +294,17 @@ public class SubSystem {
 		 * Apply Diversification Multiplier to all forecast values. Cut off Forecast values at 2 x base scale or -2 x
 		 * base scale respectively
 		 */
-		final double instanceBaseScale = this.getBaseScale();
-		final double diversificationMultiplierValue = this.getDiversificationMultiplier().getValue();
-		final double MAX_VALUE = instanceBaseScale * 2;
-		final double MIN_VALUE = 0 - MAX_VALUE;
+		final BigDecimal instanceBaseScale = this.getBaseScale();
+		final BigDecimal diversificationMultiplierValue = this.getDiversificationMultiplier().getValue();
+		final BigDecimal MAX_VALUE = instanceBaseScale.multiply(BigDecimal.valueOf(2d));
+		final BigDecimal MIN_VALUE = BigDecimal.valueOf(0d).subtract(MAX_VALUE);
 
 		for (int fcIndex = 0; fcIndex < calculatedCombinedForecasts.length; fcIndex++) {
-			double fcWithDM = calculatedCombinedForecasts[fcIndex].getValue() * diversificationMultiplierValue;
-			if (fcWithDM > MAX_VALUE)
+			BigDecimal fcWithDM = calculatedCombinedForecasts[fcIndex].getValue()
+			        .multiply(diversificationMultiplierValue);
+			if (fcWithDM.compareTo(MAX_VALUE) > 0)
 				fcWithDM = MAX_VALUE;
-			if (fcWithDM < MIN_VALUE)
+			if (fcWithDM.compareTo(MIN_VALUE) < 0)
 				fcWithDM = MIN_VALUE;
 
 			calculatedCombinedForecasts[fcIndex].setValue(fcWithDM);
@@ -307,13 +314,14 @@ public class SubSystem {
 	}
 
 	/**
-	 * Call {@link SubSystem#calculateProductPriceFactor(double[], double)} passing PRICE_FACTOR_BASE_SCALE as param.
+	 * Call {@link SubSystem#calculateProductPriceFactor(BigDecimal[], BigDecimal)} passing PRICE_FACTOR_BASE_SCALE as
+	 * param.
 	 * 
-	 * @see           SubSystem#calculateProductPriceFactor(double[], double)
-	 * @param  values {@code double[]} An Array of values the factor is to be calculated for
-	 * @return        {@code double} The calculated factor.
+	 * @see           SubSystem#calculateProductPriceFactor(BigDecimal[], BigDecimal)
+	 * @param  values {@code BigDecimal[]} An Array of values the factor is to be calculated for
+	 * @return        {@code BigDecimal} The calculated factor.
 	 */
-	private static double calculateProductPriceFactor(double[] values) {
+	private static BigDecimal calculateProductPriceFactor(BigDecimal[] values) {
 		return SubSystem.calculateProductPriceFactor(values, PRICE_FACTOR_BASE_SCALE);
 	}
 
@@ -322,28 +330,30 @@ public class SubSystem {
 	 * priceFactorBaseScale. <br>
 	 * The factor is calculated by inverting the average of the given values divided by the given priceFactorBaseScale.
 	 * 
-	 * @param  values               {@code double[]} An Array of values the factor is to be calculated for
-	 * @param  priceFactorBaseScale {@code double} The base scale to use.
-	 * @return                      {@code double} The calculated factor.
+	 * @param  values               {@code BigDecimal[]} An Array of values the factor is to be calculated for
+	 * @param  priceFactorBaseScale {@code BigDecimal} The base scale to use.
+	 * @return                      {@code BigDecimal} The calculated factor.
 	 */
-	private static double calculateProductPriceFactor(double[] values, double priceFactorBaseScale) {
-		double averageCourseValue = Util.calculateAverage(values);
+	private static BigDecimal calculateProductPriceFactor(BigDecimal[] values, BigDecimal priceFactorBaseScale) {
+		BigDecimal averageCourseValue = Util.calculateAverage(values);
 
-		return 1 / (averageCourseValue / priceFactorBaseScale);
+		return BigDecimal.valueOf(1d).divide( //
+		        averageCourseValue.divide(priceFactorBaseScale) //
+		);
 	}
 
 	/**
 	 * Calculate product prices based on the given array of values and a given product price factor.
 	 * 
 	 * @param  baseValues         {@code ValueDateTupel[]} The values the prices are to be based on.
-	 * @param  productPriceFactor {@code double} The factor used to calculate the product prices.
+	 * @param  productPriceFactor {@code BigDecimal} The factor used to calculate the product prices.
 	 * @return                    {@code ValueDateTupel[]} An array of prices using the dates of the given baseValues.
 	 */
-	private static ValueDateTupel[] calculateProductPrices(ValueDateTupel[] baseValues, double productPriceFactor) {
+	private static ValueDateTupel[] calculateProductPrices(ValueDateTupel[] baseValues, BigDecimal productPriceFactor) {
 		ValueDateTupel[] productPrices = {};
 		for (ValueDateTupel baseValue : baseValues)
 			productPrices = ValueDateTupel.addOneAt(productPrices,
-			        new ValueDateTupel(baseValue.getDate(), baseValue.getValue() * productPriceFactor),
+			        new ValueDateTupel(baseValue.getDate(), baseValue.getValue().multiply(productPriceFactor)),
 			        productPrices.length);
 
 		return productPrices;
@@ -352,29 +362,32 @@ public class SubSystem {
 	/**
 	 * Calculates the products to buy during a trading period according to the given price and given forecast.
 	 * 
-	 * @param  capital   {@code double} The capital available for trading.
-	 * @param  price     {@code double} The price at which a product can be bought.
-	 * @param  forecast  {@code double} The forecast for the current trading period.
-	 * @param  baseScale {@code double} The base scale by which the given forecast is scaled.
+	 * @param  capital   {@code BigDecimal} The capital available for trading.
+	 * @param  price     {@code BigDecimal} The price at which a product can be bought.
+	 * @param  forecast  {@code BigDecimal} The forecast for the current trading period.
+	 * @param  baseScale {@code BigDecimal} The base scale by which the given forecast is scaled.
 	 * @return           {@code int} The number of products to buy.
 	 */
-	private static long calculateProductsCount(double capital, double price, double forecast, double baseScale) {
+	private static long calculateProductsCount(BigDecimal capital, BigDecimal price, BigDecimal forecast,
+	        BigDecimal baseScale) {
 		/* Number of products if forecast had MAX_VALUE */
-		double maxProductsCount = capital / price;
+		BigDecimal maxProductsCount = capital.divide(price);
 
 		/* Number of products if forecast was 1 */
-		double fcOneProductsCounts = maxProductsCount / (baseScale * 2);
+		BigDecimal fcOneProductsCounts = maxProductsCount.divide( //
+		        baseScale.multiply(BigDecimal.valueOf(2d)) //
+		);
 
 		/*
 		 * Invert current forecast if it's negative to always generate a positive number of products
 		 */
-		if (forecast < 0)
-			forecast *= -1;
+		if (forecast.compareTo(BigDecimal.valueOf(0d)) < 0)
+			forecast = forecast.multiply(BigDecimal.valueOf(-1d));
 
 		/*
 		 * Number of products for actual forecast. Accept rounding inaccuracies.
 		 */
-		return (long) (fcOneProductsCounts * forecast);
+		return fcOneProductsCounts.multiply(forecast).longValue();
 	}
 
 	/**
@@ -387,13 +400,13 @@ public class SubSystem {
 	 *                                  <li>Must pass {@link Validator#validateRules(Rule[])}</li>
 	 *                                  <li>Each rule's base value must be same as the given base value.</li>
 	 *                                  </ul>
-	 * @param  capital                  {@code double} The capital to validate. Must pass
-	 *                                  {@link Validator#validatePositiveDouble(double)}.
-	 * @param  baseScale                {@code double} The base scale to validate. Must pass
-	 *                                  {@link Validator#validatePositiveDouble(double)}.
+	 * @param  capital                  {@code BigDecimal} The capital to validate. Must pass
+	 *                                  {@link Validator#validatePositiveDouble(BigDecimal)}.
+	 * @param  baseScale                {@code BigDecimal} The base scale to validate. Must pass
+	 *                                  {@link Validator#validatePositiveDouble(BigDecimal)}.
 	 * @throws IllegalArgumentException if any of the above criteria is not met.
 	 */
-	private static void validateInput(BaseValue baseValue, Rule[] rules, double capital, double baseScale) {
+	private static void validateInput(BaseValue baseValue, Rule[] rules, BigDecimal capital, BigDecimal baseScale) {
 		Validator.validateBaseValue(baseValue);
 
 		Validator.validateRules(rules);
@@ -455,12 +468,9 @@ public class SubSystem {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		long temp;
-		temp = Double.doubleToLongBits(baseScale);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((baseScale == null) ? 0 : baseScale.hashCode());
 		result = prime * result + ((baseValue == null) ? 0 : baseValue.hashCode());
-		temp = Double.doubleToLongBits(capital);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((capital == null) ? 0 : capital.hashCode());
 		result = prime * result + Arrays.hashCode(combinedForecasts);
 		result = prime * result + ((diversificationMultiplier == null) ? 0 : diversificationMultiplier.hashCode());
 		result = prime * result + Arrays.hashCode(rules);
@@ -480,14 +490,20 @@ public class SubSystem {
 		if (getClass() != obj.getClass())
 			return false;
 		SubSystem other = (SubSystem) obj;
-		if (Double.doubleToLongBits(baseScale) != Double.doubleToLongBits(other.baseScale))
+		if (baseScale == null) {
+			if (other.baseScale != null)
+				return false;
+		} else if (!baseScale.equals(other.baseScale))
 			return false;
 		if (baseValue == null) {
 			if (other.baseValue != null)
 				return false;
 		} else if (!baseValue.equals(other.baseValue))
 			return false;
-		if (Double.doubleToLongBits(capital) != Double.doubleToLongBits(other.capital))
+		if (capital == null) {
+			if (other.capital != null)
+				return false;
+		} else if (!capital.equals(other.capital))
 			return false;
 		if (!Arrays.equals(combinedForecasts, other.combinedForecasts))
 			return false;
@@ -588,7 +604,7 @@ public class SubSystem {
 	 * 
 	 * @return capital SubSystem
 	 */
-	public double getCapital() {
+	public BigDecimal getCapital() {
 		return capital;
 	}
 
@@ -597,7 +613,7 @@ public class SubSystem {
 	 * 
 	 * @param capital the capital to set
 	 */
-	private void setCapital(double capital) {
+	private void setCapital(BigDecimal capital) {
 		this.capital = capital;
 	}
 
@@ -624,7 +640,7 @@ public class SubSystem {
 	 * 
 	 * @return baseScale SubSystem
 	 */
-	public double getBaseScale() {
+	public BigDecimal getBaseScale() {
 		return baseScale;
 	}
 
@@ -633,7 +649,7 @@ public class SubSystem {
 	 * 
 	 * @param baseScale the baseScale to set
 	 */
-	public void setBaseScale(double baseScale) {
+	public void setBaseScale(BigDecimal baseScale) {
 		this.baseScale = baseScale;
 	}
 }

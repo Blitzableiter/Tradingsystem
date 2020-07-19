@@ -1,6 +1,7 @@
 package de.rumford.tradingsystem.helper;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
@@ -72,7 +73,7 @@ public class DataSource {
 				String[] dateAndTimeStrings = new String[2];
 				System.arraycopy(columns, 0, dateAndTimeStrings, 0, 2);
 				LocalDateTime localDateTime;
-				double value;
+				BigDecimal value;
 				localDateTime = parseLocalDateTime(dateAndTimeStrings, format);
 
 				/* Pass the third field (course value) into a double */
@@ -193,7 +194,7 @@ public class DataSource {
 	 * @return                          {@code double} The parsed value.
 	 * @throws IllegalArgumentException if the passed String cannot be properly parsed
 	 */
-	private static double parseCourseValue(String[] columns, CsvFormat format) {
+	private static BigDecimal parseCourseValue(String[] columns, CsvFormat format) {
 		String valueString = columns[0];
 		/* Eliminate thousands separator from String */
 		if (valueString.contains(format.getThousandsSeparator())) {
@@ -204,12 +205,12 @@ public class DataSource {
 			valueString = valueString.replace(format.getDecimalPoint(), CsvFormat.US.getDecimalPoint());
 		}
 
-		double value;
+		BigDecimal value;
 		/*
 		 * At this point all hindering sings have been eradicated from the String
 		 */
 		try {
-			value = Double.parseDouble(valueString);
+			value = new BigDecimal(valueString);
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException("The course value >" + columns[0] + "< cannot be parsed");
 		} catch (Exception e) {

@@ -1,5 +1,7 @@
 package de.rumford.tradingsystem;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -35,7 +37,7 @@ public class BaseValue {
 	/* Factor used in the lookback window for standard deviation */
 	private static final int LOOKBACK_WINDOW = 25;
 	/* Starting value for the short index values if no values are provided */
-	private static final double SHORT_INDEX_INITIAL_VALUE = 1000d;
+	private static final BigDecimal SHORT_INDEX_INITIAL_VALUE = BigDecimal.valueOf(1000d);
 
 	/* Name to identify an instance. Has no effect. */
 	private String name;
@@ -140,17 +142,18 @@ public class BaseValue {
 			formerValue = values[i - 1];
 			latterValue = values[i];
 
-			double returnPercentagePoints = Util.calculateReturn(formerValue.getValue(), latterValue.getValue());
+			BigDecimal returnPercentagePoints = Util.calculateReturn(formerValue.getValue(), latterValue.getValue());
 
 			/**
 			 * If the base value generates more than 50% in returns (and thus decreasing the short index value by more
 			 * than 50%) the return percentage is set to 50%.
 			 */
-			if (returnPercentagePoints > 0.5)
-				returnPercentagePoints = 0.5;
+			if (returnPercentagePoints.compareTo(BigDecimal.valueOf(0.5d)) > 0)
+				returnPercentagePoints = BigDecimal.valueOf(0.5d);
 
-			double shortIndexValue = calculatedShortIndexValues[i - 1].getValue()
-			        - calculatedShortIndexValues[i - 1].getValue() * returnPercentagePoints;
+			BigDecimal shortIndexValue = calculatedShortIndexValues[i - 1].getValue() //
+			        .subtract(calculatedShortIndexValues[i - 1].getValue()) //
+			        .multiply(returnPercentagePoints);
 
 			calculatedShortIndexValues[i] = new ValueDateTupel(latterValue.getDate(), shortIndexValue);
 		}
@@ -175,10 +178,10 @@ public class BaseValue {
 
 		/* Calculate the squared returns */
 		for (int i = 0; i < baseValues.length - 1; i++) {
-			double returns;
+			BigDecimal returns;
 			returns = Util.calculateReturn(baseValues[i].getValue(), baseValues[i + 1].getValue());
 			squaredReturns = ArrayUtils.add(squaredReturns,
-			        new ValueDateTupel(baseValues[i + 1].getDate(), Math.pow(returns, 2)));
+			        new ValueDateTupel(baseValues[i + 1].getDate(), returns.multiply(returns)));
 		}
 
 		/* Instantiate the EWMA used for the standard deviation. */
@@ -191,15 +194,15 @@ public class BaseValue {
 
 		/* Fill in the calculated values. */
 		for (int i = 0; i < squaredReturns.length; i++) {
-			double squaredEwmaOfVolatility = ewmaOfStandardDeviation.getEwmaValues()[i].getValue();
-			double ewmaOfVolatility = Math.sqrt(squaredEwmaOfVolatility);
+			BigDecimal squaredEwmaOfVolatility = ewmaOfStandardDeviation.getEwmaValues()[i].getValue();
+			BigDecimal ewmaOfVolatility = squaredEwmaOfVolatility.sqrt(new MathContext(0));
 			/*
 			 * The base values array has one more value than the standardDeviationValues will have, as there cannot be a
 			 * standard deviation value for the first time interval. The first base value will not have a standard
 			 * deviation value. Therefore to e.g. calculate the _first_ sd value, the _second_ base value has to be
 			 * used.
 			 */
-			double standardDeviation = ewmaOfVolatility * baseValues[i + 1].getValue();
+			BigDecimal standardDeviation = ewmaOfVolatility.multiply(baseValues[i + 1].getValue());
 			standardDeviationValues = ArrayUtils.add(standardDeviationValues,
 			        new ValueDateTupel(baseValues[i + 1].getDate(), standardDeviation));
 		}

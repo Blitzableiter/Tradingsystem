@@ -1,5 +1,6 @@
 package de.rumford.tradingsystem;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -39,43 +40,43 @@ public abstract class Rule {
 	 */
 	private LocalDateTime endOfReferenceWindow;
 	/* The value to which the forecasts will be scaled. */
-	private double baseScale;
+	private BigDecimal baseScale;
 
 	/* The standard deviation adjusted forecasts. */
 	private ValueDateTupel[] sdAdjustedForecasts = null;
 	/*
 	 * The scalar used to scale theses rules' forecasts to the given base scale.
 	 */
-	private double forecastScalar;
+	private BigDecimal forecastScalar;
 	/* The scaled forecasts. */
 	private ValueDateTupel[] forecasts;
 	/* The weights assigned to this rule. */
-	private double weight;
+	private BigDecimal weight;
 
 	/**
 	 * Public constructor for class Rule. Rule is an abstract class and depends on the way of working of the extending
 	 * class.
 	 * 
 	 * @param baseValue              {@link BaseValue} The base value to be used in this rule's calculations. See
-	 *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}
+	 *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}
 	 *                               for limitations.
 	 * @param variations             {@code Rule[]} An array of up to 3 rules (or null). See
-	 *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}
+	 *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}
 	 *                               for limitations.
 	 * @param startOfReferenceWindow {@link LocalDateTime} The first LocalDateTime to be considered in calculations such
 	 *                               as forecast scalar. See
-	 *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}
+	 *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}
 	 *                               for limitations.
 	 * @param endOfReferenceWindow   {@link LocalDateTime} The last LocalDateTime to be considered in calculations such
 	 *                               as forecast scalar. See
-	 *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}
+	 *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}
 	 *                               for limitations.
 	 * @param baseScale              {@code double} How the forecasts shall be scaled. See
-	 *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}
+	 *                               {@link #validateInputs(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}
 	 *                               for limitations.
 	 */
 	public Rule(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
-	        LocalDateTime endOfReferenceWindow, double baseScale) {
+	        LocalDateTime endOfReferenceWindow, BigDecimal baseScale) {
 
 		validateInputs(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
 
@@ -92,9 +93,9 @@ public abstract class Rule {
 	 * depend on the type of rule extending this abstract class.
 	 * 
 	 * @param  forecastDateTime {@link LocalDateTime} The dateTime the raw forecast shall be calculated for.
-	 * @return                  {@code double} The raw forecast value for the given LocalDateTime.
+	 * @return                  {@code BigDecimal} The raw forecast value for the given LocalDateTime.
 	 */
-	abstract double calculateRawForecast(LocalDateTime forecastDateTime);
+	abstract BigDecimal calculateRawForecast(LocalDateTime forecastDateTime);
 
 	/**
 	 * Extract the relevant forecasts for this rule.
@@ -109,9 +110,9 @@ public abstract class Rule {
 	/**
 	 * Extract the relevant forecast values for this rule.
 	 * 
-	 * @return {@code double[]} An array of the relevant forecast values for this rule.
+	 * @return {@code BigDecimal[]} An array of the relevant forecast values for this rule.
 	 */
-	public final double[] extractRelevantForecastValues() {
+	public final BigDecimal[] extractRelevantForecastValues() {
 		return ValueDateTupel.getValues(this.extractRelevantForecasts());
 	}
 
@@ -161,18 +162,18 @@ public abstract class Rule {
 	 * Calculates the standard deviation adjusted Forecast for a given LocalDateTime.
 	 * 
 	 * @param  forecastDateTime {@link LocalDateTime} The LocalDateTime the forecast is to be calculated of.
-	 * @return                  {@code double} The standard deviation adjusted value. Double.NaN if the standard
+	 * @return                  {@code BigDecimal} The standard deviation adjusted value. Double.NaN if the standard
 	 *                          deviation at the given LocalDateTime is zero.
 	 */
-	private double calculateSdAdjustedForecast(LocalDateTime forecastDateTime) {
+	private BigDecimal calculateSdAdjustedForecast(LocalDateTime forecastDateTime) {
 		if (this.hasVariations()) {
-			return Double.NaN;
+			return BigDecimal.valueOf(Double.NaN);
 		}
 
-		double rawForecast = this.calculateRawForecast(forecastDateTime);
+		BigDecimal rawForecast = this.calculateRawForecast(forecastDateTime);
 
-		double sdValue = ValueDateTupel.getElement(this.getBaseValue().getStandardDeviationValues(), forecastDateTime)
-		        .getValue();
+		BigDecimal sdValue = ValueDateTupel
+		        .getElement(this.getBaseValue().getStandardDeviationValues(), forecastDateTime).getValue();
 
 		return Util.adjustForStandardDeviation(rawForecast, sdValue);
 	}
@@ -181,12 +182,12 @@ public abstract class Rule {
 	 * Calculates the forecast scalar. If this rule has variations the variations' forecasts and respective weights are
 	 * used to calculate the forecast scalar. Else this rule's standard deviation adjusted values are used.
 	 * 
-	 * @param  baseScale {@code double} The base scale to which the forecast scalar should scale the forecasts.
-	 * @return           {@code double} The calculated forecast scalar.
+	 * @param  baseScale {@code BigDecimal} The base scale to which the forecast scalar should scale the forecasts.
+	 * @return           {@code BigDecimal} The calculated forecast scalar.
 	 */
-	private double calculateForecastScalar() {
+	private BigDecimal calculateForecastScalar() {
 
-		double instanceBaseScale = this.getBaseScale();
+		BigDecimal instanceBaseScale = this.getBaseScale();
 		Rule[] instanceVariations = this.getVariations();
 		ValueDateTupel[] relevantForecastValues;
 
@@ -206,7 +207,7 @@ public abstract class Rule {
 					/*
 					 * Calculate the value to be added to the current weighted forecast value for this rule
 					 */
-					double valueToBeAdded = variation.getForecasts()[i].getValue() * variation.getWeight();
+					BigDecimal valueToBeAdded = variation.getForecasts()[i].getValue().multiply(variation.getWeight());
 
 					/*
 					 * If the variations forecast value at this position is null (i.e. when we're in the first
@@ -219,7 +220,7 @@ public abstract class Rule {
 						/*
 						 * If there already is a value at position i add the value to the existing value
 						 */
-						relevantForecastValues[i].setValue(relevantForecastValues[i].getValue() + valueToBeAdded);
+						relevantForecastValues[i].setValue(relevantForecastValues[i].getValue().add(valueToBeAdded));
 					}
 				}
 			}
@@ -234,9 +235,9 @@ public abstract class Rule {
 		relevantForecastValues = ValueDateTupel.getElements(relevantForecastValues, this.getStartOfReferenceWindow(),
 		        this.getEndOfReferenceWindow());
 
-		double calculatedForecastScalar = Util.calculateForecastScalar(ValueDateTupel.getValues(relevantForecastValues),
-		        instanceBaseScale);
-		if (Double.isNaN(calculatedForecastScalar))
+		BigDecimal calculatedForecastScalar = Util
+		        .calculateForecastScalar(ValueDateTupel.getValues(relevantForecastValues), instanceBaseScale);
+		if (Double.isNaN(calculatedForecastScalar.doubleValue()))
 			throw new IllegalArgumentException(
 			        "Illegal values in calulated forecast values." + " Adjust reference window.");
 
@@ -271,7 +272,7 @@ public abstract class Rule {
 		 */
 		if (instanceVariations != null) {
 			ValueDateTupel[][] variationsForecasts = {};
-			double[] variationsWeights = {};
+			BigDecimal[] variationsWeights = {};
 
 			/* Extract forecasts and weights of all variations. */
 			for (Rule variation : instanceVariations) {
@@ -288,8 +289,8 @@ public abstract class Rule {
 				for (int i = 0; i < variationsForecasts[variationsIndex].length; i++) {
 
 					/* Add the weighted and scaled variation's forecast */
-					double valueToBeAdded = variationsForecasts[variationsIndex][i].getValue()
-					        * variationsWeights[variationsIndex];
+					BigDecimal valueToBeAdded = variationsForecasts[variationsIndex][i].getValue()
+					        .multiply(variationsWeights[variationsIndex]);
 
 					/*
 					 * If the scaled and weighted forecast value at this position is null (i.e. when we're in the first
@@ -302,7 +303,8 @@ public abstract class Rule {
 						/*
 						 * If there already is a value at position i add the weighted and scaled forecast.
 						 */
-						calculatedScaledForecasts[i].setValue(calculatedScaledForecasts[i].getValue() + valueToBeAdded);
+						calculatedScaledForecasts[i]
+						        .setValue(calculatedScaledForecasts[i].getValue().add(valueToBeAdded));
 					}
 				}
 			}
@@ -331,19 +333,19 @@ public abstract class Rule {
 	 * @param  sdAdjustedForecast {@link double} The standard deviation adjusted value to be scaled.
 	 * @return                    {@code double} the scaled forecast value.
 	 */
-	private double calculateScaledForecast(double sdAdjustedForecast) {
-		double instanceBaseScale = this.getBaseScale();
-		double instanceForecastScalar = this.getForecastScalar();
+	private BigDecimal calculateScaledForecast(BigDecimal sdAdjustedForecast) {
+		BigDecimal instanceBaseScale = this.getBaseScale();
+		BigDecimal instanceForecastScalar = this.getForecastScalar();
 
-		final double MAX_FORECAST = instanceBaseScale * 2;
-		final double MIN_FORECAST = 0 - MAX_FORECAST;
+		final BigDecimal MAX_FORECAST = instanceBaseScale.multiply(BigDecimal.valueOf(2));
+		final BigDecimal MIN_FORECAST = BigDecimal.valueOf(0d).subtract(MAX_FORECAST);
 
-		double scaledForecast = sdAdjustedForecast * instanceForecastScalar;
+		BigDecimal scaledForecast = sdAdjustedForecast.multiply(instanceForecastScalar);
 
-		if (scaledForecast > MAX_FORECAST)
+		if (scaledForecast.compareTo(MAX_FORECAST) > 0)
 			return MAX_FORECAST;
 
-		if (scaledForecast < MIN_FORECAST)
+		if (scaledForecast.compareTo(MIN_FORECAST) < 0)
 			return MIN_FORECAST;
 
 		return scaledForecast;
@@ -370,12 +372,12 @@ public abstract class Rule {
 	 * @param  endOfReferenceWindow     {@link LocalDateTime} The last LocalDateTime to be considered in calculations
 	 *                                  such as forecast scalar. Must pass
 	 *                                  {@link Validator#validateTimeWindow( LocalDateTime, LocalDateTime, ValueDateTupel[])}
-	 * @param  baseScale                {@code double} How the forecasts shall be scaled. Must pass
-	 *                                  {@link Validator# validatePositiveDouble(double)}.
+	 * @param  baseScale                {@code BigDecimal} How the forecasts shall be scaled. Must pass
+	 *                                  {@link Validator#validatePositiveBigDecimal(BigDecimal)}.
 	 * @throws IllegalArgumentException if the above specifications are not met.
 	 */
 	private static void validateInputs(BaseValue baseValue, Rule[] variations, LocalDateTime startOfReferenceWindow,
-	        LocalDateTime endOfReferenceWindow, double baseScale) {
+	        LocalDateTime endOfReferenceWindow, BigDecimal baseScale) {
 
 		Validator.validateBaseValue(baseValue);
 
@@ -408,7 +410,7 @@ public abstract class Rule {
 		}
 
 		try {
-			Validator.validatePositiveDouble(baseScale);
+			Validator.validatePositiveBigDecimal(baseScale);
 		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException("The given base scale does not meet specifications.", e);
 		}
@@ -427,34 +429,34 @@ public abstract class Rule {
 		switch (instanceVariations.length) {
 		case 1:
 			/* If there is only 1 variation then its weight is 100% */
-			instanceVariations[0].setWeight(1d);
+			instanceVariations[0].setWeight(BigDecimal.valueOf(1d));
 			break;
 
 		case 2:
 			/* If there are 2 variations their weights are 50% each */
-			instanceVariations[0].setWeight(0.5d);
-			instanceVariations[1].setWeight(0.5d);
+			instanceVariations[0].setWeight(BigDecimal.valueOf(0.5d));
+			instanceVariations[1].setWeight(BigDecimal.valueOf(0.5d));
 			break;
 
 		case 3:
 			/*
 			 * Extract the values from the forecasts array, as the Dates are not needed for correlation calculation.
 			 */
-			double[][] variationsForecasts = {};
+			BigDecimal[][] variationsForecasts = {};
 			for (Rule variation : instanceVariations) {
 				ValueDateTupel[] fcs = variation.extractRelevantForecasts();
 				variationsForecasts = ArrayUtils.add(variationsForecasts, ValueDateTupel.getValues(fcs));
 			}
 
 			/* Find the correlations for the given variations. */
-			double[] correlations = Util.calculateCorrelationOfRows(variationsForecasts);
+			BigDecimal[] correlations = Util.calculateCorrelationOfRows(variationsForecasts);
 
-			if (ArrayUtils.contains(correlations, Double.NaN))
+			if (ArrayUtils.contains(correlations, BigDecimal.valueOf(Double.NaN)))
 				throw new IllegalArgumentException(
 				        "Correlations cannot be calculated due to illegal values" + " in given variations.");
 
 			/* Find the weights corresponding to the calculated correlations. */
-			double[] weights = Util.calculateWeightsForThreeCorrelations(correlations);
+			BigDecimal[] weights = Util.calculateWeightsForThreeCorrelations(correlations);
 
 			/* Set the weights of the underlying variations */
 			for (int i = 0; i < weights.length; i++) {
@@ -481,19 +483,15 @@ public abstract class Rule {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		long temp;
-		temp = Double.doubleToLongBits(baseScale);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((baseScale == null) ? 0 : baseScale.hashCode());
 		result = prime * result + ((baseValue == null) ? 0 : baseValue.hashCode());
 		result = prime * result + ((endOfReferenceWindow == null) ? 0 : endOfReferenceWindow.hashCode());
-		temp = Double.doubleToLongBits(forecastScalar);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((forecastScalar == null) ? 0 : forecastScalar.hashCode());
 		result = prime * result + Arrays.hashCode(forecasts);
 		result = prime * result + Arrays.hashCode(sdAdjustedForecasts);
 		result = prime * result + ((startOfReferenceWindow == null) ? 0 : startOfReferenceWindow.hashCode());
 		result = prime * result + Arrays.hashCode(variations);
-		temp = Double.doubleToLongBits(weight);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((weight == null) ? 0 : weight.hashCode());
 		return result;
 	}
 
@@ -501,6 +499,7 @@ public abstract class Rule {
 	 * Checks if this Rule is equal to another Rule.
 	 */
 	@GeneratedCode
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -510,7 +509,10 @@ public abstract class Rule {
 		if (getClass() != obj.getClass())
 			return false;
 		Rule other = (Rule) obj;
-		if (Double.doubleToLongBits(baseScale) != Double.doubleToLongBits(other.baseScale))
+		if (baseScale == null) {
+			if (other.baseScale != null)
+				return false;
+		} else if (!baseScale.equals(other.baseScale))
 			return false;
 		if (baseValue == null) {
 			if (other.baseValue != null)
@@ -522,7 +524,10 @@ public abstract class Rule {
 				return false;
 		} else if (!endOfReferenceWindow.equals(other.endOfReferenceWindow))
 			return false;
-		if (Double.doubleToLongBits(forecastScalar) != Double.doubleToLongBits(other.forecastScalar))
+		if (forecastScalar == null) {
+			if (other.forecastScalar != null)
+				return false;
+		} else if (!forecastScalar.equals(other.forecastScalar))
 			return false;
 		if (!Arrays.equals(forecasts, other.forecasts))
 			return false;
@@ -535,7 +540,10 @@ public abstract class Rule {
 			return false;
 		if (!Arrays.equals(variations, other.variations))
 			return false;
-		if (Double.doubleToLongBits(weight) != Double.doubleToLongBits(other.weight))
+		if (weight == null) {
+			if (other.weight != null)
+				return false;
+		} else if (!weight.equals(other.weight))
 			return false;
 		return true;
 	}
@@ -598,7 +606,7 @@ public abstract class Rule {
 	 * 
 	 * @return {@code double} forecast scalar of this rule
 	 */
-	public final double getForecastScalar() {
+	public final BigDecimal getForecastScalar() {
 		if (sdAdjustedForecasts == null)
 			this.calculateAndSetDerivedValues();
 		return forecastScalar;
@@ -609,7 +617,7 @@ public abstract class Rule {
 	 * 
 	 * @param forecastScalar {@code double} forecast scalar to be set for this rule
 	 */
-	private void setForecastScalar(double forecastScalar) {
+	private void setForecastScalar(BigDecimal forecastScalar) {
 		this.forecastScalar = forecastScalar;
 	}
 
@@ -618,7 +626,7 @@ public abstract class Rule {
 	 * 
 	 * @return {@code double} the weight of this rule
 	 */
-	public final double getWeight() {
+	public final BigDecimal getWeight() {
 		return weight;
 	}
 
@@ -627,7 +635,7 @@ public abstract class Rule {
 	 * 
 	 * @param weight {@code double} the weight to be set for this rule
 	 */
-	private void setWeight(double weight) {
+	private void setWeight(BigDecimal weight) {
 		this.weight = weight;
 	}
 
@@ -690,7 +698,7 @@ public abstract class Rule {
 	 * 
 	 * @return baseScale Rule
 	 */
-	public final double getBaseScale() {
+	public final BigDecimal getBaseScale() {
 		return baseScale;
 	}
 
@@ -699,7 +707,7 @@ public abstract class Rule {
 	 * 
 	 * @param baseScale the baseScale to set
 	 */
-	private void setBaseScale(double baseScale) {
+	private void setBaseScale(BigDecimal baseScale) {
 		this.baseScale = baseScale;
 	}
 

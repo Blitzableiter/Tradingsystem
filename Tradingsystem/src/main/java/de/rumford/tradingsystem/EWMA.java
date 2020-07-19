@@ -1,5 +1,6 @@
 package de.rumford.tradingsystem;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -22,7 +23,7 @@ public class EWMA {
 	/*
 	 * The decay factor for recent values calculated from the given horizon.
 	 */
-	private double decay;
+	private BigDecimal decay;
 	/* The values this EWMA shall be based upon. */
 	private ValueDateTupel[] baseValues;
 	/* The calculated EWMA values. */
@@ -48,22 +49,31 @@ public class EWMA {
 	 * Calculate the decay value based on the given horizon.
 	 * 
 	 * @param  horizon {@code int} Horizon of this EWMA.
-	 * @return         {@code double} the decay used to calculate the importance of the previous EWMA.
+	 * @return         {@code BigDecimal} the decay used to calculate the importance of the previous EWMA.
 	 */
-	private double calculateDecay(int horizon) {
-		return 2d / (horizon + 1d);
+	private BigDecimal calculateDecay(int horizon) {
+		return BigDecimal.valueOf(2d).divide( //
+		        BigDecimal.valueOf(horizon) //
+		                .add(BigDecimal.valueOf(1d))//
+		);
 	}
 
 	/**
 	 * Calculate the EWMA-value for given previous value and base value
 	 * 
-	 * @param  previousEWMA {@code double} EWMA of the previous time period
-	 * @param  baseValue    {@code double} base value of the current time period
-	 * @return              {@code double} EWMA for the current time period
+	 * @param  previousEWMA {@code BigDecimal} EWMA of the previous time period
+	 * @param  baseValue    {@code BigDecimal} base value of the current time period
+	 * @return              {@code BigDecimal} EWMA for the current time period
 	 */
-	public double calculateEWMA(double previousEWMA, double baseValue) {
+	public BigDecimal calculateEWMA(BigDecimal previousEWMA, BigDecimal baseValue) {
 		/* E_t = A * P_t + [E_t-1 * ( 1 - A ) ] */
-		return this.getDecay() * baseValue + (previousEWMA * (1d - this.getDecay()));
+		return this.getDecay() //
+		        .multiply(baseValue) //
+		        .add( //
+		                previousEWMA.multiply( //
+		                        BigDecimal.valueOf(1d).subtract(this.getDecay()) //
+						) //
+				);
 	}
 
 	/**
@@ -74,13 +84,13 @@ public class EWMA {
 	 */
 	private ValueDateTupel[] calculateEwmaValues(ValueDateTupel[] baseValues) {
 		ValueDateTupel[] newEwmaValues = ValueDateTupel.createEmptyArray();
-		double previousEwma = 0;
+		BigDecimal previousEwma = BigDecimal.valueOf(0d);
 		/* Calculate all EWMA-Values */
 		for (ValueDateTupel baseValue : baseValues) {
-			double newValue = 0;
-			if (Double.isNaN(baseValue.getValue())) {
-				newValue = Double.NaN;
-				previousEwma = 0;
+			BigDecimal newValue;
+			if (Double.isNaN(baseValue.getValue().doubleValue())) {
+				newValue = BigDecimal.valueOf(Double.NaN);
+				previousEwma = BigDecimal.valueOf(0d);
 			} else {
 				/* Calculate the new values */
 				newValue = this.calculateEWMA(previousEwma, baseValue.getValue());
@@ -202,7 +212,7 @@ public class EWMA {
 	 * 
 	 * @return {@code double} decay of the EWMA
 	 */
-	public double getDecay() {
+	public BigDecimal getDecay() {
 		return this.decay;
 	}
 
@@ -211,7 +221,7 @@ public class EWMA {
 	 * 
 	 * @param horizon {@code int} horizon on which the decay is derived from
 	 */
-	private void setDecay(double decay) {
+	private void setDecay(BigDecimal decay) {
 		this.decay = decay;
 	}
 

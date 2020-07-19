@@ -1,5 +1,6 @@
 package de.rumford.tradingsystem;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import de.rumford.tradingsystem.helper.GeneratedCode;
@@ -28,22 +29,22 @@ public class EWMAC extends Rule {
 	 * difference between the two EWMAs the greater in extent the forecast will be.
 	 * 
 	 * @param baseValue              Same as in
-	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}.
 	 * @param variations             {@code EWMAC[]} An array of three or less rules. Represents the variations of this
 	 *                               rule. Same limitations as in
-	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}.
 	 * @param startOfReferenceWindow Same as in
-	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}.
 	 * @param endOfReferenceWindow   Same as in
-	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}.
 	 * @param longHorizon            {@code int} The horizon of the long horizon EWMA. Should be 4* shortHorizon, but
 	 *                               can be anything greater than shortHorizon.
 	 * @param shortHorizon           {@code int} The horizon of the short horizon EWMA. Must be greater or equal to 2;
 	 * @param baseScale              Same as in
-	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, double)}.
+	 *                               {@link Rule#Rule(BaseValue, Rule[], LocalDateTime, LocalDateTime, BigDecimal)}.
 	 */
 	public EWMAC(BaseValue baseValue, EWMAC[] variations, LocalDateTime startOfReferenceWindow,
-	        LocalDateTime endOfReferenceWindow, int longHorizon, int shortHorizon, double baseScale) {
+	        LocalDateTime endOfReferenceWindow, int longHorizon, int shortHorizon, BigDecimal baseScale) {
 		super(baseValue, variations, startOfReferenceWindow, endOfReferenceWindow, baseScale);
 
 		this.validateHorizonValues(longHorizon, shortHorizon);
@@ -61,13 +62,13 @@ public class EWMAC extends Rule {
 	 * horizon EWMA value for this LocalDateTime.
 	 */
 	@Override
-	double calculateRawForecast(LocalDateTime forecastDateTime) {
-		double longHorizonEwmaValue = ValueDateTupel
+	BigDecimal calculateRawForecast(LocalDateTime forecastDateTime) {
+		BigDecimal longHorizonEwmaValue = ValueDateTupel
 		        .getElement(this.getLongHorizonEwma().getEwmaValues(), forecastDateTime).getValue();
-		double shortHorizonEwmaValue = ValueDateTupel
+		BigDecimal shortHorizonEwmaValue = ValueDateTupel
 		        .getElement(this.getShortHorizonEwma().getEwmaValues(), forecastDateTime).getValue();
 
-		return shortHorizonEwmaValue - longHorizonEwmaValue;
+		return shortHorizonEwmaValue.subtract(longHorizonEwmaValue);
 	}
 
 	/**
